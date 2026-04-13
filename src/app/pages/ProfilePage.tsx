@@ -1,0 +1,316 @@
+import { useState } from 'react';
+import { Shield, ChevronRight, Bell, Lock, HelpCircle, LogOut, Bookmark, Package, Settings } from 'lucide-react';
+
+// ---- Design tokens ----
+const BG = '#F5F4F0';
+const CARD = '#FFFFFF';
+const PRIMARY = '#FF6B47';
+const TEXT = '#0D0D0D';
+const TEXT2 = '#6B6B72';
+const MUTED = '#AEAEB2';
+const BORDER = '#EDEDEC';
+
+const MY_INTERESTS = ['Running', 'Photography', 'Cooking'];
+
+const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
+  Running:      { bg: '#FFF0EC', text: '#FF6B47' },
+  Photography:  { bg: '#FAE8FF', text: '#A21CAF' },
+  Cooking:      { bg: '#FEF3C7', text: '#D97706' },
+  Gardening:    { bg: '#D1FAE5', text: '#059669' },
+  'Board Games':{ bg: '#EDE9FE', text: '#7C3AED' },
+  Cycling:      { bg: '#CCFBF1', text: '#0D9488' },
+  Music:        { bg: '#FFE4E6', text: '#E11D48' },
+};
+
+const SAVED_EVENTS = [
+  { id: 1, title: 'Morning Run at Bishan-AMK Park', date: 'Sat, 12 Apr', category: 'Fitness', categoryColor: '#16A34A', categoryBg: '#DCFCE7', image: 'https://images.unsplash.com/photo-1746046318036-b091b95b02bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { id: 2, title: 'Peranakan Cooking Workshop', date: 'Sun, 13 Apr', category: 'Cooking', categoryColor: '#D97706', categoryBg: '#FEF3C7', image: 'https://images.unsplash.com/photo-1683633815082-783838d0dfe0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+];
+
+const MY_POSTS = [
+  { id: 1, type: 'Request', emoji: '🪴', title: 'Plant watering while away', status: 'Active', statusBg: '#DCFCE7', statusColor: '#16A34A', expiresIn: '4 days' },
+  { id: 2, type: 'Listing', emoji: '🪑', title: 'IKEA Side Table', status: 'In Progress', statusBg: '#FEF3C7', statusColor: '#D97706', expiresIn: null },
+];
+
+const STATS = [
+  { label: 'Events\nSaved', value: '2', emoji: '📅', bg: '#FFF0EC', text: PRIMARY },
+  { label: 'Neighbours\nJio\'d', value: '3', emoji: '👋', bg: '#EDE9FE', text: '#7C3AED' },
+  { label: 'Exchanges\nDone', value: '5', emoji: '🤝', bg: '#D1FAE5', text: '#059669' },
+];
+
+const SETTINGS_ITEMS = [
+  { Icon: Bell, label: 'Notification Preferences', sub: 'Manage alerts & reminders' },
+  { Icon: Lock, label: 'Privacy & Data', sub: 'Control your visibility' },
+  { Icon: Shield, label: 'Verification', sub: 'Singpass verified' },
+  { Icon: HelpCircle, label: 'Help & Support', sub: 'FAQs & contact us' },
+];
+
+export function ProfilePage() {
+  const [activeSection, setActiveSection] = useState<'main' | 'settings'>('main');
+
+  if (activeSection === 'settings') {
+    return <SettingsScreen onBack={() => setActiveSection('main')} />;
+  }
+
+  return (
+    <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      {/* Hero Header */}
+      <div style={{ background: `linear-gradient(150deg, #FF6B47 0%, #FF9068 60%, #FFB08A 100%)`, padding: '52px 20px 28px', position: 'relative', overflow: 'hidden' }}>
+        {/* Decorative circles */}
+        <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
+        <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
+
+        {/* Settings button */}
+        <button
+          onClick={() => setActiveSection('settings')}
+          style={{ position: 'absolute', top: '54px', right: '20px', width: '38px', height: '38px', borderRadius: '13px', background: 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
+        >
+          <Settings size={18} color="white" />
+        </button>
+
+        {/* Avatar + name */}
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginBottom: '20px' }}>
+          <div style={{ position: 'relative' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '26px', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid rgba(255,255,255,0.45)', backdropFilter: 'blur(10px)' }}>
+              <span style={{ fontSize: '34px', fontWeight: 800, color: 'white', lineHeight: 1 }}>Y</span>
+            </div>
+            <div style={{ position: 'absolute', bottom: '-4px', right: '-4px', width: '24px', height: '24px', borderRadius: '50%', background: '#22C55E', border: '3px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Shield size={11} color="white" />
+            </div>
+          </div>
+          <div style={{ paddingBottom: '6px' }}>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: 'white', marginBottom: '4px' }}>You</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', width: 'fit-content' }}>
+              <Shield size={11} color="rgba(255,255,255,0.9)" />
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.95)', fontWeight: 600 }}>Singpass Verified</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Estate pill */}
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 13px', borderRadius: '20px', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', marginBottom: '22px', border: '1px solid rgba(255,255,255,0.2)' }}>
+          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>📍 Bishan-AMK Estate</span>
+        </div>
+
+        {/* Stats row */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {STATS.map(s => (
+            <div key={s.label} style={{ flex: 1, background: 'rgba(255,255,255,0.92)', borderRadius: '18px', padding: '14px 10px', textAlign: 'center', backdropFilter: 'blur(10px)' }}>
+              <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT, lineHeight: 1, marginBottom: '5px' }}>{s.value}</div>
+              <div style={{ fontSize: '10px', color: TEXT2, fontWeight: 600, lineHeight: '1.3', whiteSpace: 'pre-line' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ padding: '20px 20px 32px' }}>
+
+        {/* My Interests */}
+        <div style={{ marginBottom: '24px' }}>
+          <SectionHeader label="My Interests" count={MY_INTERESTS.length} />
+          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {MY_INTERESTS.map(i => {
+                const c = INTEREST_COLORS[i] || { bg: '#FFF0EC', text: PRIMARY };
+                return (
+                  <span key={i} style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', fontWeight: 700, background: c.bg, color: c.text }}>
+                    {i}
+                  </span>
+                );
+              })}
+              <button style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', fontWeight: 600, background: BG, color: MUTED, border: `1.5px dashed ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
+                + Add
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Saved Events */}
+        <div style={{ marginBottom: '24px' }}>
+          <SectionHeader label="Saved Events" count={SAVED_EVENTS.length} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {SAVED_EVENTS.map(ev => (
+              <div key={ev.id} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center' }}>
+                <div style={{ width: '80px', height: '72px', flexShrink: 0, position: 'relative' }}>
+                  <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ flex: 1, padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
+                    <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: ev.categoryBg, color: ev.categoryColor }}>{ev.category}</span>
+                  </div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '3px', lineHeight: '1.3' }}>{ev.title}</div>
+                  <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{ev.date}</div>
+                </div>
+                <div style={{ padding: '0 14px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Bookmark size={13} color={PRIMARY} fill={PRIMARY} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* My Posts */}
+        <div style={{ marginBottom: '24px' }}>
+          <SectionHeader label="My Posts" count={MY_POSTS.length} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {MY_POSTS.map(p => (
+              <div key={p.id} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ width: '46px', height: '46px', borderRadius: '16px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
+                  {p.emoji}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 600, background: BG, padding: '2px 8px', borderRadius: '8px' }}>{p.type}</span>
+                    <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: p.statusBg, color: p.statusColor }}>
+                      {p.status}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '2px' }}>{p.title}</div>
+                  {p.expiresIn && <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Expires in {p.expiresIn}</div>}
+                </div>
+                <ChevronRight size={16} color={MUTED} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Settings Section */}
+        <div>
+          <SectionHeader label="Account" />
+          <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            {SETTINGS_ITEMS.map(({ Icon, label, sub }, i) => (
+              <button
+                key={label}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px',
+                  background: 'none', border: 'none', borderTop: i > 0 ? `1px solid ${BG}` : 'none',
+                  cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
+                }}
+              >
+                <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={17} color={TEXT2} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{label}</div>
+                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
+                </div>
+                <ChevronRight size={16} color={MUTED} />
+              </button>
+            ))}
+            <button
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px',
+                background: 'none', border: 'none', borderTop: `1px solid ${BG}`,
+                cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
+              }}
+            >
+              <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <LogOut size={17} color={PRIMARY} />
+              </div>
+              <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, color: PRIMARY }}>Sign Out</span>
+            </button>
+          </div>
+        </div>
+
+        {/* App version */}
+        <div style={{ textAlign: 'center', marginTop: '28px' }}>
+          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>NeighbourHood v1.0.0</div>
+          <div style={{ fontSize: '10px', color: '#C0C0CC', marginTop: '3px' }}>All residents are Singpass-verified · Estate-gated</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---- Section Header ----
+function SectionHeader({ label, count }: { label: string; count?: number }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+      <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>{label}</span>
+      {count !== undefined && (
+        <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: BORDER, color: MUTED }}>
+          {count}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ---- Settings Screen ----
+function SettingsScreen({ onBack }: { onBack: () => void }) {
+  const [notifEvents, setNotifEvents] = useState(true);
+  const [notifNeighbours, setNotifNeighbours] = useState(true);
+  const [notifHelp, setNotifHelp] = useState(false);
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Shield size={0} color="transparent" />
+          </button>
+        </div>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke={TEXT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+        <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>Settings</div>
+      </div>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+        {/* Notifications */}
+        <div style={{ marginBottom: '22px' }}>
+          <SectionHeader label="Notifications" />
+          <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            {[
+              { label: 'Event reminders', sub: 'Alerts for saved events', val: notifEvents, set: setNotifEvents },
+              { label: 'Neighbour invites', sub: 'When a neighbour Jio\'s you', val: notifNeighbours, set: setNotifNeighbours },
+              { label: 'Help & Share', sub: 'Matches for your requests', val: notifHelp, set: setNotifHelp },
+            ].map(({ label, sub, val, set }, i) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px', borderTop: i > 0 ? `1px solid ${BG}` : 'none' }}>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{label}</div>
+                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
+                </div>
+                <div
+                  onClick={() => set(!val)}
+                  style={{ width: '46px', height: '26px', borderRadius: '13px', background: val ? PRIMARY : BORDER, cursor: 'pointer', position: 'relative', transition: 'background 0.2s ease', flexShrink: 0 }}
+                >
+                  <div style={{ position: 'absolute', top: '3px', left: val ? '23px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s ease', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Privacy */}
+        <div style={{ marginBottom: '22px' }}>
+          <SectionHeader label="Privacy" />
+          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', gap: '12px', padding: '14px', background: '#F0FDF4', borderRadius: '16px' }}>
+              <Shield size={18} color="#22C55E" style={{ flexShrink: 0, marginTop: '1px' }} />
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#15803D', marginBottom: '4px' }}>Singpass Verified</div>
+                <div style={{ fontSize: '12px', color: '#166534', lineHeight: '1.55' }}>
+                  Your identity is verified via Singpass. Only your interests and proximity are visible to other residents until you confirm a connection.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* About */}
+        <div>
+          <SectionHeader label="About" />
+          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', textAlign: 'center' }}>
+            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🏘️</div>
+            <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>NeighbourHood</div>
+            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500, marginBottom: '12px' }}>Version 1.0.0 · Made for Singapore HDB Estates</div>
+            <div style={{ fontSize: '11px', color: '#C0C0CC' }}>All data is estate-gated. No PII shared without mutual consent.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
