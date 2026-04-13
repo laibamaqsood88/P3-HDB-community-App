@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Shield, ChevronRight, Bell, Lock, HelpCircle, LogOut, Bookmark, Package, Settings } from 'lucide-react';
+import { Shield, ChevronRight, Bell, Lock, HelpCircle, LogOut, Bookmark, Settings, X } from 'lucide-react';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -10,16 +10,23 @@ const TEXT2 = '#6B6B72';
 const MUTED = '#AEAEB2';
 const BORDER = '#EDEDEC';
 
+// ---- Types ----
+interface ProfilePageProps {
+  onOpenEvent?: (eventId: number) => void;
+  onClose?: () => void;
+}
+
+// ---- Mock Data ----
 const MY_INTERESTS = ['Running', 'Photography', 'Cooking'];
 
 const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
-  Running:      { bg: '#FFF0EC', text: '#FF6B47' },
-  Photography:  { bg: '#FAE8FF', text: '#A21CAF' },
-  Cooking:      { bg: '#FEF3C7', text: '#D97706' },
-  Gardening:    { bg: '#D1FAE5', text: '#059669' },
-  'Board Games':{ bg: '#EDE9FE', text: '#7C3AED' },
-  Cycling:      { bg: '#CCFBF1', text: '#0D9488' },
-  Music:        { bg: '#FFE4E6', text: '#E11D48' },
+  Running:       { bg: '#FFF0EC', text: '#FF6B47' },
+  Photography:   { bg: '#FAE8FF', text: '#A21CAF' },
+  Cooking:       { bg: '#FEF3C7', text: '#D97706' },
+  Gardening:     { bg: '#D1FAE5', text: '#059669' },
+  'Board Games': { bg: '#EDE9FE', text: '#7C3AED' },
+  Cycling:       { bg: '#CCFBF1', text: '#0D9488' },
+  Music:         { bg: '#FFE4E6', text: '#E11D48' },
 };
 
 const SAVED_EVENTS = [
@@ -45,7 +52,47 @@ const SETTINGS_ITEMS = [
   { Icon: HelpCircle, label: 'Help & Support', sub: 'FAQs & contact us' },
 ];
 
-export function ProfilePage() {
+const BADGES = [
+  {
+    id: 1,
+    emoji: '🎟️',
+    name: 'Event Joiner',
+    desc: 'Join your first event',
+    unlocked: true,
+    bg: '#FFF0EC',
+    color: '#FF6B47',
+  },
+  {
+    id: 2,
+    emoji: '👥',
+    name: 'Group Member',
+    desc: 'Join an interest group',
+    unlocked: true,
+    bg: '#EDE9FE',
+    color: '#7C3AED',
+  },
+  {
+    id: 3,
+    emoji: '🛍️',
+    name: 'Trader',
+    desc: '5 exchanges done',
+    unlocked: true,
+    bg: '#CCFBF1',
+    color: '#0D9488',
+  },
+  {
+    id: 4,
+    emoji: '🌟',
+    name: 'Community Builder',
+    desc: 'Create a new group',
+    unlocked: false,
+    bg: '#F5F5F5',
+    color: '#AEAEB2',
+  },
+];
+
+// ---- Main Component ----
+export function ProfilePage({ onOpenEvent, onClose }: ProfilePageProps) {
   const [activeSection, setActiveSection] = useState<'main' | 'settings'>('main');
 
   if (activeSection === 'settings') {
@@ -60,16 +107,36 @@ export function ProfilePage() {
         <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
         <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
 
+        {/* Close button (when shown as overlay) */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            style={{
+              position: 'absolute', top: '54px', left: '20px', width: '38px', height: '38px',
+              borderRadius: '13px', background: 'rgba(255,255,255,0.2)', border: 'none',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(8px)', zIndex: 2,
+            }}
+          >
+            <X size={18} color="white" />
+          </button>
+        )}
+
         {/* Settings button */}
         <button
           onClick={() => setActiveSection('settings')}
-          style={{ position: 'absolute', top: '54px', right: '20px', width: '38px', height: '38px', borderRadius: '13px', background: 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
+          style={{
+            position: 'absolute', top: '54px', right: '20px', width: '38px', height: '38px',
+            borderRadius: '13px', background: 'rgba(255,255,255,0.2)', border: 'none',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(8px)',
+          }}
         >
           <Settings size={18} color="white" />
         </button>
 
         {/* Avatar + name */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginBottom: '20px', marginTop: onClose ? '10px' : '0' }}>
           <div style={{ position: 'relative' }}>
             <div style={{ width: '80px', height: '80px', borderRadius: '26px', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid rgba(255,255,255,0.45)', backdropFilter: 'blur(10px)' }}>
               <span style={{ fontSize: '34px', fontWeight: 800, color: 'white', lineHeight: 1 }}>Y</span>
@@ -126,12 +193,64 @@ export function ProfilePage() {
           </div>
         </div>
 
+        {/* Rewards & Badges */}
+        <div style={{ marginBottom: '24px' }}>
+          <SectionHeader label="Rewards & Badges" count={BADGES.filter(b => b.unlocked).length} />
+          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              {BADGES.map(badge => (
+                <div
+                  key={badge.id}
+                  style={{
+                    borderRadius: '16px',
+                    padding: '14px 12px',
+                    background: badge.unlocked ? badge.bg : '#F5F5F5',
+                    position: 'relative',
+                    opacity: badge.unlocked ? 1 : 0.7,
+                  }}
+                >
+                  {/* Lock/unlock indicator */}
+                  <div style={{
+                    position: 'absolute', top: '10px', right: '10px',
+                    width: '18px', height: '18px', borderRadius: '50%',
+                    background: badge.unlocked ? '#22C55E' : BORDER,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {badge.unlocked ? (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <svg width="9" height="10" viewBox="0 0 9 10" fill="none">
+                        <rect x="0.5" y="4" width="8" height="5.5" rx="1.5" stroke={MUTED} strokeWidth="1.2" />
+                        <path d="M2 4V3C2 1.9 2.9 1 4 1H5C6.1 1 7 1.9 7 3V4" stroke={MUTED} strokeWidth="1.2" strokeLinecap="round" />
+                      </svg>
+                    )}
+                  </div>
+
+                  <div style={{ fontSize: '26px', marginBottom: '6px' }}>{badge.emoji}</div>
+                  <div style={{ fontSize: '12px', fontWeight: 800, color: badge.unlocked ? badge.color : MUTED, marginBottom: '3px', lineHeight: '1.2' }}>{badge.name}</div>
+                  <div style={{ fontSize: '10px', color: badge.unlocked ? TEXT2 : MUTED, fontWeight: 500, lineHeight: '1.3' }}>{badge.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Saved Events */}
         <div style={{ marginBottom: '24px' }}>
           <SectionHeader label="Saved Events" count={SAVED_EVENTS.length} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {SAVED_EVENTS.map(ev => (
-              <div key={ev.id} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center' }}>
+              <div
+                key={ev.id}
+                onClick={() => onOpenEvent?.(ev.id)}
+                style={{
+                  background: CARD, borderRadius: '20px', overflow: 'hidden',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex',
+                  alignItems: 'center', cursor: 'pointer',
+                }}
+              >
                 <div style={{ width: '80px', height: '72px', flexShrink: 0, position: 'relative' }}>
                   <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
@@ -142,10 +261,9 @@ export function ProfilePage() {
                   <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '3px', lineHeight: '1.3' }}>{ev.title}</div>
                   <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{ev.date}</div>
                 </div>
-                <div style={{ padding: '0 14px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Bookmark size={13} color={PRIMARY} fill={PRIMARY} />
-                  </div>
+                <div style={{ padding: '0 14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Bookmark size={13} color={PRIMARY} fill={PRIMARY} />
+                  <ChevronRight size={14} color={MUTED} />
                 </div>
               </div>
             ))}
@@ -247,16 +365,11 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
-      <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Shield size={0} color="transparent" />
-          </button>
-        </div>
+      <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}`, position: 'relative' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke={TEXT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
-        <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>Settings</div>
+        <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, paddingLeft: '48px' }}>Settings</div>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
         {/* Notifications */}
@@ -265,7 +378,7 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
           <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
             {[
               { label: 'Event reminders', sub: 'Alerts for saved events', val: notifEvents, set: setNotifEvents },
-              { label: 'Neighbour invites', sub: 'When a neighbour Jio\'s you', val: notifNeighbours, set: setNotifNeighbours },
+              { label: 'Neighbour invites', sub: "When a neighbour Jio's you", val: notifNeighbours, set: setNotifNeighbours },
               { label: 'Help & Share', sub: 'Matches for your requests', val: notifHelp, set: setNotifHelp },
             ].map(({ label, sub, val, set }, i) => (
               <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px', borderTop: i > 0 ? `1px solid ${BG}` : 'none' }}>

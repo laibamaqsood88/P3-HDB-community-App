@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Plus, Shield, Clock, X, Send, Check, Bell, Star, ChevronRight } from 'lucide-react';
+import { ChevronLeft, Plus, Shield, Clock, X, Send, Check, Bell, Star, ChevronRight, Search, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -14,12 +14,13 @@ const BORDER = '#EDEDEC';
 
 type HelpScreen =
   | 'feed' | 'category-select'
-  | 'request-detail' | 'listing-detail' | 'service-detail'
+  | 'request-detail' | 'item-detail' | 'service-detail'
   | 'poster-notif' | 'mutual-confirm' | 'chat'
-  | 'request-post' | 'listing-post' | 'service-post'
+  | 'request-post' | 'item-post' | 'service-post'
   | 'post-live';
 
-type FeedTab = 'Requests' | 'Listings' | 'Services';
+type FeedTab = 'Requests' | 'Items & Services';
+type ItemsFilter = 'All' | 'Items' | 'Services';
 
 interface NavFrame { screen: HelpScreen; params?: any; }
 
@@ -31,18 +32,23 @@ const REQUESTS = [
   { id: 4, category: 'Food Share', emoji: '🍱', description: 'Cooked too much curry tonight! Happy to share 2-3 portions with neighbours. First come first served.', timeframe: 'Tonight only', expiresIn: '3 hours', verified: true, trust: 7, poster: 'Resident D' },
 ];
 
-const LISTINGS = [
-  { id: 1, name: 'IKEA Billy Bookshelf', condition: 'Good', location: 'Blk 445', price: 'Free', emoji: '📚', category: 'Furniture', verified: true, description: 'White IKEA Billy bookshelf, 80cm wide. Small scratch on the back panel but otherwise in good condition. Self-collect from Level 5, available on weekends.', method: 'Self-collect' },
-  { id: 2, name: 'Sharp Rice Cooker', condition: 'Like New', location: 'Blk 448', price: '$20', emoji: '🍚', category: 'Kitchen', verified: true, description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', method: 'Self-collect or doorstep' },
-  { id: 3, name: 'Baby Stroller', condition: 'Good', location: 'Blk 451', price: '$80', emoji: '👶', category: 'Baby & Kids', verified: true, description: 'Combi stroller in good working condition. All parts intact. Child has outgrown it. Collection at block void deck on weekend afternoons.', method: 'Self-collect' },
-  { id: 4, name: 'Assorted Books (10 pcs)', condition: 'Good', location: 'Blk 445', price: 'Free', emoji: '📖', category: 'Books', verified: true, description: 'Mix of fiction and non-fiction — Lee Kuan Yew memoirs, Dan Brown novels, and a few children\'s books. Pick what you like, return what you don\'t.', method: 'Doorstep drop-off' },
+const ITEMS_AND_SERVICES = [
+  // Items
+  { id: 101, itemType: 'item' as const, name: 'IKEA Billy Bookshelf', condition: 'Good', location: 'Blk 445', price: 'Free', emoji: '📚', category: 'Furniture', verified: true, description: 'White IKEA Billy bookshelf, 80cm wide. Small scratch on the back panel but otherwise in good condition. Self-collect from Level 5, available on weekends.', method: 'Self-collect' },
+  { id: 102, itemType: 'item' as const, name: 'Sharp Rice Cooker', condition: 'Like New', location: 'Blk 448', price: '$20', emoji: '🍚', category: 'Kitchen', verified: true, description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', method: 'Self-collect or doorstep' },
+  { id: 103, itemType: 'item' as const, name: 'Baby Stroller', condition: 'Good', location: 'Blk 451', price: '$80', emoji: '👶', category: 'Baby & Kids', verified: true, description: 'Combi stroller in good working condition. All parts intact. Child has outgrown it. Collection at block void deck on weekend afternoons.', method: 'Self-collect' },
+  { id: 104, itemType: 'item' as const, name: 'Assorted Books (10 pcs)', condition: 'Good', location: 'Blk 445', price: 'Free', emoji: '📖', category: 'Books', verified: true, description: 'Mix of fiction and non-fiction. Pick what you like, return what you don\'t.', method: 'Doorstep drop-off' },
+  // Services
+  { id: 201, itemType: 'service' as const, name: 'Dog Walking', emoji: '🐕', availability: 'Mon, Wed, Fri mornings (7–9 AM)', pastExchanges: 2, responseRate: '90%', verified: true, trust: false, trustNote: '', description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds.', avatarColor: '#F97316', category: 'Pets' },
+  { id: 202, itemType: 'service' as const, name: 'Babysitting', emoji: '👶', availability: 'Weekday evenings (5–9 PM)', pastExchanges: 5, responseRate: '95%', verified: true, trust: true, trustNote: 'DBS checked', description: 'Experienced babysitter, parent of 2. Happy to look after children aged 2–8.', avatarColor: '#8B5CF6', category: 'Family' },
+  { id: 203, itemType: 'service' as const, name: 'Primary Math Tutoring', emoji: '📐', availability: 'Weekday evenings', pastExchanges: 8, responseRate: '100%', verified: true, trust: false, trustNote: '', description: 'Retired primary school teacher offering free maths help for P3–P6 students.', avatarColor: '#3B82F6', category: 'Education' },
+  { id: 204, itemType: 'service' as const, name: 'Elderly Companion', emoji: '🤝', availability: 'Weekends', pastExchanges: 3, responseRate: '85%', verified: true, trust: true, trustNote: 'First Aid certified', description: 'Volunteer companion for elderly residents who might enjoy some company.', avatarColor: '#22C55E', category: 'Elderly' },
 ];
 
-const SERVICES = [
-  { id: 1, type: 'Dog Walking', emoji: '🐕', availability: 'Mon, Wed, Fri mornings (7–9 AM)', pastExchanges: 2, responseRate: '90%', verified: true, trust: false, trustNote: '', description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds. Prefer dogs comfortable with other dogs.', avatarColor: '#F97316' },
-  { id: 2, type: 'Babysitting', emoji: '👶', availability: 'Weekday evenings (5–9 PM)', pastExchanges: 5, responseRate: '95%', verified: true, trust: true, trustNote: 'DBS checked', description: 'Experienced babysitter, parent of 2. Happy to look after children aged 2–8. Comfortable with bedtime routines and meal prep. References available.', avatarColor: '#8B5CF6' },
-  { id: 3, type: 'Primary Math Tutoring', emoji: '📐', availability: 'Weekday evenings', pastExchanges: 8, responseRate: '100%', verified: true, trust: false, trustNote: '', description: 'Retired primary school teacher offering free maths help for P3–P6 students in the estate. Session at your unit or library. Happy to help for the love of teaching.', avatarColor: '#3B82F6' },
-  { id: 4, type: 'Elderly Companion', emoji: '🤝', availability: 'Weekends', pastExchanges: 3, responseRate: '85%', verified: true, trust: true, trustNote: 'First Aid certified', description: 'Volunteer companion for elderly residents who might enjoy some company. Happy to accompany to wet market, park, or just have a chat over tea. No charge.', avatarColor: '#22C55E' },
+const MOCK_REVIEWS = [
+  { id: 1, reviewer: 'Neighbour A', rating: 5, comment: 'Very helpful and punctual! Would definitely recommend.', date: '2 weeks ago', avatarColor: '#8B5CF6' },
+  { id: 2, reviewer: 'Neighbour B', rating: 4, comment: 'Good condition, exactly as described. Easy collection.', date: '1 month ago', avatarColor: '#06B6D4' },
+  { id: 3, reviewer: 'Neighbour C', rating: 5, comment: 'Great neighbour, very accommodating. Smooth transaction!', date: '3 weeks ago', avatarColor: '#F97316' },
 ];
 
 const CONDITION_COLORS: Record<string, { bg: string; text: string }> = {
@@ -52,7 +58,73 @@ const CONDITION_COLORS: Record<string, { bg: string; text: string }> = {
   'New':      { bg: '#EDE9FE', text: '#7C3AED' },
 };
 
-export function HelpSharePage() {
+// ---- StarRating ----
+function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
+  return (
+    <div style={{ display: 'flex', gap: '2px' }}>
+      {Array.from({ length: max }).map((_, i) => (
+        <Star
+          key={i}
+          size={12}
+          color={i < rating ? '#F59E0B' : BORDER}
+          fill={i < rating ? '#F59E0B' : 'none'}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ---- WishlistButton ----
+function WishlistButton({ itemId, wishlist, onWishlistToggle }: { itemId: number; wishlist: number[]; onWishlistToggle: (id: number) => void }) {
+  const saved = wishlist.includes(itemId);
+  return (
+    <button
+      onClick={() => {
+        onWishlistToggle(itemId);
+        toast.success(saved ? 'Removed from wishlist' : 'Saved to wishlist');
+      }}
+      style={{
+        width: '44px', height: '44px', borderRadius: '14px',
+        background: saved ? '#FFF0EC' : BG,
+        border: `1.5px solid ${saved ? '#FFD8CC' : BORDER}`,
+        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+      }}
+    >
+      <Heart size={18} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
+    </button>
+  );
+}
+
+// ---- Reviews Section ----
+function ReviewsSection() {
+  return (
+    <div style={{ marginBottom: '20px' }}>
+      <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Reviews</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {MOCK_REVIEWS.map(review => (
+          <div key={review.id} style={{ background: BG, borderRadius: '16px', padding: '14px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: review.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: '12px', fontWeight: 800, color: 'white' }}>N</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{review.reviewer}</span>
+                  <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{review.date}</span>
+                </div>
+                <StarRating rating={review.rating} />
+              </div>
+            </div>
+            <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.55', fontWeight: 400 }}>{review.comment}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---- Main Component ----
+export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {} }: { wishlist?: number[]; onWishlistToggle?: (id: number) => void }) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [feedTab, setFeedTab] = useState<FeedTab>('Requests');
   const [chatMessages, setChatMessages] = useState([
@@ -81,12 +153,14 @@ export function HelpSharePage() {
     switch (current.screen) {
       case 'feed':
         return (
-          <HelpFeed
-            feedTab={feedTab} onTabChange={setFeedTab}
+          <MarketplaceFeed
+            feedTab={feedTab}
+            onTabChange={setFeedTab}
             onSelectRequest={r => goTo('request-detail', { item: r, type: 'request' })}
-            onSelectListing={l => goTo('listing-detail', { item: l, type: 'listing' })}
+            onSelectItem={i => goTo('item-detail', { item: i, type: 'item' })}
             onSelectService={s => goTo('service-detail', { item: s, type: 'service' })}
             onPost={() => goTo('category-select')}
+            wishlist={wishlist}
           />
         );
       case 'category-select':
@@ -95,17 +169,44 @@ export function HelpSharePage() {
             onBack={goBack}
             onSelectCategory={(cat: string) => {
               if (cat === 'request') goTo('request-post');
-              else if (cat === 'listing') goTo('listing-post');
+              else if (cat === 'item') goTo('item-post');
               else goTo('service-post');
             }}
           />
         );
       case 'request-detail':
-        return <ItemDetail item={current.params?.item} type="request" onBack={goBack} onExpressInterest={handleExpressInterest} />;
-      case 'listing-detail':
-        return <ItemDetail item={current.params?.item} type="listing" onBack={goBack} onExpressInterest={handleExpressInterest} />;
+        return (
+          <ItemDetail
+            item={current.params?.item}
+            type="request"
+            onBack={goBack}
+            onExpressInterest={handleExpressInterest}
+            wishlist={wishlist}
+            onWishlistToggle={onWishlistToggle}
+          />
+        );
+      case 'item-detail':
+        return (
+          <ItemDetail
+            item={current.params?.item}
+            type="item"
+            onBack={goBack}
+            onExpressInterest={handleExpressInterest}
+            wishlist={wishlist}
+            onWishlistToggle={onWishlistToggle}
+          />
+        );
       case 'service-detail':
-        return <ItemDetail item={current.params?.item} type="service" onBack={goBack} onExpressInterest={handleExpressInterest} />;
+        return (
+          <ItemDetail
+            item={current.params?.item}
+            type="service"
+            onBack={goBack}
+            onExpressInterest={handleExpressInterest}
+            wishlist={wishlist}
+            onWishlistToggle={onWishlistToggle}
+          />
+        );
       case 'poster-notif':
         return (
           <PosterNotification
@@ -117,13 +218,37 @@ export function HelpSharePage() {
       case 'mutual-confirm':
         return <MutualConfirm onBack={goBack} onOpenChat={() => goTo('chat')} />;
       case 'chat':
-        return <HelpChat messages={chatMessages} input={chatInput} onInputChange={setChatInput} onSend={sendChat} onBack={goBack} item={current.params?.item} />;
+        return (
+          <HelpChat
+            messages={chatMessages}
+            input={chatInput}
+            onInputChange={setChatInput}
+            onSend={sendChat}
+            onBack={goBack}
+            item={current.params?.item}
+          />
+        );
       case 'request-post':
-        return <RequestPostScreen onBack={goBack} onPost={(data: any) => { toast.success('Your post is live — matched neighbours notified!'); setNavStack([{ screen: 'feed' }]); }} />;
-      case 'listing-post':
-        return <ListingPostScreen onBack={goBack} onPost={(data: any) => { toast.success('Your listing is live — matched neighbours notified!'); setNavStack([{ screen: 'feed' }]); }} />;
+        return (
+          <RequestPostScreen
+            onBack={goBack}
+            onPost={(_data: any) => { toast.success('Your post is live — matched neighbours notified!'); setNavStack([{ screen: 'feed' }]); }}
+          />
+        );
+      case 'item-post':
+        return (
+          <ItemPostScreen
+            onBack={goBack}
+            onPost={(_data: any) => { toast.success('Your listing is live — matched neighbours notified!'); setNavStack([{ screen: 'feed' }]); }}
+          />
+        );
       case 'service-post':
-        return <ServicePostScreen onBack={goBack} onPost={(data: any) => { toast.success('Your service offer is live!'); setNavStack([{ screen: 'feed' }]); }} />;
+        return (
+          <ServicePostScreen
+            onBack={goBack}
+            onPost={(_data: any) => { toast.success('Your service offer is live!'); setNavStack([{ screen: 'feed' }]); }}
+          />
+        );
       default: return null;
     }
   };
@@ -135,9 +260,34 @@ export function HelpSharePage() {
   );
 }
 
-// ---- Help Feed ----
-function HelpFeed({ feedTab, onTabChange, onSelectRequest, onSelectListing, onSelectService, onPost }: any) {
-  const tabs: FeedTab[] = ['Requests', 'Listings', 'Services'];
+// ---- Marketplace Feed ----
+function MarketplaceFeed({ feedTab, onTabChange, onSelectRequest, onSelectItem, onSelectService, onPost, wishlist }: any) {
+  const tabs: FeedTab[] = ['Requests', 'Items & Services'];
+  const [searchQuery, setSearchQuery] = useState('');
+  const [itemsFilter, setItemsFilter] = useState<ItemsFilter>('All');
+
+  const q = searchQuery.toLowerCase().trim();
+
+  const filteredRequests = REQUESTS.filter(r =>
+    !q || r.category.toLowerCase().includes(q) || r.description.toLowerCase().includes(q)
+  );
+
+  const filteredItemsAndServices = ITEMS_AND_SERVICES.filter(i =>
+    !q || i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || i.category.toLowerCase().includes(q)
+  );
+
+  const isSearchActive = q.length > 0;
+
+  const searchItems = filteredItemsAndServices.filter(i => i.itemType === 'item');
+  const searchServices = filteredItemsAndServices.filter(i => i.itemType === 'service');
+
+  const displayItems = ITEMS_AND_SERVICES.filter(i => i.itemType === 'item').filter(i =>
+    !q || i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || i.category.toLowerCase().includes(q)
+  );
+  const displayServices = ITEMS_AND_SERVICES.filter(i => i.itemType === 'service').filter(i =>
+    !q || i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || i.category.toLowerCase().includes(q)
+  );
+
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
@@ -147,11 +297,11 @@ function HelpFeed({ feedTab, onTabChange, onSelectRequest, onSelectListing, onSe
             <span style={{ fontSize: '12px', color: MUTED }}>📍</span>
             <span style={{ fontSize: '12px', color: MUTED }}>Bishan-AMK Estate</span>
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, lineHeight: 1.15 }}>Help & Share</div>
+          <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, lineHeight: 1.15 }}>Marketplace</div>
           <div style={{ fontSize: '13px', color: MUTED, marginTop: '3px', fontWeight: 500 }}>Exchange favours and items with neighbours</div>
         </div>
-        {/* Segment control tab bar */}
-        <div style={{ display: 'flex', gap: '4px', background: BG, borderRadius: '16px', padding: '4px', marginBottom: '16px' }}>
+        {/* Segment control */}
+        <div style={{ display: 'flex', gap: '4px', background: BG, borderRadius: '16px', padding: '4px', marginBottom: '14px' }}>
           {tabs.map(tab => (
             <button key={tab} onClick={() => onTabChange(tab)} style={{
               flex: 1, padding: '10px 4px', background: feedTab === tab ? CARD : 'transparent',
@@ -162,6 +312,21 @@ function HelpFeed({ feedTab, onTabChange, onSelectRequest, onSelectListing, onSe
               transition: 'all 0.2s ease',
             }}>{tab}</button>
           ))}
+        </div>
+        {/* Search bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '16px', padding: '10px 14px', marginBottom: '14px', border: `1.5px solid ${BORDER}` }}>
+          <Search size={16} color={MUTED} style={{ flexShrink: 0 }} />
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search requests, items and services..."
+            style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '13px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+              <X size={14} color={MUTED} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -177,87 +342,99 @@ function HelpFeed({ feedTab, onTabChange, onSelectRequest, onSelectListing, onSe
           </div>
         </div>
 
-        {feedTab === 'Requests' && (
+        {/* Search active: show results from all categories in a single unified list */}
+        {isSearchActive && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {filteredRequests.length > 0 && (
+              <>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '2px' }}>Requests</div>
+                {filteredRequests.map(r => (
+                  <RequestCard key={r.id} r={r} onClick={() => onSelectRequest(r)} />
+                ))}
+              </>
+            )}
+            {searchItems.length > 0 && (
+              <>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '4px', marginBottom: '2px' }}>Items</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  {searchItems.map(i => (
+                    <ItemCard key={i.id} item={i} onClick={() => onSelectItem(i)} />
+                  ))}
+                </div>
+              </>
+            )}
+            {searchServices.length > 0 && (
+              <>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '4px', marginBottom: '2px' }}>Services</div>
+                {searchServices.map(s => (
+                  <ServiceCard key={s.id} s={s} onClick={() => onSelectService(s)} />
+                ))}
+              </>
+            )}
+            {filteredRequests.length === 0 && searchItems.length === 0 && searchServices.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>
+                No results for "{searchQuery}"
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Normal feed (no search active) */}
+        {!isSearchActive && feedTab === 'Requests' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {REQUESTS.map(r => (
-              <motion.div key={r.id} whileTap={{ scale: 0.97 }} onClick={() => onSelectRequest(r)} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-                  <div style={{ width: '50px', height: '50px', borderRadius: '16px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>
-                    {r.emoji}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px', flexWrap: 'wrap' }}>
-                      <span style={{ padding: '3px 9px', borderRadius: '10px', fontSize: '10px', background: BG, color: TEXT2, fontWeight: 700 }}>{r.category}</span>
-                      {r.verified && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '3px 8px', borderRadius: '10px', background: '#DCFCE7', fontSize: '10px', color: '#16A34A', fontWeight: 700 }}><Shield size={9} /> Verified</span>}
-                      <span style={{ padding: '3px 9px', borderRadius: '10px', fontSize: '10px', background: '#FEF2F2', color: '#EF4444', fontWeight: 700, marginLeft: 'auto' }}>
-                        Expires {r.expiresIn}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '13px', color: TEXT, lineHeight: '1.5', marginBottom: '8px', fontWeight: 500 }}>{r.description.slice(0, 80)}...</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: MUTED, fontWeight: 500 }}>
-                      <Clock size={11} color={MUTED} /> {r.timeframe}
-                    </div>
-                  </div>
-                  <ChevronRight size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '4px' }} />
-                </div>
-              </motion.div>
+              <RequestCard key={r.id} r={r} onClick={() => onSelectRequest(r)} />
             ))}
           </div>
         )}
 
-        {feedTab === 'Listings' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {LISTINGS.map(l => (
-              <motion.div key={l.id} whileTap={{ scale: 0.96 }} onClick={() => onSelectListing(l)} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
-                <div style={{ height: '96px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px' }}>
-                  {l.emoji}
+        {!isSearchActive && feedTab === 'Items & Services' && (
+          <>
+            {/* Filter chips */}
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', marginBottom: '14px', scrollbarWidth: 'none' }}>
+              {(['All', 'Items', 'Services'] as ItemsFilter[]).map(f => (
+                <button
+                  key={f}
+                  onClick={() => setItemsFilter(f)}
+                  style={{
+                    padding: '7px 18px', borderRadius: '22px', fontSize: '13px', cursor: 'pointer',
+                    fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0,
+                    border: `1.5px solid ${itemsFilter === f ? PRIMARY : BORDER}`,
+                    background: itemsFilter === f ? '#FFF0EC' : CARD,
+                    color: itemsFilter === f ? PRIMARY : TEXT2,
+                    fontWeight: itemsFilter === f ? 700 : 500,
+                    transition: 'all 0.15s',
+                  }}
+                >{f}</button>
+              ))}
+            </div>
+
+            {(itemsFilter === 'All' || itemsFilter === 'Items') && (
+              <>
+                {itemsFilter === 'All' && (
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>Items</div>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+                  {displayItems.map(item => (
+                    <ItemCard key={item.id} item={item} onClick={() => onSelectItem(item)} />
+                  ))}
                 </div>
-                <div style={{ padding: '12px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.3' }}>{l.name}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
-                    <span style={{ fontSize: '15px', fontWeight: 800, color: l.price === 'Free' ? '#16A34A' : TEXT }}>{l.price}</span>
-                    <span style={{ padding: '2px 7px', borderRadius: '8px', fontSize: '10px', background: (CONDITION_COLORS[l.condition] || { bg: BG, text: MUTED }).bg, color: (CONDITION_COLORS[l.condition] || { bg: BG, text: MUTED }).text, fontWeight: 700 }}>
-                      {l.condition}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{l.location}</div>
+              </>
+            )}
+
+            {(itemsFilter === 'All' || itemsFilter === 'Services') && (
+              <>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>Services</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {displayServices.map(s => (
+                    <ServiceCard key={s.id} s={s} onClick={() => onSelectService(s)} />
+                  ))}
                 </div>
-              </motion.div>
-            ))}
-          </div>
+              </>
+            )}
+          </>
         )}
 
-        {feedTab === 'Services' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {SERVICES.map(s => (
-              <motion.div key={s.id} whileTap={{ scale: 0.97 }} onClick={() => onSelectService(s)} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-                  <div style={{ width: '50px', height: '50px', borderRadius: '16px', background: s.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>
-                    {s.emoji}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '5px' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{s.type}</span>
-                      {s.verified && <Shield size={12} color="#22C55E" />}
-                    </div>
-                    <div style={{ fontSize: '12px', color: MUTED, marginBottom: '7px', fontWeight: 500 }}>📅 {s.availability}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>⭐ {s.responseRate}</span>
-                      <span style={{ fontSize: '11px', color: MUTED }}>·</span>
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{s.pastExchanges} exchanges</span>
-                      {s.trust && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: '2px 8px', borderRadius: '8px', background: '#DCFCE7', fontSize: '10px', color: '#16A34A', fontWeight: 700 }}>
-                          <Shield size={9} /> {s.trustNote}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <ChevronRight size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '4px' }} />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
         <div style={{ height: '80px' }} />
       </div>
 
@@ -269,11 +446,88 @@ function HelpFeed({ feedTab, onTabChange, onSelectRequest, onSelectListing, onSe
   );
 }
 
+// ---- Card sub-components ----
+function RequestCard({ r, onClick }: { r: any; onClick: () => void }) {
+  return (
+    <motion.div whileTap={{ scale: 0.97 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+        <div style={{ width: '50px', height: '50px', borderRadius: '16px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>
+          {r.emoji}
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px', flexWrap: 'wrap' }}>
+            <span style={{ padding: '3px 9px', borderRadius: '10px', fontSize: '10px', background: BG, color: TEXT2, fontWeight: 700 }}>{r.category}</span>
+            {r.verified && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '3px 8px', borderRadius: '10px', background: '#DCFCE7', fontSize: '10px', color: '#16A34A', fontWeight: 700 }}><Shield size={9} /> Verified</span>}
+            <span style={{ padding: '3px 9px', borderRadius: '10px', fontSize: '10px', background: '#FEF2F2', color: '#EF4444', fontWeight: 700, marginLeft: 'auto' }}>
+              Expires {r.expiresIn}
+            </span>
+          </div>
+          <div style={{ fontSize: '13px', color: TEXT, lineHeight: '1.5', marginBottom: '8px', fontWeight: 500 }}>{r.description.slice(0, 80)}...</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: MUTED, fontWeight: 500 }}>
+            <Clock size={11} color={MUTED} /> {r.timeframe}
+          </div>
+        </div>
+        <ChevronRight size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '4px' }} />
+      </div>
+    </motion.div>
+  );
+}
+
+function ItemCard({ item, onClick }: { item: any; onClick: () => void }) {
+  return (
+    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
+      <div style={{ height: '96px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px' }}>
+        {item.emoji}
+      </div>
+      <div style={{ padding: '12px' }}>
+        <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.3' }}>{item.name}</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
+          <span style={{ fontSize: '15px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT }}>{item.price}</span>
+          <span style={{ padding: '2px 7px', borderRadius: '8px', fontSize: '10px', background: (CONDITION_COLORS[item.condition] || { bg: BG, text: MUTED }).bg, color: (CONDITION_COLORS[item.condition] || { bg: BG, text: MUTED }).text, fontWeight: 700 }}>
+            {item.condition}
+          </span>
+        </div>
+        <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{item.location}</div>
+      </div>
+    </motion.div>
+  );
+}
+
+function ServiceCard({ s, onClick }: { s: any; onClick: () => void }) {
+  return (
+    <motion.div whileTap={{ scale: 0.97 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+        <div style={{ width: '50px', height: '50px', borderRadius: '16px', background: s.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>
+          {s.emoji}
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '5px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{s.name}</span>
+            {s.verified && <Shield size={12} color="#22C55E" />}
+          </div>
+          <div style={{ fontSize: '12px', color: MUTED, marginBottom: '7px', fontWeight: 500 }}>📅 {s.availability}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>⭐ {s.responseRate}</span>
+            <span style={{ fontSize: '11px', color: MUTED }}>·</span>
+            <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{s.pastExchanges} exchanges</span>
+            {s.trust && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: '2px 8px', borderRadius: '8px', background: '#DCFCE7', fontSize: '10px', color: '#16A34A', fontWeight: 700 }}>
+                <Shield size={9} /> {s.trustNote}
+              </span>
+            )}
+          </div>
+        </div>
+        <ChevronRight size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '4px' }} />
+      </div>
+    </motion.div>
+  );
+}
+
 // ---- Category Select ----
 function CategorySelect({ onBack, onSelectCategory }: any) {
   const cats = [
     { id: 'request', title: 'Post a Request', desc: 'Ask neighbours for help or a favour', emoji: '🙋', bg: '#FFF0EC', border: '#FFD8CC', text: PRIMARY },
-    { id: 'listing', title: 'Create a Listing', desc: 'Share an item for free or for sale', emoji: '📦', bg: '#F0FDF4', border: '#A3E6B8', text: '#16A34A' },
+    { id: 'item', title: 'List an Item', desc: 'Share an item for free or for sale', emoji: '📦', bg: '#F0FDF4', border: '#A3E6B8', text: '#16A34A' },
     { id: 'service', title: 'Offer a Service', desc: 'Share a skill or help you can offer', emoji: '🤝', bg: '#EFF6FF', border: '#BFDBFE', text: '#2563EB' },
   ];
   return (
@@ -305,16 +559,17 @@ function CategorySelect({ onBack, onSelectCategory }: any) {
 }
 
 // ---- Item Detail ----
-function ItemDetail({ item, type, onBack, onExpressInterest }: any) {
+function ItemDetail({ item, type, onBack, onExpressInterest, wishlist, onWishlistToggle }: any) {
   if (!item) return null;
   const getEmoji = () => item.emoji || '📋';
   const getTitle = () => item.title || item.name || item.type;
   const getSubInfo = () => {
     if (type === 'request') return [{ label: 'Timeframe', value: item.timeframe }, { label: 'Expires in', value: item.expiresIn }];
-    if (type === 'listing') return [{ label: 'Condition', value: item.condition }, { label: 'Collection', value: item.method }, { label: 'Location', value: item.location }];
+    if (type === 'item') return [{ label: 'Condition', value: item.condition }, { label: 'Collection', value: item.method }, { label: 'Location', value: item.location }];
     if (type === 'service') return [{ label: 'Availability', value: item.availability }, { label: 'Response rate', value: item.responseRate }, { label: 'Past exchanges', value: `${item.pastExchanges} completed` }];
     return [];
   };
+  const subInfo = getSubInfo();
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
       <div style={{ padding: '52px 20px 18px', borderBottom: `1px solid ${BG}` }}>
@@ -325,7 +580,7 @@ function ItemDetail({ item, type, onBack, onExpressInterest }: any) {
           <div style={{ width: '68px', height: '68px', borderRadius: '22px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '34px', flexShrink: 0 }}>
             {getEmoji()}
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '8px', lineHeight: '1.25' }}>{getTitle()}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap' }}>
               {item.verified && (
@@ -333,7 +588,7 @@ function ItemDetail({ item, type, onBack, onExpressInterest }: any) {
                   <Shield size={10} /> Verified
                 </span>
               )}
-              {type === 'listing' && (
+              {type === 'item' && (
                 <span style={{ fontSize: '17px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT }}>{item.price}</span>
               )}
               {type === 'request' && (
@@ -341,14 +596,15 @@ function ItemDetail({ item, type, onBack, onExpressInterest }: any) {
               )}
             </div>
           </div>
+          <WishlistButton itemId={item.id} wishlist={wishlist} onWishlistToggle={onWishlistToggle} />
         </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
         {/* Info grid */}
         <div style={{ background: BG, borderRadius: '18px', padding: '16px', marginBottom: '20px' }}>
-          {getSubInfo().map((info, i) => (
-            <div key={info.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < getSubInfo().length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+          {subInfo.map((info, i) => (
+            <div key={info.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < subInfo.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
               <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{info.label}</span>
               <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{info.value}</span>
             </div>
@@ -367,11 +623,14 @@ function ItemDetail({ item, type, onBack, onExpressInterest }: any) {
           </div>
         )}
 
-        <div style={{ padding: '14px 16px', background: '#FFF0EC', borderRadius: '16px', border: '1px solid #FFD8CC' }}>
+        <div style={{ padding: '14px 16px', background: '#FFF0EC', borderRadius: '16px', border: '1px solid #FFD8CC', marginBottom: '24px' }}>
           <div style={{ fontSize: '13px', color: PRIMARY, fontWeight: 500 }}>
             🔒 Contact details only shared after both parties confirm. No obligation to proceed.
           </div>
         </div>
+
+        {/* Reviews */}
+        <ReviewsSection />
       </div>
 
       <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
@@ -562,8 +821,8 @@ function RequestPostScreen({ onBack, onPost }: any) {
   );
 }
 
-// ---- Listing Post Screen ----
-function ListingPostScreen({ onBack, onPost }: any) {
+// ---- Item Post Screen (formerly Listing Post) ----
+function ItemPostScreen({ onBack, onPost }: any) {
   const [category, setCategory] = useState('');
   const [itemName, setItemName] = useState('');
   const [condition, setCondition] = useState('');
@@ -578,7 +837,7 @@ function ListingPostScreen({ onBack, onPost }: any) {
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
-        <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>Create a Listing</div>
+        <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>List an Item</div>
         <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Share an item with your neighbours</div>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
@@ -611,7 +870,7 @@ function ListingPostScreen({ onBack, onPost }: any) {
       </div>
       <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
         <button onClick={() => valid && onPost({ category, itemName, condition, method })} disabled={!valid} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}>
-          Post Listing
+          List Item
         </button>
       </div>
     </div>

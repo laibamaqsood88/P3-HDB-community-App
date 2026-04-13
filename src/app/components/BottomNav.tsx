@@ -1,7 +1,7 @@
-import { Calendar, Users, HandHelping, User } from 'lucide-react';
+import { Calendar, Compass, ShoppingBag, MessageCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 
-type ActiveTab = 'events' | 'neighbours' | 'help' | 'profile';
+type ActiveTab = 'events' | 'explore' | 'marketplace' | 'messages';
 
 interface Props {
   activeTab: ActiveTab;
@@ -9,10 +9,10 @@ interface Props {
 }
 
 const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any> }[] = [
-  { id: 'events',     label: 'Events',     Icon: Calendar },
-  { id: 'neighbours', label: 'Connect', Icon: Users },
-  { id: 'help',       label: 'Marketplace', Icon: HandHelping },
-  { id: 'profile',    label: 'Profile',    Icon: User },
+  { id: 'events',      label: 'Events',      Icon: Calendar },
+  { id: 'explore',     label: 'Explore',     Icon: Compass },
+  { id: 'marketplace', label: 'Marketplace', Icon: ShoppingBag },
+  { id: 'messages',    label: 'Messages',    Icon: MessageCircle },
 ];
 
 export function BottomNav({ activeTab, onTabChange }: Props) {

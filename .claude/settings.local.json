@@ -6,7 +6,12 @@
       "Bash(npm install:*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(gh auth:*)",
-      "Bash(brew install:*)"
+      "Bash(brew install:*)",
+      "Bash(gh repo:*)",
+      "Bash(npx tsc:*)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(node_modules/.bin/vite build:*)",
+      "Bash(npm run:*)"
     ]
   }
 }
