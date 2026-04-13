@@ -11,7 +11,7 @@ interface Props {
 const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any> }[] = [
   { id: 'events',     label: 'Events',     Icon: Calendar },
   { id: 'neighbours', label: 'Neighbours', Icon: Users },
-  { id: 'help',       label: 'Help & Share', Icon: HandHelping },
+  { id: 'help',       label: 'Marketplace', Icon: HandHelping },
   { id: 'profile',    label: 'Profile',    Icon: User },
 ];
 
