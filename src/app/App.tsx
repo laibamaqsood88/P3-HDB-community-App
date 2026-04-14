@@ -15,9 +15,15 @@ type ActiveTab = 'events' | 'explore' | 'marketplace' | 'messages';
 export default function App() {
   const [authScreen, setAuthScreen] = useState<AuthScreen>('login');
   const [activeTab, setActiveTab] = useState<ActiveTab>('events');
+  const [exploreInitialSubTab, setExploreInitialSubTab] = useState<'events' | 'groups'>('events');
   const [showProfile, setShowProfile] = useState(false);
   const [savedEvents, setSavedEvents] = useState<number[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
+
+  const openExploreGroups = () => {
+    setExploreInitialSubTab('groups');
+    setActiveTab('explore');
+  };
 
   // ---- Auth flow ----
   if (authScreen === 'login') {
@@ -69,13 +75,17 @@ export default function App() {
         {activeTab === 'events' && (
           <EventsPage
             onOpenProfile={() => setShowProfile(true)}
-            onOpenEvent={(id) => {
-              setActiveTab('explore');
-            }}
+            onOpenEvent={(id) => { setActiveTab('explore'); }}
+            onOpenGroups={openExploreGroups}
             savedEvents={savedEvents}
           />
         )}
-        {activeTab === 'explore' && <ExplorePage />}
+        {activeTab === 'explore' && (
+          <ExplorePage
+            initialSubTab={exploreInitialSubTab}
+            onSubTabChange={setExploreInitialSubTab}
+          />
+        )}
         {activeTab === 'marketplace' && (
           <HelpSharePage />
         )}

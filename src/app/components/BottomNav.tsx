@@ -1,4 +1,4 @@
-import { Calendar, Compass, ShoppingBag, MessageCircle } from 'lucide-react';
+import { Home, Compass, ShoppingBag, MessageCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 
 type ActiveTab = 'events' | 'explore' | 'marketplace' | 'messages';
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any> }[] = [
-  { id: 'events',      label: 'Events',      Icon: Calendar },
+  { id: 'events',      label: 'Home',        Icon: Home },
   { id: 'explore',     label: 'Explore',     Icon: Compass },
   { id: 'marketplace', label: 'Marketplace', Icon: ShoppingBag },
   { id: 'messages',    label: 'Messages',    Icon: MessageCircle },

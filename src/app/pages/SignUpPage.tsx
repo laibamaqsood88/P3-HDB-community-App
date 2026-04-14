@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, Users } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Users, X, Bookmark, Calendar, MapPin, ExternalLink } from 'lucide-react';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -12,19 +12,37 @@ const MUTED = '#AEAEB2';
 const BORDER = '#EDEDEC';
 
 const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
-  Running:       { bg: '#FFF0EC', text: '#FF6B47' },
-  Gardening:     { bg: '#D1FAE5', text: '#059669' },
-  'Board Games': { bg: '#EDE9FE', text: '#7C3AED' },
-  Cooking:       { bg: '#FEF3C7', text: '#D97706' },
-  Reading:       { bg: '#DBEAFE', text: '#2563EB' },
-  Cycling:       { bg: '#CCFBF1', text: '#0D9488' },
-  Pets:          { bg: '#FEF9C3', text: '#CA8A04' },
-  Photography:   { bg: '#FAE8FF', text: '#A21CAF' },
-  Music:         { bg: '#FFE4E6', text: '#E11D48' },
-  Fitness:       { bg: '#DCFCE7', text: '#16A34A' },
-  Hiking:        { bg: '#D1FAE5', text: '#059669' },
-  Yoga:          { bg: '#F3E8FF', text: '#9333EA' },
+  // Social & Community
+  'Community Volunteering':       { bg: '#FEE2E2', text: '#DC2626' },
+  'Cultural Heritage & Festivals':{ bg: '#FEF3C7', text: '#B45309' },
+  // Fitness & Wellness
+  'Fitness & Sports':             { bg: '#DCFCE7', text: '#16A34A' },
+  'Yoga & Mindfulness':           { bg: '#F3E8FF', text: '#9333EA' },
+  'Outdoor Activities':           { bg: '#CCFBF1', text: '#0D9488' },
+  // Arts & Creativity
+  'Arts & Crafts':                { bg: '#FCE7F3', text: '#DB2777' },
+  'Music & Performing Arts':      { bg: '#FFE4E6', text: '#E11D48' },
+  'Dance':                        { bg: '#EDE9FE', text: '#7C3AED' },
+  // Learning & Skills
+  'Cooking & Baking':             { bg: '#FEF3C7', text: '#D97706' },
+  'Technology & Digital Skills':  { bg: '#DBEAFE', text: '#2563EB' },
+  'DIY & Home Improvement':       { bg: '#F1F5F9', text: '#475569' },
+  'Language Learning':            { bg: '#CFFAFE', text: '#0891B2' },
+  // Lifestyle & Hobbies
+  'Pets & Animals':               { bg: '#FEF9C3', text: '#CA8A04' },
+  'Gardening & Plants':           { bg: '#D1FAE5', text: '#059669' },
+  'Gaming':                       { bg: '#E0E7FF', text: '#4F46E5' },
+  'Fashion & Beauty':             { bg: '#FCE7F3', text: '#BE185D' },
+  'Photography':                  { bg: '#FAE8FF', text: '#A21CAF' },
 };
+
+const INTEREST_CATEGORIES = [
+  { label: 'Social & Community',   items: ['Community Volunteering', 'Cultural Heritage & Festivals'] },
+  { label: 'Fitness & Wellness',   items: ['Fitness & Sports', 'Yoga & Mindfulness', 'Outdoor Activities'] },
+  { label: 'Arts & Creativity',    items: ['Arts & Crafts', 'Music & Performing Arts', 'Dance'] },
+  { label: 'Learning & Skills',    items: ['Cooking & Baking', 'Technology & Digital Skills', 'DIY & Home Improvement', 'Language Learning'] },
+  { label: 'Lifestyle & Hobbies',  items: ['Pets & Animals', 'Gardening & Plants', 'Gaming', 'Fashion & Beauty', 'Photography'] },
+];
 
 const ALL_INTERESTS = Object.keys(INTEREST_COLORS);
 
@@ -96,7 +114,7 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
             transition={{ duration: 0.3 }}
             style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
           >
-            <StepDOB dob={dob} onChangeDob={setDob} onNext={() => setStep(2)} />
+            <StepDOB dob={dob} onChangeDob={setDob} onNext={() => setStep(2)} onBack={() => setStep(0)} />
           </motion.div>
         )}
 
@@ -113,6 +131,7 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
               familyStatus={familyStatus}
               onSelect={setFamilyStatus}
               onNext={() => setStep(3 as any)}
+              onBack={() => setStep(1)}
             />
           </motion.div>
         )}
@@ -130,6 +149,7 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
               interests={interests}
               onToggle={toggleInterest}
               onNext={() => setStep(4 as any)}
+              onBack={() => setStep(2 as any)}
             />
           </motion.div>
         )}
@@ -277,10 +297,14 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
 }
 
 // ---- Step 1: Date of Birth ----
-function StepDOB({ dob, onChangeDob, onNext }: { dob: string; onChangeDob: (v: string) => void; onNext: () => void }) {
+function StepDOB({ dob, onChangeDob, onNext, onBack }: { dob: string; onChangeDob: (v: string) => void; onNext: () => void; onBack: () => void }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
       <div style={{ padding: '52px 24px 0' }}>
+        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
+          <ChevronLeft size={18} color={TEXT2} />
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
+        </button>
         <ProgressBar step={1} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
           When were you born?
@@ -350,14 +374,20 @@ function StepFamily({
   familyStatus,
   onSelect,
   onNext,
+  onBack,
 }: {
   familyStatus: string;
   onSelect: (v: string) => void;
   onNext: () => void;
+  onBack: () => void;
 }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
       <div style={{ padding: '52px 24px 0', flex: 1, overflowY: 'auto' }}>
+        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
+          <ChevronLeft size={18} color={TEXT2} />
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
+        </button>
         <ProgressBar step={2} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
           What's your family status?
@@ -446,10 +476,12 @@ function StepInterests({
   interests,
   onToggle,
   onNext,
+  onBack,
 }: {
   interests: string[];
   onToggle: (t: string) => void;
   onNext: () => void;
+  onBack: () => void;
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const filteredInterests = ALL_INTERESTS.filter(t =>
@@ -457,8 +489,12 @@ function StepInterests({
   );
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 24px 0' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD, minHeight: 0 }}>
+      <div style={{ padding: '52px 24px 0', flexShrink: 0 }}>
+        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
+          <ChevronLeft size={18} color={TEXT2} />
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
+        </button>
         <ProgressBar step={3} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
           What are you into?
@@ -485,42 +521,50 @@ function StepInterests({
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 16px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-          {filteredInterests.length === 0 ? (
-            <div style={{ width: '100%', textAlign: 'center', padding: '40px 0', color: MUTED, fontSize: '14px' }}>
-              No interests found for "{searchQuery}"
-            </div>
-          ) : null}
-          {filteredInterests.map(t => {
-            const sel = interests.includes(t);
-            const colors = INTEREST_COLORS[t];
-            return (
-              <motion.button
-                key={t}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onToggle(t)}
-                style={{
-                  padding: '10px 18px',
-                  borderRadius: '24px',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
-                  border: `2px solid ${sel ? colors.text : BORDER}`,
-                  background: sel ? colors.bg : CARD,
-                  color: sel ? colors.text : TEXT2,
-                  fontWeight: sel ? 700 : 400,
-                  transition: 'all 0.15s',
-                }}
-              >
-                {t}
-              </motion.button>
-            );
-          })}
-        </div>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 16px', minHeight: 0 }}>
+        {filteredInterests.length === 0 ? (
+          <div style={{ width: '100%', textAlign: 'center', padding: '40px 0', color: MUTED, fontSize: '14px' }}>
+            No interests found for "{searchQuery}"
+          </div>
+        ) : searchQuery ? (
+          /* Flat list when searching */
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {filteredInterests.map(t => {
+              const sel = interests.includes(t);
+              const colors = INTEREST_COLORS[t];
+              return (
+                <motion.button key={t} whileTap={{ scale: 0.95 }} onClick={() => onToggle(t)}
+                  style={{ padding: '10px 18px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
+                  {t}
+                </motion.button>
+              );
+            })}
+          </div>
+        ) : (
+          /* Grouped by category */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {INTEREST_CATEGORIES.map(cat => (
+              <div key={cat.label}>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '10px' }}>{cat.label}</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {cat.items.map(t => {
+                    const sel = interests.includes(t);
+                    const colors = INTEREST_COLORS[t];
+                    return (
+                      <motion.button key={t} whileTap={{ scale: 0.95 }} onClick={() => onToggle(t)}
+                        style={{ padding: '9px 16px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
+                        {t}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div style={{ padding: '16px 24px 40px', borderTop: `1px solid ${BG}` }}>
+      <div style={{ padding: '16px 24px 40px', borderTop: `1px solid ${BG}`, flexShrink: 0 }}>
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onNext}
@@ -655,29 +699,41 @@ const REC_EVENTS = [
   {
     id: 1,
     title: 'Morning Run at Bishan-AMK Park',
-    date: 'Sat 12 Apr',
+    date: 'Sat, 12 Apr 2026',
+    time: '7:00 AM – 9:00 AM',
     emoji: '🏃',
-    category: 'Fitness',
+    category: 'Fitness & Sports',
     categoryColor: '#16A34A',
     categoryBg: '#DCFCE7',
+    location: 'Bishan-AMK Park, Main Pavilion',
+    description: 'Join your neighbours for a refreshing morning run around Bishan-AMK Park. All paces welcome — water stations provided along the route.',
+    price: 'Free',
   },
   {
     id: 2,
     title: 'Peranakan Cooking Workshop',
-    date: 'Sun 13 Apr',
+    date: 'Sun, 13 Apr 2026',
+    time: '10:00 AM – 1:00 PM',
     emoji: '🍳',
-    category: 'Cooking',
+    category: 'Cooking & Baking',
     categoryColor: '#D97706',
     categoryBg: '#FEF3C7',
+    location: 'Community Hub, Blk 123 Level 2',
+    description: 'Learn to cook traditional Peranakan dishes including Ayam Buah Keluak and Kueh Pie Tee. Ingredients provided. Limited to 15 participants.',
+    price: 'Free',
   },
   {
     id: 3,
     title: 'Community Garden Morning',
-    date: 'Sat 19 Apr',
+    date: 'Sat, 19 Apr 2026',
+    time: '8:00 AM – 11:00 AM',
     emoji: '🌱',
-    category: 'Gardening',
+    category: 'Gardening & Plants',
     categoryColor: '#059669',
     categoryBg: '#D1FAE5',
+    location: 'Rooftop Garden, Blk 450',
+    description: "Help tend the estate's shared rooftop garden. Activities include planting vegetables, pruning herbs, and composting. Gloves and tools provided.",
+    price: 'Free',
   },
 ];
 
@@ -689,6 +745,10 @@ function RecommendationsStep({
   onGetStarted: () => void;
 }) {
   const [joinedGroups, setJoinedGroups] = useState<number[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<typeof REC_EVENTS[number] | null>(null);
+  const [wishlist, setWishlist] = useState<number[]>([]);
+
+  const toggleWishlist = (id: number) => setWishlist(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
@@ -872,71 +932,35 @@ function RecommendationsStep({
               scrollbarWidth: 'none',
             } as React.CSSProperties}
           >
-            {REC_EVENTS.map((ev, i) => (
-              <motion.div
-                key={ev.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + i * 0.1 }}
-                style={{
-                  flexShrink: 0,
-                  width: '200px',
-                  background: CARD,
-                  borderRadius: '20px',
-                  padding: '16px',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
-                }}
-              >
-                <div
-                  style={{
-                    width: '46px',
-                    height: '46px',
-                    borderRadius: '14px',
-                    background: ev.categoryBg,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '22px',
-                    marginBottom: '12px',
-                  }}
+            {REC_EVENTS.map((ev, i) => {
+              const isWishlisted = wishlist.includes(ev.id);
+              return (
+                <motion.div
+                  key={ev.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + i * 0.1 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setSelectedEvent(ev)}
+                  style={{ flexShrink: 0, width: '200px', background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', cursor: 'pointer', position: 'relative' }}
                 >
-                  {ev.emoji}
-                </div>
-                <div
-                  style={{
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    color: TEXT,
-                    marginBottom: '6px',
-                    lineHeight: '1.35',
-                  }}
-                >
-                  {ev.title}
-                </div>
-                <div
-                  style={{
-                    fontSize: '11px',
-                    color: TEXT2,
-                    fontWeight: 500,
-                    marginBottom: '8px',
-                  }}
-                >
-                  📅 {ev.date}
-                </div>
-                <span
-                  style={{
-                    padding: '3px 9px',
-                    borderRadius: '10px',
-                    background: ev.categoryBg,
-                    color: ev.categoryColor,
-                    fontSize: '10px',
-                    fontWeight: 700,
-                  }}
-                >
-                  {ev.category}
-                </span>
-              </motion.div>
-            ))}
+                  {/* Wishlist badge */}
+                  {isWishlisted && (
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Bookmark size={11} color="white" fill="white" />
+                    </div>
+                  )}
+                  <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: ev.categoryBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', marginBottom: '12px' }}>
+                    {ev.emoji}
+                  </div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.35' }}>{ev.title}</div>
+                  <div style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, marginBottom: '8px' }}>📅 {ev.date}</div>
+                  <span style={{ padding: '3px 9px', borderRadius: '10px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 700 }}>
+                    {ev.category}
+                  </span>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -972,6 +996,100 @@ function RecommendationsStep({
           Get Started →
         </motion.button>
       </div>
+
+      {/* Event Detail Bottom Sheet */}
+      <AnimatePresence>
+        {selectedEvent && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedEvent(null)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 24px 40px', maxHeight: '80vh', overflowY: 'auto' }}
+            >
+              {/* Handle */}
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+
+              {/* Header row */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <div style={{ flex: 1, paddingRight: '12px' }}>
+                  <div style={{ display: 'inline-flex', padding: '3px 10px', borderRadius: '20px', background: selectedEvent.categoryBg, marginBottom: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: selectedEvent.categoryColor }}>{selectedEvent.category}</span>
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, lineHeight: '1.3' }}>{selectedEvent.title}</div>
+                </div>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                >
+                  <X size={15} color={TEXT} />
+                </button>
+              </div>
+
+              {/* Info rows */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', background: BG, borderRadius: '14px' }}>
+                  <Calendar size={15} color={PRIMARY} />
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{selectedEvent.date}</div>
+                    <div style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{selectedEvent.time}</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', background: BG, borderRadius: '14px' }}>
+                  <MapPin size={15} color={PRIMARY} />
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT }}>{selectedEvent.location}</div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.65', marginBottom: '24px' }}>{selectedEvent.description}</div>
+
+              {/* Action buttons */}
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleWishlist(selectedEvent.id)}
+                  style={{
+                    width: '48px', height: '48px', borderRadius: '16px', flexShrink: 0,
+                    background: wishlist.includes(selectedEvent.id) ? '#FFF0EC' : BG,
+                    border: `2px solid ${wishlist.includes(selectedEvent.id) ? PRIMARY : BORDER}`,
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  <Bookmark size={18} color={wishlist.includes(selectedEvent.id) ? PRIMARY : MUTED} fill={wishlist.includes(selectedEvent.id) ? PRIMARY : 'none'} />
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => {
+                    setSelectedEvent(null);
+                  }}
+                  style={{
+                    flex: 1, padding: '14px', borderRadius: '16px',
+                    background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`,
+                    border: 'none', cursor: 'pointer',
+                    fontSize: '14px', fontWeight: 700, color: 'white',
+                    fontFamily: "'DM Sans', sans-serif",
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  }}
+                >
+                  Register for this Event <ExternalLink size={14} />
+                </motion.button>
+              </div>
+              <div style={{ textAlign: 'center', marginTop: '10px', fontSize: '11px', color: MUTED }}>
+                {selectedEvent.price} · Registration opens in the app
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
