@@ -19,10 +19,16 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false);
   const [savedEvents, setSavedEvents] = useState<number[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const [initialGroupChatId, setInitialGroupChatId] = useState<number | undefined>(undefined);
 
   const openExploreGroups = () => {
     setExploreInitialSubTab('groups');
     setActiveTab('explore');
+  };
+
+  const openGroupChat = (groupId: number) => {
+    setInitialGroupChatId(groupId);
+    setActiveTab('messages');
   };
 
   // ---- Auth flow ----
@@ -77,6 +83,7 @@ export default function App() {
             onOpenProfile={() => setShowProfile(true)}
             onOpenEvent={(id) => { setActiveTab('explore'); }}
             onOpenGroups={openExploreGroups}
+            onOpenGroupChat={openGroupChat}
             savedEvents={savedEvents}
           />
         )}
@@ -89,7 +96,12 @@ export default function App() {
         {activeTab === 'marketplace' && (
           <HelpSharePage />
         )}
-        {activeTab === 'messages' && <MessagesPage />}
+        {activeTab === 'messages' && (
+          <MessagesPage
+            initialConvId={initialGroupChatId}
+            key={initialGroupChatId}
+          />
+        )}
       </div>
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

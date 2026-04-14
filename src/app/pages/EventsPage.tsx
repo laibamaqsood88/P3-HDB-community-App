@@ -21,6 +21,7 @@ interface EventsPageProps {
   onOpenProfile: () => void;
   onOpenEvent: (eventId: number) => void;
   onOpenGroups: () => void;
+  onOpenGroupChat: (groupId: number) => void;
   savedEvents: number[];
 }
 
@@ -217,7 +218,7 @@ const HOME_MARKETPLACE_PICKS = [
 ];
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, savedEvents }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, savedEvents }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [eventsTab, setEventsTab] = useState<EventsTab>('upcoming');
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
@@ -527,7 +528,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, savedEven
               <motion.div
                 key={group.id}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => goTo('group-detail', { group })}
+                onClick={() => onOpenGroupChat(group.id)}
                 style={{ flexShrink: 0, width: '150px', borderRadius: '20px', background: group.gradient, padding: '16px', cursor: 'pointer' }}
               >
                 <div style={{ fontSize: '28px', marginBottom: '8px' }}>{group.emoji}</div>

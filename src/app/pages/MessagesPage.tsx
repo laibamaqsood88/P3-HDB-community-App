@@ -51,6 +51,17 @@ const CONVERSATIONS: Conversation[] = [
   },
   {
     id: 3,
+    type: 'group',
+    name: 'Board Game Sundays',
+    avatar: '🎲',
+    avatarBg: '#7C3AED',
+    lastMessage: "Anyone up for Ticket to Ride this Sunday? 🚂",
+    time: '3:30 PM',
+    unread: 1,
+    tag: 'Board Games',
+  },
+  {
+    id: 3,
     type: 'marketplace',
     name: 'IKEA Bookshelf',
     avatar: '📚',
@@ -96,6 +107,11 @@ const GROUP_MESSAGES: Record<number, ChatMessage[]> = {
     { id: 2, from: 'them', sender: 'B', text: "Sounds great! I'll bring some seedlings.", time: 'Yesterday' },
     { id: 3, from: 'me', sender: 'me', text: "I'll be there! What tools should I bring?", time: 'Yesterday' },
   ],
+  3: [
+    { id: 1, from: 'them', sender: 'E', text: "Anyone up for Ticket to Ride this Sunday? 🚂", time: '3:20 PM' },
+    { id: 2, from: 'me', sender: 'me', text: "I'm in! Haven't played that one yet.", time: '3:25 PM' },
+    { id: 3, from: 'them', sender: 'F', text: "Me too! See you all at 2 PM 🎲", time: '3:30 PM' },
+  ],
 };
 
 const MARKETPLACE_MESSAGES: Record<number, ChatMessage[]> = {
@@ -131,6 +147,7 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   Running:       { bg: '#FFF0EC', text: '#FF6B47' },
   Gardening:     { bg: '#D1FAE5', text: '#059669' },
   'Board Games': { bg: '#EDE9FE', text: '#7C3AED' },
+  'Board Game Sundays': { bg: '#EDE9FE', text: '#7C3AED' },
   Cooking:       { bg: '#FEF3C7', text: '#D97706' },
   Listing:       { bg: '#DBEAFE', text: '#2563EB' },
   Request:       { bg: '#DCFCE7', text: '#16A34A' },
@@ -139,9 +156,15 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
 type FilterTab = 'All' | 'Groups' | 'Marketplace' | 'Direct';
 const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Marketplace', 'Direct'];
 
-export function MessagesPage() {
+interface MessagesPageProps {
+  initialConvId?: number;
+}
+
+export function MessagesPage({ initialConvId }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
-  const [openConv, setOpenConv] = useState<Conversation | null>(null);
+  const [openConv, setOpenConv] = useState<Conversation | null>(
+    initialConvId ? (CONVERSATIONS.find(c => c.id === initialConvId) ?? null) : null
+  );
   const [chatInputs, setChatInputs] = useState<Record<number, string>>({});
   const [localMessages, setLocalMessages] = useState<Record<number, ChatMessage[]>>({});
 
