@@ -511,7 +511,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               <img src={ev.organizerImage} alt="" style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, marginBottom: '2px' }}>{ev.organizer}</div>
-                <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '4px' }}>Organiser</div>
+                <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '4px' }}>{ev.title}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <Star size={12} color="#FF6B47" fill="#FF6B47" />
                   <span style={{ fontSize: '12px', fontWeight: 700, color: TEXT }}>{ev.organizerRating}</span>
@@ -519,49 +519,6 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 </div>
               </div>
             </div>
-
-            {/* Verified Neighbours Attending */}
-            {EVENT_ATTENDEES[ev.id] && EVENT_ATTENDEES[ev.id].length > 0 && (
-              <div style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', marginBottom: '20px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>
-                  ✓ Verified Neighbours Attending
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  {EVENT_ATTENDEES[ev.id].map(neighbourId => {
-                    const neighbour = NEIGHBOUR_AVATARS.find(n => n.id === neighbourId);
-                    if (!neighbour) return null;
-                    return (
-                      <motion.button
-                        key={neighbourId}
-                        whileTap={{ scale: 0.9 }}
-                        style={{
-                          width: '44px',
-                          height: '44px',
-                          borderRadius: '12px',
-                          background: neighbour.color,
-                          border: `2px solid ${BORDER}`,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '20px',
-                          position: 'relative',
-                          boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-                        }}
-                        title={neighbour.name}
-                      >
-                        {neighbour.avatar}
-                      </motion.button>
-                    );
-                  })}
-                  {EVENT_ATTENDEES[ev.id].length > 0 && (
-                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 600, marginLeft: '4px' }}>
-                      +{ev.signups - EVENT_ATTENDEES[ev.id].length} others
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
 
             {/* Description */}
             <div style={{ background: CARD, borderRadius: '18px', padding: '16px', marginBottom: '20px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
