@@ -260,6 +260,29 @@ export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {} }: { 
   );
 }
 
+// ---- Smart Matching Algorithm ----
+function getMatchedServices(request: any): any[] {
+  const keywords = request.category.toLowerCase();
+  const matching = ITEMS_AND_SERVICES.filter(service => {
+    if (service.itemType !== 'service') return false;
+    const serviceName = service.name.toLowerCase();
+
+    // Match babysitting
+    if (keywords.includes('babysit')) return serviceName.includes('babysit');
+    // Match pet care
+    if (keywords.includes('dog') || keywords.includes('pet')) return serviceName.includes('dog') || serviceName.includes('pet');
+    // Match plant/plant care
+    if (keywords.includes('plant') || keywords.includes('water')) return serviceName.includes('dog') || serviceName.includes('elderly');
+    // Match moving help
+    if (keywords.includes('moving') || keywords.includes('moving help')) return serviceName.includes('dog') || serviceName.includes('elderly');
+    // Match carpool
+    if (keywords.includes('carpool')) return serviceName.includes('dog') || serviceName.includes('elderly');
+
+    return false;
+  });
+  return matching;
+}
+
 // ---- Marketplace Feed ----
 function MarketplaceFeed({ feedTab, onTabChange, onSelectRequest, onSelectItem, onSelectService, onPost, wishlist }: any) {
   const tabs: FeedTab[] = ['Requests', 'Items & Services'];
@@ -337,10 +360,52 @@ function MarketplaceFeed({ feedTab, onTabChange, onSelectRequest, onSelectItem, 
             <Star size={16} color="white" fill="white" />
           </div>
           <div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: PRIMARY }}>Matched for you</div>
-            <div style={{ fontSize: '11px', color: '#FF8C70', fontWeight: 500 }}>Based on your location & interests in the estate</div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: PRIMARY }}>Smart Matched for you</div>
+            <div style={{ fontSize: '11px', color: '#FF8C70', fontWeight: 500 }}>Services and items suggested based on requests</div>
           </div>
         </div>
+
+        {/* Show matched services for requests when on Requests tab */}
+        {!isSearchActive && feedTab === 'Requests' && REQUESTS.length > 0 && (
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Popular Requests</div>
+            {REQUESTS.slice(0, 2).map(r => {
+              const matched = getMatchedServices(r);
+              return (
+                <div key={r.id} style={{ marginBottom: '12px' }}>
+                  <RequestCard r={r} onClick={() => onSelectRequest(r)} />
+                  {matched.length > 0 && (
+                    <div style={{ marginTop: '8px', paddingLeft: '8px', borderLeft: `3px solid ${PRIMARY}`, paddingBottom: '8px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 600, color: TEXT2, marginBottom: '6px' }}>💡 Matched services:</div>
+                      {matched.map(service => (
+                        <button
+                          key={service.id}
+                          onClick={() => onSelectService(service)}
+                          style={{
+                            display: 'inline-block',
+                            marginRight: '6px',
+                            marginBottom: '4px',
+                            padding: '4px 10px',
+                            borderRadius: '12px',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            background: '#FFF0EC',
+                            color: PRIMARY,
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontFamily: 'inherit',
+                          }}
+                        >
+                          {service.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Search active: show results from all categories in a single unified list */}
         {isSearchActive && (
