@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, ChevronLeft, Users, Bookmark } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronDown, Users, Bookmark } from 'lucide-react';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -484,9 +484,17 @@ function StepInterests({
   onBack: () => void;
 }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
   const filteredInterests = ALL_INTERESTS.filter(t =>
     t.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const toggleCat = (label: string) =>
+    setExpandedCats(prev => {
+      const next = new Set(prev);
+      next.has(label) ? next.delete(label) : next.add(label);
+      return next;
+    });
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD, minHeight: 0 }}>
@@ -541,25 +549,67 @@ function StepInterests({
             })}
           </div>
         ) : (
-          /* Grouped by category */
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {INTEREST_CATEGORIES.map(cat => (
-              <div key={cat.label}>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '10px' }}>{cat.label}</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {cat.items.map(t => {
-                    const sel = interests.includes(t);
-                    const colors = INTEREST_COLORS[t];
-                    return (
-                      <motion.button key={t} whileTap={{ scale: 0.95 }} onClick={() => onToggle(t)}
-                        style={{ padding: '9px 16px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
-                        {t}
-                      </motion.button>
-                    );
-                  })}
+          /* Grouped by category with collapsible dropdowns */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {INTEREST_CATEGORIES.map(cat => {
+              const isOpen = expandedCats.has(cat.label);
+              const selectedInCat = cat.items.filter(t => interests.includes(t)).length;
+              return (
+                <div key={cat.label} style={{ background: BG, borderRadius: '18px', overflow: 'hidden' }}>
+                  {/* Category header — tappable */}
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => toggleCat(cat.label)}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer',
+                      fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{cat.label}</span>
+                      {selectedInCat > 0 && (
+                        <div style={{ minWidth: '20px', height: '20px', borderRadius: '10px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px' }}>
+                          <span style={{ fontSize: '10px', fontWeight: 800, color: 'white' }}>{selectedInCat}</span>
+                        </div>
+                      )}
+                    </div>
+                    <motion.div
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ChevronDown size={16} color={MUTED} />
+                    </motion.div>
+                  </motion.button>
+
+                  {/* Subcategory pills — shown when expanded */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: 'easeInOut' }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '2px 16px 16px' }}>
+                          {cat.items.map(t => {
+                            const sel = interests.includes(t);
+                            const colors = INTEREST_COLORS[t];
+                            return (
+                              <motion.button key={t} whileTap={{ scale: 0.95 }} onClick={() => onToggle(t)}
+                                style={{ padding: '9px 16px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
+                                {t}
+                              </motion.button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

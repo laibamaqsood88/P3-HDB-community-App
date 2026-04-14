@@ -22,6 +22,7 @@ interface EventsPageProps {
   onOpenEvent: (eventId: number) => void;
   onOpenGroups: () => void;
   onOpenGroupChat: (groupId: number) => void;
+  onOpenMarketplace: () => void;
   savedEvents: number[];
 }
 
@@ -201,12 +202,12 @@ const NEIGHBOURS_GOING = [
 
 // ---- Notifications mock data ----
 const NOTIFICATIONS = [
-  { id: 1, type: 'event', emoji: '🏃', title: 'Morning Run tomorrow at 7 AM', body: 'Your registered event starts in less than 24 hours. Meet at Bishan-AMK Park Pavilion.', time: '10 min ago', read: false },
-  { id: 2, type: 'group', emoji: '🌱', title: 'New message in Backyard Gardeners', body: 'Diana M.: "The tomatoes are looking great this week! 🍅"', time: '32 min ago', read: false },
-  { id: 3, type: 'marketplace', emoji: '🪴', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false },
-  { id: 4, type: 'event', emoji: '📅', title: 'New event near you', body: 'Peranakan Cooking Workshop on Sun 13 Apr — 12 neighbours are going!', time: '3 hrs ago', read: true },
-  { id: 5, type: 'group', emoji: '🎲', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true },
-  { id: 6, type: 'marketplace', emoji: '📚', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true },
+  { id: 1, type: 'event', emoji: '🏃', title: 'Morning Run tomorrow at 7 AM', body: 'Your registered event starts in less than 24 hours. Meet at Bishan-AMK Park Pavilion.', time: '10 min ago', read: false, route: { to: 'event', eventId: 1 } },
+  { id: 2, type: 'group', emoji: '🌱', title: 'New message in Backyard Gardeners', body: 'Diana M.: "The tomatoes are looking great this week! 🍅"', time: '32 min ago', read: false, route: { to: 'group', groupId: 2 } },
+  { id: 3, type: 'marketplace', emoji: '🪴', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false, route: { to: 'marketplace' } },
+  { id: 4, type: 'event', emoji: '📅', title: 'New event near you', body: 'Peranakan Cooking Workshop on Sun 13 Apr — 12 neighbours are going!', time: '3 hrs ago', read: true, route: { to: 'event', eventId: 2 } },
+  { id: 5, type: 'group', emoji: '🎲', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true, route: { to: 'group', groupId: 3 } },
+  { id: 6, type: 'marketplace', emoji: '📚', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true, route: { to: 'marketplace' } },
 ];
 
 const NOTIF_COLORS: Record<string, { bg: string; text: string }> = {
@@ -235,7 +236,7 @@ const HOME_MARKETPLACE_PICKS = [
 ];
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, savedEvents }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [eventsTab, setEventsTab] = useState<EventsTab>('upcoming');
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
@@ -809,7 +810,21 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     <motion.div
                       key={notif.id}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => setReadNotifs(p => p.includes(notif.id) ? p : [...p, notif.id])}
+                      onClick={() => {
+                        // Mark as read
+                        setReadNotifs(p => p.includes(notif.id) ? p : [...p, notif.id]);
+                        setShowNotifications(false);
+                        // Navigate to relevant screen
+                        const r = notif.route;
+                        if (r.to === 'event') {
+                          const ev = EVENTS.find(e => e.id === (r as any).eventId);
+                          if (ev) goTo('detail', { event: ev });
+                        } else if (r.to === 'group') {
+                          onOpenGroupChat((r as any).groupId);
+                        } else if (r.to === 'marketplace') {
+                          onOpenMarketplace();
+                        }
+                      }}
                       style={{
                         display: 'flex', alignItems: 'flex-start', gap: '14px',
                         padding: '14px 0',

@@ -84,6 +84,7 @@ export default function App() {
             onOpenEvent={(id) => { setActiveTab('explore'); }}
             onOpenGroups={openExploreGroups}
             onOpenGroupChat={openGroupChat}
+            onOpenMarketplace={() => setActiveTab('marketplace')}
             savedEvents={savedEvents}
           />
         )}
