@@ -195,8 +195,15 @@ function CollectionPointMap({ address }: { address: string }) {
 }
 
 // ---- Main Component ----
-export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {}, onAddPost }: { wishlist?: number[]; onWishlistToggle?: (id: number) => void; onAddPost?: (post: any) => void }) {
-  const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
+export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {}, onAddPost, initialItemId }: { wishlist?: number[]; onWishlistToggle?: (id: number) => void; onAddPost?: (post: any) => void; initialItemId?: number }) {
+  const initialStack: NavFrame[] = (() => {
+    if (initialItemId) {
+      const item = ITEMS_AND_SERVICES.find(i => i.id === initialItemId);
+      if (item) return [{ screen: 'feed' }, { screen: item.itemType === 'service' ? 'service-detail' : 'item-detail', params: { item, type: item.itemType } }];
+    }
+    return [{ screen: 'feed' }];
+  })();
+  const [navStack, setNavStack] = useState<NavFrame[]>(initialStack);
   const [chatMessages, setChatMessages] = useState([
     { id: 1, from: 'them', text: "Hi! I saw you're interested. When would work for you?", time: '2:15 PM' },
     { id: 2, from: 'me', text: 'Great! How about Saturday afternoon around 3 PM?', time: '2:17 PM' },

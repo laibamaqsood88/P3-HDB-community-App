@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { REQUESTS_DATA, REQUESTS_CAT_EMOJIS } from './RequestsPage';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -24,6 +25,7 @@ interface EventsPageProps {
   onOpenMarketplace: () => void;
   savedEvents: number[];
   onOpenNeighbours?: () => void;
+  onOpenRequest?: (id: number) => void;
 }
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
@@ -229,20 +231,12 @@ const NOTIF_COLORS: Record<string, { bg: string; text: string }> = {
   community:   { bg: '#FEF3C7', text: '#D97706' },
 };
 
-// ---- Marketplace data (mirrored from HelpSharePage for home preview) ----
-const HOME_LATEST_REQUEST = {
-  id: 1, category: 'Plant Care', emoji: '🪴',
-  description: "Need someone to water my 4 potted plants while I'm away travelling. Easy — just water once every 2 days.",
-  timeframe: 'Apr 15–22', expiresIn: '2 days', poster: 'Resident A', trust: 3,
-};
-
-
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
-  const [selectedRequest, setSelectedRequest] = useState<typeof HOME_LATEST_REQUEST | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedNeighbour, setSelectedNeighbour] = useState<typeof MOCK_NEIGHBOURS[0] | null>(null);
   const [readNotifs, setReadNotifs] = useState<number[]>(NOTIFICATIONS.filter(n => n.read).map(n => n.id));
 
   const unreadCount = NOTIFICATIONS.filter(n => !readNotifs.includes(n.id)).length;
@@ -562,45 +556,50 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </div>
         </div>
 
-        {/* Latest Request */}
+        {/* Latest Requests */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Latest Request</span>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>from your neighbourhood</span>
+            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Latest Requests</span>
+            <button
+              onClick={() => onOpenRequest && onOpenRequest(0)}
+              style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
+            >
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>See all</span>
+              <ChevronRight size={14} color={PRIMARY} />
+            </button>
           </div>
-          <motion.div
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setSelectedRequest(HOME_LATEST_REQUEST)}
-            style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
-                {HOME_LATEST_REQUEST.emoji}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{HOME_LATEST_REQUEST.category}</span>
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: '#D97706', background: '#FEF3C7', borderRadius: '20px', padding: '2px 8px' }}>
-                    Expires in {HOME_LATEST_REQUEST.expiresIn}
-                  </span>
-                </div>
-                <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.5', marginBottom: '10px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
-                  {HOME_LATEST_REQUEST.description}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div style={{ display: 'flex', gap: '2px' }}>
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: i < HOME_LATEST_REQUEST.trust ? '#22C55E' : BORDER }} />
-                      ))}
-                    </div>
-                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>Trust score</span>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '6px' }}>
+            {REQUESTS_DATA.slice(0, 5).map(r => {
+              const typeColors: Record<string, { bg: string; text: string }> = {
+                'Borrow': { bg: '#EDE9FE', text: '#7C3AED' },
+                'Free Request': { bg: '#DCFCE7', text: '#16A34A' },
+                'Paid Request': { bg: '#FEF3C7', text: '#D97706' },
+              };
+              const tc = typeColors[r.type] || { bg: BG, text: TEXT2 };
+              return (
+                <motion.div
+                  key={r.id}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => onOpenRequest ? onOpenRequest(r.id) : undefined}
+                  style={{ flexShrink: 0, width: '200px', background: CARD, borderRadius: '20px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+                >
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', marginBottom: '10px' }}>
+                    {REQUESTS_CAT_EMOJIS[r.category] || '📋'}
                   </div>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: PRIMARY }}>View request →</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '5px', lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                    {r.title}
+                  </div>
+                  <div style={{ fontSize: '11px', color: TEXT2, lineHeight: '1.4', marginBottom: '10px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                    {r.description}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                    <span style={{ padding: '3px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: 700, background: tc.bg, color: tc.text }}>{r.type}</span>
+                    <span style={{ fontSize: '10px', color: MUTED, fontWeight: 500 }}>Exp {r.expiresOn}</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Connect with Neighbours */}
@@ -627,7 +626,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   <span style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>{neighbour.avatar}</span>
                 </div>
                 <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '2px', lineHeight: '1.2' }}>{neighbour.name}</div>
-                <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '8px' }}>{neighbour.distance}</div>
+                <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '8px' }}>{neighbour.unit.split(' #')[0]} · {neighbour.distance}</div>
                 {/* Interest pills (first 1) */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '10px' }}>
                   {neighbour.interests.slice(0, 1).map(interest => (
@@ -645,7 +644,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     Say Hello 👋
                   </button>
                   <button
-                    onClick={() => toast('Profile coming soon!')}
+                    onClick={() => setSelectedNeighbour(neighbour)}
                     style={{ width: '100%', padding: '8px', borderRadius: '12px', background: 'none', border: `1.5px solid ${BORDER}`, color: TEXT2, fontSize: '11px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
                   >
                     View Profile
@@ -665,7 +664,6 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: '#FFF0EC', color: PRIMARY }}>{signedUpEvents.length}</span>
               )}
             </div>
-            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>signed up</span>
           </div>
 
           {signedUpEvents.length === 0 ? (
@@ -810,14 +808,14 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         )}
       </AnimatePresence>
 
-      {/* ---- Request Detail Bottom Sheet ---- */}
+      {/* ---- Neighbour Profile Bottom Sheet ---- */}
       <AnimatePresence>
-        {selectedRequest && (
+        {selectedNeighbour && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedRequest(null)}
+            onClick={() => setSelectedNeighbour(null)}
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
           >
             <motion.div
@@ -826,47 +824,34 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
               onClick={e => e.stopPropagation()}
-              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px', maxHeight: '85vh', overflowY: 'auto' }}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px' }}
             >
-              {/* Handle */}
-              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
-              {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '18px' }}>
-                <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>
-                  {selectedRequest.emoji}
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 24px' }} />
+              {/* Avatar + name */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: selectedNeighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '24px', fontWeight: 800, color: 'white' }}>{selectedNeighbour.avatar}</span>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{selectedRequest.category}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#D97706', background: '#FEF3C7', borderRadius: '20px', padding: '2px 8px' }}>Expires {selectedRequest.expiresIn}</span>
-                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>📅 {selectedRequest.timeframe}</span>
-                  </div>
+                <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{selectedNeighbour.name}</div>
+                <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>{selectedNeighbour.distance} away</div>
+              </div>
+              {/* Interests */}
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Interests</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {selectedNeighbour.interests.map(interest => (
+                    <span key={interest} style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: '#FFF0EC', color: PRIMARY }}>
+                      {interest}
+                    </span>
+                  ))}
                 </div>
               </div>
-              {/* Description */}
-              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>Request details</div>
-                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.6' }}>{selectedRequest.description}</div>
-              </div>
-              {/* Trust */}
-              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>Neighbour trust score</div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: i < selectedRequest.trust ? '#22C55E' : BORDER }} />
-                    ))}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#D1FAE5', borderRadius: '20px', padding: '4px 10px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#059669' }}>✓ Singpass Verified</span>
-                </div>
-              </div>
+              {/* Action button */}
               <button
-                onClick={() => { toast.success('Request sent! The neighbour will be notified.'); setSelectedRequest(null); }}
+                onClick={() => { toast.success(`Message sent to ${selectedNeighbour.name}! 👋`); setSelectedNeighbour(null); }}
                 style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'DM Sans', sans-serif" }}
               >
-                I Can Help!
+                Say Hello 👋
               </button>
             </motion.div>
           </motion.div>

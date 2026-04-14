@@ -24,6 +24,9 @@ export default function App() {
   const [userInterests, setUserInterests] = useState<string[]>([]);
   const [myPosts, setMyPosts] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
+  const [initialRequestId, setInitialRequestId] = useState<number | undefined>(undefined);
+  const [initialEventId, setInitialEventId] = useState<number | undefined>(undefined);
+  const [initialMarketplaceItemId, setInitialMarketplaceItemId] = useState<number | undefined>(undefined);
 
   const onAddPost = (post: any) => setMyPosts(prev => [post, ...prev]);
   const onAddConversation = (conv: any) => setConversations(prev => [conv, ...prev]);
@@ -41,6 +44,11 @@ export default function App() {
   const openGroupChat = (groupId: number) => {
     setInitialGroupChatId(groupId);
     setActiveTab('messages');
+  };
+
+  const openRequest = (id: number) => {
+    setInitialRequestId(id || undefined);
+    setActiveTab('requests');
   };
 
   // ---- Auth flow ----
@@ -102,10 +110,13 @@ export default function App() {
             onOpenMarketplace={() => setActiveTab('marketplace')}
             savedEvents={savedEvents}
             onOpenNeighbours={openExploreNeighbours}
+            onOpenRequest={openRequest}
           />
         )}
         {activeTab === 'explore' && (
           <ExplorePage
+            key={initialEventId}
+            initialEventId={initialEventId}
             initialSubTab={exploreInitialSubTab}
             onSubTabChange={setExploreInitialSubTab}
             userInterests={userInterests}
@@ -113,10 +124,10 @@ export default function App() {
           />
         )}
         {activeTab === 'marketplace' && (
-          <HelpSharePage onAddPost={onAddPost} />
+          <HelpSharePage key={initialMarketplaceItemId} onAddPost={onAddPost} initialItemId={initialMarketplaceItemId} />
         )}
         {activeTab === 'requests' && (
-          <RequestsPage onAddPost={onAddPost} />
+          <RequestsPage key={initialRequestId} onAddPost={onAddPost} initialRequestId={initialRequestId} />
         )}
         {activeTab === 'messages' && (
           <MessagesPage
@@ -142,9 +153,22 @@ export default function App() {
             onClose={() => setShowProfile(false)}
             onOpenEvent={(id) => {
               setShowProfile(false);
+              setInitialEventId(id);
+              setExploreInitialSubTab('events');
               setActiveTab('explore');
             }}
+            onOpenMarketplaceItem={(id) => {
+              setShowProfile(false);
+              setInitialMarketplaceItemId(id);
+              setActiveTab('marketplace');
+            }}
+            onOpenRequest={(id) => {
+              setShowProfile(false);
+              openRequest(id);
+            }}
             myPosts={myPosts}
+            userInterests={userInterests}
+            onUpdateInterests={setUserInterests}
           />
         </div>
       )}

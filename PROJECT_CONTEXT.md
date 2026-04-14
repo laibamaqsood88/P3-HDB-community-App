@@ -7,106 +7,37 @@
 https://github.com/laibamaqsood88/P3-HDB-community-App
 
 ## What This App Is
-A Singapore HDB community mobile web app called **NeighbourHood**. It connects verified HDB residents within an estate (Bishan-AMK Estate in the demo) via Singpass identity verification. Stack: React 18 + TypeScript + Vite, inline styles, Framer Motion (motion/react), Lucide React icons, Sonner toasts. No backend — all mock data.
+A Singapore HDB community mobile web app called **NeighbourHood**. It connects verified HDB residents within an estate (Bishan-AMK Estate in the demo) via Singpass identity verification. Stack: React 18 + TypeScript + Vite, inline styles, Framer Motion (`motion/react`), Lucide React icons, Sonner toasts. No backend — all mock data.
 
 ## How to Run
 ```bash
-cd "/Users/laibamaqsood/Desktop/P3 HDB community App"
-npm install        # if node_modules missing
+cd /Users/nurleeyana/Desktop/P3
 npm run dev        # starts on http://localhost:5173
 ```
 Preview server config: `.claude/launch.json` (port 5173, `npm run dev`).
 
 ---
 
-## Current App State (as of last session)
-
-### Auth Flow
-- **Login page** (`LoginPage.tsx`) — Singpass-only red button, calls `onLogin()`
-- **Sign-up onboarding** (`SignUpPage.tsx`) — 6 steps:
-  - Step 0: Welcome screen
-  - Step 1: Date of Birth (date input)
-  - Step 2: Family Status (single select: Individual, Couple, Family with Young Kids, Family with Teenagers, Single Parent, Empty Nester, Senior)
-  - Step 3: Interests (multi-select: Running, Gardening, Board Games, Cooking, Reading, Cycling, Pets, Photography, Music, Fitness, Hiking, Yoga)
-  - Step 4: Loading spinner (auto-advances to Step 5 after 2000ms)
-  - Step 5: Recommendations — horizontal scroll carousel of top 3 interest groups + top 3 recommended events → "Get Started" calls `onComplete()`
-- **App.tsx** starts at `authScreen: 'login'` → `'signup'` → `'main'`
-
-### Bottom Navigation (BottomNav.tsx)
-4 tabs: **Events · Explore · Marketplace · Messages**
-Icons: Calendar, Compass, ShoppingBag, MessageCircle
-
-### Tab 1 — Events (Home Dashboard) `EventsPage.tsx`
-- Profile avatar button (orange "Y" circle) **top-left** → opens Profile overlay
-- Notification bell icon **top-right** (shows red dot)
-- "Good morning ☀️" greeting, Bishan-AMK Estate + Verified badge
-- Two sub-tabs: **Upcoming** | **Signed Up**
-- **Upcoming tab:**
-  - "Your Interest Groups" horizontal carousel (Morning Runners, Backyard Gardeners, Board Game Sundays) + "More →" arrow
-  - "Recommended Events" vertical list (3 events with image thumbnails)
-  - "Saved Events" section (shows if any saved; cards are clickable → navigates to Explore)
-  - "My Wishlist" section (horizontal scroll of saved marketplace items)
-- **Signed Up tab:** list of registered events with green "Registered ✓" badge
-- Props: `{ onOpenProfile, onOpenEvent, savedEvents }`
-
-### Tab 2 — Explore `ExplorePage.tsx`
-Two segments inside the page: **Events** | **Connect**
-
-**Events segment:**
-- Search bar + Filter button
-- Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness
-- Featured event card (large image) + upcoming list
-- Event detail page includes: Calendar, MapPin, Globe, Users, **Family Status** fields
-- Full flow: detail → share → singpass → recipient-detail → register → browser
-
-**Connect segment (formerly Neighbours):**
-- Interest filter pills
-- Neighbour cards with **real photos** (Unsplash) + colored avatar fallback
-- Top Matches horizontal scroll
-- Clicking neighbour → profile screen with **"Invite"** button (NOT "Jio")
-- Invite flow → chat
-- Group discovery sheet
-- Group Space (chat + activity tabs)
-- "Interest Groups I'm In" section
-- Group create screen
-- All "Jio" renamed to "Invite" throughout
-
-**Neighbours data** (6 neighbours with names: Alex T., Mei L., Raj K., Sarah C., Jun W., Nurul A.)
-
-### Tab 3 — Marketplace `HelpSharePage.tsx`
-- Header: "Marketplace" (renamed from "Help & Share")
-- Two tabs: **Requests** | **Items & Services** (merged listings + services)
-- Search bar: "Search requests, items and services..."
-- Filter chips on Items & Services tab: All | Items | Services
-- Items shown in 2-column grid; Services in vertical list
-- Each detail page has:
-  - **Wishlist heart button** (save/unsave with toast)
-  - **Reviews section** (3 mock reviews with star ratings + avatar)
-- Post flows: Request, List an Item, Offer a Service
-- Props: `{ wishlist?: number[], onWishlistToggle?: (id: number) => void }`
-- Item IDs: 101–104 (items), 201–204 (services), 1–4 (requests)
-
-### Tab 4 — Messages `MessagesPage.tsx`
-- Header: "Messages" + bell icon
-- Filter tabs: All | Groups | Marketplace | Direct
-- 5 mock conversations: Morning Runners (group), Backyard Gardeners (group), IKEA Bookshelf (marketplace), Neighbour #2 (direct), Plant Watering Request (marketplace)
-- Tapping a conversation opens a chat screen (slide-in animation)
-- Chat has message bubbles (me=orange right, them=white left, system=green pill)
-
-### Profile `ProfilePage.tsx` (shown as overlay from Home tab)
-- Accessed via profile avatar button on Events tab (not in bottom nav)
-- Orange gradient hero header, avatar "Y", Singpass Verified badge, estate pill
-- Stats: Events Saved, Neighbours Jio'd, Exchanges Done
-- **My Interests** section
-- **Rewards & Badges** section (2×2 grid):
-  - 🎟️ Event Joiner — UNLOCKED
-  - 👥 Group Member — UNLOCKED
-  - 🛍️ Trader — UNLOCKED (5 exchanges)
-  - 🌟 Community Builder — LOCKED (grayed out)
-- **Saved Events** — clickable cards (call `onOpenEvent`)
-- **My Posts** — Requests/Listings with status
-- **Account** settings menu
-- Props: `{ onClose?: () => void, onOpenEvent?: (id: number) => void }`
+## File Structure
+```
+src/
+├── styles/
+│   └── theme.css                  — CSS variables + .no-scrollbar utility
+└── app/
+    ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks
+    ├── components/
+    │   └── BottomNav.tsx          — 4-tab nav (Events / Explore / Marketplace / Messages)
+    └── pages/
+        ├── LoginPage.tsx          — Singpass login screen
+        ├── SignUpPage.tsx         — 6-step onboarding
+        ├── EventsPage.tsx         — Home dashboard (Tab 1)
+        ├── ExplorePage.tsx        — Events + Groups sub-tabs (Tab 2)
+        ├── ConnectPage.tsx        — Groups list + detail (used inside ExplorePage)
+        ├── HelpSharePage.tsx      — Marketplace (Tab 3)
+        ├── MessagesPage.tsx       — Group + direct chats (Tab 4)
+        ├── ProfilePage.tsx        — Profile overlay (opened from Home)
+        └── RequestsPage.tsx       — Requests page (new)
+```
 
 ---
 
@@ -114,15 +45,169 @@ Two segments inside the page: **Events** | **Connect**
 ```
 BG      = '#F5F4F0'   // beige background
 CARD    = '#FFFFFF'   // white cards
-PRIMARY = '#FF6B47'   // orange
-TEXT    = '#0D0D0D'   // dark
-TEXT2   = '#6B6B72'   // gray
+PRIMARY = '#FF6B47'   // orange accent
+TEXT    = '#0D0D0D'   // near-black
+TEXT2   = '#6B6B72'   // medium gray
 MUTED   = '#AEAEB2'   // light gray
 BORDER  = '#EDEDEC'   // light border
 Font: 'DM Sans', sans-serif
 ```
 
-## Interest Tag Colors
+### Scrollbar Hiding
+Apply `className="no-scrollbar"` to any scrollable element to hide the scrollbar while keeping scroll functionality. Defined in `src/styles/theme.css`.
+
+---
+
+## Auth Flow (`App.tsx`)
+- `authScreen` state: `'login'` → `'signup'` → `'main'`
+- **LoginPage** → calls `onLogin()` → goes to signup
+- **SignUpPage** → calls `onComplete()` → enters main app
+- Main app has `activeTab` state and a `showProfile` overlay
+
+### Cross-tab Navigation (App.tsx callbacks)
+- `openExploreGroups()` — switches to Explore tab, opens Groups sub-tab
+- `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat (passes `initialConvId` + `key` to force remount)
+- `onOpenMarketplace()` — switches to Marketplace tab
+
+---
+
+## Tab 1 — Home Dashboard (`EventsPage.tsx`)
+
+### Header
+- Profile avatar button (orange "Y") **top-left** → opens Profile overlay
+- App name "NeighbourHood" centered
+- Bell icon **top-right** → opens **notification bottom sheet**
+
+### Notification System
+- 6 notifications (event, group, marketplace types; no lift/community notices)
+- Each has a `route` field: `{ to: 'event', eventId }` | `{ to: 'group', groupId }` | `{ to: 'marketplace' }`
+- Unread count badge on bell icon
+- "Mark all read" button in sheet
+- Clicking a notification routes to the relevant page/screen
+
+### Content Sections (scrollable, no scrollbar)
+1. **Greeting** — "Good morning ☀️", estate + Verified badge
+2. **Your Interest Groups** — horizontal scroll (Morning Runners, Backyard Gardeners, Board Game Sundays) + "More →"; clicking a group card opens its group chat in Messages tab
+3. **Latest Request** — single card showing newest marketplace request with trust score dots + expiry badge; tapping opens bottom-sheet detail ("I Can Help!" CTA)
+4. **Marketplace Picks** — horizontal scroll of 4 recommended items/services; tapping opens bottom-sheet detail ("I Want This!" / "Request This Service" CTA)
+5. **Recommended Events** — vertical list of event cards (image thumbnails); tapping navigates to Explore tab
+6. **Saved Events** — shown if any saved
+7. **My Wishlist** — horizontal scroll of saved marketplace items
+
+### Sub-tabs
+- **Upcoming** — shows all above sections
+- **Signed Up** — list of events user registered for
+
+### Props
+```ts
+{ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents }
+```
+
+---
+
+## Tab 2 — Explore (`ExplorePage.tsx`)
+
+### Sub-tabs: Events | Groups
+
+### Events Sub-tab
+- Search bar + Filter button
+- Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness, Age filter
+- Featured event card (large image) + upcoming list
+- **Event Detail screen** (matches Home tab style):
+  - Date row card, Location row card
+  - Organizer card (photo + star rating + review count)
+  - About card
+  - Hosting panel + Going panel (clickable → Going breakdown screen)
+  - Price + Attend toggle button
+- **Going Breakdown screen**:
+  - Stacked bar chart by family status (6 categories)
+  - Neighbours attending list (avatar initials, name, unit, status)
+- Full detail flow: detail → share → singpass → recipient-detail → register → browser
+
+### Groups Sub-tab (`ConnectPage.tsx`)
+- Groups list with cover image cards (category badge, name, description, members, location, "View →")
+- Group detail: hero image, back button, category badge, name, members, MEETS + LOCATION info cards, About, hashtag tags, Join/Leave button
+- 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
+- Search bar + category filter pills
+- "My Groups" horizontal scroll (joined groups)
+- No visible scrollbars
+
+---
+
+## Tab 3 — Marketplace (`HelpSharePage.tsx`)
+- Header: "Marketplace"
+- Two tabs: **Requests** | **Items & Services**
+- Search bar
+- Filter chips on Items & Services: All | Items | Services
+- Items in 2-column grid; Services in vertical list
+- Each detail page has: wishlist heart button, reviews section (3 mock reviews)
+- Post flows: Request, List an Item, Offer a Service
+- Item IDs: 101–104 (items), 201–204 (services), 1–4 (requests)
+- Props: `{ wishlist?: number[], onWishlistToggle?: (id: number) => void }`
+
+---
+
+## Tab 4 — Messages (`MessagesPage.tsx`)
+- Header: "Messages" + bell icon
+- Filter tabs: All | Groups | Marketplace | Direct
+- **Conversations**:
+  - ID 1: Morning Runners Club (group, green `#16A34A`)
+  - ID 2: Backyard Gardeners (group, green `#059669`)
+  - ID 3: Board Game Sundays (group, purple `#7C3AED`)
+  - IKEA Bookshelf (marketplace)
+  - Neighbour #2 (direct)
+  - Plant Watering Request (marketplace)
+- **Group chat screen** has two tabs: **Chat** | **Activity Board** (default: Chat)
+  - Activity Board shows: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal + discoverability notice
+- Props: `{ initialConvId?: number }` — opens directly to a specific group chat
+- `key={initialGroupChatId}` on MessagesPage forces remount when switching group
+
+### GROUP_ACTIVITY mock data
+```ts
+1: { meetup: 'Saturday 7 AM · Bishan-AMK Park Pavilion', members: 14 }
+2: { meetup: 'Saturday 8 AM · Rooftop Garden, Blk 450', members: 9 }
+3: { meetup: 'Sunday 2 PM · RC Multi-Purpose Hall, Blk 447', members: 11 }
+```
+
+---
+
+## Profile Overlay (`ProfilePage.tsx`)
+- Opened via avatar button on Home tab (not in bottom nav)
+- Orange gradient hero, avatar "Y", Singpass Verified badge, estate pill
+- Stats: Events Saved, Neighbours Jio'd, Exchanges Done
+- My Interests section
+- Rewards & Badges (2×2 grid): Event Joiner ✓, Group Member ✓, Trader ✓, Community Builder 🔒
+- Saved Events (clickable → Explore)
+- My Posts (Requests/Listings with status)
+- Account settings menu
+- Props: `{ onClose?: () => void, onOpenEvent?: (id: number) => void }`
+
+---
+
+## Login Page (`LoginPage.tsx`)
+- Animated canvas background (orange blobs)
+- 🏘️ logo icon
+- App name: **NeighbourHood**
+- Tagline: "Connect with neighbours"
+- Small text: "Estate-verified · Privacy-first · Singpass secured"
+- **"Log in with singpass" button** — positioned directly below the tagline text
+- Privacy note + 🦁 Singpass badge at bottom
+- No feature pills (removed: Verified Residents Only, Your Estate Only, Real Connections)
+
+---
+
+## Onboarding (`SignUpPage.tsx`)
+6 steps: Welcome → Date of Birth → Family Status → Interests → Loading → Recommendations
+
+### Step: Interests ("What are you into?")
+- Search bar filters interests in real-time
+- **Selected interests appear as removable coloured pills directly below the search bar** (horizontally scrollable, no scrollbar visible)
+- Interests grouped by collapsible category dropdowns (animated expand/collapse with `AnimatePresence`)
+- Category header shows orange count badge when items selected inside
+- When searching: flat pill list shown instead of categories
+- "Find my community →" button disabled until ≥1 interest selected
+
+### Interest Categories & Colors
 ```
 Running:      bg #FFF0EC, text #FF6B47
 Gardening:    bg #D1FAE5, text #059669
@@ -140,53 +225,9 @@ Yoga:         bg #F3E8FF, text #9333EA
 
 ---
 
-## File Structure
-```
-src/
-└── app/
-    ├── App.tsx                    — root, auth state, tab state, profile overlay
-    ├── components/
-    │   └── BottomNav.tsx          — 4-tab nav (events/explore/marketplace/messages)
-    └── pages/
-        ├── LoginPage.tsx          — Singpass login
-        ├── SignUpPage.tsx         — 6-step onboarding
-        ├── EventsPage.tsx         — Home dashboard
-        ├── ExplorePage.tsx        — Events + Connect segments
-        ├── HelpSharePage.tsx      — Marketplace
-        ├── MessagesPage.tsx       — Consolidated chats
-        ├── ProfilePage.tsx        — Profile overlay
-        └── NeighboursPage.tsx     — (legacy, no longer used in nav)
-```
-
----
-
-## Known Issues / Not Yet Done
-- `NeighboursPage.tsx` is now unused (superseded by Connect segment in ExplorePage) — can be deleted
-- `HelpSharePage` wishlist props not fully wired in `App.tsx` (wishlist state exists but not passed)
+## Known Limitations
 - No real Singpass integration (UI only)
-- No backend / API (all mock data)
-- Notification bell shows toast only, no real notification list
-- Saved events from EventsPage don't persist to ProfilePage (separate state)
-
----
-
-## What Was Done Last Session (2026-04-13/14)
-1. Created GitHub repo: https://github.com/laibamaqsood88/P3-HDB-community-App
-2. Renamed "Help & Share" → "Marketplace" in bottom nav
-3. Renamed "Neighbours" → "Connect" in bottom nav
-4. Implemented the full feature list:
-   - Singpass-only login page
-   - 3-question onboarding with loading + recommendations
-   - Notification bell on home
-   - Profile button moved to top-left of home, removed from bottom nav
-   - Rewards & Badges section in Profile
-   - Saved events clickable
-   - Chat/Messages tab (consolidated)
-   - Wishlist section
-   - Interest Groups section on home with "More" arrow
-   - Events sub-tabs: Upcoming + Signed Up
-   - Explore tab with Events + Connect segments
-   - Family Status field on event detail
-   - Neighbour photos on circular icons
-   - Jio → Invite rename
-   - Marketplace: merged Items & Services, search bar, reviews, wishlist save
+- No backend / API — all mock data
+- Saved events state in EventsPage does not sync to ProfilePage (separate state)
+- `HelpSharePage` wishlist props not fully wired in `App.tsx`
+- No real push notifications

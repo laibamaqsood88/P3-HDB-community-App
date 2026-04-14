@@ -36,7 +36,7 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   'Photography':                  { bg: '#FAE8FF', text: '#A21CAF' },
 };
 
-const INTEREST_CATEGORIES = [
+export const INTEREST_CATEGORIES = [
   { label: 'Social & Community',   items: ['Community Volunteering', 'Cultural Heritage & Festivals'] },
   { label: 'Fitness & Wellness',   items: ['Fitness & Sports', 'Yoga & Mindfulness', 'Outdoor Activities'] },
   { label: 'Arts & Creativity',    items: ['Arts & Crafts', 'Music & Performing Arts', 'Dance'] },
@@ -848,14 +848,6 @@ function RecommendationsStep({
           borderBottom: `1px solid ${BORDER}`,
         }}
       >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-          style={{ fontSize: '32px', marginBottom: '8px' }}
-        >
-          🎉
-        </motion.div>
         <div
           style={{
             fontSize: '24px',
@@ -865,7 +857,7 @@ function RecommendationsStep({
             lineHeight: '1.2',
           }}
         >
-          Here's your neighbourhood 🎉
+          Here's your neighbourhood
         </div>
         <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.5', marginBottom: interests.length > 0 ? '14px' : '0' }}>
           Based on your interests, we found these for you

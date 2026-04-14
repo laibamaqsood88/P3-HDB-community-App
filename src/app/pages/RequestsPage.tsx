@@ -45,6 +45,8 @@ const INITIAL_REQUESTS = [
   { id: 5, title: 'Need help fixing leaking kitchen tap', category: 'Repairs', type: 'Paid Request', description: 'Kitchen tap has been dripping for a week. Looking for someone handy who can fix it. Will pay for parts and a small appreciation fee.', expiresOn: '22 Apr 2026', verified: true, poster: POSTER_AVATARS[4], collectionPoint: 'Blk 445, Level 8, #08-11' },
 ];
 
+export { INITIAL_REQUESTS as REQUESTS_DATA, CAT_EMOJIS as REQUESTS_CAT_EMOJIS };
+
 // ---- Map Component ----
 function CollectionPointMap({ address }: { address: string }) {
   return (
@@ -541,10 +543,14 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
 // ---- Main Export ----
 interface RequestsPageProps {
   onAddPost?: (post: any) => void;
+  initialRequestId?: number;
 }
 
-export function RequestsPage({ onAddPost }: RequestsPageProps = {}) {
-  const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
+export function RequestsPage({ onAddPost, initialRequestId }: RequestsPageProps = {}) {
+  const initialStack: NavFrame[] = initialRequestId
+    ? [{ screen: 'feed' }, { screen: 'detail', params: { request: INITIAL_REQUESTS.find(r => r.id === initialRequestId) } }]
+    : [{ screen: 'feed' }];
+  const [navStack, setNavStack] = useState<NavFrame[]>(initialStack);
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
 
   const current = navStack[navStack.length - 1];
