@@ -209,53 +209,24 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           style={{
             width: '100%',
             padding: '18px 24px',
-            borderRadius: '22px',
-            background: '#E30613',
-            border: 'none',
+            borderRadius: '16px',
+            background: '#FFFFFF',
+            border: '1.5px solid #D1D5DB',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '12px',
-            boxShadow: '0 8px 28px rgba(227,6,19,0.32)',
+            gap: '0px',
+            boxShadow: 'none',
             marginBottom: '16px',
             fontFamily: "'DM Sans', sans-serif",
           }}
         >
-          {/* Singpass logo badge */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              background: 'rgba(255,255,255,0.15)',
-              padding: '5px 10px',
-              borderRadius: '8px',
-            }}
-          >
-            <span style={{ fontSize: '15px', color: 'white', fontWeight: 900, letterSpacing: '0.5px' }}>
-              Sing
-            </span>
-            <span
-              style={{
-                fontSize: '15px',
-                color: '#FF6B6B',
-                fontWeight: 900,
-                letterSpacing: '0.5px',
-              }}
-            >
-              pass
-            </span>
-          </div>
-          <span
-            style={{
-              fontSize: '16px',
-              fontWeight: 700,
-              color: 'white',
-              letterSpacing: '0.1px',
-            }}
-          >
-            Login with Singpass
+          <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111', letterSpacing: '0.1px' }}>
+            Log in with&nbsp;
+          </span>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: '#E30613', letterSpacing: '0.1px' }}>
+            singpass
           </span>
         </motion.button>
 

@@ -29,13 +29,12 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
 const ALL_INTERESTS = Object.keys(INTEREST_COLORS);
 
 const FAMILY_OPTIONS = [
-  'Individual',
+  'Single',
   'Couple',
-  'Family with Young Kids',
-  'Family with Teenagers',
-  'Single Parent',
-  'Empty Nester',
-  'Senior',
+  'Living with kids',
+  'Living with parents',
+  'Multigenerational',
+  'Senior (60 and above)',
 ];
 
 interface SignUpPageProps {
@@ -452,6 +451,11 @@ function StepInterests({
   onToggle: (t: string) => void;
   onNext: () => void;
 }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredInterests = ALL_INTERESTS.filter(t =>
+    t.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
       <div style={{ padding: '52px 24px 0' }}>
@@ -459,14 +463,36 @@ function StepInterests({
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
           What are you into?
         </div>
-        <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '24px', lineHeight: '1.5' }}>
+        <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '16px', lineHeight: '1.5' }}>
           Select all that apply — we'll match you with relevant groups and events.
+        </div>
+        {/* Search bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '14px', padding: '10px 14px', marginBottom: '16px' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#AEAEB2" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search interests..."
+            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: "'DM Sans', sans-serif" }}
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AEAEB2" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          )}
         </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 16px' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-          {ALL_INTERESTS.map(t => {
+          {filteredInterests.length === 0 ? (
+            <div style={{ width: '100%', textAlign: 'center', padding: '40px 0', color: MUTED, fontSize: '14px' }}>
+              No interests found for "{searchQuery}"
+            </div>
+          ) : null}
+          {filteredInterests.map(t => {
             const sel = interests.includes(t);
             const colors = INTEREST_COLORS[t];
             return (
