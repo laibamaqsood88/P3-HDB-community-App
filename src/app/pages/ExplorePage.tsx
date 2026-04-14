@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Filter, Bookmark, Share2, X, Shield,
-  Bell, Calendar, MapPin, Globe, Users, Search,
-  ExternalLink, Check, AlertCircle, Clock
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -25,9 +24,10 @@ type EventScreen =
 
 interface EventData {
   id: number; title: string; date: string; time: string;
-  location: string; language: string; audience: string;
-  attendees: number; signups: number; image: string;
+  location: string; address: string; language: string; audience: string;
+  attendees: number; signups: number; going: number; price: string; image: string;
   description: string; category: string; categoryColor: string; categoryBg: string;
+  organizer: string; organizerRating: number; organizerReviews: number; organizerImage: string;
 }
 
 interface Filters {
@@ -40,53 +40,82 @@ interface NavFrame { screen: EventScreen; params?: any; }
 // ---- Mock Data ----
 const EVENTS: EventData[] = [
   {
-    id: 1, title: 'Morning Run at Bishan-AMK Park', date: 'Sat, 12 Apr 2026', time: '7:00 AM',
-    location: 'Bishan-AMK Park, Main Pavilion', language: 'English', audience: 'Adults 25–45',
-    attendees: 8, signups: 24, categoryColor: '#16A34A', categoryBg: '#DCFCE7', category: 'Fitness',
+    id: 1, title: 'Morning Run at Bishan-AMK Park', date: 'Sat, 12 Apr 2026', time: '7:00 AM – 9:00 AM',
+    location: 'Bishan-AMK Park, Main Pavilion', address: '1384 Ang Mo Kio Ave 1, S569931',
+    language: 'English', audience: 'Adults 25–45',
+    attendees: 8, signups: 24, going: 24, price: 'Free',
+    organizer: 'Bishan-AMK RC', organizerRating: 4.8, organizerReviews: 124,
+    organizerImage: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
+    categoryColor: '#16A34A', categoryBg: '#DCFCE7', category: 'Fitness',
     image: 'https://images.unsplash.com/photo-1746046318036-b091b95b02bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
     description: 'Join your neighbours for a refreshing morning run around Bishan-AMK Park. Suitable for casual joggers and experienced runners alike. Meet at the main pavilion at 6:50 AM. Water stations provided along the route. All fitness levels welcome — we run at a conversational pace so no one gets left behind.',
   },
   {
-    id: 2, title: 'Peranakan Cooking Workshop', date: 'Sun, 13 Apr 2026', time: '10:00 AM',
-    location: 'Blk 123 Community Hub, Level 2', language: 'English / Mandarin', audience: 'Families',
-    attendees: 12, signups: 30, categoryColor: '#D97706', categoryBg: '#FEF3C7', category: 'Cooking',
+    id: 2, title: 'Peranakan Cooking Workshop', date: 'Sun, 13 Apr 2026', time: '10:00 AM – 1:00 PM',
+    location: 'Blk 123 Community Hub, Level 2', address: 'Blk 123 Ang Mo Kio Ave 6, S560123',
+    language: 'English / Mandarin', audience: 'All Ages',
+    attendees: 12, signups: 30, going: 30, price: 'Free',
+    organizer: 'Bishan CC', organizerRating: 4.9, organizerReviews: 359,
+    organizerImage: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
+    categoryColor: '#D97706', categoryBg: '#FEF3C7', category: 'Cooking',
     image: 'https://images.unsplash.com/photo-1683633815082-783838d0dfe0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
     description: 'Learn to cook traditional Peranakan dishes with your neighbours! Mrs Lim will guide you through making Ayam Buah Keluak and Kueh Pie Tee. Ingredients provided. Limited to 15 participants. Perfect for families and food enthusiasts who want to connect over Singapore heritage food.',
   },
   {
-    id: 3, title: 'Community Garden Morning', date: 'Sat, 19 Apr 2026', time: '8:00 AM',
-    location: 'Rooftop Garden, Blk 450', language: 'English', audience: 'All Ages',
-    attendees: 5, signups: 18, categoryColor: '#059669', categoryBg: '#D1FAE5', category: 'Gardening',
+    id: 3, title: 'Community Garden Morning', date: 'Sat, 19 Apr 2026', time: '8:00 AM – 11:00 AM',
+    location: 'Rooftop Garden, Blk 450', address: 'Blk 450 Ang Mo Kio Ave 10, S560450',
+    language: 'English', audience: 'All Ages',
+    attendees: 5, signups: 18, going: 18, price: 'Free',
+    organizer: 'Green Thumbs SG', organizerRating: 4.7, organizerReviews: 88,
+    organizerImage: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
+    categoryColor: '#059669', categoryBg: '#D1FAE5', category: 'Gardening',
     image: 'https://images.unsplash.com/photo-1759716705272-8d1697eccf7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
     description: "Help tend the estate's shared rooftop garden! Activities include planting vegetables, pruning herbs, and composting. No experience needed — seasoned gardeners and curious beginners are both welcome. Gloves and tools provided. We meet every fortnight to grow our community garden together.",
   },
   {
-    id: 4, title: 'Saturday Board Game Afternoon', date: 'Sat, 19 Apr 2026', time: '2:00 PM',
-    location: 'RC Multi-Purpose Hall, Blk 447', language: 'English', audience: 'Adults 20–40',
-    attendees: 6, signups: 15, categoryColor: '#7C3AED', categoryBg: '#EDE9FE', category: 'Board Games',
+    id: 4, title: 'Saturday Board Game Afternoon', date: 'Sat, 19 Apr 2026', time: '2:00 PM – 5:00 PM',
+    location: 'RC Multi-Purpose Hall, Blk 447', address: 'Blk 447 Ang Mo Kio Ave 10, S560447',
+    language: 'English', audience: 'Adults 20–40',
+    attendees: 6, signups: 15, going: 15, price: 'Free',
+    organizer: 'Bishan-AMK RC', organizerRating: 4.6, organizerReviews: 72,
+    organizerImage: 'https://images.unsplash.com/photo-1632501641765-e568d28b0015?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
+    categoryColor: '#7C3AED', categoryBg: '#EDE9FE', category: 'Board Games',
     image: 'https://images.unsplash.com/photo-1762068383473-f59f4dc614e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
     description: "Bring your favourite board games or try something new from the communal game library. From Catan to Codenames, there's something for everyone. Snacks and drinks provided. Great way to meet neighbours who love strategy and fun in a relaxed Saturday afternoon setting.",
   },
   {
-    id: 5, title: 'Seniors Tai Chi Morning', date: 'Wed, 16 Apr 2026', time: '7:30 AM',
-    location: 'Void Deck, Blk 445', language: 'Mandarin', audience: 'Seniors 55+',
-    attendees: 15, signups: 40, categoryColor: '#0891B2', categoryBg: '#CFFAFE', category: 'Wellness',
+    id: 5, title: 'Seniors Tai Chi Morning', date: 'Wed, 16 Apr 2026', time: '7:30 AM – 9:00 AM',
+    location: 'Void Deck, Blk 445', address: 'Blk 445 Ang Mo Kio Ave 10, S560445',
+    language: 'Mandarin', audience: 'Seniors 55+',
+    attendees: 15, signups: 40, going: 40, price: 'Free',
+    organizer: 'Active Ageing SG', organizerRating: 4.9, organizerReviews: 201,
+    organizerImage: 'https://images.unsplash.com/photo-1690254995096-6e3cc6263e6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
+    categoryColor: '#0891B2', categoryBg: '#CFFAFE', category: 'Wellness',
     image: 'https://images.unsplash.com/photo-1690254995096-6e3cc6263e6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
     description: 'Weekly Tai Chi sessions for seniors conducted in Mandarin by a certified instructor. Improve balance, reduce stress, and meet fellow residents. Wear comfortable clothing and flat shoes. Open to all senior residents. No prior experience required — we have been running this weekly session for 3 years.',
   },
 ];
 
-const AGE_GROUPS = ['All Ages', '20–35', '35–50', '55+', 'Families'];
+const AGE_GROUPS = ['All Ages', '20–35', '35–50', '55+'];
 const LANGUAGES = ['English', 'Mandarin', 'Malay', 'Tamil', 'Multilingual'];
 const INTERESTS = ['Fitness', 'Cooking', 'Gardening', 'Board Games', 'Arts & Crafts', 'Music'];
-const FAMILY_STATUS = ['Individual', 'Families', 'Parents', 'Seniors'];
+const FAMILY_STATUS = ['Single', 'Couple', 'Living with kids', 'Living with parents', 'Multigenerational', 'Senior (60 and above)'];
 const CATEGORIES = ['All', '🏃 Fitness', '🍳 Cooking', '🌱 Gardening', '🎲 Board Games', '💆 Wellness'];
+
+const NEIGHBOURS_GOING = [
+  { id: 1, initials: 'AL', color: '#FF6B47' },
+  { id: 2, initials: 'BT', color: '#7C3AED' },
+  { id: 3, initials: 'CK', color: '#0891B2' },
+  { id: 4, initials: 'DM', color: '#059669' },
+];
 
 interface ExplorePageProps {
   initialEventId?: number;
+  initialSubTab?: 'events' | 'groups';
+  onSubTabChange?: (tab: 'events' | 'groups') => void;
 }
 
-export function ExplorePage({ initialEventId }: ExplorePageProps) {
+export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange }: ExplorePageProps) {
   const initialScreen: NavFrame = initialEventId
     ? { screen: 'detail', params: { event: EVENTS.find(e => e.id === initialEventId) || EVENTS[0] } }
     : { screen: 'feed' };
@@ -95,11 +124,17 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
   const [filters, setFilters] = useState<Filters>({ ageGroups: [], languages: [], interests: [], familyStatus: [] });
   const [tempFilters, setTempFilters] = useState<Filters>({ ageGroups: [], languages: [], interests: [], familyStatus: [] });
   const [savedEvents, setSavedEvents] = useState<number[]>([]);
+  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
   const [showFilter, setShowFilter] = useState(false);
   const [reminderOption, setReminderOption] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeSubTab, setActiveSubTab] = useState<'events' | 'connect'>('events');
+  const [activeSubTab, setActiveSubTab] = useState<'events' | 'groups'>(initialSubTab);
+
+  const handleSubTabChange = (tab: 'events' | 'groups') => {
+    setActiveSubTab(tab);
+    onSubTabChange?.(tab);
+  };
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: EventScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
@@ -115,9 +150,10 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
   });
 
   const toggleSave = (id: number) => setSavedEvents(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  const toggleRegister = (id: number) => setRegisteredEvents(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
 
-  // ---- Sub-tab: Connect ----
-  if (activeSubTab === 'connect' && (current.screen === 'feed' || current.screen === 'filtered')) {
+  // ---- Sub-tab: Groups ----
+  if (activeSubTab === 'groups' && (current.screen === 'feed' || current.screen === 'filtered')) {
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
         {/* Sub-tab header */}
@@ -125,11 +161,11 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0px' }}>
             {([
               { key: 'events', label: 'Events', icon: '📅' },
-              { key: 'connect', label: 'Connect', icon: '🤝' },
+              { key: 'groups', label: 'Groups', icon: '🤝' },
             ] as const).map(tab => (
               <button
                 key={tab.key}
-                onClick={() => setActiveSubTab(tab.key)}
+                onClick={() => handleSubTabChange(tab.key)}
                 style={{
                   flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
                   padding: '10px 0 0', background: 'none', border: 'none', cursor: 'pointer',
@@ -168,11 +204,11 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0px' }}>
             {([
               { key: 'events', label: 'Events', icon: '📅' },
-              { key: 'connect', label: 'Connect', icon: '🤝' },
+              { key: 'groups', label: 'Groups', icon: '🤝' },
             ] as const).map(tab => (
               <button
                 key={tab.key}
-                onClick={() => setActiveSubTab(tab.key)}
+                onClick={() => handleSubTabChange(tab.key)}
                 style={{
                   flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
                   padding: '10px 0 0', background: 'none', border: 'none', cursor: 'pointer',
@@ -368,6 +404,7 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
     const ev: EventData = current.params?.event;
     if (!ev) return null;
     const isSaved = savedEvents.includes(ev.id);
+    const isRegistered = registeredEvents.includes(ev.id);
 
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
@@ -375,77 +412,125 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
           {/* Hero image */}
           <div style={{ height: '260px', position: 'relative' }}>
             <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 40%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 45%)' }} />
             <button onClick={goBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
               <ChevronLeft size={20} color={TEXT} />
             </button>
             <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
-              <button onClick={() => toggleSave(ev.id)} style={{ width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-                <Bookmark size={18} color={isSaved ? PRIMARY : TEXT} fill={isSaved ? PRIMARY : 'none'} />
-              </button>
               <button onClick={() => goTo('share', { event: ev })} style={{ width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-                <Share2 size={18} color={TEXT} />
+                <Share2 size={17} color={TEXT} />
+              </button>
+              <button onClick={() => toggleSave(ev.id)} style={{ width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+                <Bookmark size={17} color={isSaved ? PRIMARY : TEXT} fill={isSaved ? PRIMARY : 'none'} />
               </button>
             </div>
           </div>
 
           <div style={{ padding: '20px 20px 32px' }}>
-            <div style={{ display: 'inline-flex', padding: '4px 12px', borderRadius: '20px', background: ev.categoryBg, marginBottom: '12px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: ev.categoryColor }}>{ev.category}</span>
+            {/* Category badge */}
+            <div style={{ display: 'inline-flex', padding: '4px 12px', borderRadius: '20px', background: ev.categoryBg, marginBottom: '10px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: ev.categoryColor }}>{ev.category}</span>
             </div>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT, marginBottom: '16px', lineHeight: '1.3' }}>{ev.title}</div>
 
-            {/* Info cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-              {[
-                { Icon: Calendar, label: 'Date', value: ev.date },
-                { Icon: Clock, label: 'Time', value: ev.time },
-                { Icon: MapPin, label: 'Location', value: ev.location },
-                { Icon: Globe, label: 'Language', value: ev.language },
-                { Icon: Users, label: 'Audience', value: ev.audience },
-                { Icon: Users, label: 'Signed Up', value: `${ev.signups} people` },
-              ].map(({ Icon, label, value }) => (
-                <div key={label} style={{ background: CARD, borderRadius: '16px', padding: '12px 14px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <Icon size={13} color={MUTED} />
-                    <span style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{label}</span>
-                  </div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, lineHeight: '1.3' }}>{value}</div>
+            {/* Title */}
+            <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT, marginBottom: '18px', lineHeight: '1.3' }}>{ev.title}</div>
+
+            {/* Date row */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '14px', padding: '14px 16px', background: CARD, borderRadius: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Calendar size={16} color={PRIMARY} />
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{ev.date}</div>
+                <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginTop: '2px' }}>{ev.time} GMT+8</div>
+              </div>
+            </div>
+
+            {/* Location row */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '18px', padding: '14px 16px', background: CARD, borderRadius: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <MapPin size={16} color={PRIMARY} />
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{ev.location}</div>
+                <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginTop: '2px' }}>{ev.address}</div>
+              </div>
+            </div>
+
+            {/* Organizer card */}
+            <div style={{ background: CARD, borderRadius: '18px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px', boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
+              <img src={ev.organizerImage} alt="" style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, marginBottom: '2px' }}>{ev.organizer}</div>
+                <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '4px' }}>Organiser</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <Star size={12} color="#FF6B47" fill="#FF6B47" />
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: TEXT }}>{ev.organizerRating}</span>
+                  <span style={{ fontSize: '12px', color: MUTED }}>· {ev.organizerReviews} reviews</span>
                 </div>
-              ))}
+              </div>
             </div>
 
             {/* Description */}
-            <div style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', marginBottom: '20px' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this event</div>
-              <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.6' }}>{ev.description}</div>
+            <div style={{ background: CARD, borderRadius: '18px', padding: '16px', marginBottom: '20px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this event</div>
+              <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.65' }}>{ev.description}</div>
             </div>
 
-            {/* Organiser */}
-            <div style={{ background: CARD, borderRadius: '20px', padding: '16px 18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '42px', height: '42px', borderRadius: '14px', background: ev.categoryBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Users size={18} color={ev.categoryColor} />
+            {/* Hosting & Going */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              {/* Hosting */}
+              <div style={{ flex: 1, background: CARD, borderRadius: '18px', padding: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT2, marginBottom: '10px' }}>Hosting (1)</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: 'white' }}>O</span>
+                    <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '14px', height: '14px', borderRadius: '50%', background: '#7C3AED', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Check size={7} color="white" strokeWidth={3} />
+                    </div>
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: TEXT2 }}>Super Organizer</span>
+                </div>
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '12px', color: MUTED, fontWeight: 600, marginBottom: '2px' }}>Organiser</div>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>Bishan-AMK RC</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', borderRadius: '20px', background: '#D1FAE5' }}>
-                <Shield size={11} color="#059669" />
-                <span style={{ fontSize: '11px', fontWeight: 700, color: '#059669' }}>Verified</span>
+
+              {/* Going */}
+              <div style={{ flex: 1, background: CARD, borderRadius: '18px', padding: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY, marginBottom: '10px' }}>Going ({ev.going + (isRegistered ? 1 : 0)})</div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {NEIGHBOURS_GOING.slice(0, 4).map((n, i) => (
+                    <div key={n.id} style={{ width: '32px', height: '32px', borderRadius: '50%', background: n.color, border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: i > 0 ? '-8px' : '0' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 800, color: 'white' }}>{n.initials}</span>
+                    </div>
+                  ))}
+                  {ev.going > 4 && (
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: '-8px' }}>
+                      <span style={{ fontSize: '9px', fontWeight: 700, color: TEXT2 }}>+{ev.going - 4}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Register button */}
-        <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}` }}>
-          <button
-            onClick={() => goTo('register', { event: ev })}
-            style={{ width: '100%', padding: '16px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
+        {/* Bottom bar */}
+        <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>{ev.price}</div>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => toggleRegister(ev.id)}
+            style={{
+              flex: 1, padding: '15px', borderRadius: '18px',
+              background: isRegistered ? '#D1FAE5' : PRIMARY,
+              border: 'none', cursor: 'pointer',
+              fontSize: '15px', fontWeight: 800,
+              color: isRegistered ? '#059669' : 'white',
+              fontFamily: "'DM Sans', sans-serif",
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            }}
           >
-            Register for this Event
-          </button>
+            {isRegistered ? <><Check size={16} strokeWidth={2.5} /> Attending</> : 'Attend'}
+          </motion.button>
         </div>
       </div>
     );
