@@ -18,7 +18,7 @@ const BORDER = '#EDEDEC';
 
 // ---- Types ----
 type EventScreen =
-  | 'feed' | 'filtered' | 'detail' | 'share'
+  | 'feed' | 'filtered' | 'detail' | 'share' | 'going'
   | 'singpass' | 'recipient-detail' | 'non-resident'
   | 'register' | 'browser';
 
@@ -102,11 +102,24 @@ const INTERESTS = ['Fitness', 'Cooking', 'Gardening', 'Board Games', 'Arts & Cra
 const FAMILY_STATUS = ['Single', 'Couple', 'Living with kids', 'Living with parents', 'Multigenerational', 'Senior (60 and above)'];
 const CATEGORIES = ['All', '🏃 Fitness', '🍳 Cooking', '🌱 Gardening', '🎲 Board Games', '💆 Wellness'];
 
+const FAMILY_STATUS_BREAKDOWN = [
+  { label: 'Single',              count: 8,  color: '#FF6B47' },
+  { label: 'Couple',              count: 5,  color: '#7C3AED' },
+  { label: 'Living with kids',    count: 6,  color: '#D97706' },
+  { label: 'Living with parents', count: 3,  color: '#0891B2' },
+  { label: 'Multigenerational',   count: 2,  color: '#059669' },
+  { label: 'Senior (60+)',        count: 7,  color: '#DB2777' },
+];
+
 const NEIGHBOURS_GOING = [
-  { id: 1, initials: 'AL', color: '#FF6B47' },
-  { id: 2, initials: 'BT', color: '#7C3AED' },
-  { id: 3, initials: 'CK', color: '#0891B2' },
-  { id: 4, initials: 'DM', color: '#059669' },
+  { id: 1, initials: 'AL', color: '#FF6B47', unit: 'Blk 445 #12-34', status: 'Single' },
+  { id: 2, initials: 'BT', color: '#7C3AED', unit: 'Blk 447 #08-12', status: 'Couple' },
+  { id: 3, initials: 'CS', color: '#D97706', unit: 'Blk 448 #03-22', status: 'Living with kids' },
+  { id: 4, initials: 'DM', color: '#059669', unit: 'Blk 445 #15-01', status: 'Senior (60+)' },
+  { id: 5, initials: 'EN', color: '#0891B2', unit: 'Blk 449 #07-05', status: 'Single' },
+  { id: 6, initials: 'FR', color: '#DB2777', unit: 'Blk 446 #11-18', status: 'Living with parents' },
+  { id: 7, initials: 'GK', color: '#EA580C', unit: 'Blk 450 #04-09', status: 'Couple' },
+  { id: 8, initials: 'HL', color: '#475569', unit: 'Blk 445 #09-33', status: 'Senior (60+)' },
 ];
 
 // Mock neighbour attendance data
@@ -543,8 +556,12 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               </div>
 
               {/* Going */}
-              <div style={{ flex: 1, background: CARD, borderRadius: '18px', padding: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY, marginBottom: '10px' }}>Going ({ev.going + (isRegistered ? 1 : 0)})</div>
+              <motion.div
+                whileTap={{ scale: 0.97 }}
+                onClick={() => goTo('going', { event: ev })}
+                style={{ flex: 1, background: CARD, borderRadius: '18px', padding: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', cursor: 'pointer' }}
+              >
+                <div style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY, marginBottom: '10px' }}>Going ({ev.going + (isRegistered ? 1 : 0)}) →</div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   {NEIGHBOURS_GOING.slice(0, 4).map((n, i) => (
                     <div key={n.id} style={{ width: '32px', height: '32px', borderRadius: '50%', background: n.color, border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: i > 0 ? '-8px' : '0' }}>
@@ -557,7 +574,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -580,6 +597,91 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           >
             {isRegistered ? <><Check size={16} strokeWidth={2.5} /> Attending</> : 'Attend'}
           </motion.button>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Going breakdown screen ----
+  if (current.screen === 'going') {
+    const ev: EventData = current.params?.event;
+    const total = FAMILY_STATUS_BREAKDOWN.reduce((s, f) => s + f.count, 0);
+
+    return (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+        {/* Header */}
+        <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ChevronLeft size={20} color={TEXT} />
+          </button>
+          <div>
+            <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT }}>Who's Going</div>
+            <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev?.title}</div>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
+          {/* Stacked bar chart */}
+          <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>By Household Type</span>
+              <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{total} going</span>
+            </div>
+
+            {/* Single stacked bar */}
+            <div style={{ height: '20px', borderRadius: '10px', overflow: 'hidden', display: 'flex', marginBottom: '20px' }}>
+              {FAMILY_STATUS_BREAKDOWN.map((item, i) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(item.count / total) * 100}%` }}
+                  transition={{ duration: 0.6, ease: 'easeOut', delay: i * 0.08 }}
+                  style={{ height: '100%', background: item.color }}
+                />
+              ))}
+            </div>
+
+            {/* Legend */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {FAMILY_STATUS_BREAKDOWN.map(item => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: item.color, flexShrink: 0 }} />
+                    <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
+                    <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / total) * 100)}%)</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Neighbours attending */}
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '12px' }}>Neighbours Attending</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {NEIGHBOURS_GOING.map(n => (
+                <motion.div
+                  key={n.id}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ background: CARD, borderRadius: '18px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
+                >
+                  <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: 'white' }}>{n.initials}</span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>Neighbour {n.initials}</div>
+                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{n.unit}</div>
+                  </div>
+                  <div style={{ padding: '4px 10px', borderRadius: '20px', background: BG, flexShrink: 0 }}>
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: TEXT2 }}>{n.status}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
