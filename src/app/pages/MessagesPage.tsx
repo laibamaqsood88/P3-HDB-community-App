@@ -142,6 +142,13 @@ interface ChatMessage {
   time: string;
 }
 
+// ---- Group Activity Board data ----
+const GROUP_ACTIVITY: Record<number, { meetup: string; plan: string; goal: string; members: number }> = {
+  1: { meetup: 'Saturday 7 AM · Bishan-AMK Park Pavilion', plan: 'Bring water and comfortable shoes', goal: 'Hit 5K in under 30 minutes together', members: 14 },
+  2: { meetup: 'Saturday 8 AM · Rooftop Garden, Blk 450', plan: 'Bring gloves — we are pruning herbs this week', goal: 'Grow enough vegetables to share with neighbours', members: 9 },
+  3: { meetup: 'Sunday 2 PM · RC Multi-Purpose Hall, Blk 447', plan: 'Bring snacks — we have Catan and Codenames ready', goal: 'Try 3 new games this month as a group', members: 11 },
+};
+
 // ---- Interest tag colors ----
 const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   Running:       { bg: '#FFF0EC', text: '#FF6B47' },
@@ -501,51 +508,24 @@ function ChatScreen({
   onBack: () => void;
 }) {
   const isGroup = conv.type === 'group';
+  const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
+  const activity = GROUP_ACTIVITY[conv.id];
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
       {/* Header */}
-      <div
-        style={{
-          background: CARD,
-          padding: '52px 20px 16px',
-          borderBottom: `1px solid ${BORDER}`,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}` }}>
+        <div style={{ padding: '52px 20px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={onBack}
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '12px',
-              background: BG,
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
+            style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
           >
             <ChevronLeft size={20} color={TEXT} />
           </button>
 
           {/* Avatar */}
           <div
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '14px',
-              background: conv.avatarBg,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: conv.avatar.length > 2 ? '20px' : '15px',
-              fontWeight: 800,
-              color: 'white',
-              flexShrink: 0,
-            }}
+            style={{ width: '44px', height: '44px', borderRadius: '14px', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: conv.avatar.length > 2 ? '20px' : '15px', fontWeight: 800, color: 'white', flexShrink: 0 }}
           >
             {conv.avatar}
           </div>
@@ -558,10 +538,8 @@ function ChatScreen({
             </div>
             <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>
               {isGroup
-                ? `Group · ${conv.tag}`
-                : conv.type === 'marketplace'
-                ? 'Marketplace chat'
-                : 'Direct message'}
+                ? `${activity?.members ?? ''} members`
+                : conv.type === 'marketplace' ? 'Marketplace chat' : 'Direct message'}
             </span>
           </div>
 
@@ -569,26 +547,72 @@ function ChatScreen({
           {conv.tag && (() => {
             const colors = INTEREST_COLORS[conv.tag] || { bg: BG, text: TEXT2 };
             return (
-              <span
-                style={{
-                  padding: '4px 10px',
-                  borderRadius: '10px',
-                  background: colors.bg,
-                  color: colors.text,
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  flexShrink: 0,
-                }}
-              >
+              <span style={{ padding: '4px 10px', borderRadius: '10px', background: colors.bg, color: colors.text, fontSize: '11px', fontWeight: 700, flexShrink: 0 }}>
                 {conv.tag}
               </span>
             );
           })()}
         </div>
+
+        {/* Chat / Activity Board tabs — groups only */}
+        {isGroup && (
+          <div style={{ display: 'flex', borderTop: `1px solid ${BORDER}` }}>
+            {(['chat', 'activity'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setGroupTab(tab)}
+                style={{
+                  flex: 1, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer',
+                  fontFamily: "'DM Sans', sans-serif", fontSize: '13px',
+                  fontWeight: groupTab === tab ? 700 : 500,
+                  color: groupTab === tab ? PRIMARY : MUTED,
+                  borderBottom: `2px solid ${groupTab === tab ? PRIMARY : 'transparent'}`,
+                  transition: 'all 0.15s',
+                }}
+              >
+                {tab === 'chat' ? 'Chat' : 'Activity Board'}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* Activity Board — groups only */}
+      {isGroup && groupTab === 'activity' && activity && (
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: MUTED, letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '14px' }}>
+            Upcoming Activity
+          </div>
+
+          {[
+            { emoji: '📍', label: 'Next Meetup', value: activity.meetup },
+            { emoji: '📋', label: 'Upcoming Plan', value: activity.plan },
+            { emoji: '🎯', label: 'Group Goal', value: activity.goal },
+          ].map(item => (
+            <div
+              key={item.label}
+              style={{ background: CARD, borderRadius: '18px', padding: '16px 18px', display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}
+            >
+              <span style={{ fontSize: '22px', lineHeight: 1, marginTop: '1px' }}>{item.emoji}</span>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>{item.label}</div>
+                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5' }}>{item.value}</div>
+              </div>
+            </div>
+          ))}
+
+          {/* Discoverability notice */}
+          <div style={{ background: '#FFF0EC', borderRadius: '16px', padding: '14px 16px', display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '8px', border: `1px solid #FFD8CC` }}>
+            <Users size={16} color={PRIMARY} style={{ flexShrink: 0, marginTop: '1px' }} />
+            <div style={{ fontSize: '12px', color: PRIMARY, fontWeight: 600, lineHeight: '1.5' }}>
+              This group is discoverable by verified estate residents with the "{conv.tag}" interest tag
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Messages */}
-      <div
+      {(!isGroup || groupTab === 'chat') && <div
         style={{
           flex: 1,
           overflowY: 'auto',
@@ -681,10 +705,10 @@ function ChatScreen({
             </div>
           );
         })}
-      </div>
+      </div>}
 
-      {/* Input bar */}
-      <div
+      {/* Input bar — chat tab only */}
+      {(!isGroup || groupTab === 'chat') && <div
         style={{
           padding: '12px 16px 28px',
           background: CARD,
@@ -728,7 +752,7 @@ function ChatScreen({
             <Send size={18} color="white" />
           </button>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
