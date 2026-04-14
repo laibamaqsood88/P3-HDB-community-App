@@ -165,15 +165,32 @@ const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Marketplace', 'Direct'];
 
 interface MessagesPageProps {
   initialConvId?: number;
+  extraConversations?: any[];
 }
 
-export function MessagesPage({ initialConvId }: MessagesPageProps = {}) {
+export function MessagesPage({ initialConvId, extraConversations = [] }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
   const [openConv, setOpenConv] = useState<Conversation | null>(
     initialConvId ? (CONVERSATIONS.find(c => c.id === initialConvId) ?? null) : null
   );
   const [chatInputs, setChatInputs] = useState<Record<number, string>>({});
   const [localMessages, setLocalMessages] = useState<Record<number, ChatMessage[]>>({});
+
+  // Merge extra conversations (from neighbours connect etc.) with existing mock data
+  const allConversations: Conversation[] = [
+    ...extraConversations.map((c: any) => ({
+      id: c.id,
+      type: (c.type || 'direct') as ConvType,
+      name: c.name,
+      avatar: c.avatar || c.name?.substring(0, 2) || '??',
+      avatarBg: c.avatarColor || c.avatarBg || '#8B5CF6',
+      lastMessage: c.lastMessage || 'Say hello!',
+      time: c.time || 'Just now',
+      unread: c.unread ?? 0,
+      tag: c.tag || null,
+    })),
+    ...CONVERSATIONS,
+  ];
 
   const getMessages = (conv: Conversation): ChatMessage[] => {
     const local = localMessages[conv.id];
@@ -206,7 +223,7 @@ export function MessagesPage({ initialConvId }: MessagesPageProps = {}) {
     setChatInputs(p => ({ ...p, [conv.id]: '' }));
   };
 
-  const filteredConvs = CONVERSATIONS.filter(c => {
+  const filteredConvs = allConversations.filter(c => {
     if (activeFilter === 'All') return true;
     if (activeFilter === 'Groups') return c.type === 'group';
     if (activeFilter === 'Marketplace') return c.type === 'marketplace';

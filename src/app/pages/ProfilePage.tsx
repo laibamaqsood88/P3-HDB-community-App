@@ -14,6 +14,7 @@ const BORDER = '#EDEDEC';
 interface ProfilePageProps {
   onOpenEvent?: (eventId: number) => void;
   onClose?: () => void;
+  myPosts?: any[];
 }
 
 // ---- Mock Data ----
@@ -94,7 +95,7 @@ const BADGES = [
 ];
 
 // ---- Main Component ----
-export function ProfilePage({ onOpenEvent, onClose }: ProfilePageProps) {
+export function ProfilePage({ onOpenEvent, onClose, myPosts = [] }: ProfilePageProps) {
   const [activeSection, setActiveSection] = useState<'main' | 'settings'>('main');
 
   if (activeSection === 'settings') {
@@ -285,29 +286,55 @@ export function ProfilePage({ onOpenEvent, onClose }: ProfilePageProps) {
         </div>
 
         {/* My Posts */}
-        <div style={{ marginBottom: '24px' }}>
-          <SectionHeader label="My Posts" count={MY_POSTS.length} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {MY_POSTS.map(p => (
-              <div key={p.id} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: '46px', height: '46px', borderRadius: '16px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
-                  {p.emoji}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 600, background: BG, padding: '2px 8px', borderRadius: '8px' }}>{p.type}</span>
-                    <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: p.statusBg, color: p.statusColor }}>
-                      {p.status}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '2px' }}>{p.title}</div>
-                  {p.expiresIn && <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Expires in {p.expiresIn}</div>}
-                </div>
-                <ChevronRight size={16} color={MUTED} />
+        {(() => {
+          const typeColors: Record<string, { bg: string; text: string }> = {
+            listing: { bg: '#DBEAFE', text: '#2563EB' },
+            service: { bg: '#DCFCE7', text: '#16A34A' },
+            request: { bg: '#EDE9FE', text: '#7C3AED' },
+          };
+          const newPosts = myPosts.map(p => ({
+            id: p.id,
+            type: p.type === 'listing' ? 'Listing' : p.type === 'service' ? 'Service' : 'Request',
+            emoji: p.emoji || '📋',
+            title: p.title,
+            status: p.status || 'Active',
+            statusBg: '#DCFCE7',
+            statusColor: '#16A34A',
+            date: p.date,
+            expiresIn: null,
+          }));
+          const allPosts = [...newPosts, ...MY_POSTS];
+          return (
+            <div style={{ marginBottom: '24px' }}>
+              <SectionHeader label="My Posts" count={allPosts.length} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {allPosts.map(p => {
+                  const typeLower = p.type.toLowerCase();
+                  const tc = typeColors[typeLower] || { bg: BG, text: TEXT2 };
+                  return (
+                    <div key={p.id} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <div style={{ width: '46px', height: '46px', borderRadius: '16px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
+                        {p.emoji}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
+                          <span style={{ fontSize: '11px', color: tc.text, fontWeight: 700, background: tc.bg, padding: '2px 8px', borderRadius: '8px' }}>{p.type}</span>
+                          <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: (p as any).statusBg || '#DCFCE7', color: (p as any).statusColor || '#16A34A' }}>
+                            {p.status}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '2px' }}>{p.title}</div>
+                        {(p as any).date && <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{(p as any).date}</div>}
+                        {(p as any).expiresIn && <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Expires in {(p as any).expiresIn}</div>}
+                      </div>
+                      <ChevronRight size={16} color={MUTED} />
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          );
+        })()}
 
         {/* Settings Section */}
         <div>

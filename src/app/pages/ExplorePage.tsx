@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  ChevronLeft, Filter, Bookmark, Share2, X, Shield,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink
+  ChevronLeft, Bookmark, Share2, X, Shield,
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, UserPlus, SlidersHorizontal
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -141,13 +141,49 @@ const EVENT_ATTENDEES: Record<number, number[]> = {
 };
 
 
+// ---- Neighbours Mock Data ----
+const MOCK_NEIGHBOURS = [
+  { id: 1, name: 'Alex Lim', distance: '0.1 km', unit: 'Blk 445 #12-34', interests: ['Fitness & Sports', 'Cooking & Baking'], avatar: 'AL', color: '#FF6B47', lastActive: '2 hours ago' },
+  { id: 2, name: 'Ben Tan', distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'], avatar: 'BT', color: '#7C3AED', lastActive: '5 hours ago' },
+  { id: 3, name: 'Clara Soh', distance: '0.3 km', unit: 'Blk 448 #03-22', interests: ['Cooking & Baking', 'Gardening & Plants'], avatar: 'CS', color: '#D97706', lastActive: '1 day ago' },
+  { id: 4, name: 'Diana Mak', distance: '0.4 km', unit: 'Blk 445 #15-01', interests: ['Gardening & Plants', 'Yoga & Mindfulness'], avatar: 'DM', color: '#059669', lastActive: '3 hours ago' },
+  { id: 5, name: 'Eli Ng', distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'], avatar: 'EN', color: '#0891B2', lastActive: 'Just now' },
+  { id: 6, name: 'Fiona Raj', distance: '0.6 km', unit: 'Blk 446 #11-18', interests: ['Music & Performing Arts', 'Dance'], avatar: 'FR', color: '#DB2777', lastActive: '30 min ago' },
+  { id: 7, name: 'Gary Koh', distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', color: '#EA580C', lastActive: '2 days ago' },
+  { id: 8, name: 'Hannah Lee', distance: '1.0 km', unit: 'Blk 445 #09-33', interests: ['Photography', 'Outdoor Activities'], avatar: 'HL', color: '#475569', lastActive: '4 hours ago' },
+  { id: 9, name: 'Ivan Wong', distance: '1.2 km', unit: 'Blk 451 #02-15', interests: ['Language Learning', 'Cultural Heritage & Festivals'], avatar: 'IW', color: '#0D9488', lastActive: '1 hour ago' },
+  { id: 10, name: 'Jasmine Yap', distance: '1.5 km', unit: 'Blk 452 #06-28', interests: ['Fashion & Beauty', 'Arts & Crafts'], avatar: 'JY', color: '#BE185D', lastActive: '6 hours ago' },
+];
+
+const NEIGHBOUR_INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
+  'Community Volunteering':       { bg: '#FEE2E2', text: '#DC2626' },
+  'Cultural Heritage & Festivals':{ bg: '#FEF3C7', text: '#B45309' },
+  'Fitness & Sports':             { bg: '#DCFCE7', text: '#16A34A' },
+  'Yoga & Mindfulness':           { bg: '#F3E8FF', text: '#9333EA' },
+  'Outdoor Activities':           { bg: '#CCFBF1', text: '#0D9488' },
+  'Arts & Crafts':                { bg: '#FCE7F3', text: '#DB2777' },
+  'Music & Performing Arts':      { bg: '#FFE4E6', text: '#E11D48' },
+  'Dance':                        { bg: '#EDE9FE', text: '#7C3AED' },
+  'Cooking & Baking':             { bg: '#FEF3C7', text: '#D97706' },
+  'Technology & Digital Skills':  { bg: '#DBEAFE', text: '#2563EB' },
+  'DIY & Home Improvement':       { bg: '#F1F5F9', text: '#475569' },
+  'Language Learning':            { bg: '#CFFAFE', text: '#0891B2' },
+  'Pets & Animals':               { bg: '#FEF9C3', text: '#CA8A04' },
+  'Gardening & Plants':           { bg: '#D1FAE5', text: '#059669' },
+  'Gaming':                       { bg: '#E0E7FF', text: '#4F46E5' },
+  'Fashion & Beauty':             { bg: '#FCE7F3', text: '#BE185D' },
+  'Photography':                  { bg: '#FAE8FF', text: '#A21CAF' },
+};
+
 interface ExplorePageProps {
   initialEventId?: number;
-  initialSubTab?: 'events' | 'groups';
-  onSubTabChange?: (tab: 'events' | 'groups') => void;
+  initialSubTab?: 'events' | 'groups' | 'neighbours';
+  onSubTabChange?: (tab: 'events' | 'groups' | 'neighbours') => void;
+  userInterests?: string[];
+  onAddConversation?: (conv: any) => void;
 }
 
-export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange }: ExplorePageProps) {
+export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation }: ExplorePageProps) {
   const initialScreen: NavFrame = initialEventId
     ? { screen: 'detail', params: { event: EVENTS.find(e => e.id === initialEventId) || EVENTS[0] } }
     : { screen: 'feed' };
@@ -161,9 +197,17 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const [reminderOption, setReminderOption] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeSubTab, setActiveSubTab] = useState<'events' | 'groups'>(initialSubTab);
+  const [activeSubTab, setActiveSubTab] = useState<'events' | 'groups' | 'neighbours'>(initialSubTab);
+  const [searchMode, setSearchMode] = useState(false);
+  const [searchScopeTab, setSearchScopeTab] = useState<'events' | 'groups' | 'neighbours'>(initialSubTab);
+  const [showGroupFilter, setShowGroupFilter] = useState(false);
+  const [showNeighbourFilter, setShowNeighbourFilter] = useState(false);
+  const [activeGroupCategory, setActiveGroupCategory] = useState('All');
+  const [distanceFilter, setDistanceFilter] = useState('Any');
+  const [filterSharedOnly, setFilterSharedOnly] = useState(false);
+  const [filterRecentOnly, setFilterRecentOnly] = useState(false);
 
-  const handleSubTabChange = (tab: 'events' | 'groups') => {
+  const handleSubTabChange = (tab: 'events' | 'groups' | 'neighbours') => {
     setActiveSubTab(tab);
     onSubTabChange?.(tab);
   };
@@ -214,186 +258,202 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const toggleSave = (id: number) => setSavedEvents(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
   const toggleRegister = (id: number) => setRegisteredEvents(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
 
-  // ---- Sub-tab: Groups ----
-  if (activeSubTab === 'groups' && (current.screen === 'feed' || current.screen === 'filtered')) {
-    return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
-        {/* Sub-tab header */}
-        <div style={{ background: CARD, paddingTop: '52px', borderBottom: `1px solid ${BORDER}` }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0px' }}>
-            {([
-              { key: 'events', label: 'Events', icon: '📅' },
-              { key: 'groups', label: 'Groups', icon: '🤝' },
-            ] as const).map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => handleSubTabChange(tab.key)}
-                style={{
-                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-                  padding: '10px 0 0', background: 'none', border: 'none', cursor: 'pointer',
-                  fontFamily: 'inherit', position: 'relative',
-                }}
-              >
-                <span style={{ fontSize: '22px' }}>{tab.icon}</span>
-                <span style={{
-                  fontSize: '13px', fontWeight: activeSubTab === tab.key ? 700 : 500,
-                  color: activeSubTab === tab.key ? TEXT : MUTED,
-                  paddingBottom: '10px',
-                }}>
-                  {tab.label}
-                </span>
-                {activeSubTab === tab.key && (
-                  <div style={{ position: 'absolute', bottom: 0, left: '16px', right: '16px', height: '2px', background: TEXT, borderRadius: '2px' }} />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div style={{ flex: 1, overflow: 'hidden' }}>
-          <ConnectPage />
-        </div>
-      </div>
-    );
-  }
-
-  // ---- Feed screen ----
+  // ---- Feed screen (unified for all 3 sub-tabs) ----
   if (current.screen === 'feed' || current.screen === 'filtered') {
+    const groupFilterActive = activeGroupCategory !== 'All';
+    const neighbourFilterActive = distanceFilter !== 'Any' || filterSharedOnly || filterRecentOnly;
+    const filterLabel = activeSubTab === 'events' ? 'Events' : activeSubTab === 'groups' ? 'Groups' : 'Neighbours';
+    const isFilterActive = activeSubTab === 'events' ? activeFilterCount > 0 : activeSubTab === 'groups' ? groupFilterActive : neighbourFilterActive;
+
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
-        {/* Header */}
-        <div style={{ background: CARD, padding: '52px 20px 0px', borderBottom: `1px solid ${BORDER}` }}>
-          {/* Sub-tabs */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0px' }}>
-            {([
-              { key: 'events', label: 'Events', icon: '📅' },
-              { key: 'groups', label: 'Groups', icon: '🤝' },
-            ] as const).map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => handleSubTabChange(tab.key)}
-                style={{
-                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-                  padding: '10px 0 0', background: 'none', border: 'none', cursor: 'pointer',
-                  fontFamily: 'inherit', position: 'relative',
-                }}
-              >
-                <span style={{ fontSize: '22px' }}>{tab.icon}</span>
-                <span style={{
-                  fontSize: '13px', fontWeight: activeSubTab === tab.key ? 700 : 500,
-                  color: activeSubTab === tab.key ? TEXT : MUTED,
-                  paddingBottom: '10px',
-                }}>
-                  {tab.label}
-                </span>
-                {activeSubTab === tab.key && (
-                  <div style={{ position: 'absolute', bottom: 0, left: '16px', right: '16px', height: '2px', background: TEXT, borderRadius: '2px' }} />
-                )}
-              </button>
-            ))}
-          </div>
-          {/* Search + filter row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '14px' }}>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '14px', padding: '10px 14px' }}>
-              <Search size={16} color={MUTED} />
-              <input
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search events..."
-                style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: 'inherit' }}
-              />
-            </div>
-            <button
-              onClick={() => { setTempFilters(filters); setShowFilter(true); }}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 14px', borderRadius: '14px', background: activeFilterCount > 0 ? '#FFF0EC' : BG, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif", position: 'relative' }}>
+
+        {/* ── Shared Header ── */}
+        <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
+          {/* Search trigger row */}
+          <div style={{ padding: '52px 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Tappable search pill */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => { setSearchScopeTab(activeSubTab); setSearchMode(true); }}
+              style={{
+                flex: 1, display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '11px 16px', borderRadius: '50px',
+                background: CARD, border: `1px solid ${BORDER}`,
+                boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
+                cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
+              }}
             >
-              <Filter size={15} color={activeFilterCount > 0 ? PRIMARY : TEXT2} />
-              {activeFilterCount > 0 && (
-                <span style={{ fontSize: '13px', fontWeight: 600, color: PRIMARY }}>{activeFilterCount}</span>
+              <Search size={15} color={MUTED} strokeWidth={2.5} />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{filterLabel}</span>
+                <span style={{ fontSize: '12px', color: MUTED, fontWeight: 400 }}>
+                  {searchQuery ? `"${searchQuery}"` : 'Singapore'}
+                </span>
+              </div>
+              {searchQuery && (
+                <button
+                  onClick={e => { e.stopPropagation(); setSearchQuery(''); }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
+                >
+                  <X size={14} color={MUTED} />
+                </button>
+              )}
+            </motion.button>
+
+            {/* Filter button */}
+            <button
+              onClick={() => {
+                if (activeSubTab === 'events') { setTempFilters(filters); setShowFilter(true); }
+                else if (activeSubTab === 'groups') setShowGroupFilter(true);
+                else setShowNeighbourFilter(true);
+              }}
+              style={{
+                width: '46px', height: '46px', borderRadius: '50%', flexShrink: 0,
+                background: isFilterActive ? '#FFF0EC' : CARD,
+                border: `1px solid ${isFilterActive ? '#FFD0C3' : BORDER}`,
+                boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
+              }}
+            >
+              <SlidersHorizontal size={17} color={isFilterActive ? PRIMARY : TEXT2} />
+              {activeSubTab === 'events' && activeFilterCount > 0 && (
+                <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
+                  <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{activeFilterCount}</span>
+                </div>
+              )}
+              {activeSubTab !== 'events' && isFilterActive && (
+                <div style={{ position: 'absolute', top: '4px', right: '4px', width: '10px', height: '10px', borderRadius: '50%', background: PRIMARY, border: '2px solid white' }} />
               )}
             </button>
           </div>
-          {/* Category pills */}
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '14px', marginTop: '12px' }}>
-            {CATEGORIES.map(cat => (
+
+          {/* Sub-tabs */}
+          <div style={{ display: 'flex', marginTop: '12px' }}>
+            {(['events', 'groups', 'neighbours'] as const).map(tab => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
+                key={tab}
+                onClick={() => handleSubTabChange(tab)}
                 style={{
-                  flexShrink: 0, padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
-                  background: activeCategory === cat ? PRIMARY : CARD,
-                  color: activeCategory === cat ? 'white' : TEXT2,
-                  border: activeCategory === cat ? 'none' : `1px solid ${BORDER}`,
-                  cursor: 'pointer', fontFamily: 'inherit',
+                  flex: 1, padding: '8px 0 0', background: 'none', border: 'none',
+                  cursor: 'pointer', fontFamily: 'inherit', position: 'relative',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
                 }}
               >
-                {cat}
+                <span style={{
+                  fontSize: '13px', fontWeight: activeSubTab === tab ? 700 : 500,
+                  color: activeSubTab === tab ? TEXT : MUTED,
+                  paddingBottom: '10px',
+                }}>
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </span>
+                {activeSubTab === tab && (
+                  <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />
+                )}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Event list */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 32px' }}>
-          {filteredEvents.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-              <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>No events found</div>
-              <div style={{ fontSize: '13px', color: TEXT2 }}>Try adjusting your filters</div>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {filteredEvents.map(ev => (
-                <motion.div
-                  key={ev.id}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => goTo('detail', { event: ev })}
-                  style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-                >
-                  <div style={{ height: '160px', position: 'relative' }}>
-                    <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: '12px', left: '12px', padding: '4px 10px', borderRadius: '20px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '11px', fontWeight: 700 }}>
-                      {ev.category}
-                    </div>
-                    <button
-                      onClick={e => { e.stopPropagation(); toggleSave(ev.id); }}
-                      style={{ position: 'absolute', top: '10px', right: '10px', width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        {/* ── Tab content ── */}
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+
+          {/* Events */}
+          {activeSubTab === 'events' && (
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 32px' }}>
+              {filteredEvents.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>No events found</div>
+                  <div style={{ fontSize: '13px', color: TEXT2 }}>Try adjusting your filters</div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {filteredEvents.map(ev => (
+                    <motion.div
+                      key={ev.id}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => goTo('detail', { event: ev })}
+                      style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'pointer' }}
                     >
-                      <Bookmark size={15} color={savedEvents.includes(ev.id) ? PRIMARY : MUTED} fill={savedEvents.includes(ev.id) ? PRIMARY : 'none'} />
-                    </button>
-                  </div>
-                  <div style={{ padding: '16px' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, marginBottom: '8px', lineHeight: '1.3' }}>{ev.title}</div>
-                    <div style={{ display: 'flex', gap: '14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Calendar size={13} color={MUTED} />
-                        <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
+                      <div style={{ height: '160px', position: 'relative' }}>
+                        <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', top: '12px', left: '12px', padding: '4px 10px', borderRadius: '20px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '11px', fontWeight: 700 }}>
+                          {ev.category}
+                        </div>
+                        <button
+                          onClick={e => { e.stopPropagation(); toggleSave(ev.id); }}
+                          style={{ position: 'absolute', top: '10px', right: '10px', width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          <Bookmark size={15} color={savedEvents.includes(ev.id) ? PRIMARY : MUTED} fill={savedEvents.includes(ev.id) ? PRIMARY : 'none'} />
+                        </button>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Clock size={13} color={MUTED} />
-                        <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
+                      <div style={{ padding: '16px' }}>
+                        <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, marginBottom: '8px', lineHeight: '1.3' }}>{ev.title}</div>
+                        <div style={{ display: 'flex', gap: '14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <Calendar size={13} color={MUTED} />
+                            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <Clock size={13} color={MUTED} />
+                            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '6px' }}>
+                          <MapPin size={13} color={MUTED} />
+                          <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.location}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <Users size={13} color={MUTED} />
+                            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.signups} signed up</span>
+                          </div>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY }}>View →</span>
+                        </div>
                       </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '6px' }}>
-                      <MapPin size={13} color={MUTED} />
-                      <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.location}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Users size={13} color={MUTED} />
-                        <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.signups} signed up</span>
-                      </div>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY }}>View →</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
+          )}
+
+          {/* Groups */}
+          {activeSubTab === 'groups' && (
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+              <ConnectPage
+                hideHeader={true}
+                externalSearchQuery={searchQuery}
+                externalCategory={activeGroupCategory}
+                showExternalFilter={showGroupFilter}
+                onFilterClose={() => setShowGroupFilter(false)}
+                onCategoryChange={setActiveGroupCategory}
+              />
+            </div>
+          )}
+
+          {/* Neighbours */}
+          {activeSubTab === 'neighbours' && (
+            <NeighboursTab
+              userInterests={userInterests}
+              onAddConversation={onAddConversation}
+              externalSearchQuery={searchQuery}
+              distanceFilter={distanceFilter}
+              filterSharedOnly={filterSharedOnly}
+              filterRecentOnly={filterRecentOnly}
+              showExternalFilter={showNeighbourFilter}
+              onFilterClose={() => setShowNeighbourFilter(false)}
+              onDistanceChange={setDistanceFilter}
+              onSharedOnlyChange={setFilterSharedOnly}
+              onRecentOnlyChange={setFilterRecentOnly}
+            />
           )}
         </div>
 
-        {/* Filter modal */}
+        {/* ── Events filter panel ── */}
         <AnimatePresence>
-          {showFilter && (
+          {activeSubTab === 'events' && showFilter && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -441,7 +501,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 ))}
                 <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                   <button
-                    onClick={() => { setTempFilters({ ageGroups: [], languages: [], interests: [], familyStatus: [] }); }}
+                    onClick={() => setTempFilters({ ageGroups: [], languages: [], interests: [], familyStatus: [] })}
                     style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
                   >
                     Clear All
@@ -454,6 +514,90 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                   </button>
                 </div>
               </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Search overlay (Meetup-style) ── */}
+        <AnimatePresence>
+          {searchMode && (
+            <motion.div
+              key="search-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              style={{
+                position: 'absolute', inset: 0,
+                background: 'rgba(242,241,238,0.97)',
+                zIndex: 80, display: 'flex', flexDirection: 'column',
+              }}
+            >
+              {/* Header row: X | Events | Groups | Neighbours | 🔍 */}
+              <div style={{ display: 'flex', alignItems: 'flex-end', paddingTop: '52px', paddingLeft: '4px', paddingRight: '12px', paddingBottom: '10px' }}>
+                <button
+                  onClick={() => { handleSubTabChange(searchScopeTab); setSearchMode(false); }}
+                  style={{ width: '44px', height: '40px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                >
+                  <X size={22} color={TEXT} strokeWidth={2} />
+                </button>
+
+                {(['events', 'groups', 'neighbours'] as const).map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setSearchScopeTab(tab)}
+                    style={{
+                      flex: 1, padding: '8px 2px',
+                      background: 'none', border: 'none',
+                      borderBottom: searchScopeTab === tab ? `2.5px solid ${PRIMARY}` : '2.5px solid transparent',
+                      cursor: 'pointer', fontFamily: 'inherit',
+                      fontSize: '14px', fontWeight: searchScopeTab === tab ? 700 : 500,
+                      color: searchScopeTab === tab ? PRIMARY : MUTED,
+                    }}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+
+                <motion.button
+                  whileTap={{ scale: 0.93 }}
+                  onClick={() => { handleSubTabChange(searchScopeTab); setSearchMode(false); }}
+                  style={{ width: '38px', height: '38px', borderRadius: '50%', background: TEXT, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: '4px' }}
+                >
+                  <Search size={15} color="white" strokeWidth={2.5} />
+                </motion.button>
+              </div>
+
+              {/* Search card */}
+              <div style={{ margin: '4px 16px 0', background: CARD, borderRadius: '20px', boxShadow: '0 4px 24px rgba(0,0,0,0.10)', overflow: 'hidden' }}>
+                {/* Search input row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 18px', borderBottom: `1px solid ${BORDER}` }}>
+                  {searchScopeTab === 'events'
+                    ? <Calendar size={20} color={MUTED} strokeWidth={1.8} />
+                    : searchScopeTab === 'groups'
+                    ? <Users size={20} color={MUTED} strokeWidth={1.8} />
+                    : <UserPlus size={20} color={MUTED} strokeWidth={1.8} />
+                  }
+                  <input
+                    autoFocus
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={`Search ${searchScopeTab}...`}
+                    style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '16px', color: TEXT, fontFamily: 'inherit' }}
+                    onKeyDown={e => { if (e.key === 'Enter') { handleSubTabChange(searchScopeTab); setSearchMode(false); } }}
+                  />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                      <X size={16} color={MUTED} />
+                    </button>
+                  )}
+                </div>
+                {/* Location row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 18px' }}>
+                  <MapPin size={20} color={MUTED} strokeWidth={1.8} />
+                  <span style={{ fontSize: '16px', color: TEXT, fontWeight: 500 }}>Singapore</span>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -782,4 +926,270 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   }
 
   return null;
+}
+
+// ---- Neighbours Sub-tab ----
+function NeighboursTab({
+  userInterests, onAddConversation,
+  externalSearchQuery,
+  distanceFilter, filterSharedOnly, filterRecentOnly,
+  showExternalFilter, onFilterClose,
+  onDistanceChange, onSharedOnlyChange, onRecentOnlyChange,
+}: {
+  userInterests: string[];
+  onAddConversation?: (conv: any) => void;
+  externalSearchQuery?: string;
+  distanceFilter: string;
+  filterSharedOnly: boolean;
+  filterRecentOnly: boolean;
+  showExternalFilter: boolean;
+  onFilterClose: () => void;
+  onDistanceChange: (v: string) => void;
+  onSharedOnlyChange: (v: boolean) => void;
+  onRecentOnlyChange: (v: boolean) => void;
+}) {
+  const [visibleCount, setVisibleCount] = useState(5);
+  const [connected, setConnected] = useState<number[]>([]);
+
+  const recentActiveValues = ['Just now', '30 min ago', '1 hour ago', '2 hours ago', '3 hours ago', '4 hours ago', '5 hours ago'];
+
+  const filtered = MOCK_NEIGHBOURS.filter(n => {
+    if (distanceFilter === '< 0.5 km') {
+      const km = parseFloat(n.distance);
+      if (km >= 0.5) return false;
+    } else if (distanceFilter === '< 1 km') {
+      const km = parseFloat(n.distance);
+      if (km >= 1) return false;
+    }
+    if (filterSharedOnly) {
+      const hasShared = n.interests.some(i => userInterests.includes(i));
+      if (!hasShared) return false;
+    }
+    if (filterRecentOnly) {
+      if (!recentActiveValues.includes(n.lastActive)) return false;
+    }
+    if (externalSearchQuery && !n.name.toLowerCase().includes(externalSearchQuery.toLowerCase())) return false;
+    return true;
+  });
+
+  const handleConnect = (neighbour: typeof MOCK_NEIGHBOURS[0]) => {
+    if (connected.includes(neighbour.id)) return;
+    setConnected(p => [...p, neighbour.id]);
+    toast.success(`Connected! Chat started with ${neighbour.name} 👋`);
+    onAddConversation?.({
+      id: Date.now(),
+      type: 'direct',
+      name: neighbour.name,
+      avatar: neighbour.avatar,
+      avatarColor: neighbour.color,
+      lastMessage: 'Say hello to your new neighbour!',
+      time: 'Just now',
+      unread: 0,
+      tag: null,
+    });
+  };
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif", position: 'relative' }}>
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+        <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500, marginBottom: '12px' }}>
+          {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} nearby
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {filtered.slice(0, visibleCount).map(n => {
+            const sharedInterests = n.interests.filter(i => userInterests.includes(i));
+            const isConnected = connected.includes(n.id);
+
+            return (
+              <motion.div
+                key={n.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ background: CARD, borderRadius: '22px', padding: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+                  {/* Avatar */}
+                  <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>{n.avatar}</span>
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>{n.name}</span>
+                      <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{n.lastActive}</span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '10px' }}>
+                      {n.distance} · {n.unit}
+                    </div>
+
+                    {/* Interest pills */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '12px' }}>
+                      {n.interests.map(interest => {
+                        const isShared = userInterests.includes(interest);
+                        const colors = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
+                        return (
+                          <span
+                            key={interest}
+                            style={{
+                              padding: '3px 9px',
+                              borderRadius: '20px',
+                              fontSize: '11px',
+                              fontWeight: isShared ? 700 : 500,
+                              background: isShared ? colors.bg : BG,
+                              color: isShared ? colors.text : MUTED,
+                              border: isShared ? `1px solid ${colors.text}30` : 'none',
+                            }}
+                          >
+                            {isShared ? '★ ' : ''}{interest}
+                          </span>
+                        );
+                      })}
+                    </div>
+
+                    {/* CTA buttons */}
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <motion.button
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => handleConnect(n)}
+                        style={{
+                          flex: 1, padding: '10px', borderRadius: '14px',
+                          background: isConnected ? '#DCFCE7' : 'none',
+                          border: `1.5px solid ${isConnected ? '#16A34A' : PRIMARY}`,
+                          color: isConnected ? '#16A34A' : PRIMARY,
+                          fontSize: '13px', fontWeight: 700, cursor: isConnected ? 'default' : 'pointer',
+                          fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                        }}
+                      >
+                        {isConnected ? <>✓ Connected</> : <><UserPlus size={14} /> Connect</>}
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => toast('Profile coming soon!')}
+                        style={{
+                          flex: 1, padding: '10px', borderRadius: '14px',
+                          background: PRIMARY, border: 'none',
+                          color: 'white',
+                          fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+                          fontFamily: 'inherit',
+                        }}
+                      >
+                        View Profile
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Load more */}
+        {visibleCount < filtered.length && (
+          <button
+            onClick={() => setVisibleCount(p => p + 5)}
+            style={{ width: '100%', marginTop: '16px', padding: '14px', borderRadius: '18px', background: CARD, border: `1.5px solid ${BORDER}`, color: TEXT2, fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+          >
+            Load more ({filtered.length - visibleCount} remaining)
+          </button>
+        )}
+
+        {filtered.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>👥</div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>No neighbours found</div>
+            <div style={{ fontSize: '13px', color: TEXT2 }}>Try adjusting your filters</div>
+          </div>
+        )}
+
+        <div style={{ height: '32px' }} />
+      </div>
+
+      {/* Neighbour filter bottom sheet */}
+      <AnimatePresence>
+        {showExternalFilter && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+            onClick={onFilterClose}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', maxHeight: '70vh', overflowY: 'auto' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter Neighbours</span>
+                <button
+                  onClick={onFilterClose}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <X size={16} color={TEXT} />
+                </button>
+              </div>
+
+              {/* Distance */}
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Distance</div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                {(['Any', '< 0.5 km', '< 1 km'] as const).map(d => {
+                  const sel = distanceFilter === d;
+                  return (
+                    <button
+                      key={d}
+                      onClick={() => onDistanceChange(d)}
+                      style={{ padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: sel ? '#FFF0EC' : BG, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid transparent`, cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
+                      {d === 'Any' ? 'Any Distance' : d}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Toggles */}
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Preferences</div>
+              {[
+                { label: '🎯 Shared Interests', sub: 'Only show neighbours with matching interests', value: filterSharedOnly, onChange: onSharedOnlyChange },
+                { label: '🟢 Recently Active', sub: 'Only show neighbours active within 5 hours', value: filterRecentOnly, onChange: onRecentOnlyChange },
+              ].map(({ label, sub, value, onChange }) => (
+                <div
+                  key={label}
+                  onClick={() => onChange(!value)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: value ? '#FFF0EC' : BG, borderRadius: '16px', marginBottom: '10px', cursor: 'pointer', border: `1.5px solid ${value ? PRIMARY : 'transparent'}` }}
+                >
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: value ? PRIMARY : TEXT }}>{label}</div>
+                    <div style={{ fontSize: '12px', color: TEXT2, marginTop: '2px' }}>{sub}</div>
+                  </div>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: value ? PRIMARY : BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {value && <Check size={13} color="white" strokeWidth={3} />}
+                  </div>
+                </div>
+              ))}
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button
+                  onClick={() => { onDistanceChange('Any'); onSharedOnlyChange(false); onRecentOnlyChange(false); }}
+                  style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={onFilterClose}
+                  style={{ flex: 2, padding: '14px', borderRadius: '16px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}
+                >
+                  Apply
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }

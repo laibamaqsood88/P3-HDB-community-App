@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Plus, Shield, X, Send, Check, Star, ChevronRight, Search, Heart, Wrench, BookOpen, Users, Home, Package, Monitor, Smile, Droplets, MapPin, ChevronDown, Camera } from 'lucide-react';
+import { ChevronLeft, Plus, Shield, X, Send, Check, Star, ChevronRight, Search, Heart, Wrench, BookOpen, Users, Home, Package, Monitor, Smile, Droplets, MapPin, ChevronDown, Camera, SlidersHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -195,7 +195,7 @@ function CollectionPointMap({ address }: { address: string }) {
 }
 
 // ---- Main Component ----
-export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {} }: { wishlist?: number[]; onWishlistToggle?: (id: number) => void }) {
+export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {}, onAddPost }: { wishlist?: number[]; onWishlistToggle?: (id: number) => void; onAddPost?: (post: any) => void }) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [chatMessages, setChatMessages] = useState([
     { id: 1, from: 'them', text: "Hi! I saw you're interested. When would work for you?", time: '2:15 PM' },
@@ -258,14 +258,35 @@ export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {} }: { 
           <ItemPostScreen
             onBack={goBack}
             photos={current.params?.photos || []}
-            onPost={(_data: any) => {
+            onPost={(data: any) => {
+              onAddPost?.({
+                id: Date.now(),
+                type: 'listing',
+                title: data.itemName || 'New Listing',
+                price: data.price ? `$${data.price}` : 'Free',
+                status: 'Active',
+                emoji: '📦',
+                date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
+              });
               setShowConfetti(true);
               setNavStack([{ screen: 'feed' }]);
             }}
           />
         );
       case 'service-post':
-        return <ServicePostScreen onBack={goBack} onPost={(_data: any) => { toast.success('Your service offer is live!'); setNavStack([{ screen: 'feed' }]); }} />;
+        return <ServicePostScreen onBack={goBack} onPost={(data: any) => {
+          onAddPost?.({
+            id: Date.now(),
+            type: 'service',
+            title: data.category ? `${data.category} Service` : 'New Service',
+            price: 'Free',
+            status: 'Active',
+            emoji: '🤝',
+            date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
+          });
+          toast.success('Your service offer is live!');
+          setNavStack([{ screen: 'feed' }]);
+        }} />;
       default: return null;
     }
   };
@@ -278,12 +299,68 @@ export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {} }: { 
   );
 }
 
+const MARKETPLACE_DISTANCE_OPTIONS = ['< 0.5 km', '< 1 km', '< 2 km', 'Any'];
+
+// ---- Marketplace Filter Panel ----
+function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, activeDistance, onItemCategoryChange, onServiceCategoryChange, onDistanceChange, onClose, onClear }: any) {
+  const categories = mainFilter === 'Items' ? ITEM_CATEGORIES : SERVICE_CATEGORIES;
+  const activeCategory = mainFilter === 'Items' ? itemCategory : serviceCategory;
+  const onCategoryChange = mainFilter === 'Items' ? onItemCategoryChange : onServiceCategoryChange;
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20, background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}>
+        <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter {mainFilter}</div>
+        <button onClick={onClose} style={{ width: '34px', height: '34px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <X size={16} color={TEXT2} />
+        </button>
+      </div>
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Distance</div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {MARKETPLACE_DISTANCE_OPTIONS.map(d => {
+            const active = activeDistance === d;
+            return (
+              <button key={d} onClick={() => onDistanceChange(d)} style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? '#FFF0EC' : 'transparent', color: active ? PRIMARY : TEXT2, fontWeight: active ? 700 : 500 }}>
+                {d}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div style={{ marginBottom: '24px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Category</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {categories.map((cat: string) => {
+            const active = activeCategory === cat;
+            return (
+              <button key={cat} onClick={() => onCategoryChange(cat)} style={{ padding: '7px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? '#FFF0EC' : 'transparent', color: active ? PRIMARY : TEXT2, fontWeight: active ? 700 : 500 }}>
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button onClick={onClear} style={{ flex: 1, padding: '14px', borderRadius: '18px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>
+          Clear All
+        </button>
+        <button onClick={onClose} style={{ flex: 2, padding: '14px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
+          Apply Filters
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
 // ---- Marketplace Feed ----
 function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: any) {
   const [mainFilter, setMainFilter] = useState<MainFilter>('Items');
   const [itemCategory, setItemCategory] = useState('All');
   const [serviceCategory, setServiceCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [activeDistance, setActiveDistance] = useState('Any');
 
   const q = searchQuery.toLowerCase().trim();
 
@@ -299,6 +376,10 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: an
     (serviceCategory === 'All' || s.category === serviceCategory) &&
     (!q || s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q))
   );
+
+  const filterCount = (activeDistance !== 'Any' ? 1 : 0) +
+    (mainFilter === 'Items' && itemCategory !== 'All' ? 1 : 0) +
+    (mainFilter === 'Services' && serviceCategory !== 'All' ? 1 : 0);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
@@ -320,31 +401,36 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: an
             </button>
           ))}
         </div>
-        {/* Search bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '16px', padding: '10px 14px', marginBottom: '0', border: `1.5px solid ${BORDER}` }}>
-          <Search size={16} color={MUTED} style={{ flexShrink: 0 }} />
-          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={`Search ${mainFilter.toLowerCase()}...`} style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '13px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
-              <X size={14} color={MUTED} />
-            </button>
-          )}
+        {/* Search bar + filter button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '16px', padding: '10px 14px', border: `1.5px solid ${BORDER}` }}>
+            <Search size={16} color={MUTED} style={{ flexShrink: 0 }} />
+            <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={`Search ${mainFilter.toLowerCase()}...`} style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '13px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                <X size={14} color={MUTED} />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setShowFilterPanel(true)}
+            style={{ position: 'relative', width: '44px', height: '44px', borderRadius: '14px', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+          >
+            <SlidersHorizontal size={18} color={filterCount > 0 ? PRIMARY : TEXT2} />
+            {filterCount > 0 && (
+              <div style={{ position: 'absolute', top: '-4px', right: '-4px', minWidth: '16px', height: '16px', borderRadius: '8px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px' }}>
+                <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+              </div>
+            )}
+          </button>
         </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px' }}>
-        {/* Category sub-filters */}
         {mainFilter === 'Items' && (
           <>
-            <div style={{ display: 'flex', gap: '7px', overflowX: 'auto', paddingBottom: '4px', marginBottom: '14px', scrollbarWidth: 'none' }}>
-              {ITEM_CATEGORIES.map(cat => (
-                <button key={cat} onClick={() => setItemCategory(cat)} style={{ padding: '7px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0, border: `1.5px solid ${itemCategory === cat ? PRIMARY : BORDER}`, background: itemCategory === cat ? '#FFF0EC' : CARD, color: itemCategory === cat ? PRIMARY : TEXT2, fontWeight: itemCategory === cat ? 700 : 500, transition: 'all 0.15s' }}>
-                  {cat}
-                </button>
-              ))}
-            </div>
             {displayItems.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No items in this category</div>
+              <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No items found</div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 {displayItems.map(item => (
@@ -357,15 +443,8 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: an
 
         {mainFilter === 'Services' && (
           <>
-            <div style={{ display: 'flex', gap: '7px', overflowX: 'auto', paddingBottom: '4px', marginBottom: '14px', scrollbarWidth: 'none' }}>
-              {SERVICE_CATEGORIES.map(cat => (
-                <button key={cat} onClick={() => setServiceCategory(cat)} style={{ padding: '7px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0, border: `1.5px solid ${serviceCategory === cat ? PRIMARY : BORDER}`, background: serviceCategory === cat ? '#FFF0EC' : CARD, color: serviceCategory === cat ? PRIMARY : TEXT2, fontWeight: serviceCategory === cat ? 700 : 500, transition: 'all 0.15s' }}>
-                  {cat}
-                </button>
-              ))}
-            </div>
             {displayServices.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No services in this category</div>
+              <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No services found</div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {displayServices.map(s => <ServiceCard key={s.id} s={s} onClick={() => onSelectService(s)} />)}
@@ -376,6 +455,25 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: an
 
         <div style={{ height: '80px' }} />
       </div>
+
+      <AnimatePresence>
+        {showFilterPanel && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFilterPanel(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 19 }} />
+            <MarketplaceFilterPanel
+              mainFilter={mainFilter}
+              itemCategory={itemCategory}
+              serviceCategory={serviceCategory}
+              activeDistance={activeDistance}
+              onItemCategoryChange={setItemCategory}
+              onServiceCategoryChange={setServiceCategory}
+              onDistanceChange={setActiveDistance}
+              onClose={() => setShowFilterPanel(false)}
+              onClear={() => { setItemCategory('All'); setServiceCategory('All'); setActiveDistance('Any'); }}
+            />
+          </>
+        )}
+      </AnimatePresence>
 
       <button onClick={onPost} style={{ position: 'absolute', bottom: '20px', right: '20px', width: '58px', height: '58px', borderRadius: '50%', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 28px rgba(255,107,71,0.45)', zIndex: 10 }}>
         <Plus size={26} color="white" />

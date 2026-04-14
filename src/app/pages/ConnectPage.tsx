@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Users, ChevronRight, X, Check, MapPin, Bell } from 'lucide-react';
 import { toast } from 'sonner';
@@ -147,17 +147,35 @@ const GROUPS: Group[] = [
   },
 ];
 
-const CATEGORIES = ['All', '🏃 Fitness', '🍳 Food', '🌱 Gardening', '🎲 Games', '💆 Wellness', '👨‍👩‍👧 Family', '🎨 Arts', '📚 Reading'];
+const CATEGORIES = ['All', 'Fitness', 'Food', 'Gardening', 'Games', 'Wellness', 'Family', 'Arts', 'Reading'];
 
-export function ConnectPage() {
+// ---- Props ----
+interface ConnectPageProps {
+  hideHeader?: boolean;
+  externalSearchQuery?: string;
+  externalCategory?: string;
+  showExternalFilter?: boolean;
+  onFilterClose?: () => void;
+  onCategoryChange?: (cat: string) => void;
+}
+
+export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange }: ConnectPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [joinedGroups, setJoinedGroups] = useState<number[]>([]);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: GroupScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
   const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
+
+  // Sync external filter open signal
+  useEffect(() => {
+    if (showExternalFilter) {
+      setShowCategoryFilter(true);
+    }
+  }, [showExternalFilter]);
 
   const toggleJoin = (id: number) => {
     setJoinedGroups(p => {
@@ -167,9 +185,13 @@ export function ConnectPage() {
     });
   };
 
+  // Use external search query / category if hideHeader, otherwise use internal
+  const effectiveQuery = hideHeader ? (externalSearchQuery ?? '') : searchQuery;
+  const effectiveCategory = hideHeader ? (externalCategory ?? 'All') : activeCategory;
+
   const filteredGroups = GROUPS.filter(g => {
-    if (activeCategory !== 'All' && !activeCategory.includes(g.category)) return false;
-    if (searchQuery && !g.name.toLowerCase().includes(searchQuery.toLowerCase()) && !g.category.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (effectiveCategory !== 'All' && g.category !== effectiveCategory) return false;
+    if (effectiveQuery && !g.name.toLowerCase().includes(effectiveQuery.toLowerCase()) && !g.category.toLowerCase().includes(effectiveQuery.toLowerCase())) return false;
     return true;
   });
 
@@ -262,41 +284,43 @@ export function ConnectPage() {
   // ---- Feed screen ----
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
-      {/* Search */}
-      <div style={{ background: CARD, padding: '14px 20px 0px', borderBottom: `1px solid ${BORDER}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '14px', padding: '10px 14px', marginBottom: '12px' }}>
-          <Search size={16} color={MUTED} />
-          <input
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search interest groups..."
-            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: 'inherit' }}
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
-              <X size={14} color={MUTED} />
-            </button>
-          )}
+      {/* Search + category pills — only shown when NOT in embedded (hideHeader) mode */}
+      {!hideHeader && (
+        <div style={{ background: CARD, padding: '14px 20px 0px', borderBottom: `1px solid ${BORDER}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '14px', padding: '10px 14px', marginBottom: '12px' }}>
+            <Search size={16} color={MUTED} />
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search interest groups..."
+              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: 'inherit' }}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+                <X size={14} color={MUTED} />
+              </button>
+            )}
+          </div>
+          {/* Category pills */}
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '14px' }}>
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                style={{
+                  flexShrink: 0, padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
+                  background: activeCategory === cat ? PRIMARY : CARD,
+                  color: activeCategory === cat ? 'white' : TEXT2,
+                  border: activeCategory === cat ? 'none' : `1px solid ${BORDER}`,
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
-        {/* Category pills */}
-        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '14px' }}>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              style={{
-                flexShrink: 0, padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
-                background: activeCategory === cat ? PRIMARY : CARD,
-                color: activeCategory === cat ? 'white' : TEXT2,
-                border: activeCategory === cat ? 'none' : `1px solid ${BORDER}`,
-                cursor: 'pointer', fontFamily: 'inherit',
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 32px' }}>
         {/* My Groups */}
@@ -325,7 +349,7 @@ export function ConnectPage() {
 
         {/* All Groups */}
         <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
-          {activeCategory === 'All' ? 'All Groups' : 'Groups'} · {filteredGroups.length}
+          {effectiveCategory === 'All' ? 'All Groups' : 'Groups'} · {filteredGroups.length}
         </div>
 
         {filteredGroups.length === 0 ? (
@@ -384,6 +408,73 @@ export function ConnectPage() {
           </div>
         )}
       </div>
+
+      {/* Category filter bottom sheet (for embedded mode) */}
+      <AnimatePresence>
+        {showCategoryFilter && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+            onClick={() => { setShowCategoryFilter(false); onFilterClose?.(); }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', maxHeight: '70vh', overflowY: 'auto' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter Groups</span>
+                <button
+                  onClick={() => { setShowCategoryFilter(false); onFilterClose?.(); }}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <X size={16} color={TEXT} />
+                </button>
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
+                {CATEGORIES.map(cat => {
+                  const sel = activeCategory === cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      style={{
+                        padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 600,
+                        background: sel ? '#FFF0EC' : BG,
+                        color: sel ? PRIMARY : TEXT2,
+                        border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid transparent`,
+                        cursor: 'pointer', fontFamily: 'inherit',
+                      }}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={() => { setActiveCategory('All'); onCategoryChange?.('All'); }}
+                  style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => { setShowCategoryFilter(false); onFilterClose?.(); onCategoryChange?.(activeCategory); }}
+                  style={{ flex: 2, padding: '14px', borderRadius: '16px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}
+                >
+                  Apply
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

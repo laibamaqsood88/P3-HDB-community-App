@@ -16,14 +16,25 @@ type ActiveTab = 'events' | 'explore' | 'marketplace' | 'requests' | 'messages';
 export default function App() {
   const [authScreen, setAuthScreen] = useState<AuthScreen>('login');
   const [activeTab, setActiveTab] = useState<ActiveTab>('events');
-  const [exploreInitialSubTab, setExploreInitialSubTab] = useState<'events' | 'groups'>('events');
+  const [exploreInitialSubTab, setExploreInitialSubTab] = useState<'events' | 'groups' | 'neighbours'>('events');
   const [showProfile, setShowProfile] = useState(false);
   const [savedEvents, setSavedEvents] = useState<number[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [initialGroupChatId, setInitialGroupChatId] = useState<number | undefined>(undefined);
+  const [userInterests, setUserInterests] = useState<string[]>([]);
+  const [myPosts, setMyPosts] = useState<any[]>([]);
+  const [conversations, setConversations] = useState<any[]>([]);
+
+  const onAddPost = (post: any) => setMyPosts(prev => [post, ...prev]);
+  const onAddConversation = (conv: any) => setConversations(prev => [conv, ...prev]);
 
   const openExploreGroups = () => {
     setExploreInitialSubTab('groups');
+    setActiveTab('explore');
+  };
+
+  const openExploreNeighbours = () => {
+    setExploreInitialSubTab('neighbours');
     setActiveTab('explore');
   };
 
@@ -54,7 +65,10 @@ export default function App() {
           richColors
           toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'DM Sans', sans-serif" } }}
         />
-        <SignUpPage onComplete={() => setAuthScreen('main')} />
+        <SignUpPage onComplete={({ dob, familyStatus, interests }) => {
+          setUserInterests(interests);
+          setAuthScreen('main');
+        }} />
       </div>
     );
   }
@@ -87,24 +101,28 @@ export default function App() {
             onOpenGroupChat={openGroupChat}
             onOpenMarketplace={() => setActiveTab('marketplace')}
             savedEvents={savedEvents}
+            onOpenNeighbours={openExploreNeighbours}
           />
         )}
         {activeTab === 'explore' && (
           <ExplorePage
             initialSubTab={exploreInitialSubTab}
             onSubTabChange={setExploreInitialSubTab}
+            userInterests={userInterests}
+            onAddConversation={onAddConversation}
           />
         )}
         {activeTab === 'marketplace' && (
-          <HelpSharePage />
+          <HelpSharePage onAddPost={onAddPost} />
         )}
         {activeTab === 'requests' && (
-          <RequestsPage />
+          <RequestsPage onAddPost={onAddPost} />
         )}
         {activeTab === 'messages' && (
           <MessagesPage
             initialConvId={initialGroupChatId}
             key={initialGroupChatId}
+            extraConversations={conversations}
           />
         )}
       </div>
@@ -126,6 +144,7 @@ export default function App() {
               setShowProfile(false);
               setActiveTab('explore');
             }}
+            myPosts={myPosts}
           />
         </div>
       )}

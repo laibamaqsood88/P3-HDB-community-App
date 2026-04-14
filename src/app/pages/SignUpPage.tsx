@@ -828,9 +828,31 @@ function RecommendationsStep({
         >
           Here's your neighbourhood 🎉
         </div>
-        <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.5' }}>
+        <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.5', marginBottom: interests.length > 0 ? '14px' : '0' }}>
           Based on your interests, we found these for you
         </div>
+        {interests.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {interests.map(interest => {
+              const colors = INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
+              return (
+                <span
+                  key={interest}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    background: colors.bg,
+                    color: colors.text,
+                  }}
+                >
+                  {interest}
+                </span>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '100px' }}>

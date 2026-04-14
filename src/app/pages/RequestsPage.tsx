@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Plus, Shield, X, Filter, MapPin, MessageCircle, Heart, ChevronDown, Check, Send } from 'lucide-react';
+import { ChevronLeft, Plus, Shield, X, SlidersHorizontal, MapPin, MessageCircle, Heart, ChevronDown, Check, Send, Search } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -69,7 +69,7 @@ function CollectionPointMap({ address }: { address: string }) {
           <MapPin size={14} color={PRIMARY} />
         </div>
         <div>
-          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Collection Point</div>
+          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Meetup Location</div>
           <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{address}</div>
         </div>
       </div>
@@ -118,15 +118,43 @@ function RequestCard({ r, onClick }: { r: any; onClick: () => void }) {
   );
 }
 
+const DISTANCE_OPTIONS = ['< 0.5 km', '< 1 km', '< 2 km', 'Any'];
+
 // ---- Filter Panel ----
-function FilterPanel({ activeCategories, activeTypes, onCategoryToggle, onTypeToggle, onClose }: any) {
+function FilterPanel({ activeCategories, activeTypes, activeDistance, sort, onCategoryToggle, onTypeToggle, onDistanceChange, onSortChange, onClose, onClear }: any) {
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20, background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)' }}>
+    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20, background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}>
         <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter Requests</div>
         <button onClick={onClose} style={{ width: '34px', height: '34px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <X size={16} color={TEXT2} />
         </button>
+      </div>
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Distance</div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {DISTANCE_OPTIONS.map(d => {
+            const active = activeDistance === d;
+            return (
+              <button key={d} onClick={() => onDistanceChange(d)} style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? '#FFF0EC' : 'transparent', color: active ? PRIMARY : TEXT2, fontWeight: active ? 700 : 500 }}>
+                {d}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Sort By</div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {(['Latest', 'Distance'] as const).map(s => {
+            const active = sort === s;
+            return (
+              <button key={s} onClick={() => onSortChange(s)} style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? '#FFF0EC' : 'transparent', color: active ? PRIMARY : TEXT2, fontWeight: active ? 700 : 500 }}>
+                {s}
+              </button>
+            );
+          })}
+        </div>
       </div>
       <div style={{ marginBottom: '20px' }}>
         <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Category</div>
@@ -155,9 +183,14 @@ function FilterPanel({ activeCategories, activeTypes, onCategoryToggle, onTypeTo
           })}
         </div>
       </div>
-      <button onClick={onClose} style={{ width: '100%', padding: '16px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
-        Apply Filters
-      </button>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button onClick={onClear} style={{ flex: 1, padding: '14px', borderRadius: '18px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>
+          Clear All
+        </button>
+        <button onClick={onClose} style={{ flex: 2, padding: '14px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
+          Apply Filters
+        </button>
+      </div>
     </motion.div>
   );
 }
@@ -167,18 +200,22 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
   const [filterVisible, setFilterVisible] = useState(false);
   const [activeCategories, setActiveCategories] = useState<string[]>([]);
   const [activeTypes, setActiveTypes] = useState<string[]>([]);
+  const [activeDistance, setActiveDistance] = useState('Any');
   const [sort, setSort] = useState<'Latest' | 'Distance'>('Latest');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const toggleCategory = (cat: string) => setActiveCategories(p => p.includes(cat) ? p.filter(c => c !== cat) : [...p, cat]);
   const toggleType = (t: string) => setActiveTypes(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t]);
 
+  const q = searchQuery.toLowerCase().trim();
   const filtered = requests.filter(r => {
     if (activeCategories.length > 0 && !activeCategories.includes(r.category)) return false;
     if (activeTypes.length > 0 && !activeTypes.includes(r.type)) return false;
+    if (q && !r.title.toLowerCase().includes(q) && !r.description.toLowerCase().includes(q)) return false;
     return true;
   });
 
-  const filterCount = activeCategories.length + activeTypes.length;
+  const filterCount = activeCategories.length + activeTypes.length + (activeDistance !== 'Any' ? 1 : 0) + (sort !== 'Latest' ? 1 : 0);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
@@ -191,16 +228,33 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
           <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, lineHeight: 1.15 }}>Requests</div>
           <div style={{ fontSize: '13px', color: MUTED, marginTop: '3px', fontWeight: 500 }}>Help your neighbours, earn community trust</div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none' }}>
-          <button onClick={() => setFilterVisible(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '9px 16px', borderRadius: '22px', background: filterCount > 0 ? '#FFF0EC' : CARD, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', fontFamily: 'inherit', fontSize: '13px', fontWeight: filterCount > 0 ? 700 : 500, color: filterCount > 0 ? PRIMARY : TEXT2, flexShrink: 0 }}>
-            <Filter size={14} color={filterCount > 0 ? PRIMARY : TEXT2} />
-            {filterCount > 0 ? `Filters (${filterCount})` : 'Filter'}
+        {/* Search bar + filter button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '16px', padding: '10px 14px', border: `1.5px solid ${BORDER}` }}>
+            <Search size={16} color={MUTED} style={{ flexShrink: 0 }} />
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search requests..."
+              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '13px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                <X size={14} color={MUTED} />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setFilterVisible(true)}
+            style={{ position: 'relative', width: '44px', height: '44px', borderRadius: '14px', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+          >
+            <SlidersHorizontal size={18} color={filterCount > 0 ? PRIMARY : TEXT2} />
+            {filterCount > 0 && (
+              <div style={{ position: 'absolute', top: '-4px', right: '-4px', minWidth: '16px', height: '16px', borderRadius: '8px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px' }}>
+                <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+              </div>
+            )}
           </button>
-          {(['Latest', 'Distance'] as const).map(s => (
-            <button key={s} onClick={() => setSort(s)} style={{ padding: '9px 16px', borderRadius: '22px', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${sort === s ? PRIMARY : BORDER}`, background: sort === s ? '#FFF0EC' : CARD, color: sort === s ? PRIMARY : TEXT2, fontWeight: sort === s ? 700 : 500, flexShrink: 0 }}>
-              {s}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -217,7 +271,18 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
         {filterVisible && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setFilterVisible(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 19 }} />
-            <FilterPanel activeCategories={activeCategories} activeTypes={activeTypes} onCategoryToggle={toggleCategory} onTypeToggle={toggleType} onClose={() => setFilterVisible(false)} />
+            <FilterPanel
+              activeCategories={activeCategories}
+              activeTypes={activeTypes}
+              activeDistance={activeDistance}
+              sort={sort}
+              onCategoryToggle={toggleCategory}
+              onTypeToggle={toggleType}
+              onDistanceChange={setActiveDistance}
+              onSortChange={setSort}
+              onClose={() => setFilterVisible(false)}
+              onClear={() => { setActiveCategories([]); setActiveTypes([]); setActiveDistance('Any'); setSort('Latest'); }}
+            />
           </>
         )}
       </AnimatePresence>
@@ -273,7 +338,7 @@ function RequestDetail({ request, onBack, onChat }: any) {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Collection Point</div>
+          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Meetup Location</div>
           <CollectionPointMap address={request.collectionPoint} />
         </div>
 
@@ -382,7 +447,7 @@ function PostRequestScreen({ onBack, onPost }: any) {
           )}
         </FormField>
 
-        <FormField label="Collection Point">
+        <FormField label="Meetup Location">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
             <MapPin size={16} color={MUTED} style={{ flexShrink: 0 }} />
             <input value={collectionPoint} onChange={e => setCollectionPoint(e.target.value)} placeholder="e.g. Blk 445, Level 5 Corridor" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
@@ -474,7 +539,11 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
 }
 
 // ---- Main Export ----
-export function RequestsPage() {
+interface RequestsPageProps {
+  onAddPost?: (post: any) => void;
+}
+
+export function RequestsPage({ onAddPost }: RequestsPageProps = {}) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
 
@@ -505,6 +574,16 @@ export function RequestsPage() {
                 collectionPoint: data.collectionPoint || 'Bishan-AMK Estate',
               };
               setRequests(prev => [newRequest, ...prev]);
+              // Notify parent for profile posts
+              onAddPost?.({
+                id: Date.now(),
+                type: 'request',
+                title: data.title,
+                category: data.category,
+                status: 'Active',
+                emoji: CAT_EMOJIS[data.category] || '📋',
+                date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
+              });
               toast.success('Your request is live! Neighbours have been notified.');
               setNavStack([{ screen: 'feed' }]);
             }}

@@ -23,7 +23,20 @@ interface EventsPageProps {
   onOpenGroupChat: (groupId: number) => void;
   onOpenMarketplace: () => void;
   savedEvents: number[];
+  onOpenNeighbours?: () => void;
 }
+
+// ---- Mock Neighbours Data (shared with ExplorePage) ----
+const MOCK_NEIGHBOURS = [
+  { id: 1, name: 'Alex Lim', distance: '0.1 km', unit: 'Blk 445 #12-34', interests: ['Fitness & Sports', 'Cooking & Baking'], avatar: 'AL', color: '#FF6B47', lastActive: '2 hours ago' },
+  { id: 2, name: 'Ben Tan', distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'], avatar: 'BT', color: '#7C3AED', lastActive: '5 hours ago' },
+  { id: 3, name: 'Clara Soh', distance: '0.3 km', unit: 'Blk 448 #03-22', interests: ['Cooking & Baking', 'Gardening & Plants'], avatar: 'CS', color: '#D97706', lastActive: '1 day ago' },
+  { id: 4, name: 'Diana Mak', distance: '0.4 km', unit: 'Blk 445 #15-01', interests: ['Gardening & Plants', 'Yoga & Mindfulness'], avatar: 'DM', color: '#059669', lastActive: '3 hours ago' },
+  { id: 5, name: 'Eli Ng', distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'], avatar: 'EN', color: '#0891B2', lastActive: 'Just now' },
+  { id: 6, name: 'Fiona Raj', distance: '0.6 km', unit: 'Blk 446 #11-18', interests: ['Music & Performing Arts', 'Dance'], avatar: 'FR', color: '#DB2777', lastActive: '30 min ago' },
+  { id: 7, name: 'Gary Koh', distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', color: '#EA580C', lastActive: '2 days ago' },
+  { id: 8, name: 'Hannah Lee', distance: '1.0 km', unit: 'Blk 445 #09-33', interests: ['Photography', 'Outdoor Activities'], avatar: 'HL', color: '#475569', lastActive: '4 hours ago' },
+];
 
 // ---- Mock Data ----
 const EVENTS = [
@@ -223,23 +236,12 @@ const HOME_LATEST_REQUEST = {
   timeframe: 'Apr 15–22', expiresIn: '2 days', poster: 'Resident A', trust: 3,
 };
 
-const HOME_MARKETPLACE_PICKS = [
-  { id: 101, type: 'item' as const, emoji: '📚', name: 'IKEA Billy Bookshelf', sub: 'Good condition', price: 'Free', category: 'Furniture',
-    description: 'White IKEA Billy bookshelf, 80cm wide. Small scratch on the back panel but otherwise in good condition. Self-collect from Level 5, available on weekends.', location: 'Blk 445', method: 'Self-collect', conditionBg: '#DBEAFE', conditionText: '#2563EB' },
-  { id: 201, type: 'service' as const, emoji: '🐕', name: 'Dog Walking', sub: 'Mon, Wed, Fri 7–9 AM', price: 'Free', category: 'Pets',
-    description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds.', avatarColor: '#F97316', pastExchanges: 2, responseRate: '90%', conditionBg: '#D1FAE5', conditionText: '#059669' },
-  { id: 102, type: 'item' as const, emoji: '🍚', name: 'Sharp Rice Cooker', sub: 'Like New', price: '$20', category: 'Kitchen',
-    description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', location: 'Blk 448', method: 'Self-collect or doorstep', conditionBg: '#DCFCE7', conditionText: '#16A34A' },
-  { id: 203, type: 'service' as const, emoji: '📐', name: 'Math Tutoring', sub: 'Weekday evenings', price: 'Free', category: 'Education',
-    description: 'Retired primary school teacher offering free maths help for P3–P6 students.', avatarColor: '#3B82F6', pastExchanges: 8, responseRate: '100%', conditionBg: '#EDE9FE', conditionText: '#7C3AED' },
-];
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
   const [selectedRequest, setSelectedRequest] = useState<typeof HOME_LATEST_REQUEST | null>(null);
-  const [selectedMarketItem, setSelectedMarketItem] = useState<typeof HOME_MARKETPLACE_PICKS[0] | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [readNotifs, setReadNotifs] = useState<number[]>(NOTIFICATIONS.filter(n => n.read).map(n => n.id));
 
@@ -601,32 +603,53 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </motion.div>
         </div>
 
-        {/* Marketplace Picks */}
+        {/* Connect with Neighbours */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Marketplace Picks</span>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>items & services nearby</span>
+            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Connect with Neighbours</span>
+            <button
+              onClick={onOpenNeighbours}
+              style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
+            >
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>See all</span>
+              <ChevronRight size={14} color={PRIMARY} />
+            </button>
           </div>
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
-            {HOME_MARKETPLACE_PICKS.map(item => (
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '6px' }}>
+            {MOCK_NEIGHBOURS.slice(0, 6).map(neighbour => (
               <motion.div
-                key={item.id}
+                key={neighbour.id}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => setSelectedMarketItem(item)}
-                style={{ flexShrink: 0, width: '148px', background: CARD, borderRadius: '18px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+                style={{ flexShrink: 0, width: '160px', background: CARD, borderRadius: '20px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }}
               >
-                <div style={{ width: '40px', height: '40px', borderRadius: '14px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', marginBottom: '10px' }}>
-                  {item.emoji}
+                {/* Avatar */}
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: neighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>{neighbour.avatar}</span>
                 </div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '4px', lineHeight: '1.25', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
-                  {item.name}
+                <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '2px', lineHeight: '1.2' }}>{neighbour.name}</div>
+                <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '8px' }}>{neighbour.distance}</div>
+                {/* Interest pills (first 1) */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '10px' }}>
+                  {neighbour.interests.slice(0, 1).map(interest => (
+                    <span key={interest} style={{ padding: '3px 8px', borderRadius: '20px', fontSize: '10px', fontWeight: 600, background: '#FFF0EC', color: PRIMARY }}>
+                      {interest.split(' ')[0]}
+                    </span>
+                  ))}
                 </div>
-                <div style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, marginBottom: '8px' }}>{item.sub}</div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 800, color: item.price === 'Free' ? '#059669' : TEXT }}>{item.price}</span>
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: item.conditionText, background: item.conditionBg, borderRadius: '20px', padding: '2px 7px' }}>
-                    {item.type === 'item' ? 'Item' : 'Service'}
-                  </span>
+                {/* Buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <button
+                    onClick={() => toast.success('Message sent! 👋')}
+                    style={{ width: '100%', padding: '8px', borderRadius: '12px', background: PRIMARY, border: 'none', color: 'white', fontSize: '11px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                  >
+                    Say Hello 👋
+                  </button>
+                  <button
+                    onClick={() => toast('Profile coming soon!')}
+                    style={{ width: '100%', padding: '8px', borderRadius: '12px', background: 'none', border: `1.5px solid ${BORDER}`, color: TEXT2, fontSize: '11px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+                  >
+                    View Profile
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -850,78 +873,6 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         )}
       </AnimatePresence>
 
-      {/* ---- Marketplace Item/Service Detail Bottom Sheet ---- */}
-      <AnimatePresence>
-        {selectedMarketItem && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedMarketItem(null)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
-          >
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              onClick={e => e.stopPropagation()}
-              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px', maxHeight: '85vh', overflowY: 'auto' }}
-            >
-              {/* Handle */}
-              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
-              {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '18px' }}>
-                <div style={{ width: '56px', height: '56px', borderRadius: '18px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '26px', flexShrink: 0 }}>
-                  {selectedMarketItem.emoji}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{selectedMarketItem.name}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: selectedMarketItem.conditionText, background: selectedMarketItem.conditionBg, borderRadius: '20px', padding: '2px 8px' }}>
-                      {selectedMarketItem.type === 'item' ? 'Item' : 'Service'}
-                    </span>
-                    <span style={{ fontSize: '13px', fontWeight: 800, color: selectedMarketItem.price === 'Free' ? '#059669' : TEXT }}>{selectedMarketItem.price}</span>
-                  </div>
-                </div>
-              </div>
-              {/* Sub-info */}
-              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '14px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                  {selectedMarketItem.type === 'item' ? 'Condition' : 'Availability'}
-                </div>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{selectedMarketItem.sub}</div>
-              </div>
-              {selectedMarketItem.type === 'item' && (
-                <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '14px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Location & Collection</div>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{(selectedMarketItem as any).location}</div>
-                  <div style={{ fontSize: '12px', color: TEXT2, marginTop: '2px' }}>{(selectedMarketItem as any).method}</div>
-                </div>
-              )}
-              {selectedMarketItem.type === 'service' && (
-                <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Stats</div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT }}>{(selectedMarketItem as any).pastExchanges} past exchanges · {(selectedMarketItem as any).responseRate} response</div>
-                  </div>
-                </div>
-              )}
-              {/* Description */}
-              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '20px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>About</div>
-                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.6' }}>{selectedMarketItem.description}</div>
-              </div>
-              <button
-                onClick={() => { toast.success('Message sent! The neighbour will be notified.'); setSelectedMarketItem(null); }}
-                style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'DM Sans', sans-serif" }}
-              >
-                {selectedMarketItem.type === 'item' ? 'I Want This!' : 'Request This Service'}
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
