@@ -47,12 +47,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     ctx.fill();
   }, []);
 
-  const features = [
-    { icon: '🔒', label: 'Verified Residents Only' },
-    { icon: '📍', label: 'Your Estate Only' },
-    { icon: '🤝', label: 'Real Connections' },
-  ];
-
   return (
     <div
       style={{
@@ -140,7 +134,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               marginBottom: '8px',
             }}
           >
-            Connect with neighbours in your HDB estate
+            Connect with neighbours
           </div>
           <div
             style={{
@@ -152,43 +146,36 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           >
             Estate-verified · Privacy-first · Singpass secured
           </div>
+
+          {/* Singpass button */}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={onLogin}
+            style={{
+              width: '100%',
+              padding: '18px 24px',
+              borderRadius: '16px',
+              background: '#FFFFFF',
+              border: '1.5px solid #D1D5DB',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0px',
+              boxShadow: 'none',
+              marginTop: '28px',
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111', letterSpacing: '0.1px' }}>
+              Log in with&nbsp;
+            </span>
+            <span style={{ fontSize: '16px', fontWeight: 700, color: '#E30613', letterSpacing: '0.1px' }}>
+              singpass
+            </span>
+          </motion.button>
         </motion.div>
 
-        {/* Feature pills */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.38, duration: 0.5 }}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            width: '100%',
-            maxWidth: '320px',
-            marginTop: '36px',
-          }}
-        >
-          {features.map((f, i) => (
-            <motion.div
-              key={f.label}
-              initial={{ x: -16, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.42 + i * 0.08, duration: 0.4 }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '13px 16px',
-                background: 'white',
-                borderRadius: '16px',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-              }}
-            >
-              <span style={{ fontSize: '20px', lineHeight: 1 }}>{f.icon}</span>
-              <span style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{f.label}</span>
-            </motion.div>
-          ))}
-        </motion.div>
       </div>
 
       {/* Bottom CTA area */}
@@ -202,34 +189,6 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           zIndex: 1,
         }}
       >
-        {/* Singpass button */}
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={onLogin}
-          style={{
-            width: '100%',
-            padding: '18px 24px',
-            borderRadius: '16px',
-            background: '#FFFFFF',
-            border: '1.5px solid #D1D5DB',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0px',
-            boxShadow: 'none',
-            marginBottom: '16px',
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        >
-          <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111', letterSpacing: '0.1px' }}>
-            Log in with&nbsp;
-          </span>
-          <span style={{ fontSize: '16px', fontWeight: 700, color: '#E30613', letterSpacing: '0.1px' }}>
-            singpass
-          </span>
-        </motion.button>
-
         {/* Privacy note */}
         <div
           style={{

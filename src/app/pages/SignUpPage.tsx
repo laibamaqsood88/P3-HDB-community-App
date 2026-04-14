@@ -527,6 +527,45 @@ function StepInterests({
             </button>
           )}
         </div>
+
+        {/* Selected interests row */}
+        <AnimatePresence>
+          {interests.length > 0 && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              style={{ overflow: 'hidden' }}
+            >
+              <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px' }}>
+                {interests.map(t => {
+                  const colors = INTEREST_COLORS[t];
+                  return (
+                    <motion.button
+                      key={t}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => onToggle(t)}
+                      style={{
+                        flexShrink: 0, display: 'flex', alignItems: 'center', gap: '6px',
+                        padding: '7px 12px', borderRadius: '24px', fontSize: '12px', fontWeight: 700,
+                        background: colors.bg, color: colors.text, border: `2px solid ${colors.text}`,
+                        cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                      }}
+                    >
+                      {t}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 16px', minHeight: 0 }}>
