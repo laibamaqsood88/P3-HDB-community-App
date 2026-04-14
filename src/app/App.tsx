@@ -4,13 +4,14 @@ import { BottomNav } from './components/BottomNav';
 import { EventsPage } from './pages/EventsPage';
 import { ExplorePage } from './pages/ExplorePage';
 import { HelpSharePage } from './pages/HelpSharePage';
+import { RequestsPage } from './pages/RequestsPage';
 import { MessagesPage } from './pages/MessagesPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 
 type AuthScreen = 'login' | 'signup' | 'main';
-type ActiveTab = 'events' | 'explore' | 'marketplace' | 'messages';
+type ActiveTab = 'events' | 'explore' | 'marketplace' | 'requests' | 'messages';
 
 export default function App() {
   const [authScreen, setAuthScreen] = useState<AuthScreen>('login');
@@ -96,6 +97,9 @@ export default function App() {
         )}
         {activeTab === 'marketplace' && (
           <HelpSharePage />
+        )}
+        {activeTab === 'requests' && (
+          <RequestsPage />
         )}
         {activeTab === 'messages' && (
           <MessagesPage

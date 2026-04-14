@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Shield, ChevronRight, Bell, Lock, HelpCircle, LogOut, Bookmark, Settings, X } from 'lucide-react';
+import { Shield, ChevronRight, Bell, Lock, HelpCircle, LogOut, Bookmark, Settings, X, Tag } from 'lucide-react';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -29,9 +29,11 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   Music:         { bg: '#FFE4E6', text: '#E11D48' },
 };
 
-const SAVED_EVENTS = [
-  { id: 1, title: 'Morning Run at Bishan-AMK Park', date: 'Sat, 12 Apr', category: 'Fitness', categoryColor: '#16A34A', categoryBg: '#DCFCE7', image: 'https://images.unsplash.com/photo-1746046318036-b091b95b02bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
-  { id: 2, title: 'Peranakan Cooking Workshop', date: 'Sun, 13 Apr', category: 'Cooking', categoryColor: '#D97706', categoryBg: '#FEF3C7', image: 'https://images.unsplash.com/photo-1683633815082-783838d0dfe0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+const SAVED_ITEMS = [
+  { id: 1, type: 'Event', title: 'Morning Run at Bishan-AMK Park', sub: 'Sat, 12 Apr', category: 'Fitness', categoryColor: '#16A34A', categoryBg: '#DCFCE7', image: 'https://images.unsplash.com/photo-1746046318036-b091b95b02bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { id: 2, type: 'Event', title: 'Peranakan Cooking Workshop', sub: 'Sun, 13 Apr', category: 'Cooking', categoryColor: '#D97706', categoryBg: '#FEF3C7', image: 'https://images.unsplash.com/photo-1683633815082-783838d0dfe0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { id: 3, type: 'Item', title: 'IKEA Billy Bookshelf', sub: 'Free · Blk 445', category: 'Furniture', categoryColor: '#2563EB', categoryBg: '#DBEAFE', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { id: 4, type: 'Request', title: 'Need someone to water my plants', sub: 'Free Request · Home Help', category: 'Request', categoryColor: '#7C3AED', categoryBg: '#EDE9FE', image: null },
 ];
 
 const MY_POSTS = [
@@ -40,7 +42,7 @@ const MY_POSTS = [
 ];
 
 const STATS = [
-  { label: 'Events\nSaved', value: '2', emoji: '📅', bg: '#FFF0EC', text: PRIMARY },
+  { label: 'Items\nSaved', value: '4', emoji: '🔖', bg: '#FFF0EC', text: PRIMARY },
   { label: 'Neighbours\nJio\'d', value: '3', emoji: '👋', bg: '#EDE9FE', text: '#7C3AED' },
   { label: 'Exchanges\nDone', value: '5', emoji: '🤝', bg: '#D1FAE5', text: '#059669' },
 ];
@@ -237,36 +239,48 @@ export function ProfilePage({ onOpenEvent, onClose }: ProfilePageProps) {
           </div>
         </div>
 
-        {/* Saved Events */}
+        {/* Saved Items */}
         <div style={{ marginBottom: '24px' }}>
-          <SectionHeader label="Saved Events" count={SAVED_EVENTS.length} />
+          <SectionHeader label="Saved Items" count={SAVED_ITEMS.length} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {SAVED_EVENTS.map(ev => (
-              <div
-                key={ev.id}
-                onClick={() => onOpenEvent?.(ev.id)}
-                style={{
-                  background: CARD, borderRadius: '20px', overflow: 'hidden',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex',
-                  alignItems: 'center', cursor: 'pointer',
-                }}
-              >
-                <div style={{ width: '80px', height: '72px', flexShrink: 0, position: 'relative' }}>
-                  <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div style={{ flex: 1, padding: '14px 16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: ev.categoryBg, color: ev.categoryColor }}>{ev.category}</span>
+            {SAVED_ITEMS.map(item => {
+              const typeColors: Record<string, { bg: string; text: string }> = {
+                Event: { bg: '#FFF0EC', text: PRIMARY },
+                Item: { bg: '#DBEAFE', text: '#2563EB' },
+                Request: { bg: '#EDE9FE', text: '#7C3AED' },
+                Service: { bg: '#DCFCE7', text: '#16A34A' },
+              };
+              const tc = typeColors[item.type] || { bg: BG, text: MUTED };
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => item.type === 'Event' && onOpenEvent?.(item.id)}
+                  style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', cursor: item.type === 'Event' ? 'pointer' : 'default' }}
+                >
+                  <div style={{ width: '80px', height: '72px', flexShrink: 0 }}>
+                    {item.image ? (
+                      <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', background: tc.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>
+                        {item.type === 'Request' ? '🙋' : '🛍️'}
+                      </div>
+                    )}
                   </div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '3px', lineHeight: '1.3' }}>{ev.title}</div>
-                  <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{ev.date}</div>
+                  <div style={{ flex: 1, padding: '12px 14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: tc.bg, color: tc.text }}>{item.type}</span>
+                      <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: item.categoryBg, color: item.categoryColor }}>{item.category}</span>
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '2px', lineHeight: '1.3' }}>{item.title}</div>
+                    <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{item.sub}</div>
+                  </div>
+                  <div style={{ padding: '0 14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Bookmark size={13} color={PRIMARY} fill={PRIMARY} />
+                    <ChevronRight size={14} color={MUTED} />
+                  </div>
                 </div>
-                <div style={{ padding: '0 14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Bookmark size={13} color={PRIMARY} fill={PRIMARY} />
-                  <ChevronRight size={14} color={MUTED} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

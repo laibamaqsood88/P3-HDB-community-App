@@ -1,7 +1,7 @@
-import { Home, Compass, ShoppingBag, MessageCircle } from 'lucide-react';
+import { Home, Compass, ShoppingBag, MessageCircle, ClipboardList } from 'lucide-react';
 import { motion } from 'motion/react';
 
-type ActiveTab = 'events' | 'explore' | 'marketplace' | 'messages';
+type ActiveTab = 'events' | 'explore' | 'marketplace' | 'requests' | 'messages';
 
 interface Props {
   activeTab: ActiveTab;
@@ -12,6 +12,7 @@ const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any> }[] = [
   { id: 'events',      label: 'Home',        Icon: Home },
   { id: 'explore',     label: 'Explore',     Icon: Compass },
   { id: 'marketplace', label: 'Marketplace', Icon: ShoppingBag },
+  { id: 'requests',    label: 'Requests',    Icon: ClipboardList },
   { id: 'messages',    label: 'Messages',    Icon: MessageCircle },
 ];
 
