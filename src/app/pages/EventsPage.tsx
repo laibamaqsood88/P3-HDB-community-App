@@ -198,11 +198,31 @@ const NEIGHBOURS_GOING = [
   { id: 8, initials: 'HL', color: '#475569', unit: 'Blk 445 #09-33', status: 'Senior (60+)' },
 ];
 
+// ---- Marketplace data (mirrored from HelpSharePage for home preview) ----
+const HOME_LATEST_REQUEST = {
+  id: 1, category: 'Plant Care', emoji: '🪴',
+  description: "Need someone to water my 4 potted plants while I'm away travelling. Easy — just water once every 2 days.",
+  timeframe: 'Apr 15–22', expiresIn: '2 days', poster: 'Resident A', trust: 3,
+};
+
+const HOME_MARKETPLACE_PICKS = [
+  { id: 101, type: 'item' as const, emoji: '📚', name: 'IKEA Billy Bookshelf', sub: 'Good condition', price: 'Free', category: 'Furniture',
+    description: 'White IKEA Billy bookshelf, 80cm wide. Small scratch on the back panel but otherwise in good condition. Self-collect from Level 5, available on weekends.', location: 'Blk 445', method: 'Self-collect', conditionBg: '#DBEAFE', conditionText: '#2563EB' },
+  { id: 201, type: 'service' as const, emoji: '🐕', name: 'Dog Walking', sub: 'Mon, Wed, Fri 7–9 AM', price: 'Free', category: 'Pets',
+    description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds.', avatarColor: '#F97316', pastExchanges: 2, responseRate: '90%', conditionBg: '#D1FAE5', conditionText: '#059669' },
+  { id: 102, type: 'item' as const, emoji: '🍚', name: 'Sharp Rice Cooker', sub: 'Like New', price: '$20', category: 'Kitchen',
+    description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', location: 'Blk 448', method: 'Self-collect or doorstep', conditionBg: '#DCFCE7', conditionText: '#16A34A' },
+  { id: 203, type: 'service' as const, emoji: '📐', name: 'Math Tutoring', sub: 'Weekday evenings', price: 'Free', category: 'Education',
+    description: 'Retired primary school teacher offering free maths help for P3–P6 students.', avatarColor: '#3B82F6', pastExchanges: 8, responseRate: '100%', conditionBg: '#EDE9FE', conditionText: '#7C3AED' },
+];
+
 // ---- Main Component ----
 export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, savedEvents }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [eventsTab, setEventsTab] = useState<EventsTab>('upcoming');
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
+  const [selectedRequest, setSelectedRequest] = useState<typeof HOME_LATEST_REQUEST | null>(null);
+  const [selectedMarketItem, setSelectedMarketItem] = useState<typeof HOME_MARKETPLACE_PICKS[0] | null>(null);
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: EventsScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
@@ -461,7 +481,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, savedEven
     upcomingEvents;
 
   return (
-    <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="no-scrollbar" style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -502,7 +522,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, savedEven
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
-          <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
             {INTEREST_GROUPS.map(group => (
               <motion.div
                 key={group.id}
@@ -515,6 +535,79 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, savedEven
                 <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', fontWeight: 500, marginBottom: '6px' }}>{group.members} members</div>
                 <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)', fontWeight: 600, background: 'rgba(255,255,255,0.15)', borderRadius: '10px', padding: '3px 8px' }}>
                   {group.nextActivity}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Latest Request */}
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Latest Request</span>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>from your neighbourhood</span>
+          </div>
+          <motion.div
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setSelectedRequest(HOME_LATEST_REQUEST)}
+            style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
+                {HOME_LATEST_REQUEST.emoji}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{HOME_LATEST_REQUEST.category}</span>
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: '#D97706', background: '#FEF3C7', borderRadius: '20px', padding: '2px 8px' }}>
+                    Expires in {HOME_LATEST_REQUEST.expiresIn}
+                  </span>
+                </div>
+                <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.5', marginBottom: '10px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                  {HOME_LATEST_REQUEST.description}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ display: 'flex', gap: '2px' }}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: i < HOME_LATEST_REQUEST.trust ? '#22C55E' : BORDER }} />
+                      ))}
+                    </div>
+                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>Trust score</span>
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: PRIMARY }}>View request →</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Marketplace Picks */}
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Marketplace Picks</span>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>items & services nearby</span>
+          </div>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
+            {HOME_MARKETPLACE_PICKS.map(item => (
+              <motion.div
+                key={item.id}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setSelectedMarketItem(item)}
+                style={{ flexShrink: 0, width: '148px', background: CARD, borderRadius: '18px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+              >
+                <div style={{ width: '40px', height: '40px', borderRadius: '14px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', marginBottom: '10px' }}>
+                  {item.emoji}
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '4px', lineHeight: '1.25', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                  {item.name}
+                </div>
+                <div style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, marginBottom: '8px' }}>{item.sub}</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: item.price === 'Free' ? '#059669' : TEXT }}>{item.price}</span>
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: item.conditionText, background: item.conditionBg, borderRadius: '20px', padding: '2px 7px' }}>
+                    {item.type === 'item' ? 'Item' : 'Service'}
+                  </span>
                 </div>
               </motion.div>
             ))}
@@ -638,6 +731,142 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, savedEven
           )}
         </div>
       </div>
+
+      {/* ---- Request Detail Bottom Sheet ---- */}
+      <AnimatePresence>
+        {selectedRequest && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedRequest(null)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px', maxHeight: '85vh', overflowY: 'auto' }}
+            >
+              {/* Handle */}
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '18px' }}>
+                <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0 }}>
+                  {selectedRequest.emoji}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{selectedRequest.category}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#D97706', background: '#FEF3C7', borderRadius: '20px', padding: '2px 8px' }}>Expires {selectedRequest.expiresIn}</span>
+                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>📅 {selectedRequest.timeframe}</span>
+                  </div>
+                </div>
+              </div>
+              {/* Description */}
+              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '16px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>Request details</div>
+                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.6' }}>{selectedRequest.description}</div>
+              </div>
+              {/* Trust */}
+              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>Neighbour trust score</div>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: i < selectedRequest.trust ? '#22C55E' : BORDER }} />
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#D1FAE5', borderRadius: '20px', padding: '4px 10px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#059669' }}>✓ Singpass Verified</span>
+                </div>
+              </div>
+              <button
+                onClick={() => { toast.success('Request sent! The neighbour will be notified.'); setSelectedRequest(null); }}
+                style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'DM Sans', sans-serif" }}
+              >
+                I Can Help!
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ---- Marketplace Item/Service Detail Bottom Sheet ---- */}
+      <AnimatePresence>
+        {selectedMarketItem && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedMarketItem(null)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px', maxHeight: '85vh', overflowY: 'auto' }}
+            >
+              {/* Handle */}
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '18px' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '18px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '26px', flexShrink: 0 }}>
+                  {selectedMarketItem.emoji}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{selectedMarketItem.name}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: selectedMarketItem.conditionText, background: selectedMarketItem.conditionBg, borderRadius: '20px', padding: '2px 8px' }}>
+                      {selectedMarketItem.type === 'item' ? 'Item' : 'Service'}
+                    </span>
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: selectedMarketItem.price === 'Free' ? '#059669' : TEXT }}>{selectedMarketItem.price}</span>
+                  </div>
+                </div>
+              </div>
+              {/* Sub-info */}
+              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '14px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                  {selectedMarketItem.type === 'item' ? 'Condition' : 'Availability'}
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{selectedMarketItem.sub}</div>
+              </div>
+              {selectedMarketItem.type === 'item' && (
+                <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '14px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Location & Collection</div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{(selectedMarketItem as any).location}</div>
+                  <div style={{ fontSize: '12px', color: TEXT2, marginTop: '2px' }}>{(selectedMarketItem as any).method}</div>
+                </div>
+              )}
+              {selectedMarketItem.type === 'service' && (
+                <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Stats</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT }}>{(selectedMarketItem as any).pastExchanges} past exchanges · {(selectedMarketItem as any).responseRate} response</div>
+                  </div>
+                </div>
+              )}
+              {/* Description */}
+              <div style={{ background: BG, borderRadius: '16px', padding: '14px 16px', marginBottom: '20px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>About</div>
+                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.6' }}>{selectedMarketItem.description}</div>
+              </div>
+              <button
+                onClick={() => { toast.success('Message sent! The neighbour will be notified.'); setSelectedMarketItem(null); }}
+                style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'DM Sans', sans-serif" }}
+              >
+                {selectedMarketItem.type === 'item' ? 'I Want This!' : 'Request This Service'}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
