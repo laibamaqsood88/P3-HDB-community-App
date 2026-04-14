@@ -1,17 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm install:*)",
-      "Bash(npm --version)",
-      "Bash(npm install:*)",
-      "mcp__Claude_Preview__preview_start",
       "Bash(gh auth:*)",
+      "Bash(git --version)",
+      "Bash(git config:*)",
       "Bash(brew install:*)",
       "Bash(gh repo:*)",
-      "Bash(npx tsc:*)",
-      "Bash(./node_modules/.bin/tsc --noEmit)",
-      "Bash(node_modules/.bin/vite build:*)",
-      "Bash(npm run:*)"
+      "Bash(git clone:*)",
+      "Bash(git init:*)",
+      "Bash(git remote:*)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(git stash:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)"
     ]
   }
 }

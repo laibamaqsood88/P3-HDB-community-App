@@ -6,6 +6,7 @@ import {
   ExternalLink, Check, AlertCircle, Clock
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConnectPage } from './ConnectPage';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -98,6 +99,7 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
   const [reminderOption, setReminderOption] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeSubTab, setActiveSubTab] = useState<'events' | 'connect'>('events');
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: EventScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
@@ -114,39 +116,106 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
 
   const toggleSave = (id: number) => setSavedEvents(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
 
+  // ---- Sub-tab: Connect ----
+  if (activeSubTab === 'connect' && (current.screen === 'feed' || current.screen === 'filtered')) {
+    return (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+        {/* Sub-tab header */}
+        <div style={{ background: CARD, paddingTop: '52px', borderBottom: `1px solid ${BORDER}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0px' }}>
+            {([
+              { key: 'events', label: 'Events', icon: '📅' },
+              { key: 'connect', label: 'Connect', icon: '🤝' },
+            ] as const).map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveSubTab(tab.key)}
+                style={{
+                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+                  padding: '10px 0 0', background: 'none', border: 'none', cursor: 'pointer',
+                  fontFamily: 'inherit', position: 'relative',
+                }}
+              >
+                <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+                <span style={{
+                  fontSize: '13px', fontWeight: activeSubTab === tab.key ? 700 : 500,
+                  color: activeSubTab === tab.key ? TEXT : MUTED,
+                  paddingBottom: '10px',
+                }}>
+                  {tab.label}
+                </span>
+                {activeSubTab === tab.key && (
+                  <div style={{ position: 'absolute', bottom: 0, left: '16px', right: '16px', height: '2px', background: TEXT, borderRadius: '2px' }} />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <ConnectPage />
+        </div>
+      </div>
+    );
+  }
+
   // ---- Feed screen ----
   if (current.screen === 'feed' || current.screen === 'filtered') {
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
         {/* Header */}
-        <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <div>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT }}>Explore</div>
-              <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>Discover events in your estate</div>
+        <div style={{ background: CARD, padding: '52px 20px 0px', borderBottom: `1px solid ${BORDER}` }}>
+          {/* Sub-tabs */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0px' }}>
+            {([
+              { key: 'events', label: 'Events', icon: '📅' },
+              { key: 'connect', label: 'Connect', icon: '🤝' },
+            ] as const).map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveSubTab(tab.key)}
+                style={{
+                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+                  padding: '10px 0 0', background: 'none', border: 'none', cursor: 'pointer',
+                  fontFamily: 'inherit', position: 'relative',
+                }}
+              >
+                <span style={{ fontSize: '22px' }}>{tab.icon}</span>
+                <span style={{
+                  fontSize: '13px', fontWeight: activeSubTab === tab.key ? 700 : 500,
+                  color: activeSubTab === tab.key ? TEXT : MUTED,
+                  paddingBottom: '10px',
+                }}>
+                  {tab.label}
+                </span>
+                {activeSubTab === tab.key && (
+                  <div style={{ position: 'absolute', bottom: 0, left: '16px', right: '16px', height: '2px', background: TEXT, borderRadius: '2px' }} />
+                )}
+              </button>
+            ))}
+          </div>
+          {/* Search + filter row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '14px' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '14px', padding: '10px 14px' }}>
+              <Search size={16} color={MUTED} />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search events..."
+                style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: 'inherit' }}
+              />
             </div>
             <button
               onClick={() => { setTempFilters(filters); setShowFilter(true); }}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '20px', background: activeFilterCount > 0 ? '#FFF0EC' : BG, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 14px', borderRadius: '14px', background: activeFilterCount > 0 ? '#FFF0EC' : BG, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
             >
               <Filter size={15} color={activeFilterCount > 0 ? PRIMARY : TEXT2} />
-              <span style={{ fontSize: '13px', fontWeight: 600, color: activeFilterCount > 0 ? PRIMARY : TEXT2 }}>
-                {activeFilterCount > 0 ? `Filters (${activeFilterCount})` : 'Filter'}
-              </span>
+              {activeFilterCount > 0 && (
+                <span style={{ fontSize: '13px', fontWeight: 600, color: PRIMARY }}>{activeFilterCount}</span>
+              )}
             </button>
           </div>
-          {/* Search bar */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '14px', padding: '10px 14px', marginBottom: '12px' }}>
-            <Search size={16} color={MUTED} />
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search events..."
-              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: 'inherit' }}
-            />
-          </div>
           {/* Category pills */}
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '2px' }}>
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '14px', marginTop: '12px' }}>
             {CATEGORIES.map(cat => (
               <button
                 key={cat}
