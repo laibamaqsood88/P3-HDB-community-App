@@ -950,6 +950,7 @@ function NeighboursTab({
 }) {
   const [visibleCount, setVisibleCount] = useState(5);
   const [connected, setConnected] = useState<number[]>([]);
+  const [selectedNeighbour, setSelectedNeighbour] = useState<typeof MOCK_NEIGHBOURS[0] | null>(null);
 
   const recentActiveValues = ['Just now', '30 min ago', '1 hour ago', '2 hours ago', '3 hours ago', '4 hours ago', '5 hours ago'];
 
@@ -1066,7 +1067,7 @@ function NeighboursTab({
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.97 }}
-                        onClick={() => toast('Profile coming soon!')}
+                        onClick={() => setSelectedNeighbour(n)}
                         style={{
                           flex: 1, padding: '10px', borderRadius: '14px',
                           background: PRIMARY, border: 'none',
@@ -1186,6 +1187,59 @@ function NeighboursTab({
                   Apply
                 </button>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Neighbour Profile Bottom Sheet */}
+      <AnimatePresence>
+        {selectedNeighbour && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedNeighbour(null)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 60, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px' }}
+            >
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 24px' }} />
+              {/* Avatar + name */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: selectedNeighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '24px', fontWeight: 800, color: 'white' }}>{selectedNeighbour.avatar}</span>
+                </div>
+                <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{selectedNeighbour.name}</div>
+                <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>{selectedNeighbour.unit.split(' #')[0]} · {selectedNeighbour.distance} away</div>
+              </div>
+              {/* Interests */}
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Interests</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {selectedNeighbour.interests.map(interest => {
+                    const c = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
+                    return (
+                      <span key={interest} style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: c.bg, color: c.text }}>
+                        {interest}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Action */}
+              <button
+                onClick={() => { toast.success(`Message sent to ${selectedNeighbour.name}! 👋`); setSelectedNeighbour(null); }}
+                style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
+              >
+                Say Hello 👋
+              </button>
             </motion.div>
           </motion.div>
         )}

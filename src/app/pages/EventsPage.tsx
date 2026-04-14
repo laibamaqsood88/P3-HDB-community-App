@@ -218,7 +218,7 @@ const NEIGHBOURS_GOING = [
 const NOTIFICATIONS = [
   { id: 1, type: 'event', emoji: '🏃', title: 'Morning Run tomorrow at 7 AM', body: 'Your registered event starts in less than 24 hours. Meet at Bishan-AMK Park Pavilion.', time: '10 min ago', read: false, route: { to: 'event', eventId: 1 } },
   { id: 2, type: 'group', emoji: '🌱', title: 'New message in Backyard Gardeners', body: 'Diana M.: "The tomatoes are looking great this week! 🍅"', time: '32 min ago', read: false, route: { to: 'group', groupId: 2 } },
-  { id: 3, type: 'marketplace', emoji: '🪴', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false, route: { to: 'marketplace' } },
+  { id: 3, type: 'marketplace', emoji: '🪴', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false, route: { to: 'messages', convId: 5 } },
   { id: 4, type: 'event', emoji: '📅', title: 'New event near you', body: 'Peranakan Cooking Workshop on Sun 13 Apr — 12 neighbours are going!', time: '3 hrs ago', read: true, route: { to: 'event', eventId: 2 } },
   { id: 5, type: 'group', emoji: '🎲', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true, route: { to: 'group', groupId: 3 } },
   { id: 6, type: 'marketplace', emoji: '📚', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true, route: { to: 'marketplace' } },
@@ -771,6 +771,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                           if (ev) goTo('detail', { event: ev });
                         } else if (r.to === 'group') {
                           onOpenGroupChat((r as any).groupId);
+                        } else if (r.to === 'messages') {
+                          onOpenGroupChat((r as any).convId);
                         } else if (r.to === 'marketplace') {
                           onOpenMarketplace();
                         }
