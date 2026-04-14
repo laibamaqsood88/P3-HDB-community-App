@@ -199,6 +199,24 @@ const NEIGHBOURS_GOING = [
   { id: 8, initials: 'HL', color: '#475569', unit: 'Blk 445 #09-33', status: 'Senior (60+)' },
 ];
 
+// ---- Notifications mock data ----
+const NOTIFICATIONS = [
+  { id: 1, type: 'event', emoji: '🏃', title: 'Morning Run tomorrow at 7 AM', body: 'Your registered event starts in less than 24 hours. Meet at Bishan-AMK Park Pavilion.', time: '10 min ago', read: false },
+  { id: 2, type: 'group', emoji: '🌱', title: 'New message in Backyard Gardeners', body: 'Diana M.: "The tomatoes are looking great this week! 🍅"', time: '32 min ago', read: false },
+  { id: 3, type: 'marketplace', emoji: '🪴', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false },
+  { id: 4, type: 'event', emoji: '📅', title: 'New event near you', body: 'Peranakan Cooking Workshop on Sun 13 Apr — 12 neighbours are going!', time: '3 hrs ago', read: true },
+  { id: 5, type: 'community', emoji: '📢', title: 'Estate notice from RC', body: 'Lift maintenance at Blk 445–449 on 16 Apr (Wed), 9 AM–12 PM. Please use Blk 450 lift.', time: 'Yesterday', read: true },
+  { id: 6, type: 'group', emoji: '🎲', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true },
+  { id: 7, type: 'marketplace', emoji: '📚', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true },
+];
+
+const NOTIF_COLORS: Record<string, { bg: string; text: string }> = {
+  event:       { bg: '#FFF0EC', text: '#FF6B47' },
+  group:       { bg: '#D1FAE5', text: '#059669' },
+  marketplace: { bg: '#DBEAFE', text: '#2563EB' },
+  community:   { bg: '#FEF3C7', text: '#D97706' },
+};
+
 // ---- Marketplace data (mirrored from HelpSharePage for home preview) ----
 const HOME_LATEST_REQUEST = {
   id: 1, category: 'Plant Care', emoji: '🪴',
@@ -224,6 +242,11 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
   const [selectedRequest, setSelectedRequest] = useState<typeof HOME_LATEST_REQUEST | null>(null);
   const [selectedMarketItem, setSelectedMarketItem] = useState<typeof HOME_MARKETPLACE_PICKS[0] | null>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [readNotifs, setReadNotifs] = useState<number[]>(NOTIFICATIONS.filter(n => n.read).map(n => n.id));
+
+  const unreadCount = NOTIFICATIONS.filter(n => !readNotifs.includes(n.id)).length;
+  const markAllRead = () => setReadNotifs(NOTIFICATIONS.map(n => n.id));
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: EventsScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
@@ -500,11 +523,15 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Good morning ☀️</div>
           </div>
           <button
-            onClick={() => toast('No new notifications')}
+            onClick={() => setShowNotifications(true)}
             style={{ width: '42px', height: '42px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', flexShrink: 0 }}
           >
             <Bell size={20} color={TEXT} strokeWidth={1.8} />
-            <div style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', borderRadius: '50%', background: '#EF4444', border: '1.5px solid white' }} />
+            {unreadCount > 0 && (
+              <div style={{ position: 'absolute', top: '6px', right: '6px', minWidth: '16px', height: '16px', borderRadius: '8px', background: '#EF4444', border: '1.5px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px' }}>
+                <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{unreadCount}</span>
+              </div>
+            )}
           </button>
         </div>
       </div>
@@ -732,6 +759,90 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           )}
         </div>
       </div>
+
+      {/* ---- Notifications Bottom Sheet ---- */}
+      <AnimatePresence>
+        {showNotifications && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowNotifications(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '28px 28px 0 0', maxHeight: '82vh', display: 'flex', flexDirection: 'column' }}
+            >
+              {/* Handle */}
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '16px auto 0' }} />
+
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px 12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Notifications</span>
+                  {unreadCount > 0 && (
+                    <div style={{ minWidth: '20px', height: '20px', borderRadius: '10px', background: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 800, color: 'white' }}>{unreadCount}</span>
+                    </div>
+                  )}
+                </div>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllRead}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 700, color: PRIMARY, fontFamily: "'DM Sans', sans-serif", padding: '4px 0' }}
+                  >
+                    Mark all read
+                  </button>
+                )}
+              </div>
+
+              {/* Notification list */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 36px' }}>
+                {NOTIFICATIONS.map((notif, i) => {
+                  const isRead = readNotifs.includes(notif.id);
+                  const colors = NOTIF_COLORS[notif.type] || { bg: BG, text: TEXT2 };
+                  return (
+                    <motion.div
+                      key={notif.id}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setReadNotifs(p => p.includes(notif.id) ? p : [...p, notif.id])}
+                      style={{
+                        display: 'flex', alignItems: 'flex-start', gap: '14px',
+                        padding: '14px 0',
+                        borderBottom: i < NOTIFICATIONS.length - 1 ? `1px solid ${BORDER}` : 'none',
+                        cursor: 'pointer',
+                        opacity: isRead ? 0.65 : 1,
+                      }}
+                    >
+                      {/* Icon */}
+                      <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: colors.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>
+                        {notif.emoji}
+                      </div>
+
+                      {/* Content */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '3px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: isRead ? 600 : 800, color: TEXT, lineHeight: '1.3' }}>{notif.title}</span>
+                          {!isRead && (
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#EF4444', flexShrink: 0, marginTop: '4px' }} />
+                          )}
+                        </div>
+                        <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.5', marginBottom: '5px' }}>{notif.body}</div>
+                        <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{notif.time}</span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ---- Request Detail Bottom Sheet ---- */}
       <AnimatePresence>
