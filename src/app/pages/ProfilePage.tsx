@@ -307,49 +307,6 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
           </div>
         </div>
 
-        {/* Settings Section */}
-        <div>
-          <SectionHeader label="Account" />
-          <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            {SETTINGS_ITEMS.map(({ Icon, label, sub }, i) => (
-              <button
-                key={label}
-                style={{
-                  width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px',
-                  background: 'none', border: 'none', borderTop: i > 0 ? `1px solid ${BG}` : 'none',
-                  cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
-                }}
-              >
-                <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={17} color={TEXT2} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{label}</div>
-                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
-                </div>
-                <ChevronRight size={16} color={MUTED} />
-              </button>
-            ))}
-            <button
-              style={{
-                width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px',
-                background: 'none', border: 'none', borderTop: `1px solid ${BG}`,
-                cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
-              }}
-            >
-              <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <LogOut size={17} color={PRIMARY} />
-              </div>
-              <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, color: PRIMARY }}>Sign Out</span>
-            </button>
-          </div>
-        </div>
-
-        {/* App version */}
-        <div style={{ textAlign: 'center', marginTop: '28px' }}>
-          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>NeighbourHood v1.0.0</div>
-          <div style={{ fontSize: '10px', color: '#C0C0CC', marginTop: '3px' }}>All residents are Singpass-verified · Estate-gated</div>
-        </div>
       </div>
 
       {/* ---- Interest Edit Bottom Sheet ---- */}
@@ -866,6 +823,31 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, paddingLeft: '48px' }}>Settings</div>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+        {/* Account */}
+        <div style={{ marginBottom: '22px' }}>
+          <SectionHeader label="Account" />
+          <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+            {SETTINGS_ITEMS.map(({ Icon, label, sub }, i) => (
+              <button key={label} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: 'none', border: 'none', borderTop: i > 0 ? `1px solid ${BG}` : 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
+                <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={17} color={TEXT2} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{label}</div>
+                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
+                </div>
+                <ChevronRight size={16} color={MUTED} />
+              </button>
+            ))}
+            <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: 'none', border: 'none', borderTop: `1px solid ${BG}`, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
+              <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <LogOut size={17} color={PRIMARY} />
+              </div>
+              <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, color: PRIMARY }}>Sign Out</span>
+            </button>
+          </div>
+        </div>
+
         {/* Notifications */}
         <div style={{ marginBottom: '22px' }}>
           <SectionHeader label="Notifications" />
