@@ -82,6 +82,24 @@ const INTERESTS = ['Fitness', 'Cooking', 'Gardening', 'Board Games', 'Arts & Cra
 const FAMILY_STATUS = ['Individual', 'Families', 'Parents', 'Seniors'];
 const CATEGORIES = ['All', '🏃 Fitness', '🍳 Cooking', '🌱 Gardening', '🎲 Board Games', '💆 Wellness'];
 
+// Mock neighbour attendance data
+const NEIGHBOUR_AVATARS = [
+  { id: 1, name: 'Alex T.', avatar: '🟧', color: '#F97316' },
+  { id: 2, name: 'Mei L.', avatar: '🟦', color: '#3B82F6' },
+  { id: 3, name: 'Raj K.', avatar: '🟨', color: '#FBBF24' },
+  { id: 4, name: 'Sarah C.', avatar: '🟪', color: '#A855F7' },
+  { id: 5, name: 'Jun W.', avatar: '🟩', color: '#10B981' },
+];
+
+// Determine which neighbours are attending which events
+const EVENT_ATTENDEES: Record<number, number[]> = {
+  1: [1, 2, 5],           // Morning Run: Alex, Mei, Jun
+  2: [2, 3, 4, 5],        // Cooking: Mei, Raj, Sarah, Jun
+  3: [1, 4, 5],           // Garden: Alex, Sarah, Jun
+  4: [2, 3],              // Board Games: Mei, Raj
+  5: [1, 3, 4],           // Tai Chi: Alex, Raj, Sarah
+};
+
 interface ExplorePageProps {
   initialEventId?: number;
 }
@@ -106,9 +124,39 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
   const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
 
   const activeFilterCount = Object.values(filters).flat().length;
+
+  // Helper: Check if event matches selected age groups
+  const matchesAgeGroup = (ev: EventData): boolean => {
+    if (filters.ageGroups.length === 0) return true;
+    const audience = ev.audience.toLowerCase();
+    return filters.ageGroups.some(group => {
+      if (group === 'All Ages') return audience.includes('all ages');
+      if (group === '20–35') return audience.includes('20–35') || audience.includes('20') || audience.includes('adults 20') || audience.includes('adults 25');
+      if (group === '35–50') return audience.includes('35–50') || audience.includes('adults 35') || audience.includes('adults 40');
+      if (group === '55+') return audience.includes('55+') || audience.includes('seniors');
+      if (group === 'Families') return audience.includes('families');
+      return false;
+    });
+  };
+
+  // Helper: Check if event matches selected family status
+  const matchesFamilyStatus = (ev: EventData): boolean => {
+    if (filters.familyStatus.length === 0) return true;
+    const audience = ev.audience.toLowerCase();
+    return filters.familyStatus.some(status => {
+      if (status === 'Families') return audience.includes('families');
+      if (status === 'Individual') return audience.includes('individual') || audience.includes('adults');
+      if (status === 'Parents') return audience.includes('parents') || audience.includes('families');
+      if (status === 'Seniors') return audience.includes('seniors') || audience.includes('55+');
+      return false;
+    });
+  };
+
   const filteredEvents = EVENTS.filter(ev => {
     if (filters.interests.length > 0 && !filters.interests.includes(ev.category)) return false;
     if (filters.languages.length > 0 && !filters.languages.some(l => ev.language.includes(l))) return false;
+    if (filters.ageGroups.length > 0 && !matchesAgeGroup(ev)) return false;
+    if (filters.familyStatus.length > 0 && !matchesFamilyStatus(ev)) return false;
     if (activeCategory !== 'All' && !activeCategory.includes(ev.category)) return false;
     if (searchQuery && !ev.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
@@ -415,6 +463,49 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
               ))}
             </div>
 
+            {/* Verified Neighbours Attending */}
+            {EVENT_ATTENDEES[ev.id] && EVENT_ATTENDEES[ev.id].length > 0 && (
+              <div style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', marginBottom: '20px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>
+                  ✓ Verified Neighbours Attending
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  {EVENT_ATTENDEES[ev.id].map(neighbourId => {
+                    const neighbour = NEIGHBOUR_AVATARS.find(n => n.id === neighbourId);
+                    if (!neighbour) return null;
+                    return (
+                      <motion.button
+                        key={neighbourId}
+                        whileTap={{ scale: 0.9 }}
+                        style={{
+                          width: '44px',
+                          height: '44px',
+                          borderRadius: '12px',
+                          background: neighbour.color,
+                          border: `2px solid ${BORDER}`,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '20px',
+                          position: 'relative',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                        }}
+                        title={neighbour.name}
+                      >
+                        {neighbour.avatar}
+                      </motion.button>
+                    );
+                  })}
+                  {EVENT_ATTENDEES[ev.id].length > 0 && (
+                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 600, marginLeft: '4px' }}>
+                      +{ev.signups - EVENT_ATTENDEES[ev.id].length} others
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Description */}
             <div style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', marginBottom: '20px' }}>
               <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this event</div>
@@ -477,12 +568,12 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
           </div>
           {/* Reminder options */}
           <div style={{ marginBottom: '20px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Set a reminder</div>
-            {['None', '1 day before', '1 hour before', '30 mins before'].map(opt => (
+            <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Get a reminder</div>
+            {['None', '1 day before', '3 days before', '1 week before'].map(opt => (
               <button
                 key={opt}
                 onClick={() => setReminderOption(opt)}
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 16px', marginBottom: '8px', borderRadius: '14px', background: CARD, border: `2px solid ${reminderOption === opt ? PRIMARY : BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 16px', marginBottom: '8px', borderRadius: '14px', background: reminderOption === opt ? '#FFF0EC' : CARD, border: `2px solid ${reminderOption === opt ? PRIMARY : BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
               >
                 <span style={{ fontSize: '14px', fontWeight: 600, color: reminderOption === opt ? PRIMARY : TEXT }}>{opt}</span>
                 {reminderOption === opt && <Check size={16} color={PRIMARY} />}
@@ -492,7 +583,11 @@ export function ExplorePage({ initialEventId }: ExplorePageProps) {
         </div>
         <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}` }}>
           <button
-            onClick={() => { toast.success('Registered! See you there 🎉'); goBack(); }}
+            onClick={() => {
+              const reminderMsg = reminderOption !== 'None' ? ` Reminder set for ${reminderOption.toLowerCase()}.` : '';
+              toast.success(`Registered! See you there 🎉${reminderMsg}`);
+              goBack();
+            }}
             style={{ width: '100%', padding: '16px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
           >
             Confirm Registration
