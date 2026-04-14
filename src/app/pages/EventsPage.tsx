@@ -205,9 +205,8 @@ const NOTIFICATIONS = [
   { id: 2, type: 'group', emoji: '🌱', title: 'New message in Backyard Gardeners', body: 'Diana M.: "The tomatoes are looking great this week! 🍅"', time: '32 min ago', read: false },
   { id: 3, type: 'marketplace', emoji: '🪴', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false },
   { id: 4, type: 'event', emoji: '📅', title: 'New event near you', body: 'Peranakan Cooking Workshop on Sun 13 Apr — 12 neighbours are going!', time: '3 hrs ago', read: true },
-  { id: 5, type: 'community', emoji: '📢', title: 'Estate notice from RC', body: 'Lift maintenance at Blk 445–449 on 16 Apr (Wed), 9 AM–12 PM. Please use Blk 450 lift.', time: 'Yesterday', read: true },
-  { id: 6, type: 'group', emoji: '🎲', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true },
-  { id: 7, type: 'marketplace', emoji: '📚', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true },
+  { id: 5, type: 'group', emoji: '🎲', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true },
+  { id: 6, type: 'marketplace', emoji: '📚', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true },
 ];
 
 const NOTIF_COLORS: Record<string, { bg: string; text: string }> = {
