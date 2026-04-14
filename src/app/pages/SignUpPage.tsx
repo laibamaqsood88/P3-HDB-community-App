@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, ChevronLeft, Users, X, Bookmark, Calendar, MapPin, ExternalLink } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Users, Bookmark } from 'lucide-react';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -745,7 +745,6 @@ function RecommendationsStep({
   onGetStarted: () => void;
 }) {
   const [joinedGroups, setJoinedGroups] = useState<number[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<typeof REC_EVENTS[number] | null>(null);
   const [wishlist, setWishlist] = useState<number[]>([]);
 
   const toggleWishlist = (id: number) => setWishlist(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
@@ -940,20 +939,28 @@ function RecommendationsStep({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + i * 0.1 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setSelectedEvent(ev)}
-                  style={{ flexShrink: 0, width: '200px', background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', cursor: 'pointer', position: 'relative' }}
+                  style={{ flexShrink: 0, width: '200px', background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', position: 'relative' }}
                 >
-                  {/* Wishlist badge */}
-                  {isWishlisted && (
-                    <div style={{ position: 'absolute', top: '10px', right: '10px', width: '24px', height: '24px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Bookmark size={11} color="white" fill="white" />
-                    </div>
-                  )}
+                  {/* Wishlist button */}
+                  <motion.button
+                    whileTap={{ scale: 0.88 }}
+                    onClick={() => toggleWishlist(ev.id)}
+                    style={{
+                      position: 'absolute', top: '12px', right: '12px',
+                      width: '30px', height: '30px', borderRadius: '10px',
+                      background: isWishlisted ? '#FFF0EC' : BG,
+                      border: `1.5px solid ${isWishlisted ? PRIMARY : BORDER}`,
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Bookmark size={13} color={isWishlisted ? PRIMARY : MUTED} fill={isWishlisted ? PRIMARY : 'none'} />
+                  </motion.button>
+
                   <div style={{ width: '46px', height: '46px', borderRadius: '14px', background: ev.categoryBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', marginBottom: '12px' }}>
                     {ev.emoji}
                   </div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.35' }}>{ev.title}</div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.35', paddingRight: '32px' }}>{ev.title}</div>
                   <div style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, marginBottom: '8px' }}>📅 {ev.date}</div>
                   <span style={{ padding: '3px 9px', borderRadius: '10px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 700 }}>
                     {ev.category}
@@ -997,99 +1004,6 @@ function RecommendationsStep({
         </motion.button>
       </div>
 
-      {/* Event Detail Bottom Sheet */}
-      <AnimatePresence>
-        {selectedEvent && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedEvent(null)}
-            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
-          >
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              onClick={e => e.stopPropagation()}
-              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 24px 40px', maxHeight: '80vh', overflowY: 'auto' }}
-            >
-              {/* Handle */}
-              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
-
-              {/* Header row */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <div style={{ flex: 1, paddingRight: '12px' }}>
-                  <div style={{ display: 'inline-flex', padding: '3px 10px', borderRadius: '20px', background: selectedEvent.categoryBg, marginBottom: '8px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: selectedEvent.categoryColor }}>{selectedEvent.category}</span>
-                  </div>
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, lineHeight: '1.3' }}>{selectedEvent.title}</div>
-                </div>
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-                >
-                  <X size={15} color={TEXT} />
-                </button>
-              </div>
-
-              {/* Info rows */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', background: BG, borderRadius: '14px' }}>
-                  <Calendar size={15} color={PRIMARY} />
-                  <div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{selectedEvent.date}</div>
-                    <div style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{selectedEvent.time}</div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', background: BG, borderRadius: '14px' }}>
-                  <MapPin size={15} color={PRIMARY} />
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT }}>{selectedEvent.location}</div>
-                </div>
-              </div>
-
-              {/* Description */}
-              <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.65', marginBottom: '24px' }}>{selectedEvent.description}</div>
-
-              {/* Action buttons */}
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <motion.button
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => toggleWishlist(selectedEvent.id)}
-                  style={{
-                    width: '48px', height: '48px', borderRadius: '16px', flexShrink: 0,
-                    background: wishlist.includes(selectedEvent.id) ? '#FFF0EC' : BG,
-                    border: `2px solid ${wishlist.includes(selectedEvent.id) ? PRIMARY : BORDER}`,
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
-                >
-                  <Bookmark size={18} color={wishlist.includes(selectedEvent.id) ? PRIMARY : MUTED} fill={wishlist.includes(selectedEvent.id) ? PRIMARY : 'none'} />
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => {
-                    setSelectedEvent(null);
-                  }}
-                  style={{
-                    flex: 1, padding: '14px', borderRadius: '16px',
-                    background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`,
-                    border: 'none', cursor: 'pointer',
-                    fontSize: '14px', fontWeight: 700, color: 'white',
-                    fontFamily: "'DM Sans', sans-serif",
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                  }}
-                >
-                  Register for this Event <ExternalLink size={14} />
-                </motion.button>
-              </div>
-              <div style={{ textAlign: 'center', marginTop: '10px', fontSize: '11px', color: MUTED }}>
-                {selectedEvent.price} · Registration opens in the app
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
