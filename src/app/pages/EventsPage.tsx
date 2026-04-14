@@ -14,7 +14,6 @@ const BORDER = '#EDEDEC';
 
 // ---- Types ----
 type EventsScreen = 'feed' | 'detail' | 'going' | 'group-detail';
-type EventsTab = 'signedup' | 'upcoming' | 'recommended';
 interface NavFrame { screen: EventsScreen; params?: any; }
 
 interface EventsPageProps {
@@ -238,7 +237,6 @@ const HOME_MARKETPLACE_PICKS = [
 // ---- Main Component ----
 export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
-  const [eventsTab, setEventsTab] = useState<EventsTab>('upcoming');
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
   const [selectedRequest, setSelectedRequest] = useState<typeof HOME_LATEST_REQUEST | null>(null);
   const [selectedMarketItem, setSelectedMarketItem] = useState<typeof HOME_MARKETPLACE_PICKS[0] | null>(null);
@@ -495,14 +493,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
   }
 
   // ---- Feed screen ----
-  const upcomingEvents = EVENTS;
-  const recommendedEvents = EVENTS.filter(e => e.recommended);
   const signedUpEvents = EVENTS.filter(e => registeredEvents.includes(e.id));
-
-  const eventsToShow =
-    eventsTab === 'signedup' ? signedUpEvents :
-    eventsTab === 'recommended' ? recommendedEvents :
-    upcomingEvents;
 
   return (
     <div className="no-scrollbar" style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
@@ -642,119 +633,57 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </div>
         </div>
 
-        {/* Events section */}
+        {/* Signed-Up Events — horizontal scroll */}
         <div>
-          {/* Section header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Events</span>
-            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{eventsToShow.length} events</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>My Events</span>
+              {signedUpEvents.length > 0 && (
+                <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: '#FFF0EC', color: PRIMARY }}>{signedUpEvents.length}</span>
+              )}
+            </div>
+            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>signed up</span>
           </div>
 
-          {/* 3 Sub-tabs */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
-            {([
-              { key: 'signedup',    label: 'Signed Up',   count: signedUpEvents.length },
-              { key: 'upcoming',   label: 'Upcoming',    count: null },
-              { key: 'recommended',label: 'Recommended', count: null },
-            ] as const).map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setEventsTab(tab.key)}
-                style={{
-                  flex: 1,
-                  padding: '8px 4px',
-                  borderRadius: '22px',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  background: eventsTab === tab.key ? PRIMARY : CARD,
-                  color: eventsTab === tab.key ? 'white' : TEXT2,
-                  border: eventsTab === tab.key ? 'none' : `1.5px solid ${BORDER}`,
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {tab.label}
-                {tab.count !== null && tab.count > 0 && (
-                  <span style={{
-                    width: '16px', height: '16px', borderRadius: '50%', fontSize: '9px', fontWeight: 800,
-                    background: eventsTab === tab.key ? 'rgba(255,255,255,0.3)' : '#FFF0EC',
-                    color: eventsTab === tab.key ? 'white' : PRIMARY,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Event list */}
-          {eventsToShow.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px 20px', background: CARD, borderRadius: '22px' }}>
-              <div style={{ fontSize: '36px', marginBottom: '12px' }}>📅</div>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>
-                {eventsTab === 'signedup' ? 'No events signed up yet' : 'No events found'}
-              </div>
-              <div style={{ fontSize: '13px', color: TEXT2 }}>
-                {eventsTab === 'signedup' ? 'Tap an event and hit Attend to sign up' : 'Check back soon'}
-              </div>
+          {signedUpEvents.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '32px 20px', background: CARD, borderRadius: '22px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize: '32px', marginBottom: '10px' }}>📅</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>No events signed up yet</div>
+              <div style={{ fontSize: '12px', color: MUTED }}>Browse the Explore tab to find events</div>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {eventsToShow.map(ev => {
-                const isRegistered = registeredEvents.includes(ev.id);
-                return (
-                  <motion.div
-                    key={ev.id}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => goTo('detail', { event: ev })}
-                    style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-                  >
-                    {/* Image */}
-                    <div style={{ height: '150px', position: 'relative' }}>
-                      <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '20px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '11px', fontWeight: 700 }}>
-                        {ev.category}
-                      </div>
-                      {isRegistered && (
-                        <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', alignItems: 'center', gap: '4px', background: '#DCFCE7', borderRadius: '20px', padding: '4px 10px' }}>
-                          <Check size={10} color="#16A34A" strokeWidth={2.5} />
-                          <span style={{ fontSize: '10px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
-                        </div>
-                      )}
+            <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
+              {signedUpEvents.map(ev => (
+                <motion.div
+                  key={ev.id}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => goTo('detail', { event: ev })}
+                  style={{ flexShrink: 0, width: '220px', background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', cursor: 'pointer' }}
+                >
+                  <div style={{ height: '120px', position: 'relative' }}>
+                    <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, transparent 50%)' }} />
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', padding: '3px 9px', borderRadius: '16px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 700 }}>
+                      {ev.category}
                     </div>
-                    {/* Info */}
-                    <div style={{ padding: '14px 16px' }}>
-                      <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '8px', lineHeight: '1.3' }}>{ev.title}</div>
-                      <div style={{ display: 'flex', gap: '14px', marginBottom: '6px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <Calendar size={12} color={MUTED} />
-                          <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <Clock size={12} color={MUTED} />
-                          <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.time.split('–')[0].trim()}</span>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <MapPin size={12} color={MUTED} />
-                          <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.location.split(',')[0]}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <Users size={12} color={MUTED} />
-                          <span style={{ fontSize: '11px', color: PRIMARY, fontWeight: 700 }}>{ev.going + (isRegistered ? 1 : 0)} going</span>
-                        </div>
-                      </div>
+                    <div style={{ position: 'absolute', top: '8px', right: '8px', display: 'flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '16px', padding: '3px 8px' }}>
+                      <Check size={9} color="#16A34A" strokeWidth={2.5} />
+                      <span style={{ fontSize: '9px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
                     </div>
-                  </motion.div>
-                );
-              })}
+                  </div>
+                  <div style={{ padding: '12px 14px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '7px', lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                      <Calendar size={11} color={MUTED} />
+                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <MapPin size={11} color={MUTED} />
+                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           )}
         </div>
