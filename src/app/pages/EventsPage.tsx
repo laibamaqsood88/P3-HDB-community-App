@@ -667,7 +667,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 {/* Top row: photo LEFT + name/location RIGHT */}
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
                   {/* Square photo */}
-                  <div style={{ width: '90px', height: '90px', borderRadius: '14px', overflow: 'hidden', flexShrink: 0, background: neighbour.color }}>
+                  <div style={{ width: '72px', height: '72px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: neighbour.color }}>
                     <img src={neighbour.avatarUrl} alt={neighbour.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
 
