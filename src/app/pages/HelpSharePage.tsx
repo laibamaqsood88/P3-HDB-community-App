@@ -1041,14 +1041,14 @@ function PhotoPickerSheet({ onSelect, onClose }: { onSelect: (url: string) => vo
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             <button
               onClick={() => onSelect(RECENT_PHOTOS[Math.floor(Math.random() * RECENT_PHOTOS.length)])}
-              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#FFF0EC', border: `1.5px solid #FFD8CC`, cursor: 'pointer', fontFamily: 'inherit', flexDirection: 'row', justifyContent: 'center' }}
+              style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#FFF0EC', border: `1.5px solid #FFD8CC`, cursor: 'pointer', fontFamily: 'inherit', justifyContent: 'center' }}
             >
               <Camera size={20} color={PRIMARY} />
               <span style={{ fontSize: '14px', fontWeight: 700, color: PRIMARY, marginLeft: '8px' }}>Take Photo</span>
             </button>
             <button
               onClick={() => onSelect(RECENT_PHOTOS[Math.floor(Math.random() * RECENT_PHOTOS.length)])}
-              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#EDE9FE', border: `1.5px solid #DDD6FE`, cursor: 'pointer', fontFamily: 'inherit', flexDirection: 'row', justifyContent: 'center' }}
+              style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#EDE9FE', border: `1.5px solid #DDD6FE`, cursor: 'pointer', fontFamily: 'inherit', justifyContent: 'center' }}
             >
               <Monitor size={20} color="#7C3AED" />
               <span style={{ fontSize: '14px', fontWeight: 700, color: '#7C3AED', marginLeft: '8px' }}>Library</span>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Lotus, Heart, Camera, BookOpen, Clock } from 'lucide-react';
+import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Smile, Heart, Camera, BookOpen, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -40,7 +40,7 @@ const getGroupIconElement = (emoji: string, color: string, size: number = 14) =>
     '🍳': <Utensils size={size} color={color} strokeWidth={2} />,
     '🌱': <Leaf size={size} color={color} strokeWidth={2} />,
     '🎲': <Dices size={size} color={color} strokeWidth={2} />,
-    '🧘': <Lotus size={size} color={color} strokeWidth={2} />,
+    '🧘': <Smile size={size} color={color} strokeWidth={2} />,
     '👨‍👩‍👧': <Heart size={size} color={color} strokeWidth={2} />,
     '📸': <Camera size={size} color={color} strokeWidth={2} />,
     '📚': <BookOpen size={size} color={color} strokeWidth={2} />,
