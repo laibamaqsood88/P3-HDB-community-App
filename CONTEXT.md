@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-15 (session 2)
+2026-04-15 (session 3 - onboarding updates)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -402,7 +402,12 @@ SERVICE_CATEGORIES = [
 ---
 
 ## Onboarding (`SignUpPage.tsx`)
-6 steps: Welcome → Date of Birth → Family Status → Interests → Loading → Recommendations
+6 steps: Welcome → Family Status → Interests → Spoken Language → Loading → Recommendations
+
+### Family Status Step
+- 6 options: Single, Couple, Living with kids, Living with parents, Multigenerational, Senior (60 and above)
+- Single-select with orange highlight + checkmark on selection
+- "Next" button disabled until selection made
 
 ### Interests Step
 - Search bar filters interests in real-time
@@ -411,20 +416,41 @@ SERVICE_CATEGORIES = [
 - Category header shows orange count badge when items selected
 - "Find my community →" button disabled until ≥1 interest selected
 
+### Spoken Language Step
+- 4 preset options: English, Chinese, Malay, Tamil (pill/button style matching Family Status step)
+- "Other language" text input for custom language entry
+- Single-select with orange highlight + checkmark
+- "Next" button disabled until selection made
+- Either preset or custom language must be selected to proceed
+
 ### Interest Categories & Colors
 ```
-Running:      bg #FFF0EC, text #FF6B47
-Gardening:    bg #D1FAE5, text #059669
-Board Games:  bg #EDE9FE, text #7C3AED
-Cooking:      bg #FEF3C7, text #D97706
-Reading:      bg #DBEAFE, text #2563EB
-Cycling:      bg #CCFBF1, text #0D9488
-Pets:         bg #FEF9C3, text #CA8A04
-Photography:  bg #FAE8FF, text #A21CAF
-Music:        bg #FFE4E6, text #E11D48
-Fitness:      bg #DCFCE7, text #16A34A
-Hiking:       bg #D1FAE5, text #059669
-Yoga:         bg #F3E8FF, text #9333EA
+Social & Community:
+  Community Volunteering:       bg #FEE2E2, text #DC2626
+  Cultural Heritage & Festivals: bg #FEF3C7, text #B45309
+
+Fitness & Wellness:
+  Fitness & Sports:           bg #DCFCE7, text #16A34A
+  Yoga & Mindfulness:         bg #F3E8FF, text #9333EA
+  Outdoor Activities:         bg #CCFBF1, text #0D9488
+
+Arts & Creativity:
+  Arts & Crafts:              bg #FCE7F3, text #DB2777
+  Music & Performing Arts:    bg #FFE4E6, text #E11D48
+  Dance:                      bg #EDE9FE, text #7C3AED
+
+Learning & Skills:
+  Cooking & Baking:           bg #FEF3C7, text #D97706
+  Technology & Digital Skills: bg #DBEAFE, text #2563EB
+  DIY & Home Improvement:     bg #F1F5F9, text #475569
+  Language Learning:          bg #CFFAFE, text #0891B2
+
+Lifestyle & Hobbies:
+  Pets & Animals:             bg #FEF9C3, text #CA8A04
+  Gardening & Plants:         bg #D1FAE5, text #059669
+  Gaming:                     bg #E0E7FF, text #4F46E5
+  Fashion & Beauty:           bg #FCE7F3, text #BE185D
+  Photography:                bg #FAE8FF, text #A21CAF
 ```
 
 ---
