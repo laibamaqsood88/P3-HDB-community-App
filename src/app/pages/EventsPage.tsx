@@ -690,23 +690,9 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     color: TEXT, fontSize: '12px', fontWeight: 700,
                     cursor: 'pointer', fontFamily: 'inherit',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                    marginBottom: '6px',
                   }}
                 >
                   👋 Say Hello
-                </button>
-
-                {/* View Profile — ghost */}
-                <button
-                  onClick={() => setSelectedNeighbour(neighbour)}
-                  style={{
-                    width: '100%', padding: '8px 0', borderRadius: '12px',
-                    background: 'none', border: `1px solid ${BORDER}`,
-                    color: TEXT2, fontSize: '12px', fontWeight: 600,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                >
-                  View Profile
                 </button>
               </motion.div>
             ))}
