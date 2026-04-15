@@ -243,6 +243,7 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
   const [activeDistance, setActiveDistance] = useState('Any');
   const [sort, setSort] = useState<'Latest' | 'Distance'>('Latest');
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const toggleCategory = (cat: string) => setActiveCategories(p => p.includes(cat) ? p.filter(c => c !== cat) : [...p, cat]);
   const toggleType = (t: string) => setActiveTypes(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t]);
@@ -261,45 +262,68 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
-        <div style={{ padding: '52px 16px 0' }}>
-          {/* Search pill + filter */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '14px' }}>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '12px', background: 'rgba(120,120,128,0.12)' }}>
-              <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
-              <input
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search requests..."
-                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', fontWeight: 500, color: TEXT, outline: 'none', fontFamily: 'inherit' }}
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
-                  <X size={14} color={MUTED} />
-                </button>
-              )}
-            </div>
-            <button
-              onClick={() => setFilterVisible(true)}
-              style={{ position: 'relative', width: '46px', height: '46px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-            >
-              <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
-              {filterCount > 0 && (
-                <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
-                  <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+        <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <AnimatePresence mode="wait" initial={false}>
+            {!searchOpen ? (
+              <motion.div key="title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}
+                style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.5px' }}>Requests</span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setSearchOpen(true)}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Search size={18} color={TEXT2} />
+                  </button>
+                  <button onClick={() => setFilterVisible(true)}
+                    style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
+                    {filterCount > 0 && (
+                      <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
+                        <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+                      </div>
+                    )}
+                  </button>
                 </div>
-              )}
-            </button>
-          </div>
+              </motion.div>
+            ) : (
+              <motion.div key="search" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}
+                style={{ display: 'flex', flex: 1, alignItems: 'center', gap: '8px' }}>
+                <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+                  style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <ChevronLeft size={20} color={TEXT} />
+                </button>
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '50px', background: 'rgba(120,120,128,0.10)' }}>
+                  <Search size={14} color={MUTED} />
+                  <input autoFocus value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                    placeholder="Search requests..."
+                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                      <X size={14} color={MUTED} />
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px', position: 'relative' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No requests match your filters</div>
         ) : (
           filtered.map(r => <RequestCard key={r.id} r={r} onClick={() => onSelectRequest(r)} />)
         )}
         <div style={{ height: '100px' }} />
+
+        {/* Liquid glass overlay when search is active */}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
+              onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+              style={{ position: 'absolute', inset: 0, background: 'rgba(247,247,247,0.72)', backdropFilter: 'blur(20px) saturate(1.8)', WebkitBackdropFilter: 'blur(20px) saturate(1.8)', zIndex: 30, cursor: 'pointer' }} />
+          )}
+        </AnimatePresence>
       </div>
 
       <AnimatePresence>

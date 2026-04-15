@@ -285,95 +285,97 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
         {/* ── Shared Header ── */}
         <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          {/* Search trigger row */}
-          <div style={{ padding: '52px 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Tappable search pill */}
-            <motion.button
-              whileTap={{ scale: 0.98 }}
-              onClick={() => { setSearchScopeTab(activeSubTab); setSearchMode(true); }}
-              style={{
-                flex: 1, display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '11px 16px', borderRadius: '50px',
-                background: CARD, border: `1px solid ${BORDER}`,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
-                cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
-              }}
-            >
-              <Search size={15} color={MUTED} strokeWidth={2.5} />
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{filterLabel}</span>
-                {searchQuery && (
-                  <span style={{ fontSize: '12px', color: MUTED, fontWeight: 400 }}>
-                    "{searchQuery}"
-                  </span>
-                )}
-              </div>
-              {searchQuery && (
-                <button
-                  onClick={e => { e.stopPropagation(); setSearchQuery(''); }}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
-                >
-                  <X size={14} color={MUTED} />
-                </button>
-              )}
-            </motion.button>
-
-            {/* Filter button */}
-            <button
-              onClick={() => {
-                if (activeSubTab === 'events') { setTempFilters(filters); setShowFilter(true); }
-                else if (activeSubTab === 'groups') setShowGroupFilter(true);
-                else setShowNeighbourFilter(true);
-              }}
-              style={{
-                width: '46px', height: '46px', borderRadius: '50%', flexShrink: 0,
-                background: isFilterActive ? '#FFF0EC' : CARD,
-                border: `1px solid ${isFilterActive ? '#FFD0C3' : BORDER}`,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
-              }}
-            >
-              <SlidersHorizontal size={17} color={isFilterActive ? PRIMARY : TEXT2} />
-              {activeSubTab === 'events' && activeFilterCount > 0 && (
-                <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
-                  <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{activeFilterCount}</span>
+          {!searchMode ? (
+            <>
+              {/* Normal mode: Title + icons */}
+              <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.5px' }}>Explore</span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => { setSearchScopeTab(activeSubTab); setSearchMode(true); }}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Search size={18} color={TEXT2} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (activeSubTab === 'events') { setTempFilters(filters); setShowFilter(true); }
+                      else if (activeSubTab === 'groups') setShowGroupFilter(true);
+                      else setShowNeighbourFilter(true);
+                    }}
+                    style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: isFilterActive ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: isFilterActive ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <SlidersHorizontal size={17} color={isFilterActive ? PRIMARY : TEXT2} />
+                    {activeSubTab === 'events' && activeFilterCount > 0 && (
+                      <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
+                        <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{activeFilterCount}</span>
+                      </div>
+                    )}
+                    {activeSubTab !== 'events' && isFilterActive && (
+                      <div style={{ position: 'absolute', top: '4px', right: '4px', width: '10px', height: '10px', borderRadius: '50%', background: PRIMARY, border: '2px solid white' }} />
+                    )}
+                  </button>
                 </div>
-              )}
-              {activeSubTab !== 'events' && isFilterActive && (
-                <div style={{ position: 'absolute', top: '4px', right: '4px', width: '10px', height: '10px', borderRadius: '50%', background: PRIMARY, border: '2px solid white' }} />
-              )}
-            </button>
-          </div>
-
-          {/* Sub-tabs */}
-          <div style={{ display: 'flex', marginTop: '12px' }}>
-            {(['events', 'groups', 'neighbours'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => handleSubTabChange(tab)}
-                style={{
-                  flex: 1, padding: '8px 0 0', background: 'none', border: 'none',
-                  cursor: 'pointer', fontFamily: 'inherit', position: 'relative',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center',
-                }}
-              >
-                <span style={{
-                  fontSize: '13px', fontWeight: activeSubTab === tab ? 700 : 500,
-                  color: activeSubTab === tab ? TEXT : MUTED,
-                  paddingBottom: '10px',
-                }}>
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </span>
-                {activeSubTab === tab && (
-                  <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />
-                )}
-              </button>
-            ))}
-          </div>
+              </div>
+              {/* Normal mode: Sub-tabs */}
+              <div style={{ display: 'flex' }}>
+                {(['events', 'groups', 'neighbours'] as const).map(tab => {
+                  const isActive = activeSubTab === tab;
+                  return (
+                    <button key={tab}
+                      onClick={() => handleSubTabChange(tab)}
+                      style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      </span>
+                      {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Search mode: Back + Sub-tabs row */}
+              <div style={{ padding: '52px 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <button onClick={() => { setSearchMode(false); setSearchQuery(''); }}
+                  style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <ChevronLeft size={20} color={TEXT} />
+                </button>
+                <div style={{ flex: 1, display: 'flex' }}>
+                  {(['events', 'groups', 'neighbours'] as const).map(tab => {
+                    const isActive = searchScopeTab === tab;
+                    return (
+                      <button key={tab}
+                        onClick={() => setSearchScopeTab(tab)}
+                        style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? PRIMARY : MUTED, paddingBottom: '10px' }}>
+                          {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </span>
+                        {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: PRIMARY, borderRadius: '2px' }} />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Search mode: Search input row */}
+              <div style={{ padding: '8px 16px 12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '50px', background: 'rgba(120,120,128,0.10)' }}>
+                  <Search size={14} color={MUTED} />
+                  <input autoFocus value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={`Search ${searchScopeTab}...`}
+                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+                    onKeyDown={e => { if (e.key === 'Enter') { handleSubTabChange(searchScopeTab); setSearchMode(false); } }} />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                      <X size={14} color={MUTED} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* ── Tab content ── */}
-        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
 
           {/* Events */}
           {activeSubTab === 'events' && (
@@ -536,73 +538,23 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           )}
         </AnimatePresence>
 
-        {/* ── Search overlay (Meetup-style) ── */}
-        <AnimatePresence>
-          {searchMode && (
-            <motion.div
-              key="search-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              style={{
-                position: 'absolute', inset: 0,
-                background: 'rgba(242,241,238,0.97)',
-                zIndex: 80, display: 'flex', flexDirection: 'column',
-              }}
-            >
-              {/* Header row: X | Events | Groups | Neighbours | 🔍 */}
-              <div style={{ display: 'flex', alignItems: 'flex-end', paddingTop: '52px', paddingLeft: '4px', paddingRight: '12px', paddingBottom: '10px' }}>
-                <button
-                  onClick={() => { handleSubTabChange(searchScopeTab); setSearchMode(false); }}
-                  style={{ width: '44px', height: '40px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-                >
-                  <X size={22} color={TEXT} strokeWidth={2} />
-                </button>
-
-                {(['events', 'groups', 'neighbours'] as const).map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => setSearchScopeTab(tab)}
-                    style={{
-                      flex: 1, padding: '8px 2px',
-                      background: 'none', border: 'none',
-                      borderBottom: searchScopeTab === tab ? `2.5px solid ${PRIMARY}` : '2.5px solid transparent',
-                      cursor: 'pointer', fontFamily: 'inherit',
-                      fontSize: '14px', fontWeight: searchScopeTab === tab ? 700 : 500,
-                      color: searchScopeTab === tab ? PRIMARY : MUTED,
-                    }}
-                  >
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
-                ))}
-
-              </div>
-
-              {/* Search card */}
-              <div style={{ margin: '4px 16px 0', background: CARD, borderRadius: '20px', boxShadow: '0 4px 24px rgba(0,0,0,0.10)', overflow: 'hidden' }}>
-                {/* Search input row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 18px' }}>
-                  <input
-                    autoFocus
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    placeholder={`Search ${searchScopeTab}...`}
-                    style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '16px', color: TEXT, fontFamily: 'inherit' }}
-                    onKeyDown={e => { if (e.key === 'Enter') { handleSubTabChange(searchScopeTab); setSearchMode(false); } }}
-                  />
-                  {searchQuery && (
-                    <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
-                      <X size={16} color={MUTED} />
-                    </button>
-                  )}
-                </div>
-
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          {/* Liquid glass overlay when search is active */}
+          <AnimatePresence>
+            {searchMode && (
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
+                onClick={() => { setSearchMode(false); setSearchQuery(''); }}
+                style={{
+                  position: 'absolute', inset: 0,
+                  background: 'rgba(245,244,240,0.72)',
+                  backdropFilter: 'blur(20px) saturate(1.8)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
+                  zIndex: 30, cursor: 'pointer',
+                }}
+              />
+            )}
+          </AnimatePresence>
+        </div>
     );
   }
 

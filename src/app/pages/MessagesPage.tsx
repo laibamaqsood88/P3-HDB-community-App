@@ -207,6 +207,7 @@ interface MessagesPageProps {
 export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
   const extraMapped: Conversation[] = extraConversations.map((c: any) => ({
     id: c.id,
     type: (c.type || 'direct') as ConvType,
@@ -304,76 +305,129 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
         <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)`, flexShrink: 0 }}>
-          {/* Large title */}
-          <div style={{ padding: '52px 16px 0' }}>
-            <div style={{ padding: '0 16px', marginBottom: '10px', fontSize: '28px', fontWeight: 700, color: TEXT, letterSpacing: '-0.3px' }}>
-              Messages
-            </div>
-          </div>
-
-          {/* iOS-style search bar */}
-          <div style={{ padding: '0 16px 10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '12px', background: 'rgba(120,120,128,0.12)' }}>
-              <Search size={15} color={MUTED} strokeWidth={2.2} style={{ flexShrink: 0 }} />
-              <input
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search messages..."
-                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', fontWeight: 500, color: TEXT, outline: 'none', fontFamily: "'Nunito', sans-serif" }}
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
-                  <X size={14} color={MUTED} />
+          {!searchOpen ? (
+            <>
+              {/* Normal mode: Title + search icon */}
+              <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.5px' }}>Messages</span>
+                <button onClick={() => setSearchOpen(true)}
+                  style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Search size={18} color={TEXT2} />
                 </button>
-              )}
-            </div>
-          </div>
-
-          {/* Filter tabs */}
-          <div className="no-scrollbar" style={{ display: 'flex', overflowX: 'auto' }}>
-            {FILTER_TABS.map(tab => {
-              const count = unreadFor(tab);
-              return (
-                <button
-                  key={tab}
-                  onClick={() => setActiveFilter(tab)}
-                  style={{
-                    flex: '0 0 auto',
-                    padding: '8px 14px',
-                    background: 'none',
-                    border: 'none',
-                    borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
-                    cursor: 'pointer',
-                    fontFamily: "'Nunito', sans-serif",
-                    fontSize: '13px',
-                    fontWeight: activeFilter === tab ? 600 : 500,
-                    color: activeFilter === tab ? PRIMARY : MUTED,
-                    whiteSpace: 'nowrap',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                  }}
-                >
-                  {tab}
-                  {count > 0 && (
-                    <span style={{
-                      minWidth: '17px', height: '17px', borderRadius: '9px',
-                      background: activeFilter === tab ? PRIMARY : MUTED,
-                      color: 'white', fontSize: '10px', fontWeight: 700,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      padding: '0 4px',
-                    }}>
-                      {count}
-                    </span>
+              </div>
+              {/* Normal mode: Filter tabs */}
+              <div className="no-scrollbar" style={{ display: 'flex', overflowX: 'auto' }}>
+                {FILTER_TABS.map(tab => {
+                  const count = unreadFor(tab);
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveFilter(tab)}
+                      style={{
+                        flex: '0 0 auto',
+                        padding: '8px 14px',
+                        background: 'none',
+                        border: 'none',
+                        borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
+                        cursor: 'pointer',
+                        fontFamily: "'Nunito', sans-serif",
+                        fontSize: '13px',
+                        fontWeight: activeFilter === tab ? 600 : 500,
+                        color: activeFilter === tab ? PRIMARY : MUTED,
+                        whiteSpace: 'nowrap',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                      }}
+                    >
+                      {tab}
+                      {count > 0 && (
+                        <span style={{
+                          minWidth: '17px', height: '17px', borderRadius: '9px',
+                          background: activeFilter === tab ? PRIMARY : MUTED,
+                          color: 'white', fontSize: '10px', fontWeight: 700,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          padding: '0 4px',
+                        }}>
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Search mode: Back + Filter tabs row */}
+              <div style={{ paddingTop: '52px', display: 'flex', alignItems: 'center' }}>
+                <div style={{ padding: '0 8px 0 12px', flexShrink: 0 }}>
+                  <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+                    style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ChevronLeft size={20} color={TEXT} />
+                  </button>
+                </div>
+                <div className="no-scrollbar" style={{ flex: 1, display: 'flex', overflowX: 'auto' }}>
+                  {FILTER_TABS.map(tab => {
+                    const count = unreadFor(tab);
+                    return (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveFilter(tab)}
+                        style={{
+                          flex: '0 0 auto',
+                          padding: '8px 14px',
+                          background: 'none',
+                          border: 'none',
+                          borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
+                          cursor: 'pointer',
+                          fontFamily: "'Nunito', sans-serif",
+                          fontSize: '13px',
+                          fontWeight: activeFilter === tab ? 600 : 500,
+                          color: activeFilter === tab ? PRIMARY : MUTED,
+                          whiteSpace: 'nowrap',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                        }}
+                      >
+                        {tab}
+                        {count > 0 && (
+                          <span style={{
+                            minWidth: '17px', height: '17px', borderRadius: '9px',
+                            background: activeFilter === tab ? PRIMARY : MUTED,
+                            color: 'white', fontSize: '10px', fontWeight: 700,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            padding: '0 4px',
+                          }}>
+                            {count}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Search mode: Search input row */}
+              <div style={{ padding: '8px 16px 12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '50px', background: 'rgba(120,120,128,0.10)' }}>
+                  <Search size={14} color={MUTED} />
+                  <input autoFocus value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                    placeholder="Search messages..."
+                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', color: TEXT, outline: 'none', fontFamily: "'Nunito', sans-serif" }} />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                      <X size={14} color={MUTED} />
+                    </button>
                   )}
-                </button>
-              );
-            })}
-          </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Conversation list */}
-        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '100px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '100px', position: 'relative' }}>
           {filteredConvs.length === 0 && (
             <div
               style={{
@@ -549,6 +603,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
               </div>
             </motion.div>
           ))}
+
         </div>
       </div>
 

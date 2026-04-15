@@ -525,6 +525,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [activeDistance, setActiveDistance] = useState('Any');
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const q = searchQuery.toLowerCase().trim();
 
@@ -549,55 +550,85 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: CARD, flexShrink: 0 }}>
-        {/* Search pill + filter */}
-        <div style={{ padding: '52px 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '12px', background: 'rgba(120,120,128,0.12)', border: 'none' }}>
-            <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder={`Search ${mainFilter.toLowerCase()}...`}
-              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', fontWeight: 500, color: TEXT, outline: 'none', fontFamily: 'inherit' }}
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
-                <X size={14} color={MUTED} />
-              </button>
-            )}
-          </div>
-          <button
-            onClick={() => setShowFilterPanel(true)}
-            style={{ position: 'relative', width: '44px', height: '44px', borderRadius: '50%', background: CARD, border: `1px solid ${BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-          >
-            <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
-            {filterCount > 0 && (
-              <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
-                <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+        {!searchOpen ? (
+          <>
+            {/* Normal mode: Title + icons */}
+            <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.5px' }}>Market</span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={() => setSearchOpen(true)}
+                  style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Search size={18} color={TEXT2} />
+                </button>
+                <button onClick={() => setShowFilterPanel(true)}
+                  style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
+                  {filterCount > 0 && (
+                    <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
+                      <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+                    </div>
+                  )}
+                </button>
               </div>
-            )}
-          </button>
-        </div>
-        {/* Items | Services underline tabs */}
-        <div style={{ display: 'flex', borderBottom: `0.5px solid ${BORDER}`, background: CARD }}>
-          {(['Items', 'Services'] as MainFilter[]).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setMainFilter(tab)}
-              style={{
-                flex: 1, padding: '12px', background: 'none', border: 'none',
-                borderBottom: `2px solid ${mainFilter === tab ? PRIMARY : 'transparent'}`,
-                fontSize: '15px', fontWeight: mainFilter === tab ? 700 : 500,
-                color: mainFilter === tab ? PRIMARY : MUTED,
-                cursor: 'pointer', fontFamily: 'inherit',
-              }}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+            </div>
+            {/* Normal mode: Sub-tabs */}
+            <div style={{ display: 'flex' }}>
+              {(['Items', 'Services'] as MainFilter[]).map(tab => {
+                const isActive = mainFilter === tab;
+                return (
+                  <button key={tab} onClick={() => setMainFilter(tab)}
+                    style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
+                      {tab}
+                    </span>
+                    {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Search mode: Back + Sub-tabs row */}
+            <div style={{ padding: '52px 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+                style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <ChevronLeft size={20} color={TEXT} />
+              </button>
+              <div style={{ flex: 1, display: 'flex' }}>
+                {(['Items', 'Services'] as MainFilter[]).map(tab => {
+                  const isActive = mainFilter === tab;
+                  return (
+                    <button key={tab} onClick={() => setMainFilter(tab)}
+                      style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? PRIMARY : MUTED, paddingBottom: '10px' }}>
+                        {tab}
+                      </span>
+                      {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: PRIMARY, borderRadius: '2px' }} />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            {/* Search mode: Search input row */}
+            <div style={{ padding: '8px 16px 12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '50px', background: 'rgba(120,120,128,0.10)' }}>
+                <Search size={14} color={MUTED} />
+                <input autoFocus value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                  placeholder={`Search ${mainFilter.toLowerCase()}...`}
+                  style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                    <X size={14} color={MUTED} />
+                  </button>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', position: 'relative' }}>
         {mainFilter === 'Items' && (
           <>
             {displayItems.length === 0 ? (
@@ -627,6 +658,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         )}
 
         <div style={{ height: '100px' }} />
+
       </div>
 
       <AnimatePresence>
