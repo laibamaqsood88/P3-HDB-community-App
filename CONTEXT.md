@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-15
+2026-04-15 (session 2)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -73,6 +73,7 @@ onMarketplaceSaveToggle(id, item)     // adds/removes full item object from save
 - `openExploreGroups()` — switches to Explore tab, opens Groups sub-tab
 - `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat
 - `onOpenMarketplace()` — switches to Marketplace tab
+- `onOpenDirectChat(conv)` — adds `conv` to `conversations` state, sets `initialGroupChatId` to `conv.id`, switches to Messages tab (passed to `ExplorePage` → `NeighboursTab`)
 
 ---
 
@@ -103,14 +104,20 @@ onMarketplaceSaveToggle(id, item)     // adds/removes full item object from save
 
 ### Props
 ```ts
-{ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents }
+{ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, onOpenNeighbours, onOpenRequest, savedEvents }
 ```
 
 ---
 
 ## Tab 2 — Explore (`ExplorePage.tsx`)
 
-### Sub-tabs: Events | Groups
+### Shared Header (all sub-tabs)
+- Explore-style **search pill**: rounded pill (border-radius 50px), search icon left, label text, shows `"query"` subtitle when active, clear X button, box-shadow. Tapping opens a full-screen search overlay.
+- **Filter button**: circular (46px), `SlidersHorizontal` icon, orange when active with count badge
+- **Sub-tabs**: underline style — `2.5px solid PRIMARY` on active, transparent otherwise; `PRIMARY` colour when active, `MUTED` when not
+- No location subtitle ("Singapore" removed) — label shows filter context only
+
+### Sub-tabs: Events | Groups | Neighbours
 
 #### Events Sub-tab
 - Search bar + Filter button
@@ -125,13 +132,21 @@ onMarketplaceSaveToggle(id, item)     // adds/removes full item object from save
 - "My Groups" horizontal scroll
 - Group detail: hero image, name, members, MEETS + LOCATION info, About, hashtags, Join/Leave button
 
+#### Neighbours Sub-tab
+- Lists `MOCK_NEIGHBOURS` (8 neighbours) with name, unit, distance, interests, last active time
+- Search + filter (distance / shared interests / recently active)
+- Each card shows interest pills (shared ones highlighted), **Message** button + View Profile button
+- **Message button**: creates a direct conversation object, calls `onOpenDirectChat(conv)` → adds conv to `extraConversations` in `MessagesPage` and switches app to Messages tab, opening that chat
+- No "Connect" button — removed in favour of Message
+
 ---
 
 ## Tab 3 — Marketplace (`HelpSharePage.tsx`)
 
 ### Overview
-- Two tabs: **Items** | **Services** (toggle at top)
-- Search bar + filter panel (distance + category)
+- Two tabs: **Items** | **Services** — underline style (matching Explore page tabs), not pill/toggle
+- **Header**: no location pin, no large "Marketplace" heading, no description subtitle
+- **Search bar**: explore-style rounded pill (border-radius 50px, shadow, search icon, inline input, clear X). Filter button is circular (46px).
 - Both Items and Services use a **2-column grid**
 - Save system: **Bookmark icon only** (no hearts anywhere). State lifted to `App.tsx` and synced to Profile → Saved Items
 - Post button (orange FAB) → Category Select → Item or Service post flow
@@ -310,8 +325,20 @@ SERVICE_CATEGORIES = [
 
 ---
 
+## Requests (`RequestsPage.tsx`)
+- Navigated to from Home (Latest Request card) or Profile (My Posts)
+- **Header**: no location pin, no large "Requests" heading, no description subtitle
+- **Search bar**: explore-style rounded pill (same structure as Marketplace/Messages)
+- Filter button: circular (46px), opens filter bottom sheet (categories, type, distance, sort)
+- Request cards: category emoji + title, type badge, poster avatar + name, expiry, location
+- Request detail: full description, collection point map, Chat button
+- Post flow: title, category, type (Borrow / Free / Paid), description, expiry, location
+
 ## Tab 4 — Messages (`MessagesPage.tsx`)
-- Filter tabs: All | Groups | Marketplace | Direct
+- **Header**: no large "Messages" heading
+- **Search pill**: explore-style rounded pill — filters conversation list by name in real time
+- **Filter tabs**: All | Groups | Marketplace | Direct — underline style (matching Explore page)
+- No bell icon
 - Conversations:
   - ID 1: Morning Runners Club (group, `#16A34A`)
   - ID 2: Backyard Gardeners (group, `#059669`)
@@ -321,7 +348,7 @@ SERVICE_CATEGORIES = [
   - Plant Watering Request (marketplace)
 - **Group chat screen** has two tabs: **Chat** | **Activity Board**
   - Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal + discoverability notice
-- Props: `{ initialConvId?: number }` — opens directly to a specific group chat
+- Props: `{ initialConvId?: number; extraConversations?: any[] }` — opens directly to a specific conversation (searches both `extraConversations` and static `CONVERSATIONS`)
 
 ### GROUP_ACTIVITY mock data
 ```ts
