@@ -538,22 +538,6 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           )}
         </AnimatePresence>
 
-          {/* Liquid glass overlay when search is active */}
-          <AnimatePresence>
-            {searchMode && (
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
-                onClick={() => { setSearchMode(false); setSearchQuery(''); }}
-                style={{
-                  position: 'absolute', inset: 0,
-                  background: 'rgba(245,244,240,0.72)',
-                  backdropFilter: 'blur(20px) saturate(1.8)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
-                  zIndex: 30, cursor: 'pointer',
-                }}
-              />
-            )}
-          </AnimatePresence>
         </div>
     );
   }
