@@ -321,14 +321,6 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
         )}
         <div style={{ height: '100px' }} />
 
-        {/* Liquid glass overlay when search is active */}
-        <AnimatePresence>
-          {searchOpen && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
-              onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-              style={{ position: 'absolute', inset: 0, background: 'rgba(247,247,247,0.72)', backdropFilter: 'blur(20px) saturate(1.8)', WebkitBackdropFilter: 'blur(20px) saturate(1.8)', zIndex: 30, cursor: 'pointer' }} />
-          )}
-        </AnimatePresence>
       </div>
 
       <AnimatePresence>
