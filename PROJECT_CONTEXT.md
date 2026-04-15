@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-15 (Session 2)
+2026-04-15 (Session 3)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -11,10 +11,10 @@ A Singapore HDB community mobile web app called **NeighbourHood**. It connects v
 
 ## How to Run
 ```bash
-cd /Users/nurleeyana/Desktop/P3
-npm run dev        # starts on http://localhost:5173
+cd "/Users/laibamaqsood/Desktop/P3 HDB community App"
+npm run dev        # starts on http://localhost:5173 (or next available port)
+npm run build      # production build to /dist
 ```
-Preview server config: `.claude/launch.json` (port 5173, `npm run dev`).
 
 ---
 
@@ -22,11 +22,11 @@ Preview server config: `.claude/launch.json` (port 5173, `npm run dev`).
 ```
 src/
 ├── styles/
-│   └── theme.css                  — CSS variables + .no-scrollbar utility
+│   └── theme.css                  — CSS variables + .no-scrollbar utility + Nunito font
 └── app/
     ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks
     ├── components/
-    │   └── BottomNav.tsx          — 5-tab nav (Events / Explore / Marketplace / Requests / Messages)
+    │   └── BottomNav.tsx          — 5-tab floating pill nav
     └── pages/
         ├── LoginPage.tsx          — Singpass login screen
         ├── SignUpPage.tsx         — 6-step onboarding (exports INTEREST_CATEGORIES)
@@ -36,50 +36,91 @@ src/
         ├── HelpSharePage.tsx      — Marketplace (Tab 3)
         ├── RequestsPage.tsx       — Requests page (Tab 4, exports REQUESTS_DATA + REQUESTS_CAT_EMOJIS)
         ├── MessagesPage.tsx       — Group + direct chats (Tab 5)
+        ├── NeighboursPage.tsx     — Neighbours feed (used inside ExplorePage)
         └── ProfilePage.tsx        — Profile overlay (opened from Home)
+index.html                         — Google Fonts Nunito import
 ```
 
 ---
 
-## Design Tokens (used in every file)
+## Global Design System
+
+### Font
+- **Nunito** — imported via Google Fonts CDN in `index.html`
+- Applied globally via `body { font-family: 'Nunito', sans-serif }` in `theme.css`
+- All inline style objects also specify `fontFamily: "'Nunito', sans-serif"` where needed
+
+### Design Tokens (used in every page file)
 ```
-BG      = '#F7F7F7'   // light gray background (HelpSharePage uses '#F7F7F7'; others use '#F5F4F0')
-CARD    = '#FFFFFF'   // white cards
-PRIMARY = '#FF6B47'   // orange accent
-TEXT    = '#1C1C1E'   // near-black
-TEXT2   = '#636366'   // medium gray
-MUTED   = '#8E8E93'   // light gray
-BORDER  = 'rgba(60,60,67,0.12)'   // subtle border
-Font: system-ui / inherited
+BG      = '#F7F7F7'              // app background (consistent across all pages)
+CARD    = '#FFFFFF'              // white card surfaces
+PRIMARY = '#FF6B47'              // brand orange accent
+TEXT    = '#1C1C1E'              // near-black (some older pages use '#0D0D0D')
+TEXT2   = '#636366'              // medium gray
+MUTED   = '#8E8E93' or '#AEAEB2' // light gray
+BORDER  = 'rgba(60,60,67,0.12)' // subtle hairline border
 ```
+
+### Spacing Standards
+- **Top padding**: `44px` on all page headers/first content area (accounts for status bar)
+- **Bottom padding**: `100px` on all main scroll containers (clears floating nav bar)
+- **Card border radius**: `14px–20px`
+- **Button border radius**: `12px–14px`
+- **Icon size**: typically `20px–24px` for nav, `16px–20px` for inline
 
 ### Scrollbar Hiding
-Apply `className="no-scrollbar"` to any scrollable element to hide the scrollbar while keeping scroll functionality. Defined in `src/styles/theme.css`.
+Apply `className="no-scrollbar"` to scrollable elements. Defined in `src/styles/theme.css`.
 
 ---
 
-## Bottom Nav (`App.tsx` + `BottomNav.tsx`)
-- Floating overlay at `position: absolute, bottom: 0, zIndex: 50`
-- Height: ~81px (24px safe area + ~57px pill); all main page scrollable areas use `paddingBottom: '100px'`
-- **Visible only on main/feed screens**: Home, Explore (all 3 sub-tabs), Marketplace (Items + Services), Requests (all sub-tabs), Messages (conversation list)
-- **Hidden on all detail/sub-pages**: item detail, service detail, neighbour profile, request detail, chat, group detail, etc.
-- Controlled via `showBottomNav` state in `App.tsx`; each tab page receives `onNavVisibilityChange?: (visible: boolean) => void` callback
-- `useEffect` in each page calls the callback when its internal screen changes; App.tsx resets to `true` when user taps a tab in BottomNav
-- Filter panels use `zIndex: 60/61` to appear above the nav bar
+## Bottom Nav (`BottomNav.tsx` + `App.tsx`)
+
+### Structure
+- **Floating pill** — `position: absolute, bottom: 0, zIndex: 50` inside content area
+- White pill container: `background: rgba(248,248,250,0.78)`, `backdropFilter: blur(40px) saturate(2) brightness(1.06)`
+- **Active tab**: frosted glass pill highlight (`rgba(255,255,255,0.62)` + blur) with **orange** `#FF6B47` icon + label
+- **Inactive tabs**: muted `#8E8E93` icons + labels
+- Framer Motion `layoutId="activeNavPill"` spring animation between tabs
+- Safe-area wrapper: `padding: '0 14px 24px'`
+
+### Gradient Fade Layer
+- `position: absolute, bottom: 0, height: 140px, zIndex: 40` — fades page content into nav
+- 5-stop gradient: `transparent → rgba(245,244,240,0.18) → 0.52 → 0.82 → 0.96`
+- `pointerEvents: none` so it never blocks scroll/tap
+
+### Visibility
+- **Visible**: Home, Explore (all sub-tabs), Marketplace feed, Requests feed, Messages list
+- **Hidden**: all detail pages, chat screens, post forms, item/service detail, etc.
+- Controlled via `showBottomNav` state in `App.tsx`
+- Each page calls `onNavVisibilityChange?(visible: boolean)` callback
+- App.tsx resets to `true` on tab change
+
+### Tabs
+```
+events       → Home       (House icon)
+explore      → Explore    (Compass icon)
+marketplace  → Market     (ShoppingBag icon)
+requests     → Requests   (ClipboardList icon)
+messages     → Messages   (MessageCircle icon)
+```
+
+---
 
 ## Auth Flow (`App.tsx`)
-- `authScreen` state: `'login'` → `'signup'` → `'main'`
-- **LoginPage** → calls `onLogin()` → goes to signup
-- **SignUpPage** → calls `onComplete({ dob, familyStatus, interests })` → enters main app; sets `userInterests` state
-- Main app has `activeTab` state and a `showProfile` overlay
+- `authScreen`: `'login'` → `'signup'` → `'main'`
+- **LoginPage** → `onLogin()` → signup
+- **SignUpPage** → `onComplete({ dob, familyStatus, interests })` → main app; sets `userInterests`
+- Main app: `activeTab` + `showProfile` overlay
 
 ### App.tsx State
 ```ts
 activeTab: 'events' | 'explore' | 'marketplace' | 'requests' | 'messages'
 showProfile: boolean
+showBottomNav: boolean
 savedEvents: number[]
+savedMarketplaceItems: any[]
 wishlist: number[]
-userInterests: string[]           // from onboarding, synced to ProfilePage
+userInterests: string[]
 myPosts: any[]
 conversations: any[]
 initialGroupChatId: number | undefined
@@ -89,50 +130,49 @@ initialMarketplaceItemId: number | undefined
 exploreInitialSubTab: 'events' | 'groups' | 'neighbours'
 ```
 
-### Cross-tab Navigation (App.tsx callbacks)
-- `openExploreGroups()` — switches to Explore tab, opens Groups sub-tab
-- `openExploreNeighbours()` — switches to Explore tab, opens Neighbours sub-tab
-- `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat
-- `openRequest(id)` — `setInitialRequestId(id || undefined)`, switches to Requests tab
-- Profile `onOpenEvent(id)` — sets `initialEventId`, switches to Explore (events sub-tab)
-- Profile `onOpenMarketplaceItem(id)` — sets `initialMarketplaceItemId`, switches to Marketplace tab
-- Profile `onOpenRequest(id)` — calls `openRequest(id)`
-- `key` prop forces remount on ExplorePage, HelpSharePage, RequestsPage when their `initial*Id` changes
+### Cross-tab Navigation Callbacks
+```ts
+openExploreGroups()              // → Explore tab, Groups sub-tab
+openExploreNeighbours()          // → Explore tab, Neighbours sub-tab
+openGroupChat(groupId)           // → Messages tab, specific group chat
+openRequest(id)                  // → Requests tab (id=0 → feed, id>0 → detail)
+onOpenEvent(id)                  // → Explore tab, event detail
+onOpenMarketplaceItem(id)        // → Marketplace tab, item/service detail
+```
 
 ---
 
 ## Tab 1 — Home Dashboard (`EventsPage.tsx`)
 
 ### Header
-- Profile avatar button (orange "Y") **top-left** → opens Profile overlay
-- App name "NeighbourHood" centered
-- Bell icon **top-right** → opens **notification bottom sheet**
+- Profile avatar button (orange "Y") top-left → opens Profile overlay
+- "NeighbourHood" centered
+- Bell icon top-right → notification bottom sheet (unread count badge)
 
 ### Notification System
 - 6 notifications with `route` field
-- Notification routes: `{ to: 'event', eventId }` | `{ to: 'group', groupId }` | `{ to: 'marketplace' }` | `{ to: 'messages', convId }`
-- "Neighbour replied to your request" → `{ to: 'messages', convId: 5 }` → opens conversation #5
-- Unread count badge on bell icon; "Mark all read" button in sheet
+- Routes: `{ to: 'event', eventId }` | `{ to: 'group', groupId }` | `{ to: 'marketplace' }` | `{ to: 'messages', convId }`
+- "Mark all read" button in sheet
 
-### Content Sections (scrollable, no scrollbar)
-1. **Greeting** — "Good morning ☀️", estate + Verified badge
-2. **Your Interest Groups** — horizontal scroll + "More →"; clicking opens group chat in Messages tab
-3. **Latest Requests** — horizontal scroll of 5 compact cards (200px wide each), no trust score; tapping calls `onOpenRequest(r.id)` → navigates to full request detail in Requests tab; "See all ›" button beside title calls `onOpenRequest(0)` → shows full Requests feed
+### Content Sections (scrollable)
+1. **Greeting** — "Good morning ☀️", estate, Verified badge
+2. **Your Interest Groups** — horizontal scroll; tapping opens group chat in Messages tab
+3. **Latest Requests** — horizontal scroll, compact cards (200px wide); tapping → `onOpenRequest(id)`; "See all" → `onOpenRequest(0)` → Requests feed
 4. **Marketplace Picks** — horizontal scroll of 4 items/services
-5. **Recommended Events** — vertical list; tapping navigates to Explore tab
-6. **Connect with Neighbours** — list of nearby neighbours; "View Profile" opens a bottom sheet showing name, block (no unit number), distance, interests as coloured pills, "Say Hello" button
+5. **Recommended Events** — vertical list; tapping → Explore tab
+6. **Connect with Neighbours** — horizontal scroll cards (220px wide):
+   - Category sticker tag (top-left, rotated -1.5deg, inside card)
+   - 72×72px square photo (left) + name + location (right)
+   - 👋 Say Hello outline button (orange border, white bg)
+   - No "View Profile" button
 
-### Sub-tabs
-- **Upcoming** — shows all above sections
-- **Signed Up** — list of events user registered for (no "signed up" subtitle text)
-
-### Props
+### MOCK_NEIGHBOURS data (EventsPage)
 ```ts
-{
-  onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat,
-  onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest
-}
+{ id, name, distance, unit, interests: string[], avatar, color, avatarUrl, lastActive }
 ```
+Real Unsplash photos used. Interest tag shows `interests[0]`.
+
+### Sub-tabs: Upcoming | Signed Up
 
 ---
 
@@ -141,159 +181,65 @@ exploreInitialSubTab: 'events' | 'groups' | 'neighbours'
 ### Sub-tabs: Events | Groups | Neighbours
 
 ### Events Sub-tab
-- Search bar + Filter button
-- Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness, Age filter
+- Search bar + filter button
+- Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness
 - Featured event card (large image) + upcoming list
-- **Event Detail screen**: Date row, Location row, Organizer card, About card, Hosting/Going panels, Price + Attend toggle
-- **Going Breakdown screen**: two horizontal bar charts (By Household Type, By Language Spoken) + Neighbours Attending list
-  - `FAMILY_STATUS_BREAKDOWN`: Single, Couple, Living with kids, Living with parents, Multigenerational, Senior (60+)
-  - `LANGUAGE_BREAKDOWN`: English, Mandarin, Malay, Tamil, Multilingual
-  - Neighbours Attending: shows avatar initials, name, block + distance only (no family status pill)
+- Event Detail: date, location, organizer, about, going breakdown charts
+- Going Breakdown: By Household Type + By Language charts; Neighbours Attending list (avatar, name, block+distance only)
 
-### Search Overlay (when search bar is tapped)
-- Header row: X button | Events / Groups / Neighbours tabs | Search button
-- White card below with a single text input (no left icon, no location row)
-
-### Groups Sub-tab (`ConnectPage.tsx`)
-- Groups list with cover image cards (category badge, name, description, members, location, "View →")
-- Group detail: hero image, back button, category badge, name, members count, info cards (Meets, Location), About, tags, Members section, Join/Leave button
-- **Members section** on detail page: shows `GroupMember[]` (avatar initials, name, block) as a static list; count in header matches list length; no popup or "+more" button
-- `GroupMember` type: `{ name: string; block: string; avatar: string; color: string }`
-- All 8 groups have `membersList` populated: Morning Runners Club (6), Peranakan Cooking Circle (5), Community Garden Guild (7), Board Game Crew (5), Seniors Wellness Circle (5), Parents & Kids Playgroup (6), Photography Walkers (4), Neighbourhood Book Club (5)
+### Groups Sub-tab (→ `ConnectPage.tsx`)
 - 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
-- Search bar + category filter pills; "My Groups" horizontal scroll (joined groups)
+- Group detail: hero image, category badge (Lucide icon + text), name, info cards (Clock icon + MapPin icon), About, tags, Members list, Join/Leave button
+- Category icons mapped via `getGroupIconElement(emoji, color, size)` helper
 
-### Neighbours Sub-tab
-- List of nearby neighbours showing avatar, name, **block number only** (no unit number), distance
-- Format: `{n.unit.split(' #')[0]} · {n.distance}` (e.g., "Blk 445 · 2 min walk")
-- "View Profile" button → opens bottom sheet showing name, block+distance, interests as coloured pills, "Say Hello" button
-- No "Profile coming soon!" toast
+### Neighbours Sub-tab (→ `NeighboursPage.tsx`)
+- Neighbour cards redesigned to match reference:
+  - Category sticker tag top-left (inside card, rotated -1.5deg)
+  - Square photo + name/location side by side
+  - 👋 Say Hello button (outline, orange border)
+- NEIGHBOURS data has: `{ id, name, avatarUrl, sharedInterests, allInterests, sharedCount, proximity, distance, verified, avatarColor }`
+- Real Unsplash photos
 
 ---
 
 ## Tab 3 — Marketplace (`HelpSharePage.tsx`)
-- Header: "Marketplace"
-- Two sub-tabs: **Items** | **Services** (toggle at top of feed)
-- Search bar + filter button (top-right); filter panel uses `zIndex: 61` to appear above bottom nav
-- Items in 2-column grid; Services in vertical list
-- **10 items** (IDs 101–110): IKEA Billy Bookshelf, Sharp Rice Cooker, Baby Stroller, Assorted Books, Standing Fan, Dining Table (4-seater), Yoga Mat, Laptop Bag, Kids Bicycle (20"), Potted Snake Plant
-- **10 services** (IDs 201–210): Dog Walking, Babysitting, Primary Math Tutoring, Elderly Companion, Home Cleaning, Basic Plumbing Repair, Grocery Errand Run, Secondary English Tutor, Cat Boarding, Furniture Assembly
-- Props: `{ onAddPost, initialItemId?: number, savedItems, onSaveToggle, onNavVisibilityChange }`
-- `initialItemId` opens directly to item/service detail
-- `mainFilter` state (`'Items' | 'Services'`) is lifted to `HelpSharePage` (not local to feed) so it persists when navigating back from detail screens
-
-### Item Detail Page
-- Hero photo scrolls with content (not sticky)
-- Location section: title "Location" with distance (e.g. "0.3 km away") aligned right on same line
-- Map shows `collectionAddress`; no label text under map
-- About the Neighbour card: tapping navigates to **Neighbour Profile page** (no more "coming soon" toast)
-
-### Service Detail Page
-- Hero photo scrolls with content (not sticky)
-- Location section: title "Location" with distance aligned right on same line; map footer shows `serviceAddress`
-- "Years experience" moved from About the Neighbour → Trust & Verification section
-- About the Neighbour card: tapping navigates to **Neighbour Profile page**
-- Back from service detail returns to Services sub-tab (not Items)
-
-### Neighbour Profile Page (`screen: 'neighbour-profile'`)
-- Reached by tapping "About the Neighbour" card on any item or service detail page
-- Shows: large avatar, name, Verified Resident badge, block location pill, star rating
-- Stats row: completed transactions/services, avg rating, reviews count
-- Active Listings / Services Offered: all listings by that neighbour (with "Viewing" tag on current item)
-- Reviews section: uses `MOCK_REVIEWS`
-- `HelpScreen` type includes `'neighbour-profile'`
-
-### NavStack screens
-```
-'feed' | 'item-detail' | 'service-detail' | 'neighbour-profile'
-| 'poster-notif' | 'mutual-confirm' | 'chat'
-| 'category-select' | 'item-post-photo' | 'item-post-form' | 'service-post' | 'post-success'
-```
-
-### Post flows
-- Category Select → Item: photo upload → post form → post-success (confetti)
-- Category Select → Service: service post form → post-success
+- Sub-tabs: **Items** | **Services**
+- Items: 2-column grid (IDs 101–110)
+- Services: vertical list (IDs 201–210)
+- FAB button: `position: absolute, bottom: 96px, zIndex: 60` (above nav)
+- Filter panel: `zIndex: 61`
+- NavStack screens: `'feed' | 'item-detail' | 'service-detail' | 'neighbour-profile' | 'poster-notif' | 'mutual-confirm' | 'chat' | 'category-select' | 'item-post-photo' | 'item-post-form' | 'service-post' | 'post-success'`
+- Props: `{ onAddPost, initialItemId?, savedItems, onSaveToggle, onNavVisibilityChange }`
 
 ---
 
 ## Tab 4 — Requests (`RequestsPage.tsx`)
-- Exports: `REQUESTS_DATA` (alias for `INITIAL_REQUESTS`), `REQUESTS_CAT_EMOJIS` (alias for `CAT_EMOJIS`)
-- Props: `{ onAddPost, initialRequestId?: number }` — `initialRequestId` opens directly to request detail
-- `initialRequestId = undefined` → shows full requests feed
-- `openRequest(0)` in App.tsx → `0 || undefined` = `undefined` → shows feed (used by "See all" in Home)
-
-### Post a Request form fields
-Title → Category → Type of Request → Description → **Location** (placeholder: "Location of request") → Post expires on
-
-### Request Detail page
-- Location shown once inside the `CollectionPointMap` component, labelled **"Location"** (not "Meetup Location")
+- Exports: `REQUESTS_DATA`, `REQUESTS_CAT_EMOJIS`
+- Props: `{ onAddPost, initialRequestId?, onNavVisibilityChange }`
+- FAB: `position: absolute, zIndex: 60` (above nav)
+- Category icon map: `CAT_ICON_MAP` using Lucide icons (HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake, ShoppingBag, SearchIcon)
+- Privacy notices use Lock icon instead of 🔒 emoji
+- Post form fields: Title → Category → Type → Description → Location → Expires on
 
 ---
 
 ## Tab 5 — Messages (`MessagesPage.tsx`)
 - Header: "Messages" + bell icon
 - Filter tabs: All | Groups | Marketplace | Direct
-- **Conversations**:
-  - ID 1: Morning Runners Club (group, green `#16A34A`)
-  - ID 2: Backyard Gardeners (group, green `#059669`)
-  - ID 3: Board Game Sundays (group, purple `#7C3AED`)
-  - ID 4: IKEA Bookshelf (marketplace)
-  - ID 5: Plant Watering Request (marketplace/direct) ← target for "neighbour replied to your request" notification
-  - Neighbour #2 (direct)
-- **Group chat screen**: Chat | Activity Board tabs
-  - Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal
-- Props: `{ initialConvId?: number, extraConversations?: any[] }`
-- `key={initialGroupChatId}` forces remount when switching group
+- Conversations: 6 items (IDs 1-6); avatars use 2-letter initials, no emojis
+- Group chat: Chat | Activity Board tabs
+- Activity Board icons: MapPin, ClipboardList, Target (Lucide, no emojis)
+- Props: `{ initialConvId?, extraConversations?, onNavVisibilityChange }`
 
 ---
 
 ## Profile Overlay (`ProfilePage.tsx`)
-- Opened via avatar button on Home tab (not in bottom nav)
-- `activeSection`: `'main' | 'settings' | 'saved-items' | 'my-posts'`
-- Props:
-  ```ts
-  {
-    onClose?: () => void
-    onOpenEvent?: (id: number) => void
-    onOpenMarketplaceItem?: (id: number) => void
-    onOpenRequest?: (id: number) => void
-    myPosts?: any[]
-    userInterests?: string[]          // from App.tsx, synced from onboarding
-    onUpdateInterests?: (interests: string[]) => void
-  }
-  ```
-
-### Main Screen Layout
-- Orange gradient hero; avatar "Y" at `marginTop: '52px'` (avoids X button overlap); Singpass Verified badge; estate pill
-- **No stats row** (removed: Events Saved, Neighbours Jio'd, Exchanges Done)
-- **My Interests** — shows live `userInterests` as coloured pills; `+Edit` button opens interest edit bottom sheet using `INTEREST_CATEGORIES` from SignUpPage; changes sync back via `onUpdateInterests`
-- **Rewards & Badges** (2×2 grid): Event Joiner ✓, Group Member ✓, Trader ✓, Community Builder 🔒
-- **Saved Items** — settings-style nav row (Bookmark icon + ChevronRight) → `SavedItemsScreen`
-- **My Posts** — settings-style nav row (FileText icon + ChevronRight) → `MyPostsScreen`
-- **No Account section** on main page (moved to Settings)
-
-### SavedItemsScreen
-- Search bar + filter tabs: All | Events | Marketplace | Requests
-- Each item has `sourceId`; tapping calls the correct navigation callback:
-  - Events → `onOpenEvent(sourceId)`
-  - Marketplace → `onOpenMarketplaceItem(sourceId)`
-  - Requests → `onOpenRequest(sourceId)`
-- SAVED_ITEMS sourceIds: Event 1 → sourceId:1, Event 2 → sourceId:2, Item 3 → sourceId:101, Request 4 → sourceId:1
-
-### MyPostsScreen
-- Search bar + filter tabs: All | Marketplace | Requests
-- Shows active and expired posts (expired have badge)
-- Tapping post → `PostDetailScreen`
-
-### PostDetailScreen
-- Actions: Edit Details (bottom sheet), Mark as Sold, View Chat, Delete (confirm sheet)
-- Expired requests: Renew Request action (date picker sheet)
-
-### SettingsScreen
-- Account section (moved from main): Edit Profile, Change Password, Linked Accounts, Delete Account
-- Notifications section
-- Privacy & Security section
-- Help & Support section
+- Opened via avatar on Home tab
+- Props: `{ onClose, onOpenEvent, onOpenMarketplaceItem, onOpenRequest, myPosts, userInterests, onUpdateInterests }`
+- Sections: `'main' | 'settings' | 'saved-items' | 'my-posts'`
+- Main: gradient hero, avatar, Singpass badge, My Interests (live from App.tsx), Rewards/Badges grid, Saved Items row, My Posts row
+- Badges use CalendarDays, Users, ShoppingBag, Lock icons (no emojis)
+- Settings: Account, Notifications, Privacy, Help sections
 
 ---
 
@@ -304,63 +250,81 @@ Title → Category → Type of Request → Description → **Location** (placeho
 ```ts
 export const INTEREST_CATEGORIES: { name: string; interests: string[] }[]
 ```
-Used by ProfilePage for the interest edit bottom sheet.
 
-### Step: Interests ("What are you into?")
-- Search bar filters interests in real-time
-- Selected interests appear as removable coloured pills below search bar (horizontally scrollable)
-- Interests grouped by collapsible category dropdowns (AnimatePresence)
-- Category header shows orange count badge when items selected inside
-- "Find my community →" button disabled until ≥1 interest selected
-- No confetti emoji anywhere on this page
+### Welcome screen
+- Home icon (Lucide) in orange gradient container (no 🏘️ emoji)
+- "Welcome to NeighbourHood" (no emoji)
 
-### Interest Categories & Colors (NEIGHBOUR_INTEREST_COLORS in ExplorePage)
-```
-Running:      bg #FFF0EC, text #FF6B47
-Gardening:    bg #D1FAE5, text #059669
-Board Games:  bg #EDE9FE, text #7C3AED
-Cooking:      bg #FEF3C7, text #D97706
-Reading:      bg #DBEAFE, text #2563EB
-Cycling:      bg #CCFBF1, text #0D9488
-Pets:         bg #FEF9C3, text #CA8A04
-Photography:  bg #FAE8FF, text #A21CAF
-Music:        bg #FFE4E6, text #E11D48
-Fitness:      bg #DCFCE7, text #16A34A
-Hiking:       bg #D1FAE5, text #059669
-Yoga:         bg #F3E8FF, text #9333EA
-```
+### Interest step
+- Search bar, collapsible category dropdowns, selected pills, orange count badges
+- "Find my community →" disabled until ≥1 interest
+
+---
+
+## Icon Policy (No Emojis)
+All emoji have been replaced with Lucide React icons throughout the app:
+- 🏘️ → `<Home />` (LoginPage, SignUpPage)
+- 📍 → `<MapPin />` (NeighboursPage, ConnectPage, ExplorePage)
+- 💬 → `<MessageCircle />` (ExplorePage share sheet)
+- 📋 → `<ClipboardList />` / `<Copy />`
+- 🔒 → `<Lock />` (RequestsPage privacy notices)
+- 📸 → `<Camera />` (ConnectPage group icon)
+- 📚 → `<BookOpen />`
+- 🧘 → `<Smile />`  (yoga/wellness group)
+- 🎯 → `<Target />` (group activity board)
+- Toast messages: emoji removed from success toasts
 
 ---
 
 ## Navigation Patterns
 
 ### NavStack Pattern
-Pages use `useState<NavFrame[]>` where `NavFrame = { screen: string; data?: any }`. Back button pops the last frame.
+```ts
+useState<{ screen: string; params?: any }[]>([{ screen: 'feed' }])
+const goTo = (screen, params?) => setNavStack(p => [...p, { screen, params }])
+const goBack = () => setNavStack(p => p.slice(0, -1))
+const current = navStack[navStack.length - 1]
+```
 
 ### Bottom Sheet Pattern
 ```tsx
 <AnimatePresence>
   {showSheet && (
     <>
-      <motion.div /* backdrop */ onClick={() => setShowSheet(false)} />
-      <motion.div
-        initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-        /* sheet content */
+      <motion.div /* backdrop */ style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 19 }} onClick={() => setShowSheet(false)} />
+      <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+        style={{ position: 'absolute', left: 0, right: 0, bottom: 0, borderRadius: '20px 20px 0 0', zIndex: 20 }}
       />
     </>
   )}
 </AnimatePresence>
 ```
 
-### Cross-tab from Profile
-Profile → App.tsx callbacks → set `initial*Id` state → change `activeTab` → target page receives `initialItemId`/`initialRequestId` prop → `key` prop forces remount → page starts at detail screen
+### Z-index Layers
+```
+Page content:     0
+Gradient fade:   40
+Bottom nav pill: 50
+FAB buttons:     60
+Filter panels:   61
+Profile overlay: 100+
+```
+
+---
+
+## Responsive Layout
+- All page wrappers: `width: '100%'`, `height: '100%'`
+- Root: `width: '100vw'`, `height: '100svh'`, `overflow: 'hidden'`
+- Horizontal scroll rows: `display: 'flex'`, `overflowX: 'auto'`, cards use `flexShrink: 0` with fixed widths (fine for scroll)
+- Two-column grids: `width: 'calc(50% - 6px)'`
+- No hardcoded `width: '390px'` or similar viewport-specific values
+- Buttons/inputs: `width: '100%'`
 
 ---
 
 ## Known Limitations
 - No real Singpass integration (UI only)
 - No backend / API — all mock data
-- Saved events state in EventsPage does not sync to ProfilePage (separate state)
-- `HelpSharePage` wishlist props not fully wired in `App.tsx`
+- Saved events state in EventsPage does not sync to ProfilePage
 - No real push notifications
-- ConnectPage `membersList` shows a subset of the total `members` count (mock data only)
+- ConnectPage `membersList` shows a subset of total `members` count (mock only)
