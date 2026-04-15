@@ -71,7 +71,7 @@ function CollectionPointMap({ address }: { address: string }) {
           <MapPin size={14} color={PRIMARY} />
         </div>
         <div>
-          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Meetup Location</div>
+          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Location</div>
           <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{address}</div>
         </div>
       </div>
@@ -340,7 +340,6 @@ function RequestDetail({ request, onBack, onChat }: any) {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Meetup Location</div>
           <CollectionPointMap address={request.collectionPoint} />
         </div>
 
