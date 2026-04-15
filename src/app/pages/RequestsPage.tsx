@@ -221,38 +221,30 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
-      <div style={{ background: CARD, padding: '52px 20px 16px' }}>
-        <div style={{ marginBottom: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
-            <span style={{ fontSize: '12px', color: MUTED }}>📍</span>
-            <span style={{ fontSize: '12px', color: MUTED }}>Bishan-AMK Estate</span>
-          </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, lineHeight: 1.15 }}>Requests</div>
-          <div style={{ fontSize: '13px', color: MUTED, marginTop: '3px', fontWeight: 500 }}>Help your neighbours, earn community trust</div>
-        </div>
-        {/* Search bar + filter button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '16px', padding: '10px 14px', border: `1.5px solid ${BORDER}` }}>
-            <Search size={16} color={MUTED} style={{ flexShrink: 0 }} />
+      <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
+        {/* Search pill + filter */}
+        <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 16px', borderRadius: '50px', background: CARD, border: `1px solid ${BORDER}`, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
+            <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search requests..."
-              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '13px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: TEXT, outline: 'none', fontFamily: 'inherit' }}
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+              <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
                 <X size={14} color={MUTED} />
               </button>
             )}
           </div>
           <button
             onClick={() => setFilterVisible(true)}
-            style={{ position: 'relative', width: '44px', height: '44px', borderRadius: '14px', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            style={{ position: 'relative', width: '46px', height: '46px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
           >
-            <SlidersHorizontal size={18} color={filterCount > 0 ? PRIMARY : TEXT2} />
+            <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
             {filterCount > 0 && (
-              <div style={{ position: 'absolute', top: '-4px', right: '-4px', minWidth: '16px', height: '16px', borderRadius: '8px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px' }}>
+              <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
                 <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
               </div>
             )}

@@ -131,6 +131,11 @@ export default function App() {
             onSubTabChange={setExploreInitialSubTab}
             userInterests={userInterests}
             onAddConversation={onAddConversation}
+            onOpenDirectChat={(conv) => {
+              onAddConversation(conv);
+              setInitialGroupChatId(conv.id);
+              setActiveTab('messages');
+            }}
           />
         )}
         {activeTab === 'marketplace' && (

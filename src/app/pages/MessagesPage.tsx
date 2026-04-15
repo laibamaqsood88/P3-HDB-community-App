@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Bell, Send, Shield, Users } from 'lucide-react';
+import { ChevronLeft, Send, Shield, Users, Search, X } from 'lucide-react';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -170,27 +170,29 @@ interface MessagesPageProps {
 
 export function MessagesPage({ initialConvId, extraConversations = [] }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const extraMapped: Conversation[] = extraConversations.map((c: any) => ({
+    id: c.id,
+    type: (c.type || 'direct') as ConvType,
+    name: c.name,
+    avatar: c.avatar || c.name?.substring(0, 2) || '??',
+    avatarBg: c.avatarColor || c.avatarBg || '#8B5CF6',
+    lastMessage: c.lastMessage || 'Say hello!',
+    time: c.time || 'Just now',
+    unread: c.unread ?? 0,
+    tag: c.tag || null,
+  }));
+
   const [openConv, setOpenConv] = useState<Conversation | null>(
-    initialConvId ? (CONVERSATIONS.find(c => c.id === initialConvId) ?? null) : null
+    initialConvId
+      ? (extraMapped.find(c => c.id === initialConvId) ?? CONVERSATIONS.find(c => c.id === initialConvId) ?? null)
+      : null
   );
   const [chatInputs, setChatInputs] = useState<Record<number, string>>({});
   const [localMessages, setLocalMessages] = useState<Record<number, ChatMessage[]>>({});
 
-  // Merge extra conversations (from neighbours connect etc.) with existing mock data
-  const allConversations: Conversation[] = [
-    ...extraConversations.map((c: any) => ({
-      id: c.id,
-      type: (c.type || 'direct') as ConvType,
-      name: c.name,
-      avatar: c.avatar || c.name?.substring(0, 2) || '??',
-      avatarBg: c.avatarColor || c.avatarBg || '#8B5CF6',
-      lastMessage: c.lastMessage || 'Say hello!',
-      time: c.time || 'Just now',
-      unread: c.unread ?? 0,
-      tag: c.tag || null,
-    })),
-    ...CONVERSATIONS,
-  ];
+  // Merge extra conversations (from neighbours message etc.) with existing mock data
+  const allConversations: Conversation[] = [...extraMapped, ...CONVERSATIONS];
 
   const getMessages = (conv: Conversation): ChatMessage[] => {
     const local = localMessages[conv.id];
@@ -224,10 +226,10 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
   };
 
   const filteredConvs = allConversations.filter(c => {
-    if (activeFilter === 'All') return true;
-    if (activeFilter === 'Groups') return c.type === 'group';
-    if (activeFilter === 'Marketplace') return c.type === 'marketplace';
-    if (activeFilter === 'Direct') return c.type === 'direct';
+    if (activeFilter === 'Groups' && c.type !== 'group') return false;
+    if (activeFilter === 'Marketplace' && c.type !== 'marketplace') return false;
+    if (activeFilter === 'Direct' && c.type !== 'direct') return false;
+    if (searchQuery && !c.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
@@ -245,50 +247,37 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
       {/* Main messages list */}
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
-        <div style={{ background: CARD, padding: '52px 20px 0', borderBottom: `1px solid ${BORDER}` }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '16px',
-            }}
-          >
-            <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT }}>Messages</div>
-            <button
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '13px',
-                background: BG,
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Bell size={18} color={TEXT} />
-            </button>
+        <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
+          {/* Search pill */}
+          <div style={{ padding: '52px 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 16px', borderRadius: '50px', background: CARD, border: `1px solid ${BORDER}`, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
+              <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search messages..."
+                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: TEXT, outline: 'none', fontFamily: "'Nunito', sans-serif" }}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
+                  <X size={14} color={MUTED} />
+                </button>
+              )}
+            </div>
           </div>
-
           {/* Filter tabs */}
-          <div style={{ display: 'flex', gap: '4px', marginBottom: '-1px' }}>
+          <div style={{ display: 'flex', marginTop: '12px' }}>
             {FILTER_TABS.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveFilter(tab)}
                 style={{
-                  padding: '10px 14px',
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
-                  cursor: 'pointer',
-                  fontFamily: "'Nunito', sans-serif",
-                  fontSize: '13px',
-                  fontWeight: activeFilter === tab ? 700 : 500,
+                  flex: 1, padding: '10px 4px',
+                  background: 'none', border: 'none',
+                  borderBottom: `2.5px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
+                  cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                  fontSize: '13px', fontWeight: activeFilter === tab ? 700 : 500,
                   color: activeFilter === tab ? PRIMARY : MUTED,
-                  transition: 'all 0.15s',
                   whiteSpace: 'nowrap',
                 }}
               >
