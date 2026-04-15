@@ -55,15 +55,18 @@ const FAMILY_OPTIONS = [
   'Senior (60 and above)',
 ];
 
+const SPOKEN_LANGUAGES = ['English', 'Chinese', 'Malay', 'Tamil'];
+
 interface SignUpPageProps {
-  onComplete: (profile: { dob: string; familyStatus: string; interests: string[] }) => void;
+  onComplete: (profile: { familyStatus: string; interests: string[]; spokenLanguage: string }) => void;
 }
 
 export function SignUpPage({ onComplete }: SignUpPageProps) {
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
-  const [dob, setDob] = useState('');
   const [familyStatus, setFamilyStatus] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
+  const [spokenLanguage, setSpokenLanguage] = useState('');
+  const [customLanguage, setCustomLanguage] = useState('');
 
   // Step 4 -> 5 auto-transition (loading -> recommendations)
   useEffect(() => {
@@ -107,19 +110,6 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
 
         {step === 1 && (
           <motion.div
-            key="dob"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.3 }}
-            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-          >
-            <StepDOB dob={dob} onChangeDob={setDob} onNext={() => setStep(2)} onBack={() => setStep(0)} />
-          </motion.div>
-        )}
-
-        {step === 2 && (
-          <motion.div
             key="family"
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -130,13 +120,13 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
             <StepFamily
               familyStatus={familyStatus}
               onSelect={setFamilyStatus}
-              onNext={() => setStep(3 as any)}
-              onBack={() => setStep(1)}
+              onNext={() => setStep(2)}
+              onBack={() => setStep(0)}
             />
           </motion.div>
         )}
 
-        {(step as number) === 3 && (
+        {step === 2 && (
           <motion.div
             key="interests"
             initial={{ opacity: 0, x: 40 }}
@@ -148,8 +138,28 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
             <StepInterests
               interests={interests}
               onToggle={toggleInterest}
+              onNext={() => setStep(3)}
+              onBack={() => setStep(1)}
+            />
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div
+            key="language"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+          >
+            <StepSpokenLanguage
+              spokenLanguage={spokenLanguage}
+              customLanguage={customLanguage}
+              onSelect={setSpokenLanguage}
+              onCustomChange={setCustomLanguage}
               onNext={() => setStep(4 as any)}
-              onBack={() => setStep(2 as any)}
+              onBack={() => setStep(2)}
             />
           </motion.div>
         )}
@@ -178,7 +188,7 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
           >
             <RecommendationsStep
               interests={interests}
-              onGetStarted={() => onComplete({ dob, familyStatus, interests })}
+              onGetStarted={() => onComplete({ familyStatus, interests, spokenLanguage: spokenLanguage || customLanguage })}
             />
           </motion.div>
         )}
@@ -296,80 +306,7 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-// ---- Step 1: Date of Birth ----
-function StepDOB({ dob, onChangeDob, onNext, onBack }: { dob: string; onChangeDob: (v: string) => void; onNext: () => void; onBack: () => void }) {
-  return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 24px 0' }}>
-        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
-          <ChevronLeft size={18} color={TEXT2} />
-          <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
-        </button>
-        <ProgressBar step={1} total={3} />
-        <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
-          When were you born?
-        </div>
-        <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '32px', lineHeight: '1.5' }}>
-          We use this to show you age-appropriate events and groups.
-        </div>
-
-        <div
-          style={{
-            background: BG,
-            borderRadius: '18px',
-            padding: '4px',
-            border: `2px solid ${dob ? PRIMARY : BORDER}`,
-            transition: 'border-color 0.2s',
-          }}
-        >
-          <input
-            type="date"
-            value={dob}
-            onChange={e => onChangeDob(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '16px 18px',
-              background: 'transparent',
-              border: 'none',
-              fontSize: '16px',
-              fontWeight: 600,
-              color: dob ? TEXT : MUTED,
-              outline: 'none',
-              fontFamily: "'Nunito', sans-serif",
-              boxSizing: 'border-box',
-            }}
-          />
-        </div>
-      </div>
-
-      <div style={{ marginTop: 'auto', padding: '20px 24px 40px' }}>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={onNext}
-          disabled={!dob}
-          style={{
-            width: '100%',
-            padding: '17px',
-            borderRadius: '22px',
-            background: dob ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER,
-            border: 'none',
-            color: dob ? 'white' : MUTED,
-            fontWeight: 700,
-            fontSize: '16px',
-            cursor: dob ? 'pointer' : 'not-allowed',
-            boxShadow: dob ? '0 8px 24px rgba(255,107,71,0.35)' : 'none',
-            transition: 'all 0.2s',
-            fontFamily: "'Nunito', sans-serif",
-          }}
-        >
-          Next
-        </motion.button>
-      </div>
-    </div>
-  );
-}
-
-// ---- Step 2: Family Status ----
+// ---- Step 1: Family Status ----
 function StepFamily({
   familyStatus,
   onSelect,
@@ -388,7 +325,7 @@ function StepFamily({
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
         </button>
-        <ProgressBar step={2} total={3} />
+        <ProgressBar step={1} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
           What's your family status?
         </div>
@@ -471,7 +408,7 @@ function StepFamily({
   );
 }
 
-// ---- Step 3: Interests ----
+// ---- Step 2: Interests ----
 function StepInterests({
   interests,
   onToggle,
@@ -503,7 +440,7 @@ function StepInterests({
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
         </button>
-        <ProgressBar step={3} total={3} />
+        <ProgressBar step={2} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
           What are you into?
         </div>
@@ -679,6 +616,155 @@ function StepInterests({
           }}
         >
           Find my community →
+        </motion.button>
+      </div>
+    </div>
+  );
+}
+
+// ---- Step 3: Spoken Language ----
+function StepSpokenLanguage({
+  spokenLanguage,
+  customLanguage,
+  onSelect,
+  onCustomChange,
+  onNext,
+  onBack,
+}: {
+  spokenLanguage: string;
+  customLanguage: string;
+  onSelect: (v: string) => void;
+  onCustomChange: (v: string) => void;
+  onNext: () => void;
+  onBack: () => void;
+}) {
+  const selectedLanguage = spokenLanguage || customLanguage;
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
+      <div style={{ padding: '52px 24px 0', flex: 1, overflowY: 'auto' }}>
+        <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
+          <ChevronLeft size={18} color={TEXT2} />
+          <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
+        </button>
+        <ProgressBar step={3} total={3} />
+        <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
+          Which language do you speak?
+        </div>
+        <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '28px', lineHeight: '1.5' }}>
+          Help us match you with neighbours who share your language.
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {SPOKEN_LANGUAGES.map(lang => {
+            const selected = spokenLanguage === lang;
+            return (
+              <motion.button
+                key={lang}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  onSelect(lang);
+                  onCustomChange('');
+                }}
+                style={{
+                  padding: '16px 20px',
+                  borderRadius: '18px',
+                  border: `2px solid ${selected ? PRIMARY : BORDER}`,
+                  background: selected ? '#FFF0EC' : CARD,
+                  color: selected ? PRIMARY : TEXT,
+                  fontWeight: selected ? 700 : 500,
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.15s',
+                  fontFamily: "'Nunito', sans-serif",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                {lang}
+                {selected && (
+                  <span
+                    style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      background: PRIMARY,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <span style={{ color: 'white', fontSize: '12px', fontWeight: 800 }}>✓</span>
+                  </span>
+                )}
+              </motion.button>
+            );
+          })}
+
+          {/* Others option with custom input */}
+          <div style={{ marginTop: '8px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT2, marginBottom: '10px', paddingLeft: '4px' }}>
+              Other language
+            </div>
+            <div
+              style={{
+                background: BG,
+                borderRadius: '18px',
+                padding: '4px',
+                border: `2px solid ${customLanguage ? PRIMARY : BORDER}`,
+                transition: 'border-color 0.2s',
+              }}
+            >
+              <input
+                type="text"
+                value={customLanguage}
+                onChange={e => {
+                  onCustomChange(e.target.value);
+                  if (e.target.value) onSelect('');
+                }}
+                placeholder="Enter your language..."
+                style={{
+                  width: '100%',
+                  padding: '16px 18px',
+                  background: 'transparent',
+                  border: 'none',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  color: customLanguage ? TEXT : MUTED,
+                  outline: 'none',
+                  fontFamily: "'Nunito', sans-serif",
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding: '16px 24px 40px', borderTop: `1px solid ${BG}` }}>
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={onNext}
+          disabled={!selectedLanguage}
+          style={{
+            width: '100%',
+            padding: '17px',
+            borderRadius: '22px',
+            background: selectedLanguage ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER,
+            border: 'none',
+            color: selectedLanguage ? 'white' : MUTED,
+            fontWeight: 700,
+            fontSize: '16px',
+            cursor: selectedLanguage ? 'pointer' : 'not-allowed',
+            boxShadow: selectedLanguage ? '0 8px 24px rgba(255,107,71,0.35)' : 'none',
+            transition: 'all 0.2s',
+            fontFamily: "'Nunito', sans-serif",
+          }}
+        >
+          Next
         </motion.button>
       </div>
     </div>

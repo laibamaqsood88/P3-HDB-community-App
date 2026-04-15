@@ -83,7 +83,7 @@ export default function App() {
           richColors
           toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'Nunito', sans-serif" } }}
         />
-        <SignUpPage onComplete={({ dob, familyStatus, interests }) => {
+        <SignUpPage onComplete={({ familyStatus, interests, spokenLanguage }) => {
           setUserInterests(interests);
           setAuthScreen('main');
         }} />
