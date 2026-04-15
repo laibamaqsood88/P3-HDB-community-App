@@ -645,27 +645,27 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 whileTap={{ scale: 0.97 }}
                 style={{
                   flexShrink: 0, width: '220px', background: CARD,
-                  borderRadius: '20px', padding: '14px 14px 12px',
+                  borderRadius: '20px', padding: '12px 14px 12px',
                   boxShadow: '0 2px 14px rgba(0,0,0,0.07)',
-                  cursor: 'pointer', position: 'relative', overflow: 'visible',
-                  display: 'flex', flexDirection: 'column', gap: '12px',
+                  cursor: 'pointer', position: 'relative',
+                  display: 'flex', flexDirection: 'column', gap: '10px',
                 }}
               >
-                {/* Category sticker — top-left, slightly rotated */}
-                <div style={{
-                  position: 'absolute', top: '-11px', left: '12px',
-                  padding: '4px 12px', borderRadius: '10px',
-                  background: '#FFF0EC', color: PRIMARY,
-                  fontSize: '12px', fontWeight: 700,
-                  transform: 'rotate(-1.5deg)',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-                  zIndex: 1, whiteSpace: 'nowrap',
-                }}>
-                  {neighbour.interests[0]}
+                {/* Category tag — inside card, top-left, slightly rotated */}
+                <div style={{ display: 'flex' }}>
+                  <div style={{
+                    padding: '4px 12px', borderRadius: '10px',
+                    background: '#FFF0EC', color: PRIMARY,
+                    fontSize: '12px', fontWeight: 700,
+                    transform: 'rotate(-1.5deg)',
+                    whiteSpace: 'nowrap', alignSelf: 'flex-start',
+                  }}>
+                    {neighbour.interests[0]}
+                  </div>
                 </div>
 
                 {/* Top row: photo LEFT + name/location RIGHT */}
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                   {/* Square photo */}
                   <div style={{ width: '72px', height: '72px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: neighbour.color }}>
                     <img src={neighbour.avatarUrl} alt={neighbour.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
