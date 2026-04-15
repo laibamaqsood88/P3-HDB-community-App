@@ -503,8 +503,8 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         )}
       </AnimatePresence>
 
-      {/* FAB */}
-      <button onClick={onPost} style={{ position: 'absolute', bottom: '20px', right: '20px', width: '54px', height: '54px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(255,107,71,0.38)', zIndex: 10 }}>
+      {/* FAB — z-index 60 sits above nav (50) + gradient (40); bottom offset clears the floating pill */}
+      <button onClick={onPost} style={{ position: 'absolute', bottom: '96px', right: '20px', width: '54px', height: '54px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(255,107,71,0.38)', zIndex: 60 }}>
         <Plus size={24} color="white" />
       </button>
     </div>
