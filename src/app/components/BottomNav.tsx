@@ -18,79 +18,88 @@ const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any> }[] = [
 
 export function BottomNav({ activeTab, onTabChange }: Props) {
   return (
-    /* Transparent wrapper — no background, just safe-area spacing */
-    <div style={{ padding: '6px 4px 28px', background: 'transparent', display: 'flex' }}>
-      {NAV_TABS.map(({ id, label, Icon }) => {
-        const active = activeTab === id;
-        return (
-          <motion.button
-            key={id}
-            onClick={() => onTabChange(id)}
-            whileTap={{ scale: 0.88 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 28 }}
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '3px',
-              paddingTop: '4px',
-              paddingBottom: '2px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            {/* Icon wrapper — 44×44 so the circle always fills perfectly */}
-            <div
+    /* Safe-area wrapper */
+    <div style={{ padding: '0 14px 24px', background: 'transparent' }}>
+
+      {/* White floating pill */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          background: '#FFFFFF',
+          borderRadius: '999px',
+          boxShadow: '0 2px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)',
+          border: '1px solid rgba(0,0,0,0.06)',
+          padding: '5px',
+          gap: '2px',
+        }}
+      >
+        {NAV_TABS.map(({ id, label, Icon }) => {
+          const active = activeTab === id;
+          return (
+            <motion.button
+              key={id}
+              onClick={() => onTabChange(id)}
+              whileTap={{ scale: 0.93 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               style={{
-                position: 'relative',
-                width: '44px',
-                height: '44px',
+                flex: 1,
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
+                gap: '2px',
+                padding: '7px 6px 6px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                position: 'relative',
+                borderRadius: '999px',
+                minWidth: 0,
               }}
             >
-              {/* Dark circle behind active icon */}
+              {/* Active pill highlight — slides behind icon + label */}
               {active && (
                 <motion.div
-                  layoutId="activeNavBubble"
-                  transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                  layoutId="activeNavPill"
+                  transition={{ type: 'spring', stiffness: 380, damping: 34 }}
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    borderRadius: '50%',
+                    borderRadius: '999px',
                     background: '#1C1C1E',
-                    boxShadow: '0 2px 12px rgba(0,0,0,0.22)',
                   }}
                 />
               )}
+
+              {/* Icon */}
               <Icon
-                size={22}
+                size={20}
                 color={active ? '#FFFFFF' : '#8E8E93'}
-                strokeWidth={active ? 2.2 : 1.7}
+                strokeWidth={active ? 2.2 : 1.6}
                 style={{ position: 'relative', zIndex: 1 }}
               />
-            </div>
 
-            {/* Label */}
-            <span
-              style={{
-                fontSize: '10px',
-                lineHeight: '1.1',
-                color: active ? '#1C1C1E' : '#8E8E93',
-                fontWeight: active ? 700 : 500,
-                letterSpacing: '0.1px',
-              }}
-            >
-              {label}
-            </span>
-          </motion.button>
-        );
-      })}
+              {/* Label */}
+              <span
+                style={{
+                  fontSize: '10px',
+                  lineHeight: '1.2',
+                  color: active ? '#FFFFFF' : '#8E8E93',
+                  fontWeight: active ? 700 : 500,
+                  letterSpacing: '0.1px',
+                  position: 'relative',
+                  zIndex: 1,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {label}
+              </span>
+            </motion.button>
+          );
+        })}
+      </div>
     </div>
   );
 }
