@@ -326,7 +326,7 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
       <button
         onClick={onPost}
         style={{
-          position: 'absolute', bottom: '20px', right: '20px',
+          position: 'absolute', bottom: '88px', right: '20px',
           width: '54px', height: '54px', borderRadius: '50%',
           background: PRIMARY, border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
