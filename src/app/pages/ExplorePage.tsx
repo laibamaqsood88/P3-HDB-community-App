@@ -217,9 +217,15 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const [filterSharedOnly, setFilterSharedOnly] = useState(false);
   const [filterRecentOnly, setFilterRecentOnly] = useState(false);
 
+  const [scrollProgress, setScrollProgress] = useState(0);
+
   const handleSubTabChange = (tab: 'events' | 'groups' | 'neighbours') => {
     setActiveSubTab(tab);
     onSubTabChange?.(tab);
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setScrollProgress(Math.min(e.currentTarget.scrollTop / 60, 1));
   };
 
   const current = navStack[navStack.length - 1];
@@ -288,8 +294,8 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           {!searchMode ? (
             <>
               {/* Normal mode: Title + icons */}
-              <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.5px' }}>Explore</span>
+              <div style={{ padding: `${52 - (scrollProgress * 44)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+                <span style={{ fontSize: `${28 - (scrollProgress * 12)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Explore</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => { setSearchScopeTab(activeSubTab); setSearchMode(true); }}
                     style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -379,7 +385,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
           {/* Events */}
           {activeSubTab === 'events' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }} onScroll={handleScroll}>
               {filteredEvents.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
                   <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>

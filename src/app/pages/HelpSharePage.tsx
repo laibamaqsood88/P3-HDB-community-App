@@ -526,6 +526,11 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [activeDistance, setActiveDistance] = useState('Any');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setScrollProgress(Math.min(e.currentTarget.scrollTop / 60, 1));
+  };
 
   const q = searchQuery.toLowerCase().trim();
 
@@ -553,8 +558,8 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         {!searchOpen ? (
           <>
             {/* Normal mode: Title + icons */}
-            <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.5px' }}>Market</span>
+            <div style={{ padding: `${52 - (scrollProgress * 44)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+              <span style={{ fontSize: `${28 - (scrollProgress * 12)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Market</span>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button onClick={() => setSearchOpen(true)}
                   style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -628,7 +633,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         )}
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', position: 'relative' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', position: 'relative' }} onScroll={handleScroll}>
         {mainFilter === 'Items' && (
           <>
             {displayItems.length === 0 ? (

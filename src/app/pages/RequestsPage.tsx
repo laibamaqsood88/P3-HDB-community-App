@@ -244,6 +244,11 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
   const [sort, setSort] = useState<'Latest' | 'Distance'>('Latest');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setScrollProgress(Math.min(e.currentTarget.scrollTop / 60, 1));
+  };
 
   const toggleCategory = (cat: string) => setActiveCategories(p => p.includes(cat) ? p.filter(c => c !== cat) : [...p, cat]);
   const toggleType = (t: string) => setActiveTypes(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t]);
@@ -262,12 +267,12 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
-        <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ padding: `${52 - (scrollProgress * 44)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', gap: '8px', transition: 'padding 0.1s linear' }}>
           <AnimatePresence mode="wait" initial={false}>
             {!searchOpen ? (
               <motion.div key="title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}
                 style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.5px' }}>Requests</span>
+                <span style={{ fontSize: `${28 - (scrollProgress * 12)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Requests</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => setSearchOpen(true)}
                     style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -308,7 +313,7 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px', position: 'relative' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px', position: 'relative' }} onScroll={handleScroll}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No requests match your filters</div>
         ) : (
