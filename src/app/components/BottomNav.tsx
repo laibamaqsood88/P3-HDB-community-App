@@ -20,16 +20,13 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
   return (
     /* Safe-area wrapper — transparent, just handles bottom spacing */
     <div style={{ padding: '0 12px 20px', background: 'transparent' }}>
-      {/* Floating pill capsule */}
+      {/* Floating pill capsule — no background */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           borderRadius: '999px',
-          background: '#FFFFFF',
-          boxShadow:
-            '0 4px 20px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)',
-          border: '1px solid rgba(0,0,0,0.05)',
+          background: 'transparent',
           padding: '6px 8px',
           gap: '2px',
         }}
