@@ -755,37 +755,30 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
-          {/* Stacked bar chart */}
+          {/* Horizontal bar chart */}
           <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
               <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>By Household Type</span>
               <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{total} going</span>
             </div>
 
-            {/* Single stacked bar */}
-            <div style={{ height: '20px', borderRadius: '10px', overflow: 'hidden', display: 'flex', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {FAMILY_STATUS_BREAKDOWN.map((item, i) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(item.count / total) * 100}%` }}
-                  transition={{ duration: 0.6, ease: 'easeOut', delay: i * 0.08 }}
-                  style={{ height: '100%', background: item.color }}
-                />
-              ))}
-            </div>
-
-            {/* Legend */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {FAMILY_STATUS_BREAKDOWN.map(item => (
-                <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: item.color, flexShrink: 0 }} />
+                <div key={item.label}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                     <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
+                      <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / total) * 100)}%)</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
-                    <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / total) * 100)}%)</span>
+                  <div style={{ height: '10px', borderRadius: '6px', background: BG, overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(item.count / total) * 100}%` }}
+                      transition={{ duration: 0.6, ease: 'easeOut', delay: i * 0.08 }}
+                      style={{ height: '100%', borderRadius: '6px', background: item.color }}
+                    />
                   </div>
                 </div>
               ))}
