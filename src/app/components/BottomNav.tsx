@@ -21,17 +21,22 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
     /* Safe-area wrapper */
     <div style={{ padding: '0 14px 24px', background: 'transparent' }}>
 
-      {/* Frosted glass floating pill — content visible through it */}
+      {/* iOS system-material pill */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          background: 'rgba(255,255,255,0.72)',
-          backdropFilter: 'blur(24px) saturate(1.6)',
-          WebkitBackdropFilter: 'blur(24px) saturate(1.6)',
+          /* iOS .systemThinMaterial — tinted white, high-saturation blur */
+          background: 'rgba(248,248,250,0.78)',
+          backdropFilter: 'blur(40px) saturate(2) brightness(1.06)',
+          WebkitBackdropFilter: 'blur(40px) saturate(2) brightness(1.06)',
           borderRadius: '999px',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.8) inset',
-          border: '1px solid rgba(255,255,255,0.6)',
+          /* Hairline outer edge + soft lift shadow */
+          border: '0.5px solid rgba(0,0,0,0.09)',
+          boxShadow:
+            '0 8px 32px rgba(0,0,0,0.10), ' +
+            '0 2px 8px rgba(0,0,0,0.06), ' +
+            '0 0.5px 0 rgba(255,255,255,1) inset',
           padding: '5px',
           gap: '2px',
         }}
