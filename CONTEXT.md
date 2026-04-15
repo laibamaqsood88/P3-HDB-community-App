@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-14
+2026-04-15
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -62,6 +62,13 @@ Apply `className="no-scrollbar"` to any scrollable element to hide scrollbars wh
 - **SignUpPage** → calls `onComplete()` → enters main app
 - Main app has `activeTab` state and a `showProfile` overlay
 
+### App.tsx State
+```ts
+savedMarketplaceItems: any[]          // full item/service objects that have been bookmarked
+savedMarketplaceIds: number[]         // derived from savedMarketplaceItems for SaveButton checks
+onMarketplaceSaveToggle(id, item)     // adds/removes full item object from savedMarketplaceItems
+```
+
 ### Cross-tab Navigation Callbacks
 - `openExploreGroups()` — switches to Explore tab, opens Groups sub-tab
 - `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat
@@ -121,13 +128,185 @@ Apply `className="no-scrollbar"` to any scrollable element to hide scrollbars wh
 ---
 
 ## Tab 3 — Marketplace (`HelpSharePage.tsx`)
-- Two tabs: **Requests** | **Items & Services**
-- Search bar + filter chips: All | Items | Services
-- Items in 2-column grid; Services in vertical list
-- Each detail page: wishlist heart, reviews section (3 mock reviews)
-- Post flows: Request, List an Item, Offer a Service
-- Item IDs: 101–104 (items), 201–204 (services), 1–4 (requests)
-- Props: `{ wishlist?: number[], onWishlistToggle?: (id: number) => void }`
+
+### Overview
+- Two tabs: **Items** | **Services** (toggle at top)
+- Search bar + filter panel (distance + category)
+- Both Items and Services use a **2-column grid**
+- Save system: **Bookmark icon only** (no hearts anywhere). State lifted to `App.tsx` and synced to Profile → Saved Items
+- Post button (orange FAB) → Category Select → Item or Service post flow
+
+### Props
+```ts
+{
+  onAddPost?: (post: any) => void;
+  initialItemId?: number;
+  savedItems?: number[];                         // from App.tsx (savedMarketplaceIds)
+  onSaveToggle?: (id: number, item: any) => void; // from App.tsx (onMarketplaceSaveToggle)
+}
+```
+
+### Mock Item Data (IDs 101–104)
+Each item has:
+```ts
+{
+  id, itemType: 'item', name, condition, distance, postedTime, price,
+  category, brand, verified, description,
+  collectionAddress,   // exact "Blk X Street Y, #NN-NN, Singapore XXXXXX"
+  collectionDistance,  // kept for reference but not displayed
+  image,               // Unsplash URL
+  seller: { name, avatarColor, rating, reviews }
+}
+```
+
+Condition values: `'brand new' | 'like new' | 'lightly used' | 'well used' | 'heavily used'`
+
+Condition colours (`CONDITION_COLORS`):
+```ts
+'brand new':    { bg: '#EDE9FE', text: '#7C3AED' }
+'like new':     { bg: '#DCFCE7', text: '#16A34A' }
+'lightly used': { bg: '#DBEAFE', text: '#2563EB' }
+'well used':    { bg: '#FEF3C7', text: '#D97706' }
+'heavily used': { bg: '#FEE2E2', text: '#DC2626' }
+```
+
+### Mock Service Data (IDs 201–204)
+Each service has:
+```ts
+{
+  id, itemType: 'service', name, rate, distance, postedTime,
+  category, availability, verified, trust, trustNote,
+  description, responseTime, completedServices, yearsExperience,
+  image,   // Unsplash URL
+  provider: { name, avatarColor, rating, reviews }
+}
+```
+
+Services: Dog Walking (201), Babysitting (202), Primary Math Tutoring (203), Elderly Companion (204)
+
+### ItemCard (2-col grid)
+Strict layout order:
+1. Image thumbnail (120 px height) — bookmark icon top-right
+2. Title
+3. Price (green if Free)
+4. Distance ("X km away")
+5. Posted time (relative)
+6. Seller info row: circular avatar + name
+
+### ServiceCard (2-col grid — mirrors ItemCard exactly)
+Strict layout order:
+1. Image thumbnail (120 px height) — bookmark icon top-right
+2. Title
+3. Rate (green if Free — e.g. "$15 per walk", "Free")
+4. Distance ("X km away")
+5. Posted time (relative)
+6. Provider info row: circular avatar + name
+
+No star ratings, exchange counts, or trust badges on the card.
+
+### ItemDetail (item detail page)
+Layout order:
+1. Hero image (full-width, 260 px) — floating back button (top-left) + bookmark (top-right)
+2. Title
+3. Price
+4. **Details** section — rows card (BG background, dividers):
+   - Condition (coloured value from CONDITION_COLORS)
+   - Brand (if present)
+   - Posted
+   - Category
+5. Description
+6. **Collection Point** — `CollectionPointMap` with exact `collectionAddress` in footer
+7. **About the Neighbour** — tappable card: avatar, name, star rating, review count
+8. Sticky footer: "Chat" button only
+
+### ServiceDetail (service detail page)
+Layout order:
+1. Hero image (full-width, 260 px) — floating back button + bookmark
+2. Title
+3. Rate (green if Free)
+4. **Details** section — rows card: Category · Availability · Posted
+5. Description
+6. **Location** — `CollectionPointMap` with `distanceText={item.distance}` (shows distance, not address; labelled "Service Area")
+7. **About the Neighbour** — tappable card: avatar, name, star rating, reviews, years experience
+8. **Trust & Verification** — rows card: Verified Resident · Credentials (if trust) · Response Time · Completed Services
+9. Sticky footer: "Chat" button only
+
+No reviews section on either detail page.
+
+### CollectionPointMap component
+```ts
+function CollectionPointMap({ address?, distanceText? })
+```
+- If `distanceText` is provided → footer label = "Service Area", footer text = distanceText
+- If `address` is provided → footer label = "Collection Point", footer text = address
+- Used in ItemDetail (`address` prop) and ServiceDetail (`distanceText` prop)
+
+### SaveButton component
+```tsx
+function SaveButton({ itemId, savedItems, onSaveToggle, size?, style? })
+```
+- Shows `Bookmark` icon (outline = unsaved, filled orange = saved)
+- `onClick` calls `onSaveToggle(itemId)` and shows Sonner toast
+
+### Create Item Flow
+1. **ItemPhotoUploadScreen** — tap to add photos (up to 3); "Continue" enabled when ≥1 photo
+2. **AI Loading screen** — 2.2s spinner "Analysing your photos..." → auto-fills title, description, category
+3. **ItemPostScreen** — form order:
+   - Images (tiles + `+` tile → `PhotoPickerSheet` bottom sheet, up to 6)
+   - Title
+   - Category (dropdown from `ITEM_CATEGORIES`)
+   - Condition (pill selector)
+   - Description (AI pre-filled, editable)
+   - Price toggle (For free / For sale → price input)
+   - Brand (optional)
+   - Collection Address (MapPin + textarea, exact address)
+
+### Create Service Flow
+**ServicePostScreen** — form order:
+1. Images (tiles + `+` tile → `PhotoPickerSheet`, up to 6)
+2. Service Title
+3. Category (dropdown from `SERVICE_CATEGORIES`)
+4. Availability (textarea)
+5. Description (optional, textarea)
+6. Pricing (Free / Charge a fee → rate input + /hour or /session toggle)
+7. Years of Experience
+8. Certifications (optional)
+9. Relevant Skills (optional)
+10. Service Location (`CollectionPointMap` tile + text input below)
+
+### PhotoPickerSheet component
+Spring-animated bottom sheet (AnimatePresence):
+- Handle bar + "Add Photo" title
+- "Take Photo" (orange) + "Library" (purple) action buttons
+- 3-column recent photos grid (9 mock Unsplash photos)
+- Cancel button
+- Opens when `+` tile is tapped in image grids
+
+### HelpScreen nav stack type
+```ts
+type HelpScreen =
+  | 'feed' | 'item-detail' | 'service-detail'
+  | 'poster-notif' | 'mutual-confirm' | 'chat'
+  | 'category-select' | 'item-post-photo' | 'item-post-form' | 'service-post'
+  | 'post-success'
+```
+Navigation via `navStack: NavFrame[]` push/pop pattern.
+
+### Category Lists
+```ts
+ITEM_CATEGORIES = [
+  'All', 'Babies & Kids', 'Beauty', 'Car Accessories', 'Computers & Tech',
+  'Food & Drinks', 'Furniture', 'Health', 'Learning', 'Luxury',
+  "Men's Fashion", 'Pet Supplies', 'Photography', 'Sports Equipment',
+  'TV & Home Appliances', "Women's Fashion"
+]
+
+SERVICE_CATEGORIES = [
+  'All', 'Home Help', 'Repairs', 'Cleaning Services', 'Moving',
+  'Babysitting & Childcare', 'Pet Care', 'Elderly Companion Care',
+  'Tutoring & Coaching', 'Tech Support'
+]
+```
 
 ---
 
@@ -156,13 +335,34 @@ Apply `className="no-scrollbar"` to any scrollable element to hide scrollbars wh
 ## Profile Overlay (`ProfilePage.tsx`)
 - Opened via avatar button on Home tab (not in bottom nav)
 - Orange gradient hero, avatar "Y", Singpass Verified badge, estate pill
-- Stats: Events Saved, Neighbours Jio'd, Exchanges Done
-- My Interests section
+- Stats: Items Saved, Neighbours Jio'd, Exchanges Done
+- My Interests section (editable)
 - Rewards & Badges (2×2 grid): Event Joiner ✓, Group Member ✓, Trader ✓, Community Builder 🔒
-- Saved Events (clickable → Explore)
+- Saved Items screen (clickable cards → navigates to correct tab/item)
 - My Posts (Requests/Listings with status)
-- Account settings menu
-- Props: `{ onClose?: () => void, onOpenEvent?: (id: number) => void }`
+- Settings screen (Notification Preferences, Privacy, Verification, Help)
+
+### Props
+```ts
+{
+  onClose?: () => void;
+  onOpenEvent?: (id: number) => void;
+  onOpenMarketplaceItem?: (id: number) => void;
+  onOpenRequest?: (id: number) => void;
+  myPosts?: any[];
+  userInterests?: string[];
+  onUpdateInterests?: (interests: string[]) => void;
+  savedMarketplaceItems?: any[];   // from App.tsx — dynamically bookmarked items/services
+}
+```
+
+### Saved Items Screen (`SavedItemsScreen`)
+- Tabs: All | Events | Marketplace | Requests
+- Search bar
+- **Dynamic marketplace items**: converted from `savedMarketplaceItems` prop at render time; shown first in list
+- **Static entries**: Events and Requests from hardcoded `SAVED_ITEMS` (Items/Services entries removed from static list — now fully dynamic)
+- Tapping a card: Events → `onOpenEvent`, Items/Services → `onOpenMarketplaceItem`, Requests → `onOpenRequest`
+- Saved item card shape: 80×72 px image thumbnail + type badge + category badge + title + sub text + filled bookmark icon
 
 ---
 
@@ -206,5 +406,5 @@ Yoga:         bg #F3E8FF, text #9333EA
 - No real Singpass integration (UI only)
 - No backend / API — all mock data
 - Saved events state in EventsPage does not sync to ProfilePage (separate state)
-- `HelpSharePage` wishlist props not fully wired in `App.tsx`
 - No real push notifications
+- Chunk size >500 KB (build warning only, not blocking)
