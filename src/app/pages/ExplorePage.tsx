@@ -809,9 +809,6 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                     <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>Neighbour {n.initials}</div>
                     <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{n.unit.split(' #')[0]} · {n.distance}</div>
                   </div>
-                  <div style={{ padding: '4px 10px', borderRadius: '20px', background: BG, flexShrink: 0 }}>
-                    <span style={{ fontSize: '11px', fontWeight: 600, color: TEXT2 }}>{n.status}</span>
-                  </div>
                 </motion.div>
               ))}
             </div>
