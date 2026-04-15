@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Lotus, Heart, Camera, BookOpen, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -32,6 +32,21 @@ interface Group {
 
 type GroupScreen = 'feed' | 'detail';
 interface NavFrame { screen: GroupScreen; params?: any; }
+
+// ---- Helper function to get icon color based on emoji ----
+const getGroupIconElement = (emoji: string, color: string, size: number = 14) => {
+  const iconMap: { [key: string]: any } = {
+    '🏃': <Activity size={size} color={color} strokeWidth={2} />,
+    '🍳': <Utensils size={size} color={color} strokeWidth={2} />,
+    '🌱': <Leaf size={size} color={color} strokeWidth={2} />,
+    '🎲': <Dices size={size} color={color} strokeWidth={2} />,
+    '🧘': <Lotus size={size} color={color} strokeWidth={2} />,
+    '👨‍👩‍👧': <Heart size={size} color={color} strokeWidth={2} />,
+    '📸': <Camera size={size} color={color} strokeWidth={2} />,
+    '📚': <BookOpen size={size} color={color} strokeWidth={2} />,
+  };
+  return iconMap[emoji] || <Users size={size} color={color} strokeWidth={2} />;
+};
 
 // ---- Mock Data ----
 const GROUPS: Group[] = [
@@ -241,7 +256,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
   const toggleJoin = (id: number) => {
     setJoinedGroups(p => {
       const joined = p.includes(id);
-      toast.success(joined ? 'Left group' : 'Joined! Welcome to the group 🎉');
+      toast.success(joined ? 'Left group' : 'Joined! Welcome to the group');
       return joined ? p.filter(x => x !== id) : [...p, id];
     });
   };
@@ -288,7 +303,8 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
           <div style={{ padding: '0 16px 100px' }}>
             {/* Category badge */}
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '8px', background: group.categoryBg, marginTop: '20px', marginBottom: '8px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: group.categoryColor }}>{group.emoji} {group.category}</span>
+              {getGroupIconElement(group.emoji, group.categoryColor, 12)}
+              <span style={{ fontSize: '11px', fontWeight: 700, color: group.categoryColor }}>{group.category}</span>
             </div>
 
             <div style={{ fontSize: '26px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.25', letterSpacing: '-0.3px' }}>{group.name}</div>
@@ -301,18 +317,20 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
 
             {/* Info cards */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-              {[
-                { iconBg: '#FFF0EC', icon: '🕐', label: 'Meets', value: group.meetFrequency },
-                { iconBg: '#FFF0EC', icon: '📍', label: 'Location', value: group.location },
-              ].map(({ icon, label, value }) => (
-                <div key={label} style={{ background: CARD, borderRadius: '14px', padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '14px' }}>{icon}</span>
-                  </div>
-                  <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '3px' }}>{label}</div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{value}</div>
+              <div style={{ background: CARD, borderRadius: '14px', padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+                  <Clock size={16} color={PRIMARY} strokeWidth={2} />
                 </div>
-              ))}
+                <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '3px' }}>Meets</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{group.meetFrequency}</div>
+              </div>
+              <div style={{ background: CARD, borderRadius: '14px', padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+                  <MapPin size={16} color={PRIMARY} strokeWidth={2} />
+                </div>
+                <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '3px' }}>Location</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{group.location}</div>
+              </div>
             </div>
 
             {/* About */}

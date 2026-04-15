@@ -22,7 +22,10 @@
       "Bash(git merge:*)",
       "Bash(npx vite:*)",
       "Bash(git push:*)",
-      "Bash(rm /Users/nurleeyana/Desktop/P3/.git/index.lock)"
+      "Bash(rm /Users/nurleeyana/Desktop/P3/.git/index.lock)",
+      "Bash(wc -l \"/Users/laibamaqsood/Desktop/P3 HDB community App/src/app/pages\"/*.tsx)",
+      "Bash(find src/app/components src/app/pages -name \"*.tsx\" -type f -exec sed -i \"s/#F2F2F7/#F7F7F7/g\" {} \\\\;)",
+      "Bash(grep -l \"🏠\\\\|🗺️\\\\|🛍️\\\\|💬\\\\|📋\\\\|🏘️\\\\|😊\\\\|🎉\\\\|📍\\\\|❤️\\\\|💰\" src/app/pages/*.tsx)"
     ]
   }
 }

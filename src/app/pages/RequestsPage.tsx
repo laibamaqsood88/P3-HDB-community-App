@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Plus, X, SlidersHorizontal, MapPin, MessageCircle, Heart,
-  ChevronDown, Check, Send, Search,
+  ChevronDown, Check, Send, Search, Lock,
   Home as HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake,
   ShoppingBag, Search as SearchIcon, ClipboardList, CheckCircle,
 } from 'lucide-react';
@@ -409,8 +409,9 @@ function RequestDetail({ request, onBack, onChat }: any) {
 
         {/* Privacy note */}
         <div style={{ padding: '14px 16px', background: '#FFF0EC', borderRadius: '14px', border: '1px solid #FFD8CC', marginBottom: '8px' }}>
-          <div style={{ fontSize: '13px', color: PRIMARY, fontWeight: 500 }}>
-            🔒 Contact details only shared after both parties confirm. No obligation to proceed.
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: PRIMARY, fontWeight: 500 }}>
+            <Lock size={16} color={PRIMARY} strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
+            <span>Contact details only shared after both parties confirm. No obligation to proceed.</span>
           </div>
         </div>
       </div>
@@ -632,7 +633,10 @@ function ChatScreen({ request, onBack }: any) {
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ textAlign: 'center', padding: '4px 0' }}>
-          <span style={{ padding: '6px 16px', borderRadius: '20px', background: '#F0FDF4', fontSize: '12px', color: '#16A34A', fontWeight: 700 }}>🔒 Contact details shared after confirmation</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '20px', background: '#F0FDF4', fontSize: '12px', color: '#16A34A', fontWeight: 700 }}>
+            <Lock size={14} color="#16A34A" strokeWidth={2} />
+            <span>Contact details shared after confirmation</span>
+          </div>
         </div>
         {messages.map(msg => (
           <div key={msg.id} style={{ display: 'flex', justifyContent: msg.from === 'me' ? 'flex-end' : 'flex-start' }}>

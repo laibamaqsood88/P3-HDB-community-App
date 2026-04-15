@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Bookmark, Share2, X, Shield,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -891,7 +891,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           <button
             onClick={() => {
               const reminderMsg = reminderOption !== 'None' ? ` Reminder set for ${reminderOption.toLowerCase()}.` : '';
-              toast.success(`Registered! See you there 🎉${reminderMsg}`);
+              toast.success(`Registered! See you there.${reminderMsg}`);
               goBack();
             }}
             style={{ width: '100%', padding: '16px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
@@ -920,16 +920,18 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
             <div style={{ fontSize: '13px', color: TEXT2 }}>{ev?.date} · {ev?.time}</div>
           </div>
           {[
-            { emoji: '💬', label: 'Share to WhatsApp', sub: 'Send to your contacts' },
-            { emoji: '📋', label: 'Copy Link', sub: 'Copy to clipboard' },
-            { emoji: '📲', label: 'Share via Jio', sub: 'Invite a neighbour directly' },
-          ].map(({ emoji, label, sub }) => (
+            { Icon: MessageCircle, label: 'Share to WhatsApp', sub: 'Send to your contacts' },
+            { Icon: Copy, label: 'Copy Link', sub: 'Copy to clipboard' },
+            { Icon: Share2, label: 'Share via Jio', sub: 'Invite a neighbour directly' },
+          ].map(({ Icon, label, sub }) => (
             <button
               key={label}
               onClick={() => { toast.success(`${label} — coming soon!`); }}
               style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: CARD, borderRadius: '18px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
             >
-              <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>{emoji}</div>
+              <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Icon size={20} color={MUTED} strokeWidth={1.8} />
+              </div>
               <div style={{ flex: 1, textAlign: 'left' }}>
                 <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{label}</div>
                 <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
@@ -1111,7 +1113,9 @@ function NeighboursTab({
 
         {filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <div style={{ fontSize: '36px', marginBottom: '12px' }}>👥</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+              <Users size={44} color={MUTED} strokeWidth={1.5} />
+            </div>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>No neighbours found</div>
             <div style={{ fontSize: '13px', color: TEXT2 }}>Try adjusting your filters</div>
           </div>
