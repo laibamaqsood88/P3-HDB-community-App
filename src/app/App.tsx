@@ -110,6 +110,7 @@ export default function App() {
         toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'Nunito', sans-serif" } }}
       />
 
+      {/* Content fills full height — nav floats on top */}
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         {activeTab === 'events' && (
           <EventsPage
@@ -156,9 +157,14 @@ export default function App() {
             extraConversations={conversations}
           />
         )}
-      </div>
 
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+        {/* Floating nav — overlays content */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 50, pointerEvents: 'none' }}>
+          <div style={{ pointerEvents: 'auto' }}>
+            <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+          </div>
+        </div>
+      </div>
 
       {/* Profile Modal Overlay */}
       {showProfile && (
