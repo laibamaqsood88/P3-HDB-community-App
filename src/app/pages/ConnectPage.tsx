@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Users, ChevronRight, X, Check, MapPin, Bell } from 'lucide-react';
+import { Search, Users, X, Check, MapPin, Bell } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -13,6 +13,7 @@ const MUTED = '#AEAEB2';
 const BORDER = '#EDEDEC';
 
 // ---- Types ----
+interface GroupMember { name: string; block: string; avatar: string; color: string; }
 interface Group {
   id: number;
   name: string;
@@ -21,6 +22,7 @@ interface Group {
   categoryColor: string;
   categoryBg: string;
   members: number;
+  membersList: GroupMember[];
   description: string;
   meetFrequency: string;
   location: string;
@@ -41,6 +43,14 @@ const GROUPS: Group[] = [
     categoryColor: '#16A34A',
     categoryBg: '#DCFCE7',
     members: 24,
+    membersList: [
+      { name: 'Alex Lim', block: 'Blk 445', avatar: 'AL', color: '#FF6B47' },
+      { name: 'Ben Tan', block: 'Blk 447', avatar: 'BT', color: '#7C3AED' },
+      { name: 'Diana Mak', block: 'Blk 445', avatar: 'DM', color: '#059669' },
+      { name: 'Eli Ng', block: 'Blk 449', avatar: 'EN', color: '#0891B2' },
+      { name: 'Gary Koh', block: 'Blk 450', avatar: 'GK', color: '#EA580C' },
+      { name: 'Hannah Lee', block: 'Blk 445', avatar: 'HL', color: '#475569' },
+    ],
     description: 'We meet every Saturday and Sunday at 7 AM for a casual run around the estate and Bishan-AMK Park. All paces welcome — we run together and no one gets left behind. Great way to start your weekend!',
     meetFrequency: 'Every Sat & Sun, 7 AM',
     location: 'Bishan-AMK Park',
@@ -55,6 +65,13 @@ const GROUPS: Group[] = [
     categoryColor: '#D97706',
     categoryBg: '#FEF3C7',
     members: 18,
+    membersList: [
+      { name: 'Clara Soh', block: 'Blk 448', avatar: 'CS', color: '#D97706' },
+      { name: 'Fiona Raj', block: 'Blk 446', avatar: 'FR', color: '#DB2777' },
+      { name: 'Ivan Wong', block: 'Blk 451', avatar: 'IW', color: '#0D9488' },
+      { name: 'Jasmine Yap', block: 'Blk 452', avatar: 'JY', color: '#BE185D' },
+      { name: 'Hannah Lee', block: 'Blk 445', avatar: 'HL', color: '#475569' },
+    ],
     description: 'A cosy group of food lovers sharing recipes and cooking traditional Peranakan dishes together. We meet monthly at the community hub kitchen, each time exploring a different heritage recipe.',
     meetFrequency: 'Monthly, 2nd Sunday',
     location: 'Community Hub, Blk 123',
@@ -69,6 +86,15 @@ const GROUPS: Group[] = [
     categoryColor: '#059669',
     categoryBg: '#D1FAE5',
     members: 31,
+    membersList: [
+      { name: 'Diana Mak', block: 'Blk 445', avatar: 'DM', color: '#059669' },
+      { name: 'Clara Soh', block: 'Blk 448', avatar: 'CS', color: '#D97706' },
+      { name: 'Ivan Wong', block: 'Blk 451', avatar: 'IW', color: '#0D9488' },
+      { name: 'Eli Ng', block: 'Blk 449', avatar: 'EN', color: '#0891B2' },
+      { name: 'Gary Koh', block: 'Blk 450', avatar: 'GK', color: '#EA580C' },
+      { name: 'Alex Lim', block: 'Blk 445', avatar: 'AL', color: '#FF6B47' },
+      { name: 'Jasmine Yap', block: 'Blk 452', avatar: 'JY', color: '#BE185D' },
+    ],
     description: 'Tending the estate rooftop garden together — from planting vegetables to composting. No experience needed! We share tips, tools, and harvests. A great way to go green with your neighbours.',
     meetFrequency: 'Every 2 weeks, Sat 8 AM',
     location: 'Rooftop Garden, Blk 450',
@@ -83,6 +109,13 @@ const GROUPS: Group[] = [
     categoryColor: '#7C3AED',
     categoryBg: '#EDE9FE',
     members: 15,
+    membersList: [
+      { name: 'Ben Tan', block: 'Blk 447', avatar: 'BT', color: '#7C3AED' },
+      { name: 'Eli Ng', block: 'Blk 449', avatar: 'EN', color: '#0891B2' },
+      { name: 'Fiona Raj', block: 'Blk 446', avatar: 'FR', color: '#DB2777' },
+      { name: 'Gary Koh', block: 'Blk 450', avatar: 'GK', color: '#EA580C' },
+      { name: 'Jasmine Yap', block: 'Blk 452', avatar: 'JY', color: '#BE185D' },
+    ],
     description: 'From Catan to Codenames, we love a good game session. Bring your favourite game or try from our library. Snacks provided. Perfect for adults who want to unwind and meet new friends.',
     meetFrequency: 'Every Sat, 2–5 PM',
     location: 'RC Hall, Blk 447',
@@ -97,6 +130,13 @@ const GROUPS: Group[] = [
     categoryColor: '#0891B2',
     categoryBg: '#CFFAFE',
     members: 42,
+    membersList: [
+      { name: 'Mr Tan Ah Kow', block: 'Blk 445', avatar: 'TA', color: '#0891B2' },
+      { name: 'Mdm Wong Li Hua', block: 'Blk 447', avatar: 'WL', color: '#DB2777' },
+      { name: 'Mr Lim Beng Huat', block: 'Blk 448', avatar: 'LB', color: '#059669' },
+      { name: 'Mdm Chan Siew Eng', block: 'Blk 445', avatar: 'CS', color: '#EA580C' },
+      { name: 'Mr Goh Teck Seng', block: 'Blk 449', avatar: 'GT', color: '#7C3AED' },
+    ],
     description: 'Weekly Tai Chi and light stretching sessions for seniors. Conducted in Mandarin. Improve balance, stay active, and enjoy good company. Wear comfortable clothing and flat shoes.',
     meetFrequency: 'Every Wed & Fri, 7:30 AM',
     location: 'Void Deck, Blk 445',
@@ -111,6 +151,14 @@ const GROUPS: Group[] = [
     categoryColor: '#DB2777',
     categoryBg: '#FCE7F3',
     members: 28,
+    membersList: [
+      { name: 'Sarah Chen', block: 'Blk 447', avatar: 'SC', color: '#DB2777' },
+      { name: 'Marcus Lim', block: 'Blk 448', avatar: 'ML', color: '#7C3AED' },
+      { name: 'Priya Nair', block: 'Blk 449', avatar: 'PN', color: '#D97706' },
+      { name: 'Darren Yeo', block: 'Blk 446', avatar: 'DY', color: '#059669' },
+      { name: 'Kelly Tan', block: 'Blk 450', avatar: 'KT', color: '#EA580C' },
+      { name: 'James Ho', block: 'Blk 445', avatar: 'JH', color: '#0891B2' },
+    ],
     description: 'A friendly group for parents with young children to meet, play, and share parenting tips. Activities include outdoor play, arts & crafts, and storytime. Kids aged 1–6 welcome.',
     meetFrequency: 'Every Sunday, 10 AM',
     location: 'Playground, Blk 449',
@@ -125,6 +173,12 @@ const GROUPS: Group[] = [
     categoryColor: '#EA580C',
     categoryBg: '#FFEDD5',
     members: 11,
+    membersList: [
+      { name: 'Hannah Lee', block: 'Blk 445', avatar: 'HL', color: '#475569' },
+      { name: 'Ryan Chew', block: 'Blk 451', avatar: 'RC', color: '#EA580C' },
+      { name: 'Mei Lin Tan', block: 'Blk 452', avatar: 'MT', color: '#BE185D' },
+      { name: 'Ahmad Razi', block: 'Blk 447', avatar: 'AR', color: '#0D9488' },
+    ],
     description: 'Casual photography walks around the estate and nearby parks. Share your shots, get tips from more experienced members, and see your neighbourhood through a new lens. All cameras welcome.',
     meetFrequency: 'Monthly, last Saturday',
     location: 'Meet at Blk 445',
@@ -139,6 +193,13 @@ const GROUPS: Group[] = [
     categoryColor: '#475569',
     categoryBg: '#F1F5F9',
     members: 14,
+    membersList: [
+      { name: 'Jasmine Yap', block: 'Blk 452', avatar: 'JY', color: '#BE185D' },
+      { name: 'Ivan Wong', block: 'Blk 451', avatar: 'IW', color: '#0D9488' },
+      { name: 'Nurul Ain', block: 'Blk 446', avatar: 'NA', color: '#7C3AED' },
+      { name: 'Wei Jie Ong', block: 'Blk 448', avatar: 'WJ', color: '#059669' },
+      { name: 'Celine Koh', block: 'Blk 450', avatar: 'CK', color: '#D97706' },
+    ],
     description: 'We read one book a month and meet to discuss over tea. Fiction, non-fiction, local authors — we love it all. A quiet, welcoming space for readers of all tastes.',
     meetFrequency: 'Monthly, 3rd Friday, 7:30 PM',
     location: 'Community Corner, Blk 123',
@@ -252,13 +313,43 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
             </div>
 
             {/* Tags */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
               {group.tags.map(tag => (
                 <span key={tag} style={{ padding: '5px 12px', borderRadius: '20px', background: BG, fontSize: '12px', fontWeight: 600, color: TEXT2, border: `1px solid ${BORDER}` }}>
                   #{tag}
                 </span>
               ))}
             </div>
+
+            {/* Members list */}
+            {group.membersList && group.membersList.length > 0 && (
+              <div style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>Members</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Users size={12} color={MUTED} />
+                    <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{group.membersList.length}</span>
+                  </div>
+                </div>
+                {group.membersList.map((member, i) => (
+                  <div
+                    key={i}
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '12px', borderBottom: i < group.membersList!.length - 1 ? `1px solid ${BORDER}` : 'none', marginTop: i > 0 ? '12px' : '0' }}
+                  >
+                    <div style={{ width: '40px', height: '40px', borderRadius: '14px', background: member.color + '22', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: member.color }}>{member.avatar}</span>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{member.name}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                        <MapPin size={11} color={MUTED} />
+                        <span style={{ fontSize: '12px', color: TEXT2 }}>{member.block}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -277,6 +368,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
             {isJoined ? <><Check size={16} /> Leave Group</> : <>Join Group</>}
           </button>
         </div>
+
       </div>
     );
   }
