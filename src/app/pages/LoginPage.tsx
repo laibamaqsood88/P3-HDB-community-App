@@ -54,7 +54,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         display: 'flex',
         flexDirection: 'column',
         background: BG,
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Nunito', sans-serif",
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -164,7 +164,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               gap: '0px',
               boxShadow: 'none',
               marginTop: '28px',
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
             }}
           >
             <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111', letterSpacing: '0.1px' }}>

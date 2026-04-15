@@ -64,11 +64,11 @@ export default function App() {
   // ---- Auth flow ----
   if (authScreen === 'login') {
     return (
-      <div style={{ width: '100vw', height: '100svh', fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ width: '100vw', height: '100svh', fontFamily: "'Nunito', sans-serif" }}>
         <Toaster
           position="top-center"
           richColors
-          toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'DM Sans', sans-serif" } }}
+          toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'Nunito', sans-serif" } }}
         />
         <LoginPage onLogin={() => setAuthScreen('signup')} />
       </div>
@@ -77,11 +77,11 @@ export default function App() {
 
   if (authScreen === 'signup') {
     return (
-      <div style={{ width: '100vw', height: '100svh', fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ width: '100vw', height: '100svh', fontFamily: "'Nunito', sans-serif" }}>
         <Toaster
           position="top-center"
           richColors
-          toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'DM Sans', sans-serif" } }}
+          toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'Nunito', sans-serif" } }}
         />
         <SignUpPage onComplete={({ dob, familyStatus, interests }) => {
           setUserInterests(interests);
@@ -101,13 +101,13 @@ export default function App() {
         flexDirection: 'column',
         position: 'relative',
         background: '#F5F4F0',
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Nunito', sans-serif",
       }}
     >
       <Toaster
         position="top-center"
         richColors
-        toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'DM Sans', sans-serif" } }}
+        toastOptions={{ style: { borderRadius: '16px', fontSize: '14px', fontFamily: "'Nunito', sans-serif" } }}
       />
 
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>

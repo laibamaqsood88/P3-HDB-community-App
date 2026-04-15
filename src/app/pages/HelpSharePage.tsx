@@ -307,7 +307,7 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', fontFamily: "'Nunito', sans-serif" }}>
       {renderScreen()}
       {showConfetti && <Confetti onDone={() => setShowConfetti(false)} />}
     </div>

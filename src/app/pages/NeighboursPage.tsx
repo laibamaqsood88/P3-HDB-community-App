@@ -156,7 +156,7 @@ export function NeighboursPage() {
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', fontFamily: "'Nunito', sans-serif" }}>
       {renderScreen()}
       <AnimatePresence>
         {showGroupDisc && (
@@ -739,7 +739,7 @@ function GroupDiscovery({ groups, onClose, onJoin, onOpenGroup }: any) {
       <motion.div
         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: CARD, borderRadius: '28px 28px 0 0', zIndex: 20, maxHeight: '80%', overflowY: 'auto', fontFamily: "'DM Sans', sans-serif" }}
+        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: CARD, borderRadius: '28px 28px 0 0', zIndex: 20, maxHeight: '80%', overflowY: 'auto', fontFamily: "'Nunito', sans-serif" }}
       >
         <div style={{ padding: '16px 20px 32px' }}>
           <div style={{ width: '36px', height: '4px', background: BORDER, borderRadius: '4px', margin: '0 auto 22px' }} />

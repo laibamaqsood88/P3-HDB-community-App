@@ -86,7 +86,7 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
         display: 'flex',
         flexDirection: 'column',
         background: step === 0 ? CARD : BG,
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Nunito', sans-serif",
         overflow: 'hidden',
         position: 'relative',
       }}
@@ -285,7 +285,7 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '8px',
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
           }}
         >
           Continue
@@ -335,7 +335,7 @@ function StepDOB({ dob, onChangeDob, onNext, onBack }: { dob: string; onChangeDo
               fontWeight: 600,
               color: dob ? TEXT : MUTED,
               outline: 'none',
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               boxSizing: 'border-box',
             }}
           />
@@ -359,7 +359,7 @@ function StepDOB({ dob, onChangeDob, onNext, onBack }: { dob: string; onChangeDo
             cursor: dob ? 'pointer' : 'not-allowed',
             boxShadow: dob ? '0 8px 24px rgba(255,107,71,0.35)' : 'none',
             transition: 'all 0.2s',
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
           }}
         >
           Next
@@ -415,7 +415,7 @@ function StepFamily({
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.15s',
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "'Nunito', sans-serif",
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -461,7 +461,7 @@ function StepFamily({
             cursor: familyStatus ? 'pointer' : 'not-allowed',
             boxShadow: familyStatus ? '0 8px 24px rgba(255,107,71,0.35)' : 'none',
             transition: 'all 0.2s',
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
           }}
         >
           Next
@@ -519,7 +519,7 @@ function StepInterests({
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search interests..."
-            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: "'DM Sans', sans-serif" }}
+            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: "'Nunito', sans-serif" }}
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
@@ -554,7 +554,7 @@ function StepInterests({
                         flexShrink: 0, display: 'flex', alignItems: 'center', gap: '6px',
                         padding: '7px 12px', borderRadius: '24px', fontSize: '12px', fontWeight: 700,
                         background: colors.bg, color: colors.text, border: `2px solid ${colors.text}`,
-                        cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                        cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
                       }}
                     >
                       {t}
@@ -581,7 +581,7 @@ function StepInterests({
               const colors = INTEREST_COLORS[t];
               return (
                 <motion.button key={t} whileTap={{ scale: 0.95 }} onClick={() => onToggle(t)}
-                  style={{ padding: '10px 18px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
+                  style={{ padding: '10px 18px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Nunito', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
                   {t}
                 </motion.button>
               );
@@ -602,7 +602,7 @@ function StepInterests({
                     style={{
                       width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer',
-                      fontFamily: "'DM Sans', sans-serif",
+                      fontFamily: "'Nunito', sans-serif",
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -637,7 +637,7 @@ function StepInterests({
                             const colors = INTEREST_COLORS[t];
                             return (
                               <motion.button key={t} whileTap={{ scale: 0.95 }} onClick={() => onToggle(t)}
-                                style={{ padding: '9px 16px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
+                                style={{ padding: '9px 16px', borderRadius: '24px', fontSize: '13px', cursor: 'pointer', fontFamily: "'Nunito', sans-serif", border: `2px solid ${sel ? colors.text : BORDER}`, background: sel ? colors.bg : CARD, color: sel ? colors.text : TEXT2, fontWeight: sel ? 700 : 500, transition: 'all 0.15s' }}>
                                 {t}
                               </motion.button>
                             );
@@ -675,7 +675,7 @@ function StepInterests({
             justifyContent: 'center',
             gap: '8px',
             transition: 'all 0.2s',
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
           }}
         >
           Find my community →
@@ -999,7 +999,7 @@ function RecommendationsStep({
                           fontWeight: 700,
                           cursor: 'pointer',
                           transition: 'all 0.15s',
-                          fontFamily: "'DM Sans', sans-serif",
+                          fontFamily: "'Nunito', sans-serif",
                         }}
                       >
                         {joined ? 'Joined ✓' : 'Join'}
@@ -1100,7 +1100,7 @@ function RecommendationsStep({
             fontSize: '16px',
             cursor: 'pointer',
             boxShadow: '0 8px 24px rgba(255,107,71,0.35)',
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Nunito', sans-serif",
           }}
         >
           Get Started →

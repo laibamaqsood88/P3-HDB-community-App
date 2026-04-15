@@ -240,7 +240,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
         display: 'flex',
         flexDirection: 'column',
         background: BG,
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Nunito', sans-serif",
         position: 'relative',
       }}
     >
@@ -256,7 +256,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search messages..."
-                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: TEXT, outline: 'none', fontFamily: "'DM Sans', sans-serif" }}
+                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: TEXT, outline: 'none', fontFamily: "'Nunito', sans-serif" }}
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
@@ -275,7 +275,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                   flex: 1, padding: '10px 4px',
                   background: 'none', border: 'none',
                   borderBottom: `2.5px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
-                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
                   fontSize: '13px', fontWeight: activeFilter === tab ? 700 : 500,
                   color: activeFilter === tab ? PRIMARY : MUTED,
                   whiteSpace: 'nowrap',
@@ -569,7 +569,7 @@ function ChatScreen({
                 onClick={() => setGroupTab(tab)}
                 style={{
                   flex: 1, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif", fontSize: '13px',
+                  fontFamily: "'Nunito', sans-serif", fontSize: '13px',
                   fontWeight: groupTab === tab ? 700 : 500,
                   color: groupTab === tab ? PRIMARY : MUTED,
                   borderBottom: `2px solid ${groupTab === tab ? PRIMARY : 'transparent'}`,
@@ -736,7 +736,7 @@ function ChatScreen({
               fontSize: '14px',
               outline: 'none',
               color: TEXT,
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
             }}
           />
           <button
