@@ -195,9 +195,11 @@ function CollectionPointMap({ address }: { address?: string }) {
 }
 
 // ---- Main Component ----
-export function HelpSharePage({ onAddPost, initialItemId }: { onAddPost?: (post: any) => void; initialItemId?: number }) {
-  const [savedItems, setSavedItems] = useState<number[]>([]);
-  const onSaveToggle = (id: number) => setSavedItems(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void }) {
+  const onSaveToggle = (id: number) => {
+    const item = ITEMS_AND_SERVICES.find(i => i.id === id);
+    externalSaveToggle?.(id, item);
+  };
   const initialStack: NavFrame[] = (() => {
     if (initialItemId) {
       const item = ITEMS_AND_SERVICES.find(i => i.id === initialItemId);

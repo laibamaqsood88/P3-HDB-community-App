@@ -24,12 +24,22 @@ export default function App() {
   const [userInterests, setUserInterests] = useState<string[]>([]);
   const [myPosts, setMyPosts] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
+  const [savedMarketplaceItems, setSavedMarketplaceItems] = useState<any[]>([]);
   const [initialRequestId, setInitialRequestId] = useState<number | undefined>(undefined);
   const [initialEventId, setInitialEventId] = useState<number | undefined>(undefined);
   const [initialMarketplaceItemId, setInitialMarketplaceItemId] = useState<number | undefined>(undefined);
 
   const onAddPost = (post: any) => setMyPosts(prev => [post, ...prev]);
   const onAddConversation = (conv: any) => setConversations(prev => [conv, ...prev]);
+
+  const onMarketplaceSaveToggle = (id: number, item: any) => {
+    setSavedMarketplaceItems(prev => {
+      const exists = prev.some(i => i.id === id);
+      if (exists) return prev.filter(i => i.id !== id);
+      return item ? [item, ...prev] : prev;
+    });
+  };
+  const savedMarketplaceIds = savedMarketplaceItems.map(i => i.id);
 
   const openExploreGroups = () => {
     setExploreInitialSubTab('groups');
@@ -124,7 +134,12 @@ export default function App() {
           />
         )}
         {activeTab === 'marketplace' && (
-          <HelpSharePage onAddPost={onAddPost} initialItemId={initialMarketplaceItemId} />
+          <HelpSharePage
+            onAddPost={onAddPost}
+            initialItemId={initialMarketplaceItemId}
+            savedItems={savedMarketplaceIds}
+            onSaveToggle={onMarketplaceSaveToggle}
+          />
         )}
         {activeTab === 'requests' && (
           <RequestsPage key={initialRequestId} onAddPost={onAddPost} initialRequestId={initialRequestId} />
@@ -169,6 +184,7 @@ export default function App() {
             myPosts={myPosts}
             userInterests={userInterests}
             onUpdateInterests={setUserInterests}
+            savedMarketplaceItems={savedMarketplaceItems}
           />
         </div>
       )}

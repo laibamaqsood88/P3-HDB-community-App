@@ -20,6 +20,7 @@ interface ProfilePageProps {
   myPosts?: any[];
   userInterests?: string[];
   onUpdateInterests?: (interests: string[]) => void;
+  savedMarketplaceItems?: any[];
 }
 
 // ---- Mock Data ----
@@ -101,7 +102,7 @@ const BADGES = [
 ];
 
 // ---- Main Component ----
-export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest, onClose, myPosts = [], userInterests = MY_INTERESTS, onUpdateInterests }: ProfilePageProps) {
+export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest, onClose, myPosts = [], userInterests = MY_INTERESTS, onUpdateInterests, savedMarketplaceItems = [] }: ProfilePageProps) {
   const [activeSection, setActiveSection] = useState<'main' | 'settings' | 'saved-items' | 'my-posts'>('main');
   const [showInterestEdit, setShowInterestEdit] = useState(false);
   const [draftInterests, setDraftInterests] = useState<string[]>(userInterests);
@@ -143,6 +144,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
         onOpenEvent={onOpenEvent}
         onOpenMarketplaceItem={onOpenMarketplaceItem}
         onOpenRequest={onOpenRequest}
+        savedMarketplaceItems={savedMarketplaceItems}
       />
     );
   }
@@ -692,11 +694,12 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
 }
 
 // ---- Saved Items Screen ----
-function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRequest }: {
+function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRequest, savedMarketplaceItems = [] }: {
   onBack: () => void;
   onOpenEvent?: (id: number) => void;
   onOpenMarketplaceItem?: (id: number) => void;
   onOpenRequest?: (id: number) => void;
+  savedMarketplaceItems?: any[];
 }) {
   const [activeTab, setActiveTab] = useState<'All' | 'Events' | 'Marketplace' | 'Requests'>('All');
   const [search, setSearch] = useState('');
@@ -710,7 +713,26 @@ function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRe
     Service: { bg: '#DCFCE7', text: '#16A34A' },
   };
 
-  const tabFilter = (item: typeof SAVED_ITEMS[0]) => {
+  // Convert dynamic marketplace items to the saved-item shape
+  const dynamicMarketplaceEntries = savedMarketplaceItems.map(item => ({
+    id: item.id,
+    sourceId: item.id,
+    type: item.itemType === 'service' ? 'Service' : 'Item',
+    title: item.name,
+    sub: item.price ? `${item.price} · ${item.collectionAddress?.split(',')[0] ?? item.distance ?? ''}` : (item.collectionAddress?.split(',')[0] ?? item.distance ?? ''),
+    category: item.category || '',
+    categoryColor: item.itemType === 'service' ? '#16A34A' : '#2563EB',
+    categoryBg: item.itemType === 'service' ? '#DCFCE7' : '#DBEAFE',
+    image: item.image || null,
+  }));
+
+  // Static entries: keep only Events and Requests (Items are now fully dynamic)
+  const staticEntries = SAVED_ITEMS.filter(i => i.type !== 'Item' && i.type !== 'Service');
+
+  // Merge: dynamic marketplace first, then static Events/Requests
+  const allSaved = [...dynamicMarketplaceEntries, ...staticEntries];
+
+  const tabFilter = (item: (typeof allSaved)[0]) => {
     if (activeTab === 'All') return true;
     if (activeTab === 'Events') return item.type === 'Event';
     if (activeTab === 'Marketplace') return item.type === 'Item' || item.type === 'Service';
@@ -719,7 +741,7 @@ function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRe
   };
 
   const q = search.toLowerCase().trim();
-  const filtered = SAVED_ITEMS.filter(item => tabFilter(item) && (!q || item.title.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q)));
+  const filtered = allSaved.filter(item => tabFilter(item) && (!q || item.title.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q)));
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
