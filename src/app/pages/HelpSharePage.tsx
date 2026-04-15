@@ -601,10 +601,10 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
                   return (
                     <button key={tab} onClick={() => setMainFilter(tab)}
                       style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? PRIMARY : MUTED, paddingBottom: '10px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
                         {tab}
                       </span>
-                      {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: PRIMARY, borderRadius: '2px' }} />}
+                      {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
                     </button>
                   );
                 })}
