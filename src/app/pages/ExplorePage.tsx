@@ -111,6 +111,14 @@ const FAMILY_STATUS_BREAKDOWN = [
   { label: 'Senior (60+)',        count: 7,  color: '#DB2777' },
 ];
 
+const LANGUAGE_BREAKDOWN = [
+  { label: 'English',     count: 14, color: '#2563EB' },
+  { label: 'Mandarin',   count: 8,  color: '#D97706' },
+  { label: 'Malay',      count: 4,  color: '#059669' },
+  { label: 'Tamil',      count: 2,  color: '#DB2777' },
+  { label: 'Multilingual', count: 3, color: '#7C3AED' },
+];
+
 const NEIGHBOURS_GOING = [
   { id: 1, initials: 'AL', color: '#FF6B47', unit: 'Blk 445 #12-34', status: 'Single' },
   { id: 2, initials: 'BT', color: '#7C3AED', unit: 'Blk 447 #08-12', status: 'Couple' },
@@ -782,6 +790,38 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Language horizontal bar chart */}
+          <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>By Language Spoken</span>
+              <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{LANGUAGE_BREAKDOWN.reduce((s, i) => s + i.count, 0)} going</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {LANGUAGE_BREAKDOWN.map((item, i) => {
+                const langTotal = LANGUAGE_BREAKDOWN.reduce((s, x) => s + x.count, 0);
+                return (
+                  <div key={item.label}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
+                        <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / langTotal) * 100)}%)</span>
+                      </div>
+                    </div>
+                    <div style={{ height: '10px', borderRadius: '6px', background: BG, overflow: 'hidden' }}>
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(item.count / langTotal) * 100}%` }}
+                        transition={{ duration: 0.6, ease: 'easeOut', delay: i * 0.08 }}
+                        style={{ height: '100%', borderRadius: '6px', background: item.color }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
