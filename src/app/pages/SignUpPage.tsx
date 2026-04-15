@@ -766,7 +766,7 @@ function StepSpokenLanguage({
             )}
           </motion.button>
 
-          {/* Others: autocomplete input with chips */}
+          {/* Others: search for additional languages */}
           <AnimatePresence initial={false}>
             {showOthers && (
               <motion.div
@@ -778,50 +778,16 @@ function StepSpokenLanguage({
                 onAnimationComplete={() => setOthersExpanded(showOthers)}
               >
                 <div style={{ position: 'relative' }}>
-                  {/* Chip input box */}
+                  {/* Search box */}
                   <div
                     style={{
                       background: BG,
                       borderRadius: '18px',
                       border: `2px solid ${showDropdown ? PRIMARY : BORDER}`,
-                      padding: '10px 14px',
+                      padding: '12px 14px',
                       transition: 'border-color 0.2s',
                     }}
                   >
-                    {/* Helper text */}
-                    <div style={{ fontSize: '12px', color: MUTED, marginBottom: '8px', fontWeight: 500 }}>
-                      Type to search or add languages
-                    </div>
-
-                    {/* Chips */}
-                    {otherChips.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
-                        {otherChips.map(chip => (
-                          <motion.span
-                            key={chip}
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ duration: 0.15 }}
-                            style={{
-                              display: 'inline-flex', alignItems: 'center', gap: '5px',
-                              padding: '5px 10px', borderRadius: '20px',
-                              background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
-                              color: PRIMARY, fontSize: '13px', fontWeight: 700,
-                            }}
-                          >
-                            {chip}
-                            <button
-                              onClick={() => onToggle(chip)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: PRIMARY }}
-                            >
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                            </button>
-                          </motion.span>
-                        ))}
-                      </div>
-                    )}
-
                     {/* Input */}
                     <input
                       type="text"
@@ -830,7 +796,7 @@ function StepSpokenLanguage({
                       onFocus={() => setShowDropdown(true)}
                       onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                       onKeyDown={handleKeyDown}
-                      placeholder="e.g. Japanese, Hindi..."
+                      placeholder="Search languages..."
                       style={{
                         width: '100%', background: 'transparent', border: 'none', outline: 'none',
                         fontSize: '14px', color: TEXT, fontFamily: "'Nunito', sans-serif",
@@ -851,63 +817,30 @@ function StepSpokenLanguage({
                           position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
                           background: CARD, borderRadius: '14px', border: `1.5px solid ${BORDER}`,
                           boxShadow: '0 8px 24px rgba(0,0,0,0.10)', zIndex: 20, overflow: 'hidden',
+                          maxHeight: '240px', overflowY: 'auto'
                         }}
                       >
-                        {suggestions.map((lang, i) => (
-                          <button
-                            key={lang}
-                            onMouseDown={() => addLanguage(lang)}
-                            style={{
-                              width: '100%', padding: '13px 16px', background: 'none',
-                              border: 'none', borderTop: i > 0 ? `1px solid ${BORDER}` : 'none',
-                              textAlign: 'left', fontSize: '14px', fontWeight: 500,
-                              color: TEXT, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
-                            }}
-                          >
-                            {lang}
-                          </button>
-                        ))}
-                        {/* Add custom if not in list */}
-                        {query.trim() && !AUTOCOMPLETE_LANGUAGES.some(l => l.toLowerCase() === query.trim().toLowerCase()) && !spokenLanguages.includes(query.trim()) && (
-                          <button
-                            onMouseDown={() => addLanguage(query)}
-                            style={{
-                              width: '100%', padding: '13px 16px', background: '#FFF8F6',
-                              border: 'none', borderTop: `1px solid ${BORDER}`,
-                              textAlign: 'left', fontSize: '14px', fontWeight: 600,
-                              color: PRIMARY, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
-                              display: 'flex', alignItems: 'center', gap: '6px',
-                            }}
-                          >
-                            <span style={{ fontSize: '16px' }}>+</span> Add "{query.trim()}"
-                          </button>
-                        )}
-                      </motion.div>
-                    )}
-                    {/* Show "Add" option when dropdown is open but no suggestions (pure custom entry) */}
-                    {showDropdown && suggestions.length === 0 && query.trim() && !spokenLanguages.includes(query.trim()) && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        transition={{ duration: 0.15 }}
-                        style={{
-                          position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
-                          background: CARD, borderRadius: '14px', border: `1.5px solid ${BORDER}`,
-                          boxShadow: '0 8px 24px rgba(0,0,0,0.10)', zIndex: 20, overflow: 'hidden',
-                        }}
-                      >
-                        <button
-                          onMouseDown={() => addLanguage(query)}
-                          style={{
-                            width: '100%', padding: '13px 16px', background: '#FFF8F6',
-                            border: 'none', textAlign: 'left', fontSize: '14px', fontWeight: 600,
-                            color: PRIMARY, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
-                            display: 'flex', alignItems: 'center', gap: '6px',
-                          }}
-                        >
-                          <span style={{ fontSize: '16px' }}>+</span> Add "{query.trim()}"
-                        </button>
+                        {suggestions.map((lang, i) => {
+                          const selected = spokenLanguages.includes(lang);
+                          return (
+                            <button
+                              key={lang}
+                              onMouseDown={() => addLanguage(lang)}
+                              style={{
+                                width: '100%', padding: '12px 16px', background: selected ? '#FFF0EC' : 'none',
+                                border: 'none', borderTop: i > 0 ? `1px solid ${BORDER}` : 'none',
+                                textAlign: 'left', fontSize: '14px', fontWeight: selected ? 700 : 500,
+                                color: selected ? PRIMARY : TEXT, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                              }}
+                            >
+                              <span>{lang}</span>
+                              {selected && (
+                                <span style={{ fontSize: '14px', color: PRIMARY }}>✓</span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </motion.div>
                     )}
                   </AnimatePresence>
