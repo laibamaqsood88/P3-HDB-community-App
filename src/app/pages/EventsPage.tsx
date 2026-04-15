@@ -685,11 +685,11 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 <button
                   onClick={() => toast.success(`Message sent to ${neighbour.name}!`)}
                   style={{
-                    width: '100%', padding: '11px 0', borderRadius: '14px',
+                    width: '100%', padding: '8px 0', borderRadius: '12px',
                     background: 'white', border: `1.5px solid ${PRIMARY}`,
-                    color: TEXT, fontSize: '14px', fontWeight: 700,
+                    color: TEXT, fontSize: '12px', fontWeight: 700,
                     cursor: 'pointer', fontFamily: 'inherit',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
                   }}
                 >
                   👋 Say Hello
