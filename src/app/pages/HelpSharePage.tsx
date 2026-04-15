@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Plus, Shield, X, Send, Check, Star, ChevronRight, Search, Heart, Wrench, BookOpen, Users, Home, Package, Monitor, Smile, Droplets, MapPin, ChevronDown, Camera, SlidersHorizontal } from 'lucide-react';
+import { ChevronLeft, Plus, Shield, X, Send, Check, Star, ChevronRight, Search, Heart, Wrench, BookOpen, Users, Home, Package, Monitor, Smile, Droplets, MapPin, ChevronDown, Camera, SlidersHorizontal, Bookmark } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -38,10 +38,10 @@ const SERVICE_CATEGORIES = [
 
 // ---- Mock Data ----
 const ITEMS_AND_SERVICES = [
-  { id: 101, itemType: 'item' as const, name: 'IKEA Billy Bookshelf', condition: 'Good', location: 'Blk 445', price: 'Free', category: 'Furniture', verified: true, description: 'White IKEA Billy bookshelf, 80cm wide. Small scratch on the back panel but otherwise in good condition. Self-collect from Level 5, available on weekends.', method: 'Self-collect', collectionPoint: 'Blk 445, Level 5 Corridor', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
-  { id: 102, itemType: 'item' as const, name: 'Sharp Rice Cooker', condition: 'Like New', location: 'Blk 448', price: '$20', category: 'TV & Home Appliances', verified: true, description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', method: 'Self-collect or doorstep', collectionPoint: 'Blk 448, Void Deck', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
-  { id: 103, itemType: 'item' as const, name: 'Baby Stroller', condition: 'Good', location: 'Blk 451', price: '$80', category: 'Babies & Kids', verified: true, description: 'Combi stroller in good working condition. All parts intact. Child has outgrown it. Collection at block void deck on weekend afternoons.', method: 'Self-collect', collectionPoint: 'Blk 451, Void Deck', image: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
-  { id: 104, itemType: 'item' as const, name: 'Assorted Books (10 pcs)', condition: 'Good', location: 'Blk 445', price: 'Free', category: 'Learning', verified: true, description: 'Mix of fiction and non-fiction. Pick what you like, return what you don\'t.', method: 'Doorstep drop-off', collectionPoint: 'Blk 445, Level 4, Leave at door', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { id: 101, itemType: 'item' as const, name: 'IKEA Billy Bookshelf', condition: 'lightly used', distance: '0.3 km away', postedTime: '2 hours ago', price: 'Free', category: 'Furniture', brand: 'IKEA', verified: true, description: 'White IKEA Billy bookshelf, 80cm wide. Small scratch on the back panel but otherwise in great condition. Self-collect from Level 5, available on weekends.', collectionAddress: 'Blk 445 Ang Mo Kio Ave 10, #05-12, Singapore 560445', collectionDistance: '0.3 km away', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Yusra', avatarColor: '#FF6B47', rating: 4.8, reviews: 12 } },
+  { id: 102, itemType: 'item' as const, name: 'Sharp Rice Cooker', condition: 'like new', distance: '0.6 km away', postedTime: '5 hours ago', price: '$20', category: 'TV & Home Appliances', brand: 'Sharp', verified: true, description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', collectionAddress: 'Blk 448 Ang Mo Kio Ave 10, #02-08, Singapore 560448', collectionDistance: '0.6 km away', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Ahmad', avatarColor: '#3B82F6', rating: 4.5, reviews: 8 } },
+  { id: 103, itemType: 'item' as const, name: 'Baby Stroller', condition: 'well used', distance: '1.1 km away', postedTime: '1 day ago', price: '$80', category: 'Babies & Kids', brand: 'Combi', verified: true, description: 'Combi stroller in good working condition. All parts intact. Child has outgrown it. Collection at void deck on weekend afternoons.', collectionAddress: 'Blk 451 Bishan Street 14, Void Deck, Singapore 570451', collectionDistance: '1.1 km away', image: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Mei Lin', avatarColor: '#8B5CF6', rating: 4.9, reviews: 21 } },
+  { id: 104, itemType: 'item' as const, name: 'Assorted Books (10 pcs)', condition: 'well used', distance: '0.3 km away', postedTime: '3 days ago', price: 'Free', category: 'Learning', brand: '', verified: true, description: 'Mix of fiction and non-fiction. Pick what you like, return what you don\'t.', collectionAddress: 'Blk 445 Ang Mo Kio Ave 10, #04-22, Singapore 560445', collectionDistance: '0.3 km away', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Rajan', avatarColor: '#059669', rating: 4.7, reviews: 5 } },
   { id: 201, itemType: 'service' as const, name: 'Dog Walking', ServiceIcon: Heart, availability: 'Mon, Wed, Fri mornings (7–9 AM)', pastExchanges: 2, responseRate: '90%', verified: true, trust: false, trustNote: '', description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds.', avatarColor: '#F97316', category: 'Pet Care', collectionPoint: 'Estate Vicinity' },
   { id: 202, itemType: 'service' as const, name: 'Babysitting', ServiceIcon: Smile, availability: 'Weekday evenings (5–9 PM)', pastExchanges: 5, responseRate: '95%', verified: true, trust: true, trustNote: 'DBS checked', description: 'Experienced babysitter, parent of 2. Happy to look after children aged 2–8.', avatarColor: '#8B5CF6', category: 'Babysitting & Childcare', collectionPoint: 'Bishan-AMK Estate' },
   { id: 203, itemType: 'service' as const, name: 'Primary Math Tutoring', ServiceIcon: BookOpen, availability: 'Weekday evenings', pastExchanges: 8, responseRate: '100%', verified: true, trust: false, trustNote: '', description: 'Retired primary school teacher offering free maths help for P3–P6 students.', avatarColor: '#3B82F6', category: 'Tutoring & Coaching', collectionPoint: 'Blk 445 Community Room' },
@@ -55,11 +55,11 @@ const MOCK_REVIEWS = [
 ];
 
 const CONDITION_COLORS: Record<string, { bg: string; text: string }> = {
-  'Like New': { bg: '#DCFCE7', text: '#16A34A' },
-  'Good':     { bg: '#DBEAFE', text: '#2563EB' },
-  'Fair':     { bg: '#FEF3C7', text: '#D97706' },
-  'New':      { bg: '#EDE9FE', text: '#7C3AED' },
-  'Poor':     { bg: '#FEE2E2', text: '#DC2626' },
+  'brand new':    { bg: '#EDE9FE', text: '#7C3AED' },
+  'like new':     { bg: '#DCFCE7', text: '#16A34A' },
+  'lightly used': { bg: '#DBEAFE', text: '#2563EB' },
+  'well used':    { bg: '#FEF3C7', text: '#D97706' },
+  'heavily used': { bg: '#FEE2E2', text: '#DC2626' },
 };
 
 // ---- AI Suggestions ----
@@ -125,15 +125,15 @@ function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
   );
 }
 
-// ---- WishlistButton ----
-function WishlistButton({ itemId, wishlist, onWishlistToggle }: { itemId: number; wishlist: number[]; onWishlistToggle: (id: number) => void }) {
-  const saved = wishlist.includes(itemId);
+// ---- SaveButton (Bookmark) ----
+function SaveButton({ itemId, savedItems, onSaveToggle, size = 18, style: extraStyle = {} }: { itemId: number; savedItems: number[]; onSaveToggle: (id: number) => void; size?: number; style?: React.CSSProperties }) {
+  const saved = savedItems.includes(itemId);
   return (
     <button
-      onClick={() => { onWishlistToggle(itemId); toast.success(saved ? 'Removed from wishlist' : 'Saved to wishlist'); }}
-      style={{ width: '44px', height: '44px', borderRadius: '14px', background: saved ? '#FFF0EC' : BG, border: `1.5px solid ${saved ? '#FFD8CC' : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+      onClick={(e) => { e.stopPropagation(); onSaveToggle(itemId); toast.success(saved ? 'Removed from saved' : 'Item saved'); }}
+      style={{ width: '40px', height: '40px', borderRadius: '12px', background: saved ? '#FFF0EC' : 'rgba(255,255,255,0.92)', border: `1.5px solid ${saved ? '#FFD8CC' : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...extraStyle }}
     >
-      <Heart size={18} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
+      <Bookmark size={size} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
     </button>
   );
 }
@@ -167,9 +167,9 @@ function ReviewsSection() {
 }
 
 // ---- Map Component ----
-function CollectionPointMap({ address }: { address: string }) {
+function CollectionPointMap({ address }: { address?: string }) {
   return (
-    <div style={{ borderRadius: '18px', overflow: 'hidden', border: `1px solid ${BORDER}`, marginBottom: '20px' }}>
+    <div style={{ borderRadius: '18px', overflow: 'hidden', border: `1px solid ${BORDER}` }}>
       <div style={{ position: 'relative', height: '140px', background: 'linear-gradient(135deg, #E8F5E9 0%, #DCEEFB 100%)' }}>
         {[...Array(6)].map((_, i) => <div key={`h${i}`} style={{ position: 'absolute', left: 0, right: 0, top: `${i * 25}px`, height: '1px', background: 'rgba(0,0,0,0.05)' }} />)}
         {[...Array(5)].map((_, i) => <div key={`v${i}`} style={{ position: 'absolute', top: 0, bottom: 0, left: `${i * 25}%`, width: '1px', background: 'rgba(0,0,0,0.05)' }} />)}
@@ -181,13 +181,13 @@ function CollectionPointMap({ address }: { address: string }) {
           </div>
         </div>
       </div>
-      <div style={{ background: CARD, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+        <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '1px' }}>
           <MapPin size={14} color={PRIMARY} />
         </div>
-        <div>
-          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Collection Point</div>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{address}</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '2px' }}>Collection Point</div>
+          <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{address || 'To be confirmed'}</div>
         </div>
       </div>
     </div>
@@ -195,7 +195,9 @@ function CollectionPointMap({ address }: { address: string }) {
 }
 
 // ---- Main Component ----
-export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {}, onAddPost, initialItemId }: { wishlist?: number[]; onWishlistToggle?: (id: number) => void; onAddPost?: (post: any) => void; initialItemId?: number }) {
+export function HelpSharePage({ onAddPost, initialItemId }: { onAddPost?: (post: any) => void; initialItemId?: number }) {
+  const [savedItems, setSavedItems] = useState<number[]>([]);
+  const onSaveToggle = (id: number) => setSavedItems(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const initialStack: NavFrame[] = (() => {
     if (initialItemId) {
       const item = ITEMS_AND_SERVICES.find(i => i.id === initialItemId);
@@ -235,7 +237,8 @@ export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {}, onAd
             onSelectItem={i => goTo('item-detail', { item: i, type: 'item' })}
             onSelectService={s => goTo('service-detail', { item: s, type: 'service' })}
             onPost={() => goTo('category-select')}
-            wishlist={wishlist}
+            savedItems={savedItems}
+            onSaveToggle={onSaveToggle}
           />
         );
       case 'category-select':
@@ -249,9 +252,9 @@ export function HelpSharePage({ wishlist = [], onWishlistToggle = () => {}, onAd
           />
         );
       case 'item-detail':
-        return <ItemDetail item={current.params?.item} type="item" onBack={goBack} onExpressInterest={handleExpressInterest} wishlist={wishlist} onWishlistToggle={onWishlistToggle} />;
+        return <ItemDetail item={current.params?.item} type="item" onBack={goBack} onExpressInterest={handleExpressInterest} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
       case 'service-detail':
-        return <ItemDetail item={current.params?.item} type="service" onBack={goBack} onExpressInterest={handleExpressInterest} wishlist={wishlist} onWishlistToggle={onWishlistToggle} />;
+        return <ItemDetail item={current.params?.item} type="service" onBack={goBack} onExpressInterest={handleExpressInterest} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
       case 'poster-notif':
         return <PosterNotification onBack={goBack} onConfirm={() => goTo('mutual-confirm')} onDecline={() => { toast.info('Poster declined — no further action needed'); setNavStack([{ screen: 'feed' }]); }} />;
       case 'mutual-confirm':
@@ -361,7 +364,7 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
 }
 
 // ---- Marketplace Feed ----
-function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: any) {
+function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, onSaveToggle }: any) {
   const [mainFilter, setMainFilter] = useState<MainFilter>('Items');
   const [itemCategory, setItemCategory] = useState('All');
   const [serviceCategory, setServiceCategory] = useState('All');
@@ -441,7 +444,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: an
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 {displayItems.map(item => (
-                  <ItemCard key={item.id} item={item} onClick={() => onSelectItem(item)} />
+                  <ItemCard key={item.id} item={item} savedItems={savedItems || []} onSaveToggle={onSaveToggle || (() => {})} onClick={() => onSelectItem(item)} />
                 ))}
               </div>
             )}
@@ -490,23 +493,39 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, wishlist }: an
 }
 
 // ---- Card sub-components ----
-function ItemCard({ item, onClick }: { item: any; onClick: () => void }) {
+function ItemCard({ item, savedItems, onSaveToggle, onClick }: { item: any; savedItems: number[]; onSaveToggle: (id: number) => void; onClick: () => void }) {
   return (
-    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
-      <div style={{ height: '110px', background: BG, position: 'relative', overflow: 'hidden' }}>
+    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
+      {/* Image thumbnail */}
+      <div style={{ height: '120px', background: BG, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         {item.image ? (
           <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px' }}>📦</div>
         )}
-      </div>
-      <div style={{ padding: '12px' }}>
-        <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.3' }}>{item.name}</div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
-          <span style={{ fontSize: '15px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT }}>{item.price}</span>
-          <span style={{ padding: '2px 7px', borderRadius: '8px', fontSize: '10px', background: (CONDITION_COLORS[item.condition] || { bg: BG, text: MUTED }).bg, color: (CONDITION_COLORS[item.condition] || { bg: BG, text: MUTED }).text, fontWeight: 700 }}>{item.condition}</span>
+        {/* Bookmark icon top-right */}
+        <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+          <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={15} style={{ width: '32px', height: '32px', borderRadius: '10px' }} />
         </div>
-        <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{item.location}</div>
+      </div>
+
+      {/* Card body */}
+      <div style={{ padding: '10px 12px 12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+        {/* Title */}
+        <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name}</div>
+        {/* Price */}
+        <div style={{ fontSize: '15px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT }}>{item.price}</div>
+        {/* Distance */}
+        <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{item.distance}</div>
+        {/* Posted time */}
+        <div style={{ fontSize: '10px', color: MUTED, fontWeight: 400 }}>{item.postedTime}</div>
+        {/* Seller info row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
+          </div>
+          <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.seller?.name || 'Neighbour'}</span>
+        </div>
       </div>
     </motion.div>
   );
@@ -575,97 +594,155 @@ function CategorySelect({ onBack, onSelectCategory }: any) {
 }
 
 // ---- Item Detail ----
-function ItemDetail({ item, type, onBack, onExpressInterest, wishlist, onWishlistToggle }: any) {
+function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveToggle }: any) {
   if (!item) return null;
-  const getTitle = () => item.title || item.name || item.type;
-  const getSubInfo = () => {
-    if (type === 'item') return [{ label: 'Condition', value: item.condition }, { label: 'Collection', value: item.method }, { label: 'Location', value: item.location }];
-    if (type === 'service') return [{ label: 'Availability', value: item.availability }, { label: 'Response rate', value: item.responseRate }, { label: 'Past exchanges', value: `${item.pastExchanges} completed` }];
-    return [];
-  };
-  const subInfo = getSubInfo();
+  const name = item.title || item.name || '';
   const IconComp = item.ServiceIcon || Users;
 
+  if (type === 'service') {
+    // Service detail — minimal changes, kept intact
+    const subInfo = [{ label: 'Availability', value: item.availability }, { label: 'Response rate', value: item.responseRate }, { label: 'Past exchanges', value: `${item.pastExchanges} completed` }];
+    return (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
+        <div style={{ padding: '52px 20px 18px', borderBottom: `1px solid ${BG}` }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+            <ChevronLeft size={20} color={TEXT} />
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '68px', height: '68px', borderRadius: '22px', overflow: 'hidden', flexShrink: 0, background: item.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <IconComp size={28} color="white" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '6px', lineHeight: '1.25' }}>{name}</div>
+              {item.verified && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: '4px 10px', borderRadius: '10px', background: '#DCFCE7', fontSize: '11px', color: '#16A34A', fontWeight: 700 }}><Shield size={10} /> Verified</span>}
+            </div>
+          </div>
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ background: BG, borderRadius: '18px', padding: '16px', marginBottom: '20px' }}>
+            {subInfo.map((info, i) => (
+              <div key={info.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < subInfo.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+                <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{info.label}</span>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{info.value}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
+            <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
+          </div>
+          {item.trust && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '13px 16px', background: '#F0FDF4', borderRadius: '16px', marginBottom: '16px' }}>
+              <Shield size={16} color="#22C55E" />
+              <span style={{ fontSize: '13px', color: '#15803D', fontWeight: 600 }}>Trust signal: {item.trustNote}</span>
+            </div>
+          )}
+        </div>
+        <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
+          <button onClick={onExpressInterest} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', fontFamily: 'inherit' }}>
+            Chat
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- ITEM detail layout (strict spec) ----
+  const condStyle = CONDITION_COLORS[item.condition] || { bg: BG, text: MUTED };
+
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 18px', borderBottom: `1px solid ${BG}` }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+      {/* 1. Hero image — full width */}
+      <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, flexShrink: 0 }}>
+        {item.image ? (
+          <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px' }}>📦</div>
+        )}
+        {/* Back button floating */}
+        <button
+          onClick={onBack}
+          style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '12px', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
+        >
           <ChevronLeft size={20} color={TEXT} />
         </button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '68px', height: '68px', borderRadius: '22px', overflow: 'hidden', flexShrink: 0 }}>
-            {type === 'item' && item.image ? (
-              <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : type === 'service' ? (
-              <div style={{ width: '100%', height: '100%', background: item.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconComp size={28} color="white" />
-              </div>
-            ) : (
-              <div style={{ width: '100%', height: '100%', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '34px' }}>📦</div>
-            )}
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '8px', lineHeight: '1.25' }}>{getTitle()}</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap' }}>
-              {item.verified && (
-                <span style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '4px 10px', borderRadius: '10px', background: '#DCFCE7', fontSize: '11px', color: '#16A34A', fontWeight: 700 }}>
-                  <Shield size={10} /> Verified
-                </span>
-              )}
-              {type === 'item' && (
-                <span style={{ fontSize: '17px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT }}>{item.price}</span>
-              )}
-            </div>
-          </div>
-          <WishlistButton itemId={item.id} wishlist={wishlist} onWishlistToggle={onWishlistToggle} />
+        {/* Bookmark button floating */}
+        <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
+          <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '12px', backdropFilter: 'blur(8px)' }} />
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-        <div style={{ background: BG, borderRadius: '18px', padding: '16px', marginBottom: '20px' }}>
-          {subInfo.map((info, i) => (
-            <div key={info.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < subInfo.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
-              <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{info.label}</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{info.value}</span>
+      {/* Scrollable content */}
+      <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
+        <div style={{ padding: '20px 20px 0' }}>
+          {/* 2. Title */}
+          <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px' }}>{name}</div>
+
+          {/* 3. Price */}
+          <div style={{ fontSize: '26px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT, marginBottom: '20px' }}>{item.price}</div>
+
+          {/* 4. Details card — rows */}
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
+            <div style={{ background: BG, borderRadius: '18px', padding: '4px 16px' }}>
+              {[
+                { label: 'Condition', value: item.condition, valueStyle: { color: condStyle.text, fontWeight: 700 } },
+                ...(item.brand ? [{ label: 'Brand', value: item.brand, valueStyle: {} }] : []),
+                { label: 'Posted', value: item.postedTime, valueStyle: {} },
+                { label: 'Category', value: item.category, valueStyle: {} },
+              ].map((row, i, arr) => (
+                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < arr.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+                  <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{row.label}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT, textAlign: 'right', maxWidth: '55%', ...row.valueStyle }}>{row.value}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
-          <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
-        </div>
+          {/* 5. Description */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Description</div>
+            <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
+          </div>
 
-        {/* Collection point map */}
-        {item.collectionPoint && (
-          <div style={{ marginBottom: '4px' }}>
+          {/* 6. Collection point — address + map */}
+          <div style={{ marginBottom: '24px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Collection Point</div>
-            <CollectionPointMap address={item.collectionPoint} />
+            <CollectionPointMap address={item.collectionAddress} />
           </div>
-        )}
 
-        {item.trust && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '13px 16px', background: '#F0FDF4', borderRadius: '16px', marginBottom: '16px' }}>
-            <Shield size={16} color="#22C55E" />
-            <span style={{ fontSize: '13px', color: '#15803D', fontWeight: 600 }}>Trust signal: {item.trustNote}</span>
-          </div>
-        )}
-
-        <div style={{ padding: '14px 16px', background: '#FFF0EC', borderRadius: '16px', border: '1px solid #FFD8CC', marginBottom: '24px' }}>
-          <div style={{ fontSize: '13px', color: PRIMARY, fontWeight: 500 }}>
-            🔒 Contact details only shared after both parties confirm. No obligation to proceed.
+          {/* 7. About the neighbour */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
+            <div
+              onClick={() => toast.info('Neighbour profile coming soon')}
+              style={{ background: BG, borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
+            >
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>{item.seller?.name || 'Neighbour'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.seller?.rating || '4.8'}</span>
+                  <span style={{ fontSize: '12px', color: MUTED }}>· {item.seller?.reviews || 0} reviews</span>
+                </div>
+              </div>
+              <ChevronRight size={16} color={MUTED} />
+            </div>
           </div>
         </div>
-
-        <ReviewsSection />
+        <div style={{ height: '100px' }} />
       </div>
 
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
-        <button onClick={onExpressInterest} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', marginBottom: '10px', fontFamily: 'inherit' }}>
-          Express Interest
-        </button>
-        <button onClick={onBack} style={{ width: '100%', padding: '12px', borderRadius: '18px', background: 'none', border: 'none', cursor: 'pointer', color: MUTED, fontSize: '14px', fontFamily: 'inherit' }}>
-          No Thanks
+      {/* Sticky footer — Chat only */}
+      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BORDER}`, background: CARD, flexShrink: 0 }}>
+        <button
+          onClick={onExpressInterest}
+          style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', fontFamily: 'inherit' }}
+        >
+          Chat
         </button>
       </div>
     </div>
@@ -811,7 +888,7 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
           <ChevronLeft size={20} color={TEXT} />
         </button>
         <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>Add Photos</div>
-        <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Add up to 3 photos — AI will help write your listing</div>
+        <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Add photos of your item</div>
       </div>
 
       <div style={{ flex: 1, padding: '0 20px 20px' }}>
@@ -843,62 +920,150 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
                 </motion.button>
               )}
             </div>
-            <div style={{ padding: '12px 16px', background: '#FFF0EC', borderRadius: '14px', border: '1px solid #FFD8CC', marginBottom: '20px' }}>
-              <div style={{ fontSize: '13px', color: PRIMARY, fontWeight: 600 }}>✨ AI will auto-generate your listing title and description</div>
-            </div>
           </div>
         )}
       </div>
 
       <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
         <button onClick={() => photos.length > 0 && onContinue(photos)} disabled={photos.length === 0} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: photos.length > 0 ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: photos.length > 0 ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: photos.length > 0 ? 'pointer' : 'not-allowed', boxShadow: photos.length > 0 ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}>
-          Continue → Generate Listing
+          Continue
         </button>
       </div>
     </div>
   );
 }
 
-// ---- Item Post Form (after AI generates) ----
-function ItemPostScreen({ onBack, photos, onPost }: any) {
-  const [isGenerating, setIsGenerating] = useState(true);
+// ---- Photo Picker Bottom Sheet ----
+function PhotoPickerSheet({ onSelect, onClose }: { onSelect: (url: string) => void; onClose: () => void }) {
+  const RECENT_PHOTOS = [
+    'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1586201375761-83865001e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1519689680058-324335c77eba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1491553895911-0055eca6402d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+  ];
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        onClick={onClose}
+        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+      >
+        <motion.div
+          initial={{ y: 300 }} animate={{ y: 0 }} exit={{ y: 300 }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          onClick={e => e.stopPropagation()}
+          style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '20px 20px 40px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+        >
+          {/* Handle */}
+          <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+
+          <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT, marginBottom: '16px' }}>Add Photo</div>
+
+          {/* Camera / Library actions */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <button
+              onClick={() => onSelect(RECENT_PHOTOS[Math.floor(Math.random() * RECENT_PHOTOS.length)])}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 12px', borderRadius: '18px', background: '#FFF0EC', border: `1.5px solid #FFD8CC`, cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              <Camera size={22} color={PRIMARY} />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY }}>Take Photo</span>
+            </button>
+            <button
+              onClick={() => onSelect(RECENT_PHOTOS[Math.floor(Math.random() * RECENT_PHOTOS.length)])}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 12px', borderRadius: '18px', background: '#EDE9FE', border: `1.5px solid #DDD6FE`, cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              <Monitor size={22} color="#7C3AED" />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#7C3AED' }}>Library</span>
+            </button>
+          </div>
+
+          {/* Recent photos label */}
+          <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px' }}>Recent Photos</div>
+
+          {/* Photo grid */}
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '3px' }}>
+              {RECENT_PHOTOS.map((photo, i) => (
+                <motion.div
+                  key={i}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => onSelect(photo)}
+                  style={{ aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer' }}
+                >
+                  <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Cancel */}
+          <button onClick={onClose} style={{ width: '100%', padding: '14px', borderRadius: '18px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit', marginTop: '16px' }}>
+            Cancel
+          </button>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// ---- Item Post Form ----
+function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
+  const [photos, setPhotos] = useState<string[]>(initialPhotos || []);
   const [itemName, setItemName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [condition, setCondition] = useState('');
-  const [collectionPoint, setCollectionPoint] = useState('');
+  const [priceMode, setPriceMode] = useState<'sale' | 'free'>('free');
   const [price, setPrice] = useState('');
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [brand, setBrand] = useState('');
+  const [collectionAddress, setCollectionAddress] = useState('');
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [showPickerSheet, setShowPickerSheet] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(true);
 
   const FORM_ITEM_CATEGORIES = ITEM_CATEGORIES.filter(c => c !== 'All');
-  const CONDITIONS = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
+  const CONDITIONS = ['brand new', 'like new', 'lightly used', 'well used', 'heavily used'];
+  const TILE_SIZE = '100px';
 
+  // AI auto-generate on mount
   useEffect(() => {
     const t = setTimeout(() => {
-      // Simulate AI generating listing
-      setItemName('Pre-loved Home Item in Great Condition');
+      setItemName('Pre-loved Item in Great Condition');
       setDescription(AI_DESCRIPTIONS['default']);
       setCategory('Furniture');
       setIsGenerating(false);
-    }, 2000);
+    }, 2200);
     return () => clearTimeout(t);
   }, []);
 
-  const valid = itemName.trim() && category && condition && collectionPoint.trim();
+  const removePhoto = (idx: number) => setPhotos(p => p.filter((_, i) => i !== idx));
+  const valid = itemName.trim() && category && condition;
 
+  // ---- AI generating screen ----
   if (isGenerating) {
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: CARD, gap: '20px', padding: '40px' }}>
-        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }} style={{ width: '56px', height: '56px', borderRadius: '18px', background: 'linear-gradient(135deg, #FF6B47, #FF8C70)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: '26px' }}>✨</span>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
+          style={{ width: '60px', height: '60px', borderRadius: '20px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <span style={{ fontSize: '28px' }}>✨</span>
         </motion.div>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '8px' }}>AI is analysing your photos...</div>
-          <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Generating title, description & category suggestions</div>
+          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '8px' }}>Analysing your photos...</div>
+          <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Generating listing description</div>
         </div>
         <div style={{ display: 'flex', gap: '6px' }}>
           {[0, 1, 2].map(i => (
-            <motion.div key={i} animate={{ scale: [1, 1.4, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.2 }} style={{ width: '8px', height: '8px', borderRadius: '50%', background: PRIMARY }} />
+            <motion.div key={i} animate={{ scale: [1, 1.4, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.2 }}
+              style={{ width: '8px', height: '8px', borderRadius: '50%', background: PRIMARY }} />
           ))}
         </div>
       </div>
@@ -906,42 +1071,55 @@ function ItemPostScreen({ onBack, photos, onPost }: any) {
   }
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 18px' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD, position: 'relative' }}>
+      <div style={{ padding: '52px 20px 18px', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT }}>Review Listing</div>
-          <span style={{ padding: '4px 10px', borderRadius: '10px', background: '#FFF0EC', fontSize: '11px', color: PRIMARY, fontWeight: 700 }}>✨ AI Generated</span>
-        </div>
-        <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Review and edit before posting</div>
+        <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT }}>List an Item</div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
-        {/* Photos strip */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '22px', overflowX: 'auto', scrollbarWidth: 'none' }}>
-          {photos.map((p: string, i: number) => (
-            <div key={i} style={{ width: '80px', height: '80px', borderRadius: '14px', overflow: 'hidden', flexShrink: 0 }}>
-              <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-          ))}
-        </div>
 
-        <FormField label="Item Name">
-          <input value={itemName} onChange={e => setItemName(e.target.value)} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${PRIMARY}`, fontSize: '14px', outline: 'none', color: TEXT, background: '#FFFDF9', boxSizing: 'border-box', fontFamily: 'inherit', fontWeight: 600 }} />
+        {/* 1. Images */}
+        <FormField label="Images">
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {photos.map((p, i) => (
+              <div key={i} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+                <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <button onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '5px', right: '5px', width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <X size={11} color="white" />
+                </button>
+              </div>
+            ))}
+            {photos.length < 6 && (
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setShowPickerSheet(true)}
+                style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', border: `2px dashed ${BORDER}`, background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '4px', flexShrink: 0 }}
+              >
+                <Plus size={20} color={MUTED} />
+              </motion.button>
+            )}
+          </div>
         </FormField>
 
-        <FormField label="Category (AI suggested)">
+        {/* 2. Title */}
+        <FormField label="Title">
+          <input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="What are you listing?" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+        </FormField>
+
+        {/* 3. Category */}
+        <FormField label="Category">
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setDropdownOpen(!dropdownOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${dropdownOpen ? PRIMARY : '#22C55E'}`, fontSize: '14px', background: '#F0FDF4', color: TEXT, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: 700, boxSizing: 'border-box' }}>
+            <button onClick={() => setCategoryOpen(!categoryOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${categoryOpen ? PRIMARY : BORDER}`, fontSize: '14px', background: BG, color: category ? TEXT : MUTED, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 600 : 400, boxSizing: 'border-box' }}>
               {category || 'Select category'}
-              <ChevronDown size={16} color={MUTED} style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+              <ChevronDown size={16} color={MUTED} style={{ transform: categoryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
             </button>
-            {dropdownOpen && (
+            {categoryOpen && (
               <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '16px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}`, maxHeight: '200px', overflowY: 'auto' }}>
                 {FORM_ITEM_CATEGORIES.map((cat, i) => (
-                  <button key={cat} onClick={() => { setCategory(cat); setDropdownOpen(false); }} style={{ width: '100%', padding: '12px 16px', border: 'none', background: category === cat ? '#FFF0EC' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'inherit', fontSize: '13px', color: category === cat ? PRIMARY : TEXT, fontWeight: category === cat ? 700 : 400, borderBottom: i < FORM_ITEM_CATEGORIES.length - 1 ? `1px solid ${BG}` : 'none', textAlign: 'left' }}>
+                  <button key={cat} onClick={() => { setCategory(cat); setCategoryOpen(false); }} style={{ width: '100%', padding: '12px 16px', border: 'none', background: category === cat ? '#FFF0EC' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'inherit', fontSize: '13px', color: category === cat ? PRIMARY : TEXT, fontWeight: category === cat ? 700 : 400, borderBottom: i < FORM_ITEM_CATEGORIES.length - 1 ? `1px solid ${BG}` : 'none', textAlign: 'left' }}>
                     {cat}
                     {category === cat && <Check size={15} color={PRIMARY} />}
                   </button>
@@ -951,17 +1129,14 @@ function ItemPostScreen({ onBack, photos, onPost }: any) {
           </div>
         </FormField>
 
-        <FormField label="Description (AI generated)">
-          <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid #22C55E`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: '#F0FDF4', boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
-        </FormField>
-
+        {/* 4. Condition */}
         <FormField label="Condition">
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {CONDITIONS.map(c => {
               const active = condition === c;
               const cs = CONDITION_COLORS[c] || { bg: BG, text: TEXT2 };
               return (
-                <button key={c} onClick={() => setCondition(c)} style={{ padding: '9px 16px', borderRadius: '22px', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? cs.text : BORDER}`, background: active ? cs.bg : 'transparent', color: active ? cs.text : TEXT2, fontWeight: active ? 700 : 400 }}>
+                <button key={c} onClick={() => setCondition(c)} style={{ padding: '9px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? cs.text : BORDER}`, background: active ? cs.bg : 'transparent', color: active ? cs.text : TEXT2, fontWeight: active ? 700 : 400 }}>
                   {c}
                 </button>
               );
@@ -969,26 +1144,65 @@ function ItemPostScreen({ onBack, photos, onPost }: any) {
           </div>
         </FormField>
 
-        <FormField label="Asking Price">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
-            <span style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>$</span>
-            <input value={price} onChange={e => setPrice(e.target.value)} placeholder="0 for free" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
-          </div>
+        {/* 5. Description (AI-generated, editable) */}
+        <FormField label="Description (optional)">
+          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your item..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
         </FormField>
 
-        <FormField label="Collection Point">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
-            <MapPin size={16} color={MUTED} style={{ flexShrink: 0 }} />
-            <input value={collectionPoint} onChange={e => setCollectionPoint(e.target.value)} placeholder="e.g. Blk 445, Void Deck" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+        {/* 6. Price toggle */}
+        <FormField label="Price">
+          <div style={{ display: 'flex', gap: '4px', background: BG, borderRadius: '16px', padding: '4px', marginBottom: priceMode === 'sale' ? '12px' : '0' }}>
+            {(['free', 'sale'] as const).map(mode => (
+              <button key={mode} onClick={() => setPriceMode(mode)} style={{ flex: 1, padding: '10px 4px', background: priceMode === mode ? CARD : 'transparent', border: 'none', cursor: 'pointer', borderRadius: '12px', fontFamily: 'inherit', color: priceMode === mode ? TEXT : MUTED, fontWeight: priceMode === mode ? 700 : 500, fontSize: '13px', boxShadow: priceMode === mode ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
+                {mode === 'free' ? 'For free' : 'For sale'}
+              </button>
+            ))}
+          </div>
+          {priceMode === 'sale' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
+              <span style={{ fontSize: '14px', color: MUTED, fontWeight: 600 }}>$</span>
+              <input value={price} onChange={e => setPrice(e.target.value)} placeholder="Enter price" type="number" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+            </div>
+          )}
+        </FormField>
+
+        {/* 7. Brand (optional) */}
+        <FormField label="Brand (optional)">
+          <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. IKEA, Samsung" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+        </FormField>
+
+        {/* 8. Collection address */}
+        <FormField label="Collection Address">
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
+            <MapPin size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '2px' }} />
+            <textarea
+              value={collectionAddress}
+              onChange={e => setCollectionAddress(e.target.value)}
+              placeholder="e.g. Blk 445 Ang Mo Kio Ave 10, #05-12, Singapore 560445"
+              rows={2}
+              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit', resize: 'none', lineHeight: '1.5' }}
+            />
           </div>
         </FormField>
       </div>
 
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
-        <button onClick={() => valid && onPost({ itemName, description, category, condition, price, collectionPoint, photos })} disabled={!valid} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}>
+      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}`, flexShrink: 0 }}>
+        <button
+          onClick={() => valid && onPost({ itemName, description, category, condition, price: priceMode === 'free' ? 'Free' : `$${price}`, brand, collectionAddress, photos })}
+          disabled={!valid}
+          style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}
+        >
           Post Listing
         </button>
       </div>
+
+      {/* Photo picker bottom sheet */}
+      {showPickerSheet && (
+        <PhotoPickerSheet
+          onSelect={url => { setPhotos(p => [...p, url]); setShowPickerSheet(false); }}
+          onClose={() => setShowPickerSheet(false)}
+        />
+      )}
     </div>
   );
 }

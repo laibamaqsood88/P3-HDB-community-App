@@ -124,7 +124,7 @@ export default function App() {
           />
         )}
         {activeTab === 'marketplace' && (
-          <HelpSharePage key={initialMarketplaceItemId} onAddPost={onAddPost} initialItemId={initialMarketplaceItemId} />
+          <HelpSharePage onAddPost={onAddPost} initialItemId={initialMarketplaceItemId} />
         )}
         {activeTab === 'requests' && (
           <RequestsPage key={initialRequestId} onAddPost={onAddPost} initialRequestId={initialRequestId} />
