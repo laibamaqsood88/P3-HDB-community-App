@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  ChevronLeft, Plus, Shield, X, Send, Check, Star, ChevronRight, Search,
+  ChevronLeft, Plus, Shield, ShieldCheck, X, Send, Check, Star, ChevronRight, Search,
   Wrench, BookOpen, Users, Home, Package, Monitor, Droplets, MapPin,
   ChevronDown, Camera, SlidersHorizontal, Bookmark, Heart, Leaf, Dog,
   Baby, GraduationCap, UserCheck
@@ -18,7 +18,7 @@ const MUTED = '#8E8E93';
 const BORDER = 'rgba(60,60,67,0.12)';
 
 type HelpScreen =
-  | 'feed' | 'item-detail' | 'service-detail'
+  | 'feed' | 'item-detail' | 'service-detail' | 'neighbour-profile'
   | 'poster-notif' | 'mutual-confirm' | 'chat'
   | 'category-select' | 'item-post-photo' | 'item-post-form' | 'service-post'
   | 'post-success';
@@ -47,10 +47,22 @@ const ITEMS_AND_SERVICES = [
   { id: 102, itemType: 'item' as const, name: 'Sharp Rice Cooker', condition: 'like new', distance: '0.6 km away', postedTime: '5 hours ago', price: '$20', category: 'TV & Home Appliances', brand: 'Sharp', verified: true, description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', collectionAddress: 'Blk 448 Ang Mo Kio Ave 10, #02-08, Singapore 560448', collectionDistance: '0.6 km away', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Ahmad', avatarColor: '#3B82F6', rating: 4.5, reviews: 8 } },
   { id: 103, itemType: 'item' as const, name: 'Baby Stroller', condition: 'well used', distance: '1.1 km away', postedTime: '1 day ago', price: '$80', category: 'Babies & Kids', brand: 'Combi', verified: true, description: 'Combi stroller in good working condition. All parts intact. Child has outgrown it. Collection at void deck on weekend afternoons.', collectionAddress: 'Blk 451 Bishan Street 14, Void Deck, Singapore 570451', collectionDistance: '1.1 km away', image: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Mei Lin', avatarColor: '#8B5CF6', rating: 4.9, reviews: 21 } },
   { id: 104, itemType: 'item' as const, name: 'Assorted Books (10 pcs)', condition: 'well used', distance: '0.3 km away', postedTime: '3 days ago', price: 'Free', category: 'Learning', brand: '', verified: true, description: 'Mix of fiction and non-fiction. Pick what you like, return what you don\'t.', collectionAddress: 'Blk 445 Ang Mo Kio Ave 10, #04-22, Singapore 560445', collectionDistance: '0.3 km away', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Rajan', avatarColor: '#059669', rating: 4.7, reviews: 5 } },
-  { id: 201, itemType: 'service' as const, name: 'Dog Walking', rate: '$15 per walk', distance: '0.5 km away', postedTime: '1 day ago', category: 'Pet Care', availability: 'Mon, Wed, Fri mornings (7–9 AM)', verified: true, trust: false, trustNote: '', description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds. All dogs welcome — can handle up to 2 dogs per session.', responseTime: 'Replies within a few hours', completedServices: 12, yearsExperience: 3, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'James', avatarColor: '#F97316', rating: 4.7, reviews: 9 } },
-  { id: 202, itemType: 'service' as const, name: 'Babysitting', rate: '$12 per hour', distance: '0.8 km away', postedTime: '2 days ago', category: 'Babysitting & Childcare', availability: 'Weekday evenings (5–9 PM)', verified: true, trust: true, trustNote: 'DBS checked', description: 'Experienced babysitter, parent of 2. Happy to look after children aged 2–8. Meals can be prepared on request. References available.', responseTime: 'Replies within 1 hour', completedServices: 28, yearsExperience: 5, image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Siti', avatarColor: '#8B5CF6', rating: 4.9, reviews: 18 } },
-  { id: 203, itemType: 'service' as const, name: 'Primary Math Tutoring', rate: 'Free', distance: '0.3 km away', postedTime: '3 days ago', category: 'Tutoring & Coaching', availability: 'Weekday evenings', verified: true, trust: false, trustNote: '', description: 'Retired primary school teacher offering free maths help for P3–P6 students. 25 years of teaching experience. Small group sessions available.', responseTime: 'Replies within a day', completedServices: 34, yearsExperience: 25, image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b6f2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Mr Tan', avatarColor: '#3B82F6', rating: 5.0, reviews: 22 } },
-  { id: 204, itemType: 'service' as const, name: 'Elderly Companion', rate: 'Free', distance: '1.2 km away', postedTime: '5 days ago', category: 'Elderly Companion Care', availability: 'Weekends', verified: true, trust: true, trustNote: 'First Aid certified', description: 'Volunteer companion for elderly residents who might enjoy some company or light assistance. Happy to accompany for walks, grocery runs, or just a chat.', responseTime: 'Replies within a few hours', completedServices: 15, yearsExperience: 2, image: 'https://images.unsplash.com/photo-1576765607924-3f7b8410a787?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Priya', avatarColor: '#22C55E', rating: 4.8, reviews: 11 } },
+  { id: 105, itemType: 'item' as const, name: 'Standing Fan', condition: 'lightly used', distance: '0.7 km away', postedTime: '4 days ago', price: '$15', category: 'TV & Home Appliances', brand: 'Panasonic', verified: true, description: 'Panasonic 16-inch standing fan, 3-speed settings. Works perfectly, upgrading to air-con. Collect from void deck.', collectionAddress: 'Blk 449 Ang Mo Kio Ave 10, #01-01, Singapore 560449', collectionDistance: '0.7 km away', image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Hafiz', avatarColor: '#0EA5E9', rating: 4.6, reviews: 7 } },
+  { id: 106, itemType: 'item' as const, name: 'Dining Table (4-seater)', condition: 'well used', distance: '0.9 km away', postedTime: '5 days ago', price: '$50', category: 'Furniture', brand: '', verified: true, description: 'Solid wood dining table with 4 matching chairs. Minor scratches on surface. Moving overseas, must clear.', collectionAddress: 'Blk 453 Bishan Street 14, #03-18, Singapore 570453', collectionDistance: '0.9 km away', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Linda', avatarColor: '#EC4899', rating: 4.8, reviews: 14 } },
+  { id: 107, itemType: 'item' as const, name: 'Yoga Mat', condition: 'like new', distance: '0.4 km away', postedTime: '1 week ago', price: '$10', category: 'Sports & Outdoors', brand: 'Lululemon', verified: true, description: 'Lululemon yoga mat, barely used — only 3 sessions. Non-slip surface, comes with strap.', collectionAddress: 'Blk 446 Ang Mo Kio Ave 10, #08-05, Singapore 560446', collectionDistance: '0.4 km away', image: 'https://images.unsplash.com/photo-1601925228096-3eb255ae8e9a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Sarah', avatarColor: '#A855F7', rating: 5.0, reviews: 3 } },
+  { id: 108, itemType: 'item' as const, name: 'Laptop Bag', condition: 'lightly used', distance: '0.5 km away', postedTime: '1 week ago', price: '$12', category: 'Bags & Luggage', brand: 'Targus', verified: true, description: 'Targus 15-inch laptop bag with padded compartment. Good condition, switching to a backpack.', collectionAddress: 'Blk 447 Ang Mo Kio Ave 10, #06-11, Singapore 560447', collectionDistance: '0.5 km away', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Kevin', avatarColor: '#14B8A6', rating: 4.4, reviews: 6 } },
+  { id: 109, itemType: 'item' as const, name: 'Kids Bicycle (20")', condition: 'well used', distance: '1.0 km away', postedTime: '2 weeks ago', price: '$35', category: 'Babies & Kids', brand: 'Trek', verified: true, description: 'Trek kids bike for ages 6–9. Brakes work well, tyres in good shape. Helmet included.', collectionAddress: 'Blk 510 Bishan Street 13, #01-01, Singapore 570510', collectionDistance: '1.0 km away', image: 'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'David', avatarColor: '#F59E0B', rating: 4.7, reviews: 10 } },
+  { id: 110, itemType: 'item' as const, name: 'Potted Snake Plant', condition: 'like new', distance: '0.2 km away', postedTime: '2 weeks ago', price: 'Free', category: 'Home & Garden', brand: '', verified: true, description: 'Healthy snake plant about 40cm tall. Low maintenance, great for indoors. Propagated from my own plant — collect with pot.', collectionAddress: 'Blk 444 Ang Mo Kio Ave 10, #07-03, Singapore 560444', collectionDistance: '0.2 km away', image: 'https://images.unsplash.com/photo-1599598425947-5202edd56fde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Nurul', avatarColor: '#22C55E', rating: 4.9, reviews: 8 } },
+  { id: 201, itemType: 'service' as const, name: 'Dog Walking', rate: '$15 per walk', distance: '0.5 km away', serviceAddress: 'Blk 447 Ang Mo Kio Ave 10, Singapore 560447', postedTime: '1 day ago', category: 'Pet Care', availability: 'Mon, Wed, Fri mornings (7–9 AM)', verified: true, trust: false, trustNote: '', description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds. All dogs welcome — can handle up to 2 dogs per session.', responseTime: 'Replies within a few hours', completedServices: 12, yearsExperience: 3, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'James', avatarColor: '#F97316', rating: 4.7, reviews: 9 } },
+  { id: 202, itemType: 'service' as const, name: 'Babysitting', rate: '$12 per hour', distance: '0.8 km away', serviceAddress: 'Blk 452 Bishan Street 14, Singapore 570452', postedTime: '2 days ago', category: 'Babysitting & Childcare', availability: 'Weekday evenings (5–9 PM)', verified: true, trust: true, trustNote: 'DBS checked', description: 'Experienced babysitter, parent of 2. Happy to look after children aged 2–8. Meals can be prepared on request. References available.', responseTime: 'Replies within 1 hour', completedServices: 28, yearsExperience: 5, image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Siti', avatarColor: '#8B5CF6', rating: 4.9, reviews: 18 } },
+  { id: 203, itemType: 'service' as const, name: 'Primary Math Tutoring', rate: 'Free', distance: '0.3 km away', serviceAddress: 'Blk 445 Ang Mo Kio Ave 10, Singapore 560445', postedTime: '3 days ago', category: 'Tutoring & Coaching', availability: 'Weekday evenings', verified: true, trust: false, trustNote: '', description: 'Retired primary school teacher offering free maths help for P3–P6 students. 25 years of teaching experience. Small group sessions available.', responseTime: 'Replies within a day', completedServices: 34, yearsExperience: 25, image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b6f2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Mr Tan', avatarColor: '#3B82F6', rating: 5.0, reviews: 22 } },
+  { id: 204, itemType: 'service' as const, name: 'Elderly Companion', rate: 'Free', distance: '1.2 km away', serviceAddress: 'Blk 512 Bishan Street 13, Singapore 570512', postedTime: '5 days ago', category: 'Elderly Companion Care', availability: 'Weekends', verified: true, trust: true, trustNote: 'First Aid certified', description: 'Volunteer companion for elderly residents who might enjoy some company or light assistance. Happy to accompany for walks, grocery runs, or just a chat.', responseTime: 'Replies within a few hours', completedServices: 15, yearsExperience: 2, image: 'https://images.unsplash.com/photo-1576765607924-3f7b8410a787?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Priya', avatarColor: '#22C55E', rating: 4.8, reviews: 11 } },
+  { id: 205, itemType: 'service' as const, name: 'Home Cleaning', rate: '$25 per session', distance: '0.6 km away', serviceAddress: 'Blk 448 Ang Mo Kio Ave 10, Singapore 560448', postedTime: '1 week ago', category: 'Home Cleaning', availability: 'Weekends, weekday afternoons', verified: true, trust: true, trustNote: 'Police clearance done', description: 'Thorough home cleaning for HDB flats up to 4-room. Bring own equipment and eco-friendly supplies. Flexible scheduling — contact me to discuss.', responseTime: 'Replies within a few hours', completedServices: 41, yearsExperience: 6, image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Aisha', avatarColor: '#EC4899', rating: 4.8, reviews: 27 } },
+  { id: 206, itemType: 'service' as const, name: 'Basic Plumbing Repair', rate: '$30 per visit', distance: '0.4 km away', serviceAddress: 'Blk 446 Ang Mo Kio Ave 10, Singapore 560446', postedTime: '1 week ago', category: 'Home Repair & Handyman', availability: 'Evenings and weekends', verified: true, trust: false, trustNote: '', description: 'Retired plumber offering basic pipe repairs, tap replacements and leakage fixes. 20 years trade experience. Parts charged at cost. No job too small.', responseTime: 'Replies within a few hours', completedServices: 19, yearsExperience: 20, image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Uncle Raj', avatarColor: '#F59E0B', rating: 4.6, reviews: 15 } },
+  { id: 207, itemType: 'service' as const, name: 'Grocery Errand Run', rate: 'Free', distance: '0.3 km away', serviceAddress: 'Blk 445 Ang Mo Kio Ave 10, Singapore 560445', postedTime: '2 weeks ago', category: 'Errands & Delivery', availability: 'Tue & Thu mornings', verified: true, trust: false, trustNote: '', description: 'Happy to pick up groceries for elderly or mobility-limited neighbours on my regular marketing trips to AMK market. Just share your list and reimburse cost — no charge.', responseTime: 'Replies within a day', completedServices: 8, yearsExperience: 1, image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Mrs Lim', avatarColor: '#06B6D4', rating: 5.0, reviews: 6 } },
+  { id: 208, itemType: 'service' as const, name: 'Secondary English Tutor', rate: '$20 per hour', distance: '0.7 km away', serviceAddress: 'Blk 449 Ang Mo Kio Ave 10, Singapore 560449', postedTime: '2 weeks ago', category: 'Tutoring & Coaching', availability: 'Weekday evenings, Sat mornings', verified: true, trust: true, trustNote: 'MOE-trained teacher', description: 'Full-time English teacher offering private tuition for Sec 1–4. Focus on comprehension, essay writing and oral. Small groups (max 3) or 1-to-1 available.', responseTime: 'Replies within 1 hour', completedServices: 52, yearsExperience: 8, image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Ms Chen', avatarColor: '#A855F7', rating: 4.9, reviews: 33 } },
+  { id: 209, itemType: 'service' as const, name: 'Cat Boarding', rate: '$18 per night', distance: '0.9 km away', serviceAddress: 'Blk 453 Bishan Street 14, Singapore 570453', postedTime: '3 weeks ago', category: 'Pet Care', availability: 'Year-round, book in advance', verified: true, trust: true, trustNote: 'AVS licensed boarder', description: 'Licensed home boarding for cats — up to 2 cats at a time. Spacious cat-friendly home, daily updates with photos. Experienced with timid and senior cats.', responseTime: 'Replies within a few hours', completedServices: 36, yearsExperience: 4, image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Wendy', avatarColor: '#14B8A6', rating: 4.7, reviews: 21 } },
+  { id: 210, itemType: 'service' as const, name: 'Furniture Assembly', rate: '$15 per item', distance: '0.5 km away', serviceAddress: 'Blk 447 Ang Mo Kio Ave 10, Singapore 560447', postedTime: '3 weeks ago', category: 'Home Repair & Handyman', availability: 'Weekends', verified: true, trust: false, trustNote: '', description: 'Handy with tools and happy to help assemble IKEA or flat-pack furniture. Bring own toolkit. Up to 3 items per visit. Quick and reliable — done within the day.', responseTime: 'Replies within a few hours', completedServices: 23, yearsExperience: 3, image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Ahmad', avatarColor: '#0EA5E9', rating: 4.5, reviews: 17 } },
 ];
 
 const MOCK_REVIEWS = [
@@ -194,7 +206,6 @@ function CollectionPointMap({ address, distanceText }: { address?: string; dista
           <MapPin size={14} color={PRIMARY} />
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '2px' }}>{footerLabel}</div>
           <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{footerText}</div>
         </div>
       </div>
@@ -202,8 +213,134 @@ function CollectionPointMap({ address, distanceText }: { address?: string; dista
   );
 }
 
+// ---- Neighbour Profile Page ----
+function NeighbourProfilePage({ person, item, onBack }: { person: any; item: any; onBack: () => void }) {
+  const isService = item?.itemType === 'service';
+  const name: string = person?.name || 'Neighbour';
+  const avatarColor: string = person?.avatarColor || PRIMARY;
+  const rating: number = person?.rating ?? 4.8;
+  const reviews: number = person?.reviews ?? 0;
+
+  // Derive block/area from address
+  const address: string = isService ? (item?.serviceAddress || '') : (item?.collectionAddress || '');
+  const blockMatch = address.match(/^(Blk \S+)/i);
+  const block = blockMatch ? blockMatch[1] : 'AMK Estate';
+
+  // Stats
+  const completedCount: number = isService ? (item?.completedServices ?? 0) : reviews;
+  const completedLabel = isService ? 'Services Done' : 'Transactions';
+
+  const otherListings = ITEMS_AND_SERVICES.filter(l =>
+    isService
+      ? (l as any).provider?.name === name
+      : (l as any).seller?.name === name
+  );
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+      {/* Header */}
+      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <ChevronLeft size={20} color={TEXT} />
+        </button>
+        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Neighbour Profile</span>
+      </div>
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
+        {/* Avatar + name card */}
+        <div style={{ background: CARD, borderRadius: '16px', border: `0.5px solid ${BORDER}`, padding: '24px 20px', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '28px', fontWeight: 800, color: 'white' }}>{name[0]}</span>
+          </div>
+          <div style={{ fontSize: '19px', fontWeight: 800, color: TEXT }}>{name}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F0FDF4', borderRadius: '20px', padding: '3px 10px' }}>
+              <ShieldCheck size={13} color="#16A34A" />
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#16A34A' }}>Verified Resident</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F5F5F5', borderRadius: '20px', padding: '3px 10px' }}>
+              <MapPin size={13} color={MUTED} />
+              <span style={{ fontSize: '12px', fontWeight: 500, color: TEXT2 }}>{block}</span>
+            </div>
+          </div>
+          {/* Rating */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <StarRating rating={Math.round(rating)} />
+            <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{rating.toFixed(1)}</span>
+            <span style={{ fontSize: '13px', color: MUTED }}>({reviews} reviews)</span>
+          </div>
+        </div>
+
+        {/* Stats row */}
+        <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px 20px', marginBottom: '16px', display: 'flex', justifyContent: 'space-around' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: PRIMARY }}>{completedCount}</div>
+            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{completedLabel}</div>
+          </div>
+          <div style={{ width: '1px', background: BORDER }} />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{rating.toFixed(1)}</div>
+            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Avg Rating</div>
+          </div>
+          <div style={{ width: '1px', background: BORDER }} />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{reviews}</div>
+            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Reviews</div>
+          </div>
+        </div>
+
+        {/* Active listings */}
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>
+            {isService ? 'Services Offered' : 'Active Listings'} ({otherListings.length})
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {otherListings.map((listing: any) => (
+              <div key={listing.id} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {listing.image && (
+                  <img src={listing.image} alt={listing.name} style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{listing.name}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: PRIMARY }}>{listing.price || listing.rate}</div>
+                  <div style={{ fontSize: '12px', color: MUTED }}>{listing.distance}</div>
+                </div>
+                {listing.id === item?.id && (
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: PRIMARY, background: '#FFF0EC', borderRadius: '8px', padding: '3px 8px', flexShrink: 0 }}>Viewing</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Reviews */}
+        <div>
+          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Reviews</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {MOCK_REVIEWS.map(r => (
+              <div key={r.id} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: r.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>{r.reviewer[0]}</span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{r.reviewer}</div>
+                    <div style={{ fontSize: '12px', color: MUTED }}>{r.date}</div>
+                  </div>
+                  <StarRating rating={r.rating} />
+                </div>
+                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5' }}>{r.comment}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ---- Main Component ----
-export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void }) {
+export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle, onNavVisibilityChange }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void; onNavVisibilityChange?: (visible: boolean) => void }) {
   const onSaveToggle = (id: number) => {
     const item = ITEMS_AND_SERVICES.find(i => i.id === id);
     externalSaveToggle?.(id, item);
@@ -216,6 +353,7 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
     return [{ screen: 'feed' }];
   })();
   const [navStack, setNavStack] = useState<NavFrame[]>(initialStack);
+  const [mainFilter, setMainFilter] = useState<MainFilter>('Items');
   const [chatMessages, setChatMessages] = useState([
     { id: 1, from: 'them', text: "Hi! I saw you're interested. When would work for you?", time: '2:15 PM' },
     { id: 2, from: 'me', text: 'Great! How about Saturday afternoon around 3 PM?', time: '2:17 PM' },
@@ -227,6 +365,10 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
   const current = navStack[navStack.length - 1];
   const goTo = (screen: HelpScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
   const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
+
+  useEffect(() => {
+    onNavVisibilityChange?.(current.screen === 'feed');
+  }, [current.screen]);
 
   const sendChat = () => {
     if (!chatInput.trim()) return;
@@ -249,6 +391,8 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
             onPost={() => goTo('category-select')}
             savedItems={savedItems}
             onSaveToggle={onSaveToggle}
+            mainFilter={mainFilter}
+            onMainFilterChange={setMainFilter}
           />
         );
       case 'category-select':
@@ -262,9 +406,11 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
           />
         );
       case 'item-detail':
-        return <ItemDetail item={current.params?.item} type="item" onBack={goBack} onExpressInterest={handleExpressInterest} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
+        return <ItemDetail item={current.params?.item} type="item" onBack={goBack} onExpressInterest={handleExpressInterest} onViewProfile={({ person, item }: any) => goTo('neighbour-profile', { person, item })} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
       case 'service-detail':
-        return <ItemDetail item={current.params?.item} type="service" onBack={goBack} onExpressInterest={handleExpressInterest} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
+        return <ItemDetail item={current.params?.item} type="service" onBack={goBack} onExpressInterest={handleExpressInterest} onViewProfile={({ person, item }: any) => goTo('neighbour-profile', { person, item })} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
+      case 'neighbour-profile':
+        return <NeighbourProfilePage person={current.params?.person} item={current.params?.item} onBack={goBack} />;
       case 'poster-notif':
         return <PosterNotification onBack={goBack} onConfirm={() => goTo('mutual-confirm')} onDecline={() => { toast.info('Poster declined — no further action needed'); setNavStack([{ screen: 'feed' }]); }} />;
       case 'mutual-confirm':
@@ -326,7 +472,7 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
   const onCategoryChange = mainFilter === 'Items' ? onItemCategoryChange : onServiceCategoryChange;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20, background: CARD, borderRadius: '20px 20px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto' }}>
+    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 61, background: CARD, borderRadius: '20px 20px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto' }}>
       <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}>
         <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter {mainFilter}</div>
@@ -373,8 +519,7 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
 }
 
 // ---- Marketplace Feed ----
-function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, onSaveToggle }: any) {
-  const [mainFilter, setMainFilter] = useState<MainFilter>('Items');
+function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, onSaveToggle, mainFilter, onMainFilterChange: setMainFilter }: any) {
   const [itemCategory, setItemCategory] = useState('All');
   const [serviceCategory, setServiceCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -481,13 +626,13 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
           </>
         )}
 
-        <div style={{ height: '80px' }} />
+        <div style={{ height: '100px' }} />
       </div>
 
       <AnimatePresence>
         {showFilterPanel && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFilterPanel(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 19 }} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFilterPanel(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60 }} />
             <MarketplaceFilterPanel
               mainFilter={mainFilter}
               itemCategory={itemCategory}
@@ -608,7 +753,7 @@ function CategorySelect({ onBack, onSelectCategory }: any) {
 }
 
 // ---- Item Detail ----
-function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveToggle }: any) {
+function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, savedItems, onSaveToggle }: any) {
   if (!item) return null;
   const name = item.title || item.name || '';
 
@@ -618,27 +763,27 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
       item.trust && item.trustNote ? { icon: <Check size={14} color="#2563EB" />, label: 'Credentials', value: item.trustNote, valueColor: '#2563EB' } : null,
       { icon: <Droplets size={14} color={MUTED} />, label: 'Response Time', value: item.responseTime || 'Replies within a few hours', valueColor: TEXT },
       { icon: <Check size={14} color={PRIMARY} />, label: 'Completed Services', value: `${item.completedServices || 0} done`, valueColor: TEXT },
+      item.yearsExperience ? { icon: <GraduationCap size={14} color={MUTED} />, label: 'Experience', value: `${item.yearsExperience} years`, valueColor: TEXT } : null,
     ].filter(Boolean) as { icon: React.ReactNode; label: string; value: string; valueColor: string }[];
 
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-        <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, flexShrink: 0 }}>
-          {item.image ? (
-            <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            <div style={{ width: '100%', height: '100%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Users size={64} color="white" />
-            </div>
-          )}
-          <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-            <ChevronLeft size={20} color={TEXT} />
-          </button>
-          <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
-            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
-          </div>
-        </div>
-
         <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
+          <div style={{ position: 'relative', width: '100%', height: '260px', background: BG }}>
+            {item.image ? (
+              <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Users size={64} color="white" />
+              </div>
+            )}
+            <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+              <ChevronLeft size={20} color={TEXT} />
+            </button>
+            <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
+              <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
+            </div>
+          </div>
           <div style={{ padding: '20px 20px 0' }}>
             <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
             <div style={{ fontSize: '26px', fontWeight: 700, color: (item.rate === 'Free' || !item.rate) ? '#34C759' : TEXT, marginBottom: '20px' }}>{item.rate || 'Free'}</div>
@@ -667,15 +812,18 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
             </div>
 
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Location</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>Location</div>
+                <div style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.distance}</div>
+              </div>
               <div style={{ borderRadius: '14px', overflow: 'hidden' }}>
-                <CollectionPointMap distanceText={item.distance} />
+                <CollectionPointMap address={item.serviceAddress} />
               </div>
             </div>
 
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
-              <div onClick={() => toast.info('Neighbour profile coming soon')} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
+              <div onClick={() => onViewProfile?.({ person: item.provider, item })} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.provider?.name || 'N')[0]}</span>
                 </div>
@@ -686,7 +834,6 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
                     <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.provider?.rating ?? '4.8'}</span>
                     <span style={{ fontSize: '12px', color: MUTED }}>· {item.provider?.reviews ?? 0} reviews</span>
                   </div>
-                  {item.yearsExperience ? <div style={{ fontSize: '12px', color: MUTED }}>{item.yearsExperience} yrs experience</div> : null}
                 </div>
                 <ChevronRight size={16} color={MUTED} />
               </div>
@@ -724,26 +871,25 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, flexShrink: 0 }}>
-        {item.image ? (
-          <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Package size={64} color={MUTED} />
-          </div>
-        )}
-        <button
-          onClick={onBack}
-          style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
-        >
-          <ChevronLeft size={20} color={TEXT} />
-        </button>
-        <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
-          <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
-        </div>
-      </div>
-
       <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
+        <div style={{ position: 'relative', width: '100%', height: '260px', background: BG }}>
+          {item.image ? (
+            <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Package size={64} color={MUTED} />
+            </div>
+          )}
+          <button
+            onClick={onBack}
+            style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
+          >
+            <ChevronLeft size={20} color={TEXT} />
+          </button>
+          <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
+            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
+          </div>
+        </div>
         <div style={{ padding: '20px 20px 0' }}>
           <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
           <div style={{ fontSize: '26px', fontWeight: 700, color: item.price === 'Free' ? '#34C759' : TEXT, marginBottom: '20px' }}>{item.price}</div>
@@ -777,7 +923,10 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
           </div>
 
           <div style={{ marginBottom: '24px' }}>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Collection Point</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>Location</div>
+              <div style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.collectionDistance}</div>
+            </div>
             <div style={{ borderRadius: '14px', overflow: 'hidden' }}>
               <CollectionPointMap address={item.collectionAddress} />
             </div>
@@ -786,7 +935,7 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
           <div style={{ marginBottom: '24px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
             <div
-              onClick={() => toast.info('Neighbour profile coming soon')}
+              onClick={() => onViewProfile?.({ person: item.seller, item })}
               style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
             >
               <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

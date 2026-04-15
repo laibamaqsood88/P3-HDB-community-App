@@ -543,7 +543,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
       </div>
 
       {/* Content */}
-      <div style={{ padding: '20px 20px 32px' }}>
+      <div style={{ padding: '20px 20px 100px' }}>
         {/* Interest Groups */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>

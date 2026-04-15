@@ -28,6 +28,7 @@ export default function App() {
   const [initialRequestId, setInitialRequestId] = useState<number | undefined>(undefined);
   const [initialEventId, setInitialEventId] = useState<number | undefined>(undefined);
   const [initialMarketplaceItemId, setInitialMarketplaceItemId] = useState<number | undefined>(undefined);
+  const [showBottomNav, setShowBottomNav] = useState(true);
 
   const onAddPost = (post: any) => setMyPosts(prev => [post, ...prev]);
   const onAddConversation = (conv: any) => setConversations(prev => [conv, ...prev]);
@@ -137,6 +138,7 @@ export default function App() {
               setInitialGroupChatId(conv.id);
               setActiveTab('messages');
             }}
+            onNavVisibilityChange={setShowBottomNav}
           />
         )}
         {activeTab === 'marketplace' && (
@@ -145,46 +147,52 @@ export default function App() {
             initialItemId={initialMarketplaceItemId}
             savedItems={savedMarketplaceIds}
             onSaveToggle={onMarketplaceSaveToggle}
+            onNavVisibilityChange={setShowBottomNav}
           />
         )}
         {activeTab === 'requests' && (
-          <RequestsPage key={initialRequestId} onAddPost={onAddPost} initialRequestId={initialRequestId} />
+          <RequestsPage key={initialRequestId} onAddPost={onAddPost} initialRequestId={initialRequestId} onNavVisibilityChange={setShowBottomNav} />
         )}
         {activeTab === 'messages' && (
           <MessagesPage
             initialConvId={initialGroupChatId}
             key={initialGroupChatId}
             extraConversations={conversations}
+            onNavVisibilityChange={setShowBottomNav}
           />
         )}
 
         {/* Gradient fade — sits under the nav, fades content into it */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '140px',
-            pointerEvents: 'none',
-            zIndex: 40,
-            background: `linear-gradient(
-              to bottom,
-              transparent            0%,
-              rgba(245,244,240,0.18) 28%,
-              rgba(245,244,240,0.52) 55%,
-              rgba(245,244,240,0.82) 76%,
-              rgba(245,244,240,0.96) 100%
-            )`,
-          }}
-        />
+        {showBottomNav && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '140px',
+              pointerEvents: 'none',
+              zIndex: 40,
+              background: `linear-gradient(
+                to bottom,
+                transparent            0%,
+                rgba(245,244,240,0.18) 28%,
+                rgba(245,244,240,0.52) 55%,
+                rgba(245,244,240,0.82) 76%,
+                rgba(245,244,240,0.96) 100%
+              )`,
+            }}
+          />
+        )}
 
         {/* Floating nav — overlays content */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 50, pointerEvents: 'none' }}>
-          <div style={{ pointerEvents: 'auto' }}>
-            <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+        {showBottomNav && (
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 50, pointerEvents: 'none' }}>
+            <div style={{ pointerEvents: 'auto' }}>
+              <BottomNav activeTab={activeTab} onTabChange={(tab) => { setShowBottomNav(true); setActiveTab(tab); }} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Profile Modal Overlay */}

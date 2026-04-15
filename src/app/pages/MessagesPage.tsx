@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, Send, Shield, Users, Search, X, MessageCircle, MapPin, ClipboardList, Target } from 'lucide-react';
 
@@ -166,9 +166,10 @@ const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Marketplace', 'Direct'];
 interface MessagesPageProps {
   initialConvId?: number;
   extraConversations?: any[];
+  onNavVisibilityChange?: (visible: boolean) => void;
 }
 
-export function MessagesPage({ initialConvId, extraConversations = [] }: MessagesPageProps = {}) {
+export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const extraMapped: Conversation[] = extraConversations.map((c: any) => ({
@@ -190,6 +191,10 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
   );
   const [chatInputs, setChatInputs] = useState<Record<number, string>>({});
   const [localMessages, setLocalMessages] = useState<Record<number, ChatMessage[]>>({});
+
+  useEffect(() => {
+    onNavVisibilityChange?.(openConv === null);
+  }, [openConv]);
 
   // Merge extra conversations (from neighbours message etc.) with existing mock data
   const allConversations: Conversation[] = [...extraMapped, ...CONVERSATIONS];
@@ -300,7 +305,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
         </div>
 
         {/* Conversation list */}
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '100px' }}>
           {filteredConvs.length === 0 && (
             <div
               style={{

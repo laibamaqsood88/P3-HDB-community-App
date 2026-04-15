@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Plus, X, SlidersHorizontal, MapPin, MessageCircle, Heart,
@@ -155,7 +155,7 @@ function FilterPanel({ activeCategories, activeTypes, activeDistance, sort, onCa
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 30 }}
       style={{
-        position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20,
+        position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 61,
         background: CARD, borderRadius: '20px 20px 0 0', padding: '16px 16px 40px',
         boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto',
       }}
@@ -299,13 +299,13 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
         ) : (
           filtered.map(r => <RequestCard key={r.id} r={r} onClick={() => onSelectRequest(r)} />)
         )}
-        <div style={{ height: '80px' }} />
+        <div style={{ height: '100px' }} />
       </div>
 
       <AnimatePresence>
         {filterVisible && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setFilterVisible(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 19 }} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setFilterVisible(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60 }} />
             <FilterPanel
               activeCategories={activeCategories}
               activeTypes={activeTypes}
@@ -681,9 +681,10 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
 interface RequestsPageProps {
   onAddPost?: (post: any) => void;
   initialRequestId?: number;
+  onNavVisibilityChange?: (visible: boolean) => void;
 }
 
-export function RequestsPage({ onAddPost, initialRequestId }: RequestsPageProps = {}) {
+export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChange }: RequestsPageProps = {}) {
   const initialStack: NavFrame[] = initialRequestId
     ? [{ screen: 'feed' }, { screen: 'detail', params: { request: INITIAL_REQUESTS.find(r => r.id === initialRequestId) } }]
     : [{ screen: 'feed' }];
@@ -693,6 +694,10 @@ export function RequestsPage({ onAddPost, initialRequestId }: RequestsPageProps 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: RequestScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
   const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
+
+  useEffect(() => {
+    onNavVisibilityChange?.(current.screen === 'feed');
+  }, [current.screen]);
 
   const renderScreen = () => {
     switch (current.screen) {
