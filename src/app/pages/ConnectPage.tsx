@@ -265,7 +265,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
     const isJoined = joinedGroups.includes(group.id);
 
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {/* Hero */}
           <div style={{ height: '240px', position: 'relative' }}>
@@ -375,7 +375,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
 
   // ---- Feed screen ----
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Search + category pills — only shown when NOT in embedded (hideHeader) mode */}
       {!hideHeader && (
         <div style={{ background: CARD, padding: '14px 20px 0px', borderBottom: `1px solid ${BORDER}` }}>

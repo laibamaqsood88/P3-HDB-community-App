@@ -261,7 +261,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
     const isRegistered = registeredEvents.includes(ev.id);
 
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {/* Hero */}
           <div style={{ height: '260px', position: 'relative' }}>
@@ -383,7 +383,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               border: 'none', cursor: 'pointer',
               fontSize: '15px', fontWeight: 800,
               color: isRegistered ? '#059669' : 'white',
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
             }}
           >
@@ -400,7 +400,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
     const total = FAMILY_STATUS_BREAKDOWN.reduce((s, f) => s + f.count, 0);
 
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         {/* Header */}
         <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -492,7 +492,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
   const signedUpEvents = EVENTS.filter(e => registeredEvents.includes(e.id));
 
   return (
-    <div className="no-scrollbar" style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="no-scrollbar" style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -744,7 +744,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 700, color: PRIMARY, fontFamily: "'DM Sans', sans-serif", padding: '4px 0' }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 700, color: PRIMARY, fontFamily: "'Nunito', sans-serif", padding: '4px 0' }}
                   >
                     Mark all read
                   </button>
@@ -851,7 +851,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               {/* Action button */}
               <button
                 onClick={() => { toast.success(`Message sent to ${selectedNeighbour.name}! 👋`); setSelectedNeighbour(null); }}
-                style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'DM Sans', sans-serif" }}
+                style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'Nunito', sans-serif" }}
               >
                 Say Hello 👋
               </button>
@@ -879,7 +879,7 @@ function GroupDetailScreen({ group, onBack }: { group: any; onBack: () => void }
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 0', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>

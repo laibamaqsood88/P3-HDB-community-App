@@ -150,7 +150,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
   }
 
   return (
-    <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Hero Header */}
       <div style={{ background: `linear-gradient(150deg, #FF6B47 0%, #FF9068 60%, #FFB08A 100%)`, padding: '52px 20px 28px', position: 'relative', overflow: 'hidden' }}>
         {/* Decorative circles */}
@@ -351,7 +351,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             ))}
             <button
               onClick={saveInterests}
-              style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'DM Sans', sans-serif", marginTop: '8px' }}
+              style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'Nunito', sans-serif", marginTop: '8px' }}
             >
               Save Interests
             </button>
@@ -408,7 +408,7 @@ function MyPostsScreen({ onBack, posts }: { onBack: () => void; posts: any[] }) 
   }
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
@@ -491,7 +491,7 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
   const tc = TYPE_COLORS[currentPost.type] || { bg: BG, text: TEXT2 };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 20px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -744,7 +744,7 @@ function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRe
   const filtered = allSaved.filter(item => tabFilter(item) && (!q || item.title.toLowerCase().includes(q) || item.sub.toLowerCase().includes(q)));
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
@@ -837,7 +837,7 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
   const [notifHelp, setNotifHelp] = useState(false);
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}`, position: 'relative' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke={TEXT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>

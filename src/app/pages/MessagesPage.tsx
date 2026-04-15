@@ -238,7 +238,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
         display: 'flex',
         flexDirection: 'column',
         background: BG,
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Nunito', sans-serif",
         position: 'relative',
       }}
     >
@@ -284,7 +284,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                   border: 'none',
                   borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
                   cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "'Nunito', sans-serif",
                   fontSize: '13px',
                   fontWeight: activeFilter === tab ? 700 : 500,
                   color: activeFilter === tab ? PRIMARY : MUTED,
@@ -580,7 +580,7 @@ function ChatScreen({
                 onClick={() => setGroupTab(tab)}
                 style={{
                   flex: 1, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif", fontSize: '13px',
+                  fontFamily: "'Nunito', sans-serif", fontSize: '13px',
                   fontWeight: groupTab === tab ? 700 : 500,
                   color: groupTab === tab ? PRIMARY : MUTED,
                   borderBottom: `2px solid ${groupTab === tab ? PRIMARY : 'transparent'}`,
@@ -747,7 +747,7 @@ function ChatScreen({
               fontSize: '14px',
               outline: 'none',
               color: TEXT,
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
             }}
           />
           <button

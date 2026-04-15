@@ -1,6 +1,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --font-family: 'Nunito', sans-serif;
   --font-size: 16px;
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
@@ -131,10 +132,12 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    font-family: 'Nunito', sans-serif;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Nunito', sans-serif;
   }
 
   /**

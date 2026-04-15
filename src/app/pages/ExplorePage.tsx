@@ -274,7 +274,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const isFilterActive = activeSubTab === 'events' ? activeFilterCount > 0 : activeSubTab === 'groups' ? groupFilterActive : neighbourFilterActive;
 
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif", position: 'relative' }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
         {/* ── Shared Header ── */}
         <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
@@ -611,7 +611,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const isRegistered = registeredEvents.includes(ev.id);
 
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {/* Hero image */}
           <div style={{ height: '260px', position: 'relative' }}>
@@ -733,7 +733,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               border: 'none', cursor: 'pointer',
               fontSize: '15px', fontWeight: 800,
               color: isRegistered ? '#059669' : 'white',
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Nunito', sans-serif",
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
             }}
           >
@@ -750,7 +750,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const total = FAMILY_STATUS_BREAKDOWN.reduce((s, f) => s + f.count, 0);
 
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         {/* Header */}
         <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -855,7 +855,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   if (current.screen === 'register') {
     const ev: EventData = current.params?.event;
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
@@ -910,7 +910,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   if (current.screen === 'share') {
     const ev: EventData = current.params?.event;
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
@@ -1011,7 +1011,7 @@ function NeighboursTab({
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'DM Sans', sans-serif", position: 'relative' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
         <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500, marginBottom: '12px' }}>

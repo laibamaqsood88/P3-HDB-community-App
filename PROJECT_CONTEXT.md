@@ -50,7 +50,7 @@ TEXT    = '#0D0D0D'   // near-black
 TEXT2   = '#6B6B72'   // medium gray
 MUTED   = '#AEAEB2'   // light gray
 BORDER  = '#EDEDEC'   // light border
-Font: 'DM Sans', sans-serif
+Font: 'Nunito', sans-serif
 ```
 
 ### Scrollbar Hiding
