@@ -25,6 +25,8 @@ interface ProfilePageProps {
   myPosts?: any[];
   userInterests?: string[];
   onUpdateInterests?: (interests: string[]) => void;
+  userLanguages?: string[];
+  onUpdateLanguages?: (languages: string[]) => void;
   savedMarketplaceItems?: any[];
 }
 
@@ -39,6 +41,18 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   'Board Games': { bg: '#EDE9FE', text: '#7C3AED' },
   Cycling:       { bg: '#CCFBF1', text: '#0D9488' },
   Music:         { bg: '#FFE4E6', text: '#E11D48' },
+};
+
+const LANGUAGE_COLORS: Record<string, { bg: string; text: string }> = {
+  English:       { bg: '#FFF0EC', text: '#FF6B47' },
+  Mandarin:      { bg: '#FAE8FF', text: '#A21CAF' },
+  Malay:         { bg: '#FEF3C7', text: '#D97706' },
+  Tamil:         { bg: '#D1FAE5', text: '#059669' },
+  Japanese:      { bg: '#EDE9FE', text: '#7C3AED' },
+  Korean:        { bg: '#CCFBF1', text: '#0D9488' },
+  French:        { bg: '#FFE4E6', text: '#E11D48' },
+  Spanish:       { bg: '#DBEAFE', text: '#2563EB' },
+  German:        { bg: '#F5D0A9', text: '#92400E' },
 };
 
 const SAVED_ITEMS = [
@@ -75,17 +89,27 @@ const BADGES = [
 ];
 
 // ---- Main Component ----
-export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest, onClose, myPosts = [], userInterests = MY_INTERESTS, onUpdateInterests, savedMarketplaceItems = [] }: ProfilePageProps) {
+export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest, onClose, myPosts = [], userInterests = MY_INTERESTS, onUpdateInterests, userLanguages = [], onUpdateLanguages, savedMarketplaceItems = [] }: ProfilePageProps) {
   const [activeSection, setActiveSection] = useState<'main' | 'settings' | 'saved-items' | 'my-posts'>('main');
   const [showInterestEdit, setShowInterestEdit] = useState(false);
   const [draftInterests, setDraftInterests] = useState<string[]>(userInterests);
+  const [showLanguageEdit, setShowLanguageEdit] = useState(false);
+  const [draftLanguages, setDraftLanguages] = useState<string[]>(userLanguages);
 
   const toggleDraft = (item: string) =>
     setDraftInterests(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
 
+  const toggleDraftLanguage = (lang: string) =>
+    setDraftLanguages(prev => prev.includes(lang) ? prev.filter(x => x !== lang) : [...prev, lang]);
+
   const saveInterests = () => {
     onUpdateInterests?.(draftInterests);
     setShowInterestEdit(false);
+  };
+
+  const saveLanguages = () => {
+    onUpdateLanguages?.(draftLanguages);
+    setShowLanguageEdit(false);
   };
 
   if (activeSection === 'settings') {
@@ -184,6 +208,33 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
 
       {/* ---- Main Content ---- */}
       <div style={{ padding: '24px 0 40px' }}>
+
+        {/* ---- Languages Spoken ---- */}
+        {userLanguages.length > 0 && (
+          <>
+            <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Languages Spoken
+            </div>
+            <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 24px', padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {userLanguages.map(lang => {
+                  const c = LANGUAGE_COLORS[lang] || { bg: '#FFF0EC', text: PRIMARY };
+                  return (
+                    <span key={lang} style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, background: c.bg, color: c.text }}>
+                      {lang}
+                    </span>
+                  );
+                })}
+                <button
+                  onClick={() => { setDraftLanguages(userLanguages); setShowLanguageEdit(true); }}
+                  style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: BG, color: MUTED, border: `1.5px dashed ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  + Edit
+                </button>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* ---- My Interests ---- */}
         <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>

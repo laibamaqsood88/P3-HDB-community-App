@@ -22,6 +22,7 @@ export default function App() {
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [initialGroupChatId, setInitialGroupChatId] = useState<number | undefined>(undefined);
   const [userInterests, setUserInterests] = useState<string[]>([]);
+  const [userLanguages, setUserLanguages] = useState<string[]>([]);
   const [myPosts, setMyPosts] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
   const [savedMarketplaceItems, setSavedMarketplaceItems] = useState<any[]>([]);
@@ -86,6 +87,7 @@ export default function App() {
         />
         <SignUpPage onComplete={({ familyStatus, interests, spokenLanguages }) => {
           setUserInterests(interests);
+          setUserLanguages(spokenLanguages);
           setAuthScreen('main');
         }} />
       </div>
@@ -224,6 +226,8 @@ export default function App() {
             myPosts={myPosts}
             userInterests={userInterests}
             onUpdateInterests={setUserInterests}
+            userLanguages={userLanguages}
+            onUpdateLanguages={setUserLanguages}
             savedMarketplaceItems={savedMarketplaceItems}
           />
         </div>
