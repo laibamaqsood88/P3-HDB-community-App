@@ -8,7 +8,7 @@ import {
 import { INTEREST_CATEGORIES } from './SignUpPage';
 
 // ---- Design tokens ----
-const BG = '#F2F2F7';
+const BG = '#F7F7F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
 const TEXT = '#1C1C1E';
@@ -294,7 +294,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             onClick={() => setActiveSection('settings')}
             style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Settings size={16} color={TEXT2} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left', fontFamily: 'inherit' }}>Settings</span>
@@ -868,7 +868,7 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
           </button>
           {/* Change Password */}
           <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Lock size={16} color={TEXT2} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Change Password</span>
@@ -920,7 +920,7 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
           {/* Privacy row */}
           <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <ShieldIcon size={16} color={TEXT2} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Privacy &amp; Data</span>

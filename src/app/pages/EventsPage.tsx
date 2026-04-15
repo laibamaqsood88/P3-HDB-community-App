@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { REQUESTS_DATA, REQUESTS_CAT_EMOJIS } from './RequestsPage';
 
 // ---- Design tokens ----
-const BG = '#F2F2F7';
+const BG = '#F7F7F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
 const TEXT = '#1C1C1E';

@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Shield, MapPin, CheckCircle } from 'lucide-react';
 
 // ---- Design tokens (Apple HIG) ----
-const BG = '#F2F2F7';
+const BG = '#F7F7F7';
 const PRIMARY = '#FF6B47';
 const TEXT = '#1C1C1E';
 const TEXT2 = '#636366';
