@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Bookmark, Share2, X, Shield,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, UserPlus, SlidersHorizontal
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -189,9 +189,10 @@ interface ExplorePageProps {
   onSubTabChange?: (tab: 'events' | 'groups' | 'neighbours') => void;
   userInterests?: string[];
   onAddConversation?: (conv: any) => void;
+  onOpenDirectChat?: (conv: any) => void;
 }
 
-export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation }: ExplorePageProps) {
+export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat }: ExplorePageProps) {
   const initialScreen: NavFrame = initialEventId
     ? { screen: 'detail', params: { event: EVENTS.find(e => e.id === initialEventId) || EVENTS[0] } }
     : { screen: 'feed' };
@@ -295,9 +296,11 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               <Search size={15} color={MUTED} strokeWidth={2.5} />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
                 <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{filterLabel}</span>
-                <span style={{ fontSize: '12px', color: MUTED, fontWeight: 400 }}>
-                  {searchQuery ? `"${searchQuery}"` : 'Singapore'}
-                </span>
+                {searchQuery && (
+                  <span style={{ fontSize: '12px', color: MUTED, fontWeight: 400 }}>
+                    "{searchQuery}"
+                  </span>
+                )}
               </div>
               {searchQuery && (
                 <button
@@ -446,6 +449,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
             <NeighboursTab
               userInterests={userInterests}
               onAddConversation={onAddConversation}
+              onOpenDirectChat={onOpenDirectChat}
               externalSearchQuery={searchQuery}
               distanceFilter={distanceFilter}
               filterSharedOnly={filterSharedOnly}
@@ -567,13 +571,6 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                   </button>
                 ))}
 
-                <motion.button
-                  whileTap={{ scale: 0.93 }}
-                  onClick={() => { handleSubTabChange(searchScopeTab); setSearchMode(false); }}
-                  style={{ width: '38px', height: '38px', borderRadius: '50%', background: TEXT, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: '4px' }}
-                >
-                  <Search size={15} color="white" strokeWidth={2.5} />
-                </motion.button>
               </div>
 
               {/* Search card */}
@@ -950,7 +947,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
 // ---- Neighbours Sub-tab ----
 function NeighboursTab({
-  userInterests, onAddConversation,
+  userInterests, onAddConversation, onOpenDirectChat,
   externalSearchQuery,
   distanceFilter, filterSharedOnly, filterRecentOnly,
   showExternalFilter, onFilterClose,
@@ -958,6 +955,7 @@ function NeighboursTab({
 }: {
   userInterests: string[];
   onAddConversation?: (conv: any) => void;
+  onOpenDirectChat?: (conv: any) => void;
   externalSearchQuery?: string;
   distanceFilter: string;
   filterSharedOnly: boolean;
@@ -969,7 +967,6 @@ function NeighboursTab({
   onRecentOnlyChange: (v: boolean) => void;
 }) {
   const [visibleCount, setVisibleCount] = useState(5);
-  const [connected, setConnected] = useState<number[]>([]);
   const [selectedNeighbour, setSelectedNeighbour] = useState<typeof MOCK_NEIGHBOURS[0] | null>(null);
 
   const recentActiveValues = ['Just now', '30 min ago', '1 hour ago', '2 hours ago', '3 hours ago', '4 hours ago', '5 hours ago'];
@@ -993,11 +990,8 @@ function NeighboursTab({
     return true;
   });
 
-  const handleConnect = (neighbour: typeof MOCK_NEIGHBOURS[0]) => {
-    if (connected.includes(neighbour.id)) return;
-    setConnected(p => [...p, neighbour.id]);
-    toast.success(`Connected! Chat started with ${neighbour.name} 👋`);
-    onAddConversation?.({
+  const handleMessage = (neighbour: typeof MOCK_NEIGHBOURS[0]) => {
+    const conv = {
       id: Date.now(),
       type: 'direct',
       name: neighbour.name,
@@ -1007,7 +1001,8 @@ function NeighboursTab({
       time: 'Just now',
       unread: 0,
       tag: null,
-    });
+    };
+    onOpenDirectChat?.(conv);
   };
 
   return (
@@ -1021,7 +1016,6 @@ function NeighboursTab({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {filtered.slice(0, visibleCount).map(n => {
             const sharedInterests = n.interests.filter(i => userInterests.includes(i));
-            const isConnected = connected.includes(n.id);
 
             return (
               <motion.div
@@ -1073,17 +1067,16 @@ function NeighboursTab({
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <motion.button
                         whileTap={{ scale: 0.97 }}
-                        onClick={() => handleConnect(n)}
+                        onClick={() => handleMessage(n)}
                         style={{
                           flex: 1, padding: '10px', borderRadius: '14px',
-                          background: isConnected ? '#DCFCE7' : 'none',
-                          border: `1.5px solid ${isConnected ? '#16A34A' : PRIMARY}`,
-                          color: isConnected ? '#16A34A' : PRIMARY,
-                          fontSize: '13px', fontWeight: 700, cursor: isConnected ? 'default' : 'pointer',
+                          background: PRIMARY, border: 'none',
+                          color: 'white',
+                          fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                           fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
                         }}
                       >
-                        {isConnected ? <>✓ Connected</> : <><UserPlus size={14} /> Connect</>}
+                        <MessageCircle size={14} /> Message
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.97 }}
