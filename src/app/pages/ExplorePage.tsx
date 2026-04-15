@@ -571,13 +571,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               {/* Search card */}
               <div style={{ margin: '4px 16px 0', background: CARD, borderRadius: '20px', boxShadow: '0 4px 24px rgba(0,0,0,0.10)', overflow: 'hidden' }}>
                 {/* Search input row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 18px', borderBottom: `1px solid ${BORDER}` }}>
-                  {searchScopeTab === 'events'
-                    ? <Calendar size={20} color={MUTED} strokeWidth={1.8} />
-                    : searchScopeTab === 'groups'
-                    ? <Users size={20} color={MUTED} strokeWidth={1.8} />
-                    : <UserPlus size={20} color={MUTED} strokeWidth={1.8} />
-                  }
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 18px' }}>
                   <input
                     autoFocus
                     value={searchQuery}
@@ -592,11 +586,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                     </button>
                   )}
                 </div>
-                {/* Location row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 18px' }}>
-                  <MapPin size={20} color={MUTED} strokeWidth={1.8} />
-                  <span style={{ fontSize: '16px', color: TEXT, fontWeight: 500 }}>Singapore</span>
-                </div>
+
               </div>
             </motion.div>
           )}
