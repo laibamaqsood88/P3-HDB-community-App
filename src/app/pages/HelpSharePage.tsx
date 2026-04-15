@@ -558,7 +558,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         {!searchOpen ? (
           <>
             {/* Normal mode: Title + icons */}
-            <div style={{ padding: `${52 - (scrollProgress * 44)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+            <div style={{ padding: `52px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
               <span style={{ fontSize: `${28 - (scrollProgress * 12)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Market</span>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button onClick={() => setSearchOpen(true)}

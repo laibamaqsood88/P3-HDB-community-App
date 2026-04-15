@@ -267,7 +267,7 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
-        <div style={{ padding: `${52 - (scrollProgress * 44)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', gap: '8px', transition: 'padding 0.1s linear' }}>
+        <div style={{ padding: `52px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', gap: '8px', transition: 'padding 0.1s linear' }}>
           <AnimatePresence mode="wait" initial={false}>
             {!searchOpen ? (
               <motion.div key="title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}
