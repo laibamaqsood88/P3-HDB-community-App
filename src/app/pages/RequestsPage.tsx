@@ -449,6 +449,10 @@ function PostRequestScreen({ onBack, onPost }: any) {
           )}
         </FormField>
 
+        <FormField label="Location">
+          <input value={collectionPoint} onChange={e => setCollectionPoint(e.target.value)} placeholder="Location of request" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+        </FormField>
+
         <FormField label="Post expires on">
           <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} min={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
