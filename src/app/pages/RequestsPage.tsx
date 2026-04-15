@@ -449,13 +449,6 @@ function PostRequestScreen({ onBack, onPost }: any) {
           )}
         </FormField>
 
-        <FormField label="Meetup Location">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
-            <MapPin size={16} color={MUTED} style={{ flexShrink: 0 }} />
-            <input value={collectionPoint} onChange={e => setCollectionPoint(e.target.value)} placeholder="e.g. Blk 445, Level 5 Corridor" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
-          </div>
-        </FormField>
-
         <FormField label="Post expires on">
           <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} min={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
