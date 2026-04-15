@@ -57,16 +57,40 @@ const FAMILY_OPTIONS = [
 
 const SPOKEN_LANGUAGES = ['English', 'Chinese', 'Malay', 'Tamil'];
 
+const AUTOCOMPLETE_LANGUAGES = [
+  'Afrikaans', 'Albanian', 'Amharic', 'Arabic', 'Armenian', 'Azerbaijani',
+  'Basque', 'Belarusian', 'Bengali', 'Bosnian', 'Bulgarian', 'Burmese',
+  'Catalan', 'Cebuano', 'Croatian', 'Czech', 'Danish', 'Dutch',
+  'Esperanto', 'Estonian', 'Filipino', 'Finnish', 'French',
+  'Galician', 'Georgian', 'German', 'Greek', 'Gujarati',
+  'Haitian Creole', 'Hausa', 'Hebrew', 'Hindi', 'Hmong', 'Hungarian',
+  'Icelandic', 'Igbo', 'Indonesian', 'Irish', 'Italian',
+  'Japanese', 'Javanese', 'Kannada', 'Kazakh', 'Khmer', 'Korean', 'Kurdish',
+  'Lao', 'Latin', 'Latvian', 'Lithuanian',
+  'Macedonian', 'Malagasy', 'Malayalam', 'Maltese', 'Maori', 'Marathi', 'Mongolian',
+  'Nepali', 'Norwegian', 'Odia', 'Pashto', 'Persian', 'Polish', 'Portuguese', 'Punjabi',
+  'Romanian', 'Russian', 'Samoan', 'Serbian', 'Sinhala', 'Slovak', 'Slovenian',
+  'Somali', 'Spanish', 'Sundanese', 'Swahili', 'Swedish',
+  'Tajik', 'Thai', 'Turkish', 'Turkmen',
+  'Ukrainian', 'Urdu', 'Uzbek', 'Vietnamese',
+  'Welsh', 'Xhosa', 'Yiddish', 'Yoruba', 'Zulu',
+];
+
 interface SignUpPageProps {
-  onComplete: (profile: { familyStatus: string; interests: string[]; spokenLanguage: string }) => void;
+  onComplete: (profile: { familyStatus: string; interests: string[]; spokenLanguages: string[] }) => void;
 }
 
 export function SignUpPage({ onComplete }: SignUpPageProps) {
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
   const [familyStatus, setFamilyStatus] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
-  const [spokenLanguage, setSpokenLanguage] = useState('');
-  const [customLanguage, setCustomLanguage] = useState('');
+  const [spokenLanguages, setSpokenLanguages] = useState<string[]>([]);
+
+  const toggleLanguage = (lang: string) => {
+    setSpokenLanguages(prev =>
+      prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
+    );
+  };
 
   // Step 4 -> 5 auto-transition (loading -> recommendations)
   useEffect(() => {
@@ -128,6 +152,24 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
 
         {step === 2 && (
           <motion.div
+            key="language"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+          >
+            <StepSpokenLanguage
+              spokenLanguages={spokenLanguages}
+              onToggle={toggleLanguage}
+              onNext={() => setStep(3)}
+              onBack={() => setStep(1)}
+            />
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div
             key="interests"
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -138,26 +180,6 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
             <StepInterests
               interests={interests}
               onToggle={toggleInterest}
-              onNext={() => setStep(3)}
-              onBack={() => setStep(1)}
-            />
-          </motion.div>
-        )}
-
-        {step === 3 && (
-          <motion.div
-            key="language"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.3 }}
-            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-          >
-            <StepSpokenLanguage
-              spokenLanguage={spokenLanguage}
-              customLanguage={customLanguage}
-              onSelect={setSpokenLanguage}
-              onCustomChange={setCustomLanguage}
               onNext={() => setStep(4 as any)}
               onBack={() => setStep(2)}
             />
@@ -188,7 +210,7 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
           >
             <RecommendationsStep
               interests={interests}
-              onGetStarted={() => onComplete({ familyStatus, interests, spokenLanguage: spokenLanguage || customLanguage })}
+              onGetStarted={() => onComplete({ familyStatus, interests, spokenLanguages })}
             />
           </motion.div>
         )}
@@ -407,7 +429,7 @@ function StepFamily({
   );
 }
 
-// ---- Step 2: Interests ----
+// ---- Step 3: Interests ----
 function StepInterests({
   interests,
   onToggle,
@@ -439,7 +461,7 @@ function StepInterests({
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
         </button>
-        <ProgressBar step={2} total={3} />
+        <ProgressBar step={3} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
           What are you into?
         </div>
@@ -621,50 +643,73 @@ function StepInterests({
   );
 }
 
-// ---- Step 3: Spoken Language ----
+// ---- Step 2: Spoken Language ----
 function StepSpokenLanguage({
-  spokenLanguage,
-  customLanguage,
-  onSelect,
-  onCustomChange,
+  spokenLanguages,
+  onToggle,
   onNext,
   onBack,
 }: {
-  spokenLanguage: string;
-  customLanguage: string;
-  onSelect: (v: string) => void;
-  onCustomChange: (v: string) => void;
+  spokenLanguages: string[];
+  onToggle: (lang: string) => void;
   onNext: () => void;
   onBack: () => void;
 }) {
-  const selectedLanguage = spokenLanguage || customLanguage;
+  const [showOthers, setShowOthers] = useState(false);
+  const [othersExpanded, setOthersExpanded] = useState(false);
+  const [query, setQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Languages added via the Others autocomplete (not in presets)
+  const otherChips = spokenLanguages.filter(l => !SPOKEN_LANGUAGES.includes(l));
+
+  const suggestions = query.trim().length > 0
+    ? AUTOCOMPLETE_LANGUAGES.filter(
+        l => l.toLowerCase().includes(query.toLowerCase()) && !spokenLanguages.includes(l)
+      ).slice(0, 6)
+    : [];
+
+  const addLanguage = (lang: string) => {
+    const trimmed = lang.trim();
+    if (trimmed && !spokenLanguages.includes(trimmed)) {
+      onToggle(trimmed);
+    }
+    setQuery('');
+    setShowDropdown(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === 'Enter' || e.key === ',') && query.trim()) {
+      e.preventDefault();
+      addLanguage(query);
+    }
+  };
+
+  const valid = spokenLanguages.length > 0;
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 24px 0', flex: 1, overflowY: 'auto' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD, minHeight: 0 }}>
+      <div style={{ padding: '52px 24px 48px', flex: 1, overflowY: 'auto' }}>
         <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
         </button>
-        <ProgressBar step={3} total={3} />
+        <ProgressBar step={2} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
-          Which language do you speak?
+          Which languages do you speak?
         </div>
         <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '28px', lineHeight: '1.5' }}>
-          Help us match you with neighbours who share your language.
+          Select all that apply — we'll match you with neighbours who share your language.
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {SPOKEN_LANGUAGES.map(lang => {
-            const selected = spokenLanguage === lang;
+            const selected = spokenLanguages.includes(lang);
             return (
               <motion.button
                 key={lang}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  onSelect(lang);
-                  onCustomChange('');
-                }}
+                onClick={() => onToggle(lang)}
                 style={{
                   padding: '16px 20px',
                   borderRadius: '18px',
@@ -684,18 +729,7 @@ function StepSpokenLanguage({
               >
                 {lang}
                 {selected && (
-                  <span
-                    style={{
-                      width: '22px',
-                      height: '22px',
-                      borderRadius: '50%',
-                      background: PRIMARY,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
+                  <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <span style={{ color: 'white', fontSize: '12px', fontWeight: 800 }}>✓</span>
                   </span>
                 )}
@@ -703,62 +737,203 @@ function StepSpokenLanguage({
             );
           })}
 
-          {/* Others option with custom input */}
-          <div style={{ marginTop: '8px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT2, marginBottom: '10px', paddingLeft: '4px' }}>
-              Other language
-            </div>
-            <div
-              style={{
-                background: BG,
-                borderRadius: '18px',
-                padding: '4px',
-                border: `2px solid ${customLanguage ? PRIMARY : BORDER}`,
-                transition: 'border-color 0.2s',
-              }}
-            >
-              <input
-                type="text"
-                value={customLanguage}
-                onChange={e => {
-                  onCustomChange(e.target.value);
-                  if (e.target.value) onSelect('');
-                }}
-                placeholder="Enter your language..."
-                style={{
-                  width: '100%',
-                  padding: '16px 18px',
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  color: customLanguage ? TEXT : MUTED,
-                  outline: 'none',
-                  fontFamily: "'Nunito', sans-serif",
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-          </div>
+          {/* Others option */}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => { setShowOthers(s => { if (s) setOthersExpanded(false); return !s; }); setQuery(''); setShowDropdown(false); }}
+            style={{
+              padding: '16px 20px',
+              borderRadius: '18px',
+              border: `2px solid ${showOthers || otherChips.length > 0 ? PRIMARY : BORDER}`,
+              background: showOthers || otherChips.length > 0 ? '#FFF0EC' : CARD,
+              color: showOthers || otherChips.length > 0 ? PRIMARY : TEXT,
+              fontWeight: showOthers || otherChips.length > 0 ? 700 : 500,
+              fontSize: '15px',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.15s',
+              fontFamily: "'Nunito', sans-serif",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            Others
+            {otherChips.length > 0 && (
+              <span style={{ minWidth: '22px', height: '22px', borderRadius: '11px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 6px', flexShrink: 0 }}>
+                <span style={{ color: 'white', fontSize: '11px', fontWeight: 800 }}>{otherChips.length}</span>
+              </span>
+            )}
+          </motion.button>
+
+          {/* Others: autocomplete input with chips */}
+          <AnimatePresence initial={false}>
+            {showOthers && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.22, ease: 'easeInOut' }}
+                style={{ overflow: othersExpanded ? 'visible' : 'hidden' }}
+                onAnimationComplete={() => setOthersExpanded(showOthers)}
+              >
+                <div style={{ position: 'relative' }}>
+                  {/* Chip input box */}
+                  <div
+                    style={{
+                      background: BG,
+                      borderRadius: '18px',
+                      border: `2px solid ${showDropdown ? PRIMARY : BORDER}`,
+                      padding: '10px 14px',
+                      transition: 'border-color 0.2s',
+                    }}
+                  >
+                    {/* Helper text */}
+                    <div style={{ fontSize: '12px', color: MUTED, marginBottom: '8px', fontWeight: 500 }}>
+                      Type to search or add languages
+                    </div>
+
+                    {/* Chips */}
+                    {otherChips.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                        {otherChips.map(chip => (
+                          <motion.span
+                            key={chip}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '5px',
+                              padding: '5px 10px', borderRadius: '20px',
+                              background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
+                              color: PRIMARY, fontSize: '13px', fontWeight: 700,
+                            }}
+                          >
+                            {chip}
+                            <button
+                              onClick={() => onToggle(chip)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: PRIMARY }}
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                          </motion.span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Input */}
+                    <input
+                      type="text"
+                      value={query}
+                      onChange={e => { setQuery(e.target.value); setShowDropdown(true); }}
+                      onFocus={() => setShowDropdown(true)}
+                      onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="e.g. Japanese, Hindi..."
+                      style={{
+                        width: '100%', background: 'transparent', border: 'none', outline: 'none',
+                        fontSize: '14px', color: TEXT, fontFamily: "'Nunito', sans-serif",
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+
+                  {/* Suggestions dropdown */}
+                  <AnimatePresence>
+                    {showDropdown && suggestions.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.15 }}
+                        style={{
+                          position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+                          background: CARD, borderRadius: '14px', border: `1.5px solid ${BORDER}`,
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.10)', zIndex: 20, overflow: 'hidden',
+                        }}
+                      >
+                        {suggestions.map((lang, i) => (
+                          <button
+                            key={lang}
+                            onMouseDown={() => addLanguage(lang)}
+                            style={{
+                              width: '100%', padding: '13px 16px', background: 'none',
+                              border: 'none', borderTop: i > 0 ? `1px solid ${BORDER}` : 'none',
+                              textAlign: 'left', fontSize: '14px', fontWeight: 500,
+                              color: TEXT, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                            }}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                        {/* Add custom if not in list */}
+                        {query.trim() && !AUTOCOMPLETE_LANGUAGES.some(l => l.toLowerCase() === query.trim().toLowerCase()) && !spokenLanguages.includes(query.trim()) && (
+                          <button
+                            onMouseDown={() => addLanguage(query)}
+                            style={{
+                              width: '100%', padding: '13px 16px', background: '#FFF8F6',
+                              border: 'none', borderTop: `1px solid ${BORDER}`,
+                              textAlign: 'left', fontSize: '14px', fontWeight: 600,
+                              color: PRIMARY, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                              display: 'flex', alignItems: 'center', gap: '6px',
+                            }}
+                          >
+                            <span style={{ fontSize: '16px' }}>+</span> Add "{query.trim()}"
+                          </button>
+                        )}
+                      </motion.div>
+                    )}
+                    {/* Show "Add" option when dropdown is open but no suggestions (pure custom entry) */}
+                    {showDropdown && suggestions.length === 0 && query.trim() && !spokenLanguages.includes(query.trim()) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.15 }}
+                        style={{
+                          position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+                          background: CARD, borderRadius: '14px', border: `1.5px solid ${BORDER}`,
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.10)', zIndex: 20, overflow: 'hidden',
+                        }}
+                      >
+                        <button
+                          onMouseDown={() => addLanguage(query)}
+                          style={{
+                            width: '100%', padding: '13px 16px', background: '#FFF8F6',
+                            border: 'none', textAlign: 'left', fontSize: '14px', fontWeight: 600,
+                            color: PRIMARY, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                          }}
+                        >
+                          <span style={{ fontSize: '16px' }}>+</span> Add "{query.trim()}"
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      <div style={{ padding: '16px 24px 40px', borderTop: `1px solid ${BG}` }}>
+      <div style={{ padding: '16px 24px 40px', borderTop: `1px solid ${BG}`, flexShrink: 0 }}>
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onNext}
-          disabled={!selectedLanguage}
+          disabled={!valid}
           style={{
             width: '100%',
             padding: '17px',
             borderRadius: '22px',
-            background: selectedLanguage ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER,
+            background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER,
             border: 'none',
-            color: selectedLanguage ? 'white' : MUTED,
+            color: valid ? 'white' : MUTED,
             fontWeight: 700,
             fontSize: '16px',
-            cursor: selectedLanguage ? 'pointer' : 'not-allowed',
-            boxShadow: selectedLanguage ? '0 8px 24px rgba(255,107,71,0.35)' : 'none',
+            cursor: valid ? 'pointer' : 'not-allowed',
+            boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.35)' : 'none',
             transition: 'all 0.2s',
             fontFamily: "'Nunito', sans-serif",
           }}

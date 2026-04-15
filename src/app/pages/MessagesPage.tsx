@@ -12,7 +12,7 @@ const MUTED = '#8E8E93';
 const BORDER = 'rgba(60,60,67,0.12)';
 
 // ---- Mock conversation list ----
-type ConvType = 'group' | 'marketplace' | 'direct';
+type ConvType = 'group' | 'marketplace' | 'request' | 'direct';
 
 interface Conversation {
   id: number;
@@ -51,17 +51,6 @@ const CONVERSATIONS: Conversation[] = [
   },
   {
     id: 3,
-    type: 'group',
-    name: 'Board Game Sundays',
-    avatar: 'BG',
-    avatarBg: '#7C3AED',
-    lastMessage: "Anyone up for Ticket to Ride this Sunday? 🚂",
-    time: '3:30 PM',
-    unread: 1,
-    tag: 'Board Games',
-  },
-  {
-    id: 3,
     type: 'marketplace',
     name: 'IKEA Bookshelf',
     avatar: 'IB',
@@ -69,7 +58,7 @@ const CONVERSATIONS: Conversation[] = [
     lastMessage: 'Hi! Is the bookshelf still available?',
     time: '2:15 PM',
     unread: 1,
-    tag: 'Listing',
+    tag: 'Item',
   },
   {
     id: 4,
@@ -84,13 +73,13 @@ const CONVERSATIONS: Conversation[] = [
   },
   {
     id: 5,
-    type: 'marketplace',
+    type: 'request',
     name: 'Plant Watering Request',
     avatar: 'PW',
     avatarBg: '#22C55E',
     lastMessage: 'Thanks for your offer! Saturday works.',
     time: 'Mon',
-    unread: 0,
+    unread: 1,
     tag: 'Request',
   },
 ];
@@ -149,6 +138,51 @@ const GROUP_ACTIVITY: Record<number, { meetup: string; plan: string; goal: strin
   3: { meetup: 'Sunday 2 PM · RC Multi-Purpose Hall, Blk 447', plan: 'Bring snacks — we have Catan and Codenames ready', goal: 'Try 3 new games this month as a group', members: 11 },
 };
 
+// ---- Group members mock data ----
+interface GroupMember { name: string; avatar: string; avatarBg: string; role?: string }
+const GROUP_MEMBERS: Record<number, GroupMember[]> = {
+  1: [
+    { name: 'You', avatar: 'YO', avatarBg: '#FF6B47', role: 'Admin' },
+    { name: 'Ahmad Farid', avatar: 'AF', avatarBg: '#3B82F6' },
+    { name: 'Priya Nair', avatar: 'PN', avatarBg: '#7C3AED' },
+    { name: 'Wei Ling', avatar: 'WL', avatarBg: '#059669' },
+    { name: 'Rajan Kumar', avatar: 'RK', avatarBg: '#D97706' },
+    { name: 'Mei Xin', avatar: 'MX', avatarBg: '#EC4899' },
+    { name: 'Hafiz', avatar: 'HF', avatarBg: '#0891B2' },
+    { name: 'Suriya', avatar: 'SU', avatarBg: '#16A34A' },
+    { name: 'Jin Hao', avatar: 'JH', avatarBg: '#7C3AED' },
+    { name: 'Nalini', avatar: 'NA', avatarBg: '#DC2626' },
+    { name: 'Beng Kiat', avatar: 'BK', avatarBg: '#9333EA' },
+    { name: 'Siti Rahma', avatar: 'SR', avatarBg: '#059669' },
+    { name: 'Chen Wei', avatar: 'CW', avatarBg: '#2563EB' },
+    { name: 'Deepa', avatar: 'DE', avatarBg: '#D97706' },
+  ],
+  2: [
+    { name: 'You', avatar: 'YO', avatarBg: '#059669', role: 'Admin' },
+    { name: 'Madam Tan', avatar: 'MT', avatarBg: '#16A34A' },
+    { name: 'Rohani', avatar: 'RO', avatarBg: '#7C3AED' },
+    { name: 'Vincent Lim', avatar: 'VL', avatarBg: '#3B82F6' },
+    { name: 'Karthik', avatar: 'KA', avatarBg: '#D97706' },
+    { name: 'Amy Ong', avatar: 'AO', avatarBg: '#EC4899' },
+    { name: 'Encik Razif', avatar: 'ER', avatarBg: '#0891B2' },
+    { name: 'Geeta', avatar: 'GE', avatarBg: '#DC2626' },
+    { name: 'Pak Ismail', avatar: 'PI', avatarBg: '#9333EA' },
+  ],
+  3: [
+    { name: 'You', avatar: 'YO', avatarBg: '#7C3AED', role: 'Admin' },
+    { name: 'Eugene Toh', avatar: 'ET', avatarBg: '#3B82F6' },
+    { name: 'Fiona Tan', avatar: 'FT', avatarBg: '#EC4899' },
+    { name: 'Darren Loh', avatar: 'DL', avatarBg: '#059669' },
+    { name: 'Shalini', avatar: 'SH', avatarBg: '#D97706' },
+    { name: 'Marcus Ng', avatar: 'MN', avatarBg: '#0891B2' },
+    { name: 'Preethi', avatar: 'PT', avatarBg: '#DC2626' },
+    { name: 'Alex Koh', avatar: 'AK', avatarBg: '#9333EA' },
+    { name: 'Wendy Yap', avatar: 'WY', avatarBg: '#16A34A' },
+    { name: 'Izwan', avatar: 'IZ', avatarBg: '#D97706' },
+    { name: 'Charlene', avatar: 'CH', avatarBg: '#7C3AED' },
+  ],
+};
+
 // ---- Interest tag colors ----
 const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   Running:       { bg: '#FFF0EC', text: '#FF6B47' },
@@ -156,12 +190,13 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   'Board Games': { bg: '#EDE9FE', text: '#7C3AED' },
   'Board Game Sundays': { bg: '#EDE9FE', text: '#7C3AED' },
   Cooking:       { bg: '#FEF3C7', text: '#D97706' },
-  Listing:       { bg: '#DBEAFE', text: '#2563EB' },
+  Item:          { bg: '#DBEAFE', text: '#2563EB' },
+  Service:       { bg: '#EDE9FE', text: '#7C3AED' },
   Request:       { bg: '#DCFCE7', text: '#16A34A' },
 };
 
-type FilterTab = 'All' | 'Groups' | 'Marketplace' | 'Direct';
-const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Marketplace', 'Direct'];
+type FilterTab = 'All' | 'Groups' | 'Marketplace' | 'Requests' | 'Direct';
+const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Marketplace', 'Requests', 'Direct'];
 
 interface MessagesPageProps {
   initialConvId?: number;
@@ -191,13 +226,17 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
   );
   const [chatInputs, setChatInputs] = useState<Record<number, string>>({});
   const [localMessages, setLocalMessages] = useState<Record<number, ChatMessage[]>>({});
+  const [localUnread, setLocalUnread] = useState<Record<number, number>>({});
 
   useEffect(() => {
     onNavVisibilityChange?.(openConv === null);
   }, [openConv]);
 
   // Merge extra conversations (from neighbours message etc.) with existing mock data
-  const allConversations: Conversation[] = [...extraMapped, ...CONVERSATIONS];
+  const allConversations: Conversation[] = [...extraMapped, ...CONVERSATIONS].map(c => ({
+    ...c,
+    unread: localUnread[c.id] ?? c.unread,
+  }));
 
   const getMessages = (conv: Conversation): ChatMessage[] => {
     const local = localMessages[conv.id];
@@ -211,6 +250,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
     if (!localMessages[conv.id]) {
       setLocalMessages(p => ({ ...p, [conv.id]: getMessages(conv) }));
     }
+    setLocalUnread(p => ({ ...p, [conv.id]: 0 }));
   };
 
   const sendMessage = (conv: Conversation) => {
@@ -233,10 +273,21 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
   const filteredConvs = allConversations.filter(c => {
     if (activeFilter === 'Groups' && c.type !== 'group') return false;
     if (activeFilter === 'Marketplace' && c.type !== 'marketplace') return false;
+    if (activeFilter === 'Requests' && c.type !== 'request') return false;
     if (activeFilter === 'Direct' && c.type !== 'direct') return false;
     if (searchQuery && !c.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
+
+  const unreadFor = (filter: FilterTab) => {
+    return allConversations.filter(c => {
+      if (filter === 'Groups') return c.type === 'group';
+      if (filter === 'Marketplace') return c.type === 'marketplace';
+      if (filter === 'Requests') return c.type === 'request';
+      if (filter === 'Direct') return c.type === 'direct';
+      return true; // All
+    }).reduce((sum, c) => sum + c.unread, 0);
+  };
 
   return (
     <div
@@ -279,28 +330,45 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
           </div>
 
           {/* Filter tabs */}
-          <div style={{ display: 'flex' }}>
-            {FILTER_TABS.map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveFilter(tab)}
-                style={{
-                  flex: 1,
-                  padding: '8px 4px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
-                  cursor: 'pointer',
-                  fontFamily: "'Nunito', sans-serif",
-                  fontSize: '13px',
-                  fontWeight: activeFilter === tab ? 600 : 500,
-                  color: activeFilter === tab ? PRIMARY : MUTED,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {tab}
-              </button>
-            ))}
+          <div className="no-scrollbar" style={{ display: 'flex', overflowX: 'auto' }}>
+            {FILTER_TABS.map(tab => {
+              const count = unreadFor(tab);
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveFilter(tab)}
+                  style={{
+                    flex: '0 0 auto',
+                    padding: '8px 14px',
+                    background: 'none',
+                    border: 'none',
+                    borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
+                    cursor: 'pointer',
+                    fontFamily: "'Nunito', sans-serif",
+                    fontSize: '13px',
+                    fontWeight: activeFilter === tab ? 600 : 500,
+                    color: activeFilter === tab ? PRIMARY : MUTED,
+                    whiteSpace: 'nowrap',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                  }}
+                >
+                  {tab}
+                  {count > 0 && (
+                    <span style={{
+                      minWidth: '17px', height: '17px', borderRadius: '9px',
+                      background: activeFilter === tab ? PRIMARY : MUTED,
+                      color: 'white', fontSize: '10px', fontWeight: 700,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      padding: '0 4px',
+                    }}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -537,10 +605,12 @@ function ChatScreen({
 }) {
   const isGroup = conv.type === 'group';
   const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
+  const [showMembers, setShowMembers] = useState(false);
   const activity = GROUP_ACTIVITY[conv.id];
+  const members = GROUP_MEMBERS[conv.id] ?? [];
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)` }}>
         <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -551,24 +621,29 @@ function ChatScreen({
             <ChevronLeft size={20} color={TEXT} />
           </button>
 
-          {/* Avatar */}
+          {/* Avatar + Name — tappable for groups */}
           <div
-            style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0 }}
+            onClick={() => isGroup && setShowMembers(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, cursor: isGroup ? 'pointer' : 'default', minWidth: 0 }}
           >
-            {conv.avatar}
-          </div>
-
-          {/* Name + subtitle */}
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{conv.name}</span>
-              {!isGroup && <Shield size={12} color="#22C55E" />}
+            <div
+              style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0 }}
+            >
+              {conv.avatar}
             </div>
-            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>
-              {isGroup
-                ? `${activity?.members ?? ''} members`
-                : conv.type === 'marketplace' ? 'Marketplace chat' : 'Direct message'}
-            </span>
+
+            {/* Name + subtitle */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{conv.name}</span>
+                {!isGroup && <Shield size={12} color="#22C55E" />}
+              </div>
+              <span style={{ fontSize: '11px', color: isGroup ? PRIMARY : MUTED, fontWeight: 500 }}>
+                {isGroup
+                  ? `${activity?.members ?? members.length} members`
+                  : conv.type === 'marketplace' ? 'Marketplace chat' : conv.type === 'request' ? 'Request chat' : 'Direct message'}
+              </span>
+            </div>
           </div>
 
           {/* Tag badge */}
@@ -785,6 +860,88 @@ function ChatScreen({
           </div>
         </div>
       )}
+
+      {/* Members bottom sheet */}
+      <AnimatePresence>
+        {showMembers && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMembers(false)}
+              style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)', zIndex: 20 }}
+            />
+            {/* Sheet */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                background: CARD, borderRadius: '20px 20px 0 0',
+                zIndex: 21, maxHeight: '70%', display: 'flex', flexDirection: 'column',
+              }}
+            >
+              {/* Handle */}
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 4px' }}>
+                <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'rgba(60,60,67,0.18)' }} />
+              </div>
+
+              {/* Title */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 20px 14px' }}>
+                <div>
+                  <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>{conv.name}</div>
+                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500, marginTop: '2px' }}>{members.length} members</div>
+                </div>
+                <button
+                  onClick={() => setShowMembers(false)}
+                  style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(120,120,128,0.12)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <X size={16} color={MUTED} />
+                </button>
+              </div>
+
+              {/* Members list */}
+              <div className="no-scrollbar" style={{ overflowY: 'auto', padding: '0 20px 32px', flex: 1 }}>
+                {members.map((m, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '10px 0',
+                      borderBottom: i < members.length - 1 ? `0.5px solid rgba(60,60,67,0.10)` : 'none',
+                    }}
+                  >
+                    <div style={{
+                      width: '40px', height: '40px', borderRadius: '50%', background: m.avatarBg,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '13px', fontWeight: 700, color: 'white', flexShrink: 0,
+                    }}>
+                      {m.avatar}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{m.name}</span>
+                    </div>
+                    {m.role && (
+                      <span style={{
+                        fontSize: '11px', fontWeight: 700, padding: '3px 8px',
+                        borderRadius: '8px',
+                        background: m.role === 'Admin' ? '#FFF0EC' : 'rgba(120,120,128,0.1)',
+                        color: m.role === 'Admin' ? PRIMARY : MUTED,
+                      }}>
+                        {m.role}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

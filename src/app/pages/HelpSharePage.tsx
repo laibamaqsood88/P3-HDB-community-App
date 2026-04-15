@@ -1382,7 +1382,7 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
           <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. IKEA, Samsung" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
 
-        <FormField label="Collection Address">
+        <FormField label="Collection Location">
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '14px 16px', borderRadius: '12px', border: 'none', background: 'rgba(120,120,128,0.1)' }}>
             <MapPin size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '2px' }} />
             <textarea
@@ -1536,8 +1536,7 @@ function ServicePostScreen({ onBack, onPost }: any) {
         </FormField>
 
         <FormField label="Service Location">
-          <CollectionPointMap distanceText={serviceLocation || 'Bishan-AMK Estate'} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '12px', border: 'none', background: 'rgba(120,120,128,0.1)', marginTop: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '12px', border: 'none', background: 'rgba(120,120,128,0.1)' }}>
             <MapPin size={16} color={MUTED} style={{ flexShrink: 0 }} />
             <input value={serviceLocation} onChange={e => setServiceLocation(e.target.value)} placeholder="e.g. Bishan-AMK Estate, your block" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
           </div>
