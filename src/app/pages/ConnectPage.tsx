@@ -506,7 +506,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                   <div style={{ height: '140px', position: 'relative' }}>
                     <img src={group.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '8px', background: group.categoryBg, color: group.categoryColor, fontSize: '11px', fontWeight: 700 }}>
-                      {group.emoji} {group.category}
+                      {group.category}
                     </div>
                     {isJoined && (
                       <div style={{ position: 'absolute', top: '10px', right: '10px', padding: '4px 10px', borderRadius: '8px', background: PRIMARY, fontSize: '11px', fontWeight: 700, color: 'white' }}>

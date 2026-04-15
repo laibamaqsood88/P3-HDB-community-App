@@ -766,6 +766,35 @@ function StepSpokenLanguage({
             )}
           </motion.button>
 
+          {/* Show selected other-language chips when section is collapsed */}
+          {otherChips.length > 0 && !showOthers && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+              {otherChips.map(chip => (
+                <motion.span
+                  key={chip}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    padding: '5px 10px', borderRadius: '20px',
+                    background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
+                    color: PRIMARY, fontSize: '13px', fontWeight: 700,
+                  }}
+                >
+                  {chip}
+                  <button
+                    onClick={() => onToggle(chip)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: PRIMARY }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </motion.span>
+              ))}
+            </div>
+          )}
+
           {/* Others: search for additional languages */}
           <AnimatePresence initial={false}>
             {showOthers && (

@@ -383,19 +383,6 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
           </button>
         </div>
 
-        {/* ---- Settings (separate grouped card) ---- */}
-        <div style={{ background: CARD, borderRadius: '14px', margin: '16px 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          <button
-            onClick={() => setActiveSection('settings')}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}
-          >
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Settings size={16} color={TEXT2} />
-            </div>
-            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left', fontFamily: 'inherit' }}>Settings</span>
-            <ChevronRight size={16} color={MUTED} />
-          </button>
-        </div>
 
       </div>
 

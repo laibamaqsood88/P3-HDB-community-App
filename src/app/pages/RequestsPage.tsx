@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Plus, X, SlidersHorizontal, MapPin, MessageCircle, Heart,
-  ChevronDown, Check, Send, Search, Lock,
+  ChevronDown, Check, Send, Search, Lock, Bookmark, Star, ChevronRight, ShieldCheck,
+  Camera, Monitor,
   Home as HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake,
   ShoppingBag, Search as SearchIcon, ClipboardList, CheckCircle,
 } from 'lucide-react';
@@ -17,7 +18,7 @@ const TEXT2 = '#636366';
 const MUTED = '#8E8E93';
 const BORDER = 'rgba(60,60,67,0.12)';
 
-type RequestScreen = 'feed' | 'detail' | 'post' | 'chat';
+type RequestScreen = 'feed' | 'detail' | 'post' | 'chat' | 'neighbour-profile';
 interface NavFrame { screen: RequestScreen; params?: any; }
 
 const REQUEST_CATEGORIES = ['Home Help', 'Errands', 'Repairs', 'Moving', 'Learning', 'Community', 'Items Needed', 'Lost Items'];
@@ -46,19 +47,25 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 const POSTER_AVATARS = [
-  { name: 'Sarah T.', color: '#8B5CF6', initials: 'ST' },
-  { name: 'Ahmad K.', color: '#3B82F6', initials: 'AK' },
-  { name: 'Mei Lin', color: '#F97316', initials: 'ML' },
-  { name: 'Ravi S.', color: '#22C55E', initials: 'RS' },
-  { name: 'Jennifer L.', color: '#EC4899', initials: 'JL' },
+  { name: 'Sarah T.', color: '#8B5CF6', initials: 'ST', rating: 4.8, reviews: 12 },
+  { name: 'Ahmad K.', color: '#3B82F6', initials: 'AK', rating: 4.5, reviews: 8 },
+  { name: 'Mei Lin', color: '#F97316', initials: 'ML', rating: 4.9, reviews: 21 },
+  { name: 'Ravi S.', color: '#22C55E', initials: 'RS', rating: 4.7, reviews: 5 },
+  { name: 'Jennifer L.', color: '#EC4899', initials: 'JL', rating: 4.6, reviews: 9 },
+];
+
+const MOCK_REVIEWS = [
+  { id: 1, reviewer: 'Neighbour A', rating: 5, comment: 'Very helpful and responsive! Would definitely reach out again.', date: '2 weeks ago', avatarColor: '#8B5CF6' },
+  { id: 2, reviewer: 'Neighbour B', rating: 4, comment: 'Good neighbour, easy to coordinate with. Smooth experience.', date: '1 month ago', avatarColor: '#06B6D4' },
+  { id: 3, reviewer: 'Neighbour C', rating: 5, comment: 'Great attitude, very accommodating. Highly recommended!', date: '3 weeks ago', avatarColor: '#F97316' },
 ];
 
 const INITIAL_REQUESTS = [
-  { id: 1, title: 'Need someone to water my plants', category: 'Home Help', type: 'Free Request', description: 'Need someone to water my 4 potted plants while I\'m away travelling. Easy — just water once every 2 days. Plants are by the window sill.', expiresOn: '25 Apr 2026', verified: true, poster: POSTER_AVATARS[0], collectionPoint: 'Blk 445, Level 5, #05-22' },
-  { id: 2, title: 'Help moving sofa to void deck', category: 'Moving', type: 'Paid Request', description: 'Need a hand moving a sofa from Level 8 to ground floor void deck for disposal. Only takes 30 mins with 2 people. Will pay $20 for the help.', expiresOn: '20 Apr 2026', verified: true, poster: POSTER_AVATARS[1], collectionPoint: 'Blk 448, Void Deck' },
-  { id: 3, title: 'Looking for P5 Math assessment books', category: 'Items Needed', type: 'Borrow', description: 'My daughter is in P5 and we are looking for any spare Math or English assessment books. Happy to borrow for 2 weeks and return in good condition.', expiresOn: '30 Apr 2026', verified: true, poster: POSTER_AVATARS[2], collectionPoint: 'Blk 451, Level 3 Corridor' },
-  { id: 4, title: 'Lost: Orange tabby cat near Blk 443', category: 'Lost Items', type: 'Free Request', description: 'Lost my orange tabby cat Milo near Blk 443 last Sunday evening. Very friendly, wearing a blue collar with a bell. Please contact if spotted!', expiresOn: '28 Apr 2026', verified: true, poster: POSTER_AVATARS[3], collectionPoint: 'Blk 443 Area' },
-  { id: 5, title: 'Need help fixing leaking kitchen tap', category: 'Repairs', type: 'Paid Request', description: 'Kitchen tap has been dripping for a week. Looking for someone handy who can fix it. Will pay for parts and a small appreciation fee.', expiresOn: '22 Apr 2026', verified: true, poster: POSTER_AVATARS[4], collectionPoint: 'Blk 445, Level 8, #08-11' },
+  { id: 1, title: 'Need someone to water my plants', category: 'Home Help', type: 'Free Request', description: 'Need someone to water my 4 potted plants while I\'m away travelling. Easy — just water once every 2 days. Plants are by the window sill.', expiresOn: '25 Apr 2026', postedAgo: '2 days ago', distance: '0.3 km away', image: 'https://images.unsplash.com/photo-1599598425947-5202edd56fde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[0], collectionPoint: 'Blk 445, Level 5, #05-22' },
+  { id: 2, title: 'Help moving sofa to void deck', category: 'Moving', type: 'Paid Request', description: 'Need a hand moving a sofa from Level 8 to ground floor void deck for disposal. Only takes 30 mins with 2 people. Will pay $20 for the help.', expiresOn: '20 Apr 2026', postedAgo: '5 hours ago', distance: '0.8 km away', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[1], collectionPoint: 'Blk 448, Void Deck' },
+  { id: 3, title: 'Looking for P5 Math assessment books', category: 'Items Needed', type: 'Borrow', description: 'My daughter is in P5 and we are looking for any spare Math or English assessment books. Happy to borrow for 2 weeks and return in good condition.', expiresOn: '30 Apr 2026', postedAgo: '1 day ago', distance: '1.2 km away', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[2], collectionPoint: 'Blk 451, Level 3 Corridor' },
+  { id: 4, title: 'Lost: Orange tabby cat near Blk 443', category: 'Lost Items', type: 'Free Request', description: 'Lost my orange tabby cat Milo near Blk 443 last Sunday evening. Very friendly, wearing a blue collar with a bell. Please contact if spotted!', expiresOn: '28 Apr 2026', postedAgo: '3 days ago', distance: '0.5 km away', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[3], collectionPoint: 'Blk 443 Area' },
+  { id: 5, title: 'Need help fixing leaking kitchen tap', category: 'Repairs', type: 'Paid Request', description: 'Kitchen tap has been dripping for a week. Looking for someone handy who can fix it. Will pay for parts and a small appreciation fee.', expiresOn: '22 Apr 2026', postedAgo: '4 hours ago', distance: '0.7 km away', image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[4], collectionPoint: 'Blk 445, Level 8, #08-11' },
 ];
 
 export { INITIAL_REQUESTS as REQUESTS_DATA, CAT_EMOJIS as REQUESTS_CAT_EMOJIS };
@@ -104,41 +111,75 @@ function PosterAvatar({ poster, size = 34 }: { poster: any; size?: number }) {
   );
 }
 
+// ---- Star Rating ----
+function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
+  return (
+    <div style={{ display: 'flex', gap: '2px' }}>
+      {Array.from({ length: max }).map((_, i) => (
+        <Star key={i} size={12} color={i < rating ? '#FF9500' : BORDER} fill={i < rating ? '#FF9500' : 'none'} />
+      ))}
+    </div>
+  );
+}
+
+// ---- Save Button ----
+function SaveButton({ itemId, savedItems, onSaveToggle, size = 14, style: extraStyle = {} }: { itemId: number; savedItems: number[]; onSaveToggle: (id: number) => void; size?: number; style?: React.CSSProperties }) {
+  const saved = savedItems.includes(itemId);
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); onSaveToggle(itemId); toast.success(saved ? 'Removed from saved' : 'Request saved'); }}
+      style={{ width: '30px', height: '30px', borderRadius: '50%', background: saved ? '#FFF0EC' : 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 1px 4px rgba(0,0,0,0.12)', ...extraStyle }}
+    >
+      <Bookmark size={size} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
+    </button>
+  );
+}
+
 // ---- Request Card ----
-function RequestCard({ r, onClick }: { r: any; onClick: () => void }) {
+function RequestCard({ r, savedItems, onSaveToggle, onClick }: { r: any; savedItems: number[]; onSaveToggle: (id: number) => void; onClick: () => void }) {
   const typeStyle = TYPE_COLORS[r.type] || { bg: BG, text: TEXT2 };
-  const CatIcon = CAT_ICON_MAP[r.category] || ClipboardList;
   return (
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={onClick}
       style={{
-        background: CARD, borderRadius: '14px', padding: '14px 16px',
+        background: CARD, borderRadius: '14px', overflow: 'hidden',
         boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)',
-        cursor: 'pointer', marginBottom: '10px',
+        cursor: 'pointer', marginBottom: '10px', display: 'flex', flexDirection: 'row', height: '130px',
       }}
     >
-      {/* Icon + content row */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <CatIcon size={20} color={PRIMARY} />
+      {/* Left image */}
+      <div style={{ width: '110px', flexShrink: 0, position: 'relative', background: BG, overflow: 'hidden' }}>
+        {r.image ? (
+          <img src={r.image} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ClipboardList size={32} color={MUTED} />
+          </div>
+        )}
+      </div>
+
+      {/* Right content */}
+      <div style={{ flex: 1, minWidth: 0, padding: '10px 12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Top row: type badge + distance + save */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
+            <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, background: typeStyle.bg, color: typeStyle.text, flexShrink: 0 }}>{r.type}</span>
+            <div style={{ flex: 1 }} />
+            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500, whiteSpace: 'nowrap' }}>{r.distance}</span>
+            <SaveButton itemId={r.id} savedItems={savedItems} onSaveToggle={onSaveToggle} />
+          </div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, lineHeight: '1.35', marginBottom: '4px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{r.title}</div>
+          <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.45', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>{r.description}</div>
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Type badge row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px', flexWrap: 'wrap' }}>
-            <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, background: typeStyle.bg, color: typeStyle.text }}>{r.type}</span>
+
+        {/* Bottom row: poster + time ago */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: r.poster.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: '8px', fontWeight: 800, color: 'white' }}>{r.poster.initials}</span>
           </div>
-          <div style={{ fontSize: '15px', fontWeight: 600, color: TEXT, marginBottom: '5px', lineHeight: '1.35' }}>{r.title}</div>
-          <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5', marginBottom: '10px' }}>{r.description.slice(0, 80)}...</div>
-          {/* Poster row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: r.poster.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{r.poster.initials}</span>
-            </div>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT }}>{r.poster.name}</span>
-            {r.verified && <CheckCircle size={12} color="#34C759" />}
-            <span style={{ marginLeft: 'auto', fontSize: '12px', color: MUTED }}>Expires {r.expiresOn}</span>
-          </div>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>{r.poster.name}</span>
+          <span style={{ marginLeft: 'auto', fontSize: '11px', color: MUTED }}>{r.postedAgo}</span>
         </div>
       </div>
     </motion.div>
@@ -236,7 +277,7 @@ function FilterPanel({ activeCategories, activeTypes, activeDistance, sort, onCa
 }
 
 // ---- Requests Feed ----
-function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; onSelectRequest: (r: any) => void; onPost: () => void }) {
+function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, onPost }: { requests: any[]; savedRequests: number[]; onSaveToggle: (id: number) => void; onSelectRequest: (r: any) => void; onPost: () => void }) {
   const [filterVisible, setFilterVisible] = useState(false);
   const [activeCategories, setActiveCategories] = useState<string[]>([]);
   const [activeTypes, setActiveTypes] = useState<string[]>([]);
@@ -317,7 +358,7 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No requests match your filters</div>
         ) : (
-          filtered.map(r => <RequestCard key={r.id} r={r} onClick={() => onSelectRequest(r)} />)
+          filtered.map(r => <RequestCard key={r.id} r={r} savedItems={savedRequests} onSaveToggle={onSaveToggle} onClick={() => onSelectRequest(r)} />)
         )}
         <div style={{ height: '100px' }} />
 
@@ -361,102 +402,217 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
 }
 
 // ---- Request Detail ----
-function RequestDetail({ request, onBack, onChat }: any) {
-  const [saved, setSaved] = useState(false);
+function RequestDetail({ request, savedItems, onSaveToggle, onBack, onChat, onViewProfile }: any) {
   if (!request) return null;
   const typeStyle = TYPE_COLORS[request.type] || { bg: BG, text: TEXT2 };
-  const CatIcon = CAT_ICON_MAP[request.category] || ClipboardList;
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      {/* Header */}
-      <div style={{ background: CARD, padding: '52px 16px 18px', borderBottom: `0.5px solid ${BORDER}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
-          <button
-            onClick={onBack}
-            style={{ width: '38px', height: '38px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-          >
+      <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
+        {/* Full-width image header */}
+        <div style={{ position: 'relative', width: '100%', height: '260px', background: BG }}>
+          {request.image ? (
+            <img src={request.image} alt={request.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: request.poster?.color || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ClipboardList size={64} color="white" />
+            </div>
+          )}
+          <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
-          <div style={{ flex: 1 }} />
-          <button
-            onClick={() => { setSaved(s => !s); toast.success(saved ? 'Removed from saved' : 'Saved!'); }}
-            style={{ width: '38px', height: '38px', borderRadius: '50%', background: saved ? '#FFF0EC' : BG, border: `1.5px solid ${saved ? '#FFD8CC' : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            <Heart size={16} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
-          </button>
+          <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
+            <SaveButton itemId={request.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', backdropFilter: 'blur(8px)' }} />
+          </div>
         </div>
 
-        {/* Poster row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-          <PosterAvatar poster={request.poster} size={48} />
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-              <span style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{request.poster.name}</span>
-              {request.verified && <CheckCircle size={14} color="#34C759" />}
+        <div style={{ padding: '20px 20px 0' }}>
+          {/* Title */}
+          <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{request.title}</div>
+          {/* Type badge */}
+          <div style={{ display: 'inline-block', padding: '5px 14px', borderRadius: '10px', fontSize: '15px', fontWeight: 700, background: typeStyle.bg, color: typeStyle.text, marginBottom: '20px' }}>{request.type}</div>
+
+          {/* Details */}
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
+            <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '0 16px' }}>
+              {[
+                { label: 'Type of Request', value: request.type },
+                { label: 'Date Posted', value: request.postedAgo },
+                { label: 'Category', value: request.category },
+              ].map((row, i, arr) => (
+                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < arr.length - 1 ? `0.5px solid rgba(60,60,67,0.10)` : 'none' }}>
+                  <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{row.label}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT, textAlign: 'right', maxWidth: '60%' }}>{row.value}</span>
+                </div>
+              ))}
             </div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Bishan-AMK Estate · Verified Resident</div>
           </div>
-          <span style={{ padding: '5px 12px', borderRadius: '8px', fontSize: '11px', background: typeStyle.bg, color: typeStyle.text, fontWeight: 700 }}>{request.type}</span>
-        </div>
 
-        {/* Category badge */}
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', borderRadius: '8px', fontSize: '12px', background: '#FFF0EC', color: PRIMARY, fontWeight: 700 }}>
-          <CatIcon size={13} color={PRIMARY} />
-          {request.category}
+          {/* Description */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Description</div>
+            <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px' }}>
+              <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{request.description}</div>
+            </div>
+          </div>
+
+          {/* Location */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>Location</div>
+              <div style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{request.distance}</div>
+            </div>
+            <div style={{ borderRadius: '14px', overflow: 'hidden' }}>
+              <CollectionPointMap address={request.collectionPoint} />
+            </div>
+          </div>
+
+          {/* About the Neighbour */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
+            <div
+              onClick={() => onViewProfile?.({ poster: request.poster, request })}
+              style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
+            >
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: request.poster?.color || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{request.poster?.initials || 'N'}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>{request.poster?.name || 'Neighbour'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                  <Star size={13} color="#FF9500" fill="#FF9500" />
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{request.poster?.rating ?? '4.8'}</span>
+                  <span style={{ fontSize: '12px', color: MUTED }}>· {request.poster?.reviews ?? 0} reviews</span>
+                </div>
+              </div>
+              <ChevronRight size={16} color={MUTED} />
+            </div>
+          </div>
         </div>
+        <div style={{ height: '100px' }} />
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 20px' }}>
-        {/* Title */}
-        <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, marginBottom: '12px', lineHeight: '1.3' }}>{request.title}</div>
-
-        {/* Description card */}
-        <div style={{ background: CARD, borderRadius: '14px', padding: '16px', marginBottom: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Description</div>
-          <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{request.description}</div>
-        </div>
-
-        {/* Expiry */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '13px 16px', background: '#FEF2F2', borderRadius: '14px', marginBottom: '14px' }}>
-          <span style={{ fontSize: '16px' }}>⏰</span>
-          <span style={{ fontSize: '13px', color: '#EF4444', fontWeight: 600 }}>Expires on {request.expiresOn}</span>
-        </div>
-
-        {/* Map card */}
-        <div style={{ borderRadius: '14px', overflow: 'hidden', marginBottom: '14px' }}>
-          <CollectionPointMap address={request.collectionPoint} />
-        </div>
-
-        {/* Privacy note */}
-        <div style={{ padding: '14px 16px', background: '#FFF0EC', borderRadius: '14px', border: '1px solid #FFD8CC', marginBottom: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: PRIMARY, fontWeight: 500 }}>
-            <Lock size={16} color={PRIMARY} strokeWidth={2} style={{ flexShrink: 0, marginTop: '2px' }} />
-            <span>Contact details only shared after both parties confirm. No obligation to proceed.</span>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ padding: '12px 16px 32px', borderTop: `0.5px solid ${BORDER}`, background: CARD }}>
+      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BORDER}`, background: CARD, flexShrink: 0 }}>
         <button
           onClick={onChat}
-          style={{
-            width: '100%', padding: '16px', borderRadius: '14px',
-            background: PRIMARY, border: 'none', color: 'white',
-            fontWeight: 700, fontSize: '16px', cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(255,107,71,0.35)', marginBottom: '10px',
-            fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-          }}
+          style={{ width: '100%', height: '50px', borderRadius: '14px', background: PRIMARY, border: 'none', color: 'white', fontWeight: 700, fontSize: '16px', cursor: 'pointer', fontFamily: 'inherit' }}
         >
-          <MessageCircle size={18} color="white" /> Chat with Neighbour
-        </button>
-        <button onClick={onBack} style={{ width: '100%', padding: '12px', borderRadius: '14px', background: 'none', border: 'none', cursor: 'pointer', color: MUTED, fontSize: '14px', fontFamily: 'inherit' }}>
-          Go Back
+          Chat
         </button>
       </div>
     </div>
   );
 }
+
+// ---- Request Neighbour Profile ----
+function RequestNeighbourProfile({ poster, request, onBack }: { poster: any; request: any; onBack: () => void }) {
+  const name: string = poster?.name || 'Neighbour';
+  const avatarColor: string = poster?.color || PRIMARY;
+  const rating: number = poster?.rating ?? 4.8;
+  const reviews: number = poster?.reviews ?? 0;
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <ChevronLeft size={20} color={TEXT} />
+        </button>
+        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Neighbour Profile</span>
+      </div>
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
+        {/* Avatar + name card */}
+        <div style={{ background: CARD, borderRadius: '16px', border: `0.5px solid ${BORDER}`, padding: '24px 20px', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '28px', fontWeight: 800, color: 'white' }}>{name[0]}</span>
+          </div>
+          <div style={{ fontSize: '19px', fontWeight: 800, color: TEXT }}>{name}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F0FDF4', borderRadius: '20px', padding: '3px 10px' }}>
+              <ShieldCheck size={13} color="#16A34A" />
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#16A34A' }}>Verified Resident</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F5F5F5', borderRadius: '20px', padding: '3px 10px' }}>
+              <MapPin size={13} color={MUTED} />
+              <span style={{ fontSize: '12px', fontWeight: 500, color: TEXT2 }}>Bishan-AMK</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <StarRating rating={Math.round(rating)} />
+            <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{rating.toFixed(1)}</span>
+            <span style={{ fontSize: '13px', color: MUTED }}>({reviews} reviews)</span>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px 20px', marginBottom: '16px', display: 'flex', justifyContent: 'space-around' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: PRIMARY }}>{reviews}</div>
+            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Requests</div>
+          </div>
+          <div style={{ width: '1px', background: BORDER }} />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{rating.toFixed(1)}</div>
+            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Avg Rating</div>
+          </div>
+          <div style={{ width: '1px', background: BORDER }} />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{reviews}</div>
+            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Reviews</div>
+          </div>
+        </div>
+
+        {/* Current request */}
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Active Request</div>
+          <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {request?.image && (
+              <img src={request.image} alt={request.title} style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+            )}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{request?.title}</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: TYPE_COLORS[request?.type]?.text || MUTED }}>{request?.type}</div>
+              <div style={{ fontSize: '12px', color: MUTED }}>{request?.distance}</div>
+            </div>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: PRIMARY, background: '#FFF0EC', borderRadius: '8px', padding: '3px 8px', flexShrink: 0 }}>Viewing</span>
+          </div>
+        </div>
+
+        {/* Reviews */}
+        <div>
+          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Reviews</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {MOCK_REVIEWS.map(r => (
+              <div key={r.id} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: r.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>{r.reviewer[0]}</span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{r.reviewer}</div>
+                    <div style={{ fontSize: '12px', color: MUTED }}>{r.date}</div>
+                  </div>
+                  <StarRating rating={r.rating} />
+                </div>
+                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5' }}>{r.comment}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const REQUEST_MOCK_PHOTOS = [
+  'https://images.unsplash.com/photo-1599598425947-5202edd56fde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+  'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+  'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+  'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+  'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+  'https://images.unsplash.com/photo-1519689680058-324335c77eba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+];
 
 // ---- Post Request Screen ----
 function PostRequestScreen({ onBack, onPost }: any) {
@@ -467,10 +623,13 @@ function PostRequestScreen({ onBack, onPost }: any) {
   const [expiryDate, setExpiryDate] = useState('');
   const [collectionPoint, setCollectionPoint] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [showPickerSheet, setShowPickerSheet] = useState(false);
 
   const MAX_CHARS = 280;
-  const SUGGESTED = ['Home Help', 'Errands', 'Items Needed'];
   const valid = title.trim() && category && requestType && description.trim() && expiryDate;
+  const TILE_SIZE = '100px';
+  const removePhoto = (idx: number) => setPhotos(p => p.filter((_, i) => i !== idx));
 
   const inputStyle = {
     width: '100%',
@@ -495,7 +654,29 @@ function PostRequestScreen({ onBack, onPost }: any) {
         <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Ask your neighbours for help</div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 20px', position: 'relative' }}>
+        <FormField label="Images">
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {photos.map((p, i) => (
+              <div key={i} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '12px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+                <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <button onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '5px', right: '5px', width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <X size={11} color="white" />
+                </button>
+              </div>
+            ))}
+            {photos.length < 6 && (
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setShowPickerSheet(true)}
+                style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '12px', border: '1.5px dashed rgba(60,60,67,0.2)', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '4px', flexShrink: 0 }}
+              >
+                <Plus size={20} color={MUTED} />
+              </motion.button>
+            )}
+          </div>
+        </FormField>
+
         <FormField label="Title">
           <input
             value={title}
@@ -536,24 +717,6 @@ function PostRequestScreen({ onBack, onPost }: any) {
               </div>
             )}
           </div>
-          <div style={{ marginTop: '10px' }}>
-            <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '7px' }}>Suggested</div>
-            <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap' }}>
-              {SUGGESTED.map(s => {
-                const CatIcon = CAT_ICON_MAP[s] || ClipboardList;
-                return (
-                  <button
-                    key={s}
-                    onClick={() => setCategory(s)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${category === s ? PRIMARY : BORDER}`, background: category === s ? '#FFF0EC' : CARD, color: category === s ? PRIMARY : TEXT2, fontWeight: category === s ? 700 : 500 }}
-                  >
-                    <CatIcon size={12} color={category === s ? PRIMARY : MUTED} />
-                    {s}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
         </FormField>
 
         <FormField label="Type of Request">
@@ -584,12 +747,15 @@ function PostRequestScreen({ onBack, onPost }: any) {
         </FormField>
 
         <FormField label="Location">
-          <input
-            value={collectionPoint}
-            onChange={e => setCollectionPoint(e.target.value)}
-            placeholder="Location of request"
-            style={inputStyle}
-          />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '14px 16px', borderRadius: '12px', background: 'rgba(120,120,128,0.1)' }}>
+            <MapPin size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '2px' }} />
+            <input
+              value={collectionPoint}
+              onChange={e => setCollectionPoint(e.target.value)}
+              placeholder="Location of request"
+              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+            />
+          </div>
         </FormField>
 
         <FormField label="Post expires on">
@@ -606,7 +772,7 @@ function PostRequestScreen({ onBack, onPost }: any) {
       <div style={{ padding: '12px 16px 32px', borderTop: `0.5px solid ${BORDER}`, background: CARD }}>
         <button
           onClick={() => {
-            if (valid) onPost({ title, category, requestType, description, collectionPoint, expiryDate });
+            if (valid) onPost({ title, category, requestType, description, collectionPoint, expiryDate, image: photos[0] || null });
           }}
           disabled={!valid}
           style={{
@@ -621,6 +787,52 @@ function PostRequestScreen({ onBack, onPost }: any) {
           Post Request
         </button>
       </div>
+
+      {/* Photo Picker Sheet */}
+      <AnimatePresence>
+        {showPickerSheet && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setShowPickerSheet(false)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+          >
+            <motion.div
+              initial={{ y: 300 }} animate={{ y: 0 }} exit={{ y: 300 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              style={{ background: CARD, borderRadius: '20px 20px 0 0', padding: '20px 20px 40px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+            >
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+              <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT, marginBottom: '16px' }}>Add Photo</div>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                <button
+                  onClick={() => { setPhotos(p => [...p, REQUEST_MOCK_PHOTOS[Math.floor(Math.random() * REQUEST_MOCK_PHOTOS.length)]]); setShowPickerSheet(false); }}
+                  style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#FFF0EC', border: '1.5px solid #FFD8CC', cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  <Camera size={20} color={PRIMARY} />
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: PRIMARY }}>Take Photo</span>
+                </button>
+                <button
+                  onClick={() => { setPhotos(p => [...p, REQUEST_MOCK_PHOTOS[Math.floor(Math.random() * REQUEST_MOCK_PHOTOS.length)]]); setShowPickerSheet(false); }}
+                  style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#EDE9FE', border: '1.5px solid #DDD6FE', cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  <Monitor size={20} color="#7C3AED" />
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#7C3AED' }}>Library</span>
+                </button>
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px' }}>Recent Photos</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', overflowY: 'auto' }}>
+                {REQUEST_MOCK_PHOTOS.map((photo, i) => (
+                  <motion.div key={i} whileTap={{ scale: 0.95 }} onClick={() => { setPhotos(p => [...p, photo]); setShowPickerSheet(false); }}
+                    style={{ aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer' }}>
+                    <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -711,6 +923,8 @@ export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChang
     : [{ screen: 'feed' }];
   const [navStack, setNavStack] = useState<NavFrame[]>(initialStack);
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
+  const [savedRequests, setSavedRequests] = useState<number[]>([]);
+  const toggleSave = (id: number) => setSavedRequests(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: RequestScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
@@ -723,9 +937,11 @@ export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChang
   const renderScreen = () => {
     switch (current.screen) {
       case 'feed':
-        return <RequestsFeed requests={requests} onSelectRequest={(r: any) => goTo('detail', { request: r })} onPost={() => goTo('post')} />;
+        return <RequestsFeed requests={requests} savedRequests={savedRequests} onSaveToggle={toggleSave} onSelectRequest={(r: any) => goTo('detail', { request: r })} onPost={() => goTo('post')} />;
       case 'detail':
-        return <RequestDetail request={current.params?.request} onBack={goBack} onChat={() => goTo('chat', current.params)} />;
+        return <RequestDetail request={current.params?.request} savedItems={savedRequests} onSaveToggle={toggleSave} onBack={goBack} onChat={() => goTo('chat', current.params)} onViewProfile={({ poster, request }: any) => goTo('neighbour-profile', { poster, request })} />;
+      case 'neighbour-profile':
+        return <RequestNeighbourProfile poster={current.params?.poster} request={current.params?.request} onBack={goBack} />;
       case 'post':
         return (
           <PostRequestScreen
@@ -738,12 +954,14 @@ export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChang
                 type: data.requestType,
                 description: data.description,
                 expiresOn: new Date(data.expiryDate).toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
+                postedAgo: 'Just now',
+                distance: '0.1 km away',
+                image: data.image || null,
                 verified: true,
                 poster: POSTER_AVATARS[0],
                 collectionPoint: data.collectionPoint || 'Bishan-AMK Estate',
               };
               setRequests(prev => [newRequest, ...prev]);
-              // Notify parent for profile posts
               onAddPost?.({
                 id: Date.now(),
                 type: 'request',
