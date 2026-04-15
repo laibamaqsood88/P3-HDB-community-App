@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-15
+2026-04-15 (Session 2)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -43,20 +43,29 @@ src/
 
 ## Design Tokens (used in every file)
 ```
-BG      = '#F5F4F0'   // beige background
+BG      = '#F7F7F7'   // light gray background (HelpSharePage uses '#F7F7F7'; others use '#F5F4F0')
 CARD    = '#FFFFFF'   // white cards
 PRIMARY = '#FF6B47'   // orange accent
-TEXT    = '#0D0D0D'   // near-black
-TEXT2   = '#6B6B72'   // medium gray
-MUTED   = '#AEAEB2'   // light gray
-BORDER  = '#EDEDEC'   // light border
-Font: 'Nunito', sans-serif
+TEXT    = '#1C1C1E'   // near-black
+TEXT2   = '#636366'   // medium gray
+MUTED   = '#8E8E93'   // light gray
+BORDER  = 'rgba(60,60,67,0.12)'   // subtle border
+Font: system-ui / inherited
 ```
 
 ### Scrollbar Hiding
 Apply `className="no-scrollbar"` to any scrollable element to hide the scrollbar while keeping scroll functionality. Defined in `src/styles/theme.css`.
 
 ---
+
+## Bottom Nav (`App.tsx` + `BottomNav.tsx`)
+- Floating overlay at `position: absolute, bottom: 0, zIndex: 50`
+- Height: ~81px (24px safe area + ~57px pill); all main page scrollable areas use `paddingBottom: '100px'`
+- **Visible only on main/feed screens**: Home, Explore (all 3 sub-tabs), Marketplace (Items + Services), Requests (all sub-tabs), Messages (conversation list)
+- **Hidden on all detail/sub-pages**: item detail, service detail, neighbour profile, request detail, chat, group detail, etc.
+- Controlled via `showBottomNav` state in `App.tsx`; each tab page receives `onNavVisibilityChange?: (visible: boolean) => void` callback
+- `useEffect` in each page calls the callback when its internal screen changes; App.tsx resets to `true` when user taps a tab in BottomNav
+- Filter panels use `zIndex: 60/61` to appear above the nav bar
 
 ## Auth Flow (`App.tsx`)
 - `authScreen` state: `'login'` → `'signup'` → `'main'`
@@ -164,13 +173,46 @@ exploreInitialSubTab: 'events' | 'groups' | 'neighbours'
 
 ## Tab 3 — Marketplace (`HelpSharePage.tsx`)
 - Header: "Marketplace"
-- Two tabs: **Requests** | **Items & Services**
-- Search bar; filter chips on Items & Services: All | Items | Services
+- Two sub-tabs: **Items** | **Services** (toggle at top of feed)
+- Search bar + filter button (top-right); filter panel uses `zIndex: 61` to appear above bottom nav
 - Items in 2-column grid; Services in vertical list
-- Each detail page has: wishlist heart button, reviews section
-- Post flows: Request, List an Item, Offer a Service
-- Item IDs: 101–104 (items), 201–204 (services)
-- Props: `{ onAddPost, initialItemId?: number }` — `initialItemId` opens directly to item/service detail
+- **10 items** (IDs 101–110): IKEA Billy Bookshelf, Sharp Rice Cooker, Baby Stroller, Assorted Books, Standing Fan, Dining Table (4-seater), Yoga Mat, Laptop Bag, Kids Bicycle (20"), Potted Snake Plant
+- **10 services** (IDs 201–210): Dog Walking, Babysitting, Primary Math Tutoring, Elderly Companion, Home Cleaning, Basic Plumbing Repair, Grocery Errand Run, Secondary English Tutor, Cat Boarding, Furniture Assembly
+- Props: `{ onAddPost, initialItemId?: number, savedItems, onSaveToggle, onNavVisibilityChange }`
+- `initialItemId` opens directly to item/service detail
+- `mainFilter` state (`'Items' | 'Services'`) is lifted to `HelpSharePage` (not local to feed) so it persists when navigating back from detail screens
+
+### Item Detail Page
+- Hero photo scrolls with content (not sticky)
+- Location section: title "Location" with distance (e.g. "0.3 km away") aligned right on same line
+- Map shows `collectionAddress`; no label text under map
+- About the Neighbour card: tapping navigates to **Neighbour Profile page** (no more "coming soon" toast)
+
+### Service Detail Page
+- Hero photo scrolls with content (not sticky)
+- Location section: title "Location" with distance aligned right on same line; map footer shows `serviceAddress`
+- "Years experience" moved from About the Neighbour → Trust & Verification section
+- About the Neighbour card: tapping navigates to **Neighbour Profile page**
+- Back from service detail returns to Services sub-tab (not Items)
+
+### Neighbour Profile Page (`screen: 'neighbour-profile'`)
+- Reached by tapping "About the Neighbour" card on any item or service detail page
+- Shows: large avatar, name, Verified Resident badge, block location pill, star rating
+- Stats row: completed transactions/services, avg rating, reviews count
+- Active Listings / Services Offered: all listings by that neighbour (with "Viewing" tag on current item)
+- Reviews section: uses `MOCK_REVIEWS`
+- `HelpScreen` type includes `'neighbour-profile'`
+
+### NavStack screens
+```
+'feed' | 'item-detail' | 'service-detail' | 'neighbour-profile'
+| 'poster-notif' | 'mutual-confirm' | 'chat'
+| 'category-select' | 'item-post-photo' | 'item-post-form' | 'service-post' | 'post-success'
+```
+
+### Post flows
+- Category Select → Item: photo upload → post form → post-success (confetti)
+- Category Select → Service: service post form → post-success
 
 ---
 

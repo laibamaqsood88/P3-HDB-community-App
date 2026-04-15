@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Bookmark, Share2, X, Shield,
@@ -190,9 +190,10 @@ interface ExplorePageProps {
   userInterests?: string[];
   onAddConversation?: (conv: any) => void;
   onOpenDirectChat?: (conv: any) => void;
+  onNavVisibilityChange?: (visible: boolean) => void;
 }
 
-export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat }: ExplorePageProps) {
+export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat, onNavVisibilityChange }: ExplorePageProps) {
   const initialScreen: NavFrame = initialEventId
     ? { screen: 'detail', params: { event: EVENTS.find(e => e.id === initialEventId) || EVENTS[0] } }
     : { screen: 'feed' };
@@ -224,6 +225,11 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const current = navStack[navStack.length - 1];
   const goTo = (screen: EventScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
   const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
+
+  useEffect(() => {
+    const atRoot = current.screen === 'feed' || current.screen === 'filtered';
+    onNavVisibilityChange?.(atRoot);
+  }, [current.screen]);
 
   const activeFilterCount = Object.values(filters).flat().length;
 
@@ -371,7 +377,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
           {/* Events */}
           {activeSubTab === 'events' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 32px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }}>
               {filteredEvents.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
                   <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
@@ -470,7 +476,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+              style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
               onClick={() => setShowFilter(false)}
             >
               <motion.div
@@ -1010,7 +1016,7 @@ function NeighboursTab({
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }}>
         <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500, marginBottom: '12px' }}>
           {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} nearby
         </div>
@@ -1131,7 +1137,7 @@ function NeighboursTab({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
             onClick={onFilterClose}
           >
             <motion.div

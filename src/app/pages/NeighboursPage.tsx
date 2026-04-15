@@ -15,8 +15,9 @@ const BORDER = '#EDEDEC';
 type NeighbourScreen = 'feed' | 'tag-setup' | 'profile' | 'invite' | 'chat' | 'group-create' | 'group-space' | 'group-discovery';
 
 interface Neighbour {
-  id: number; sharedInterests: string[]; allInterests: string[];
-  sharedCount: number; proximity: string; verified: boolean; avatarColor: string;
+  id: number; name: string; avatarUrl: string;
+  sharedInterests: string[]; allInterests: string[];
+  sharedCount: number; proximity: string; distance: string; verified: boolean; avatarColor: string;
 }
 
 interface Group {
@@ -28,12 +29,12 @@ interface NavFrame { screen: NeighbourScreen; params?: any; }
 const ALL_INTERESTS = ['Running', 'Gardening', 'Board Games', 'Cooking', 'Reading', 'Cycling', 'Pets', 'Photography', 'Music', 'Fitness', 'Hiking', 'Yoga'];
 
 const NEIGHBOURS: Neighbour[] = [
-  { id: 1, sharedInterests: ['Running', 'Photography'], allInterests: ['Running', 'Photography', 'Cooking', 'Travel'], sharedCount: 2, proximity: 'Same Block', verified: true, avatarColor: '#8B5CF6' },
-  { id: 2, sharedInterests: ['Gardening', 'Cooking'], allInterests: ['Gardening', 'Cooking', 'Reading', 'Yoga'], sharedCount: 2, proximity: 'Nearby in Estate', verified: true, avatarColor: '#06B6D4' },
-  { id: 3, sharedInterests: ['Board Games', 'Cycling'], allInterests: ['Board Games', 'Cycling', 'Music', 'Photography'], sharedCount: 2, proximity: 'Same Block', verified: true, avatarColor: '#F97316' },
-  { id: 4, sharedInterests: ['Cooking'], allInterests: ['Cooking', 'Fitness', 'Pets', 'Hiking'], sharedCount: 1, proximity: 'Nearby in Estate', verified: true, avatarColor: '#22C55E' },
-  { id: 5, sharedInterests: ['Running', 'Fitness'], allInterests: ['Running', 'Fitness', 'Cycling', 'Reading'], sharedCount: 2, proximity: 'Same Floor', verified: true, avatarColor: '#EC4899' },
-  { id: 6, sharedInterests: ['Music'], allInterests: ['Music', 'Photography', 'Board Games', 'Cooking'], sharedCount: 1, proximity: 'Nearby in Estate', verified: true, avatarColor: '#EAB308' },
+  { id: 1, name: 'Alex Lim',    avatarUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop', sharedInterests: ['Running', 'Photography'], allInterests: ['Running', 'Photography', 'Cooking', 'Travel'],   sharedCount: 2, proximity: 'Blk 445', distance: '0.1 km', verified: true, avatarColor: '#8B5CF6' },
+  { id: 2, name: 'Priya Nair',  avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop', sharedInterests: ['Gardening', 'Cooking'], allInterests: ['Gardening', 'Cooking', 'Reading', 'Yoga'],         sharedCount: 2, proximity: 'Blk 447', distance: '0.3 km', verified: true, avatarColor: '#06B6D4' },
+  { id: 3, name: 'Wei Ming',    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop', sharedInterests: ['Board Games', 'Cycling'], allInterests: ['Board Games', 'Cycling', 'Music', 'Photography'], sharedCount: 2, proximity: 'Blk 445', distance: '0.1 km', verified: true, avatarColor: '#F97316' },
+  { id: 4, name: 'Siti Rahah',  avatarUrl: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=200&h=200&fit=crop', sharedInterests: ['Cooking'], allInterests: ['Cooking', 'Fitness', 'Pets', 'Hiking'],                       sharedCount: 1, proximity: 'Blk 449', distance: '0.5 km', verified: true, avatarColor: '#22C55E' },
+  { id: 5, name: 'Rajan Kumar', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop', sharedInterests: ['Running', 'Fitness'], allInterests: ['Running', 'Fitness', 'Cycling', 'Reading'],         sharedCount: 2, proximity: 'Blk 445', distance: '0.1 km', verified: true, avatarColor: '#EC4899' },
+  { id: 6, name: 'Hannah Lee',  avatarUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop', sharedInterests: ['Music'], allInterests: ['Music', 'Photography', 'Board Games', 'Cooking'],                sharedCount: 1, proximity: 'Blk 451', distance: '0.6 km', verified: true, avatarColor: '#EAB308' },
 ];
 
 const GROUPS: Group[] = [
@@ -334,94 +335,120 @@ function NeighboursFeed({ neighbours, activeFilter, myInterests, onFilterChange,
   );
 }
 
-// ---- Match Card (horizontal scroll) ----
+// ---- Match Card (horizontal scroll) — reference style ----
 function MatchCard({ neighbour: n, onTap }: { neighbour: Neighbour; onTap: () => void }) {
   const topInterest = n.sharedInterests[0];
-  const colors = topInterest ? (INTEREST_COLORS[topInterest] || { bg: '#FFF0EC', text: PRIMARY }) : { bg: '#F5F4F0', text: MUTED };
+  const colors = topInterest ? (INTEREST_COLORS[topInterest] || { bg: '#FFF0EC', text: PRIMARY }) : { bg: '#FFF0EC', text: PRIMARY };
 
   return (
     <motion.div
       whileTap={{ scale: 0.96 }}
       onClick={onTap}
-      style={{ flexShrink: 0, width: '148px', background: CARD, borderRadius: '22px', padding: '16px', boxShadow: '0 2px 14px rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '12px' }}
+      style={{
+        flexShrink: 0, width: '160px', background: CARD, borderRadius: '20px',
+        padding: '14px', boxShadow: '0 2px 14px rgba(0,0,0,0.07)', cursor: 'pointer',
+        display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative', overflow: 'visible',
+      }}
     >
-      {/* Avatar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: n.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: '19px', fontWeight: 800, color: 'white' }}>N{n.id}</span>
-        </div>
-        {n.verified && (
-          <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Shield size={11} color="#16A34A" />
-          </div>
-        )}
+      {/* Category tag — top-left sticker */}
+      <div style={{
+        position: 'absolute', top: '-10px', left: '10px',
+        padding: '4px 10px', borderRadius: '8px',
+        background: colors.bg, color: colors.text,
+        fontSize: '11px', fontWeight: 700,
+        transform: 'rotate(-1.5deg)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+        zIndex: 1,
+      }}>
+        {topInterest}
       </div>
-      {/* Name + proximity */}
-      <div>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>Neighbour #{n.id}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: MUTED, fontWeight: 500 }}>
-          <MapPin size={10} color={MUTED} strokeWidth={2} />
-          {n.proximity}
-        </div>
+
+      {/* Photo */}
+      <div style={{ width: '100%', height: '110px', borderRadius: '14px', overflow: 'hidden', background: n.avatarColor, marginTop: '6px' }}>
+        <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
-      {/* Shared interests chips */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-        {n.sharedInterests.slice(0, 2).map(i => {
-          const c = INTEREST_COLORS[i] || { bg: '#FFF0EC', text: PRIMARY };
-          return (
-            <span key={i} style={{ padding: '3px 8px', borderRadius: '8px', fontSize: '10px', fontWeight: 700, background: c.bg, color: c.text }}>
-              {i}
-            </span>
-          );
-        })}
+
+      {/* Name */}
+      <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, lineHeight: 1.2 }}>{n.name}</div>
+
+      {/* Location */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <MapPin size={11} color={MUTED} strokeWidth={2} />
+        <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{n.proximity} · {n.distance}</span>
       </div>
-      {/* Shared count */}
-      <div style={{ padding: '6px 10px', borderRadius: '10px', background: BG, textAlign: 'center' }}>
-        <span style={{ fontSize: '11px', fontWeight: 700, color: PRIMARY }}>
-          {n.sharedCount} in common
-        </span>
-      </div>
+
+      {/* Say Hello button */}
+      <button
+        onClick={e => { e.stopPropagation(); onTap(); }}
+        style={{
+          width: '100%', padding: '8px 0', borderRadius: '12px',
+          background: 'white', border: `1.5px solid ${PRIMARY}`,
+          color: TEXT, fontSize: '12px', fontWeight: 700,
+          cursor: 'pointer', fontFamily: 'inherit',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+        }}
+      >
+        👋 Say Hello
+      </button>
     </motion.div>
   );
 }
 
-// ---- Neighbour Card (vertical list) ----
+// ---- Neighbour Card (vertical list) — reference style ----
 function NeighbourCard({ neighbour: n, onTap }: { neighbour: Neighbour; onTap: () => void }) {
+  const topInterest = n.sharedInterests[0];
+  const colors = topInterest ? (INTEREST_COLORS[topInterest] || { bg: '#FFF0EC', text: PRIMARY }) : { bg: '#FFF0EC', text: PRIMARY };
+
   return (
-    <motion.div whileTap={{ scale: 0.97 }} onClick={onTap} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', cursor: 'pointer' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <div style={{ width: '50px', height: '50px', borderRadius: '16px', background: n.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <span style={{ fontSize: '19px', fontWeight: 800, color: 'white' }}>N{n.id}</span>
+    <motion.div
+      whileTap={{ scale: 0.97 }}
+      onClick={onTap}
+      style={{
+        background: CARD, borderRadius: '20px', padding: '16px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'pointer',
+        position: 'relative', overflow: 'visible',
+      }}
+    >
+      {/* Category sticker tag */}
+      <div style={{
+        position: 'absolute', top: '-10px', left: '14px',
+        padding: '4px 12px', borderRadius: '8px',
+        background: colors.bg, color: colors.text,
+        fontSize: '11px', fontWeight: 700,
+        transform: 'rotate(-1.5deg)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+        zIndex: 1,
+      }}>
+        {topInterest}
+      </div>
+
+      <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', marginTop: '8px' }}>
+        {/* Square photo */}
+        <div style={{ width: '80px', height: '80px', borderRadius: '16px', overflow: 'hidden', flexShrink: 0, background: n.avatarColor }}>
+          <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>Neighbour #{n.id}</span>
-            {n.verified && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: '2px 8px', borderRadius: '8px', background: '#DCFCE7', fontSize: '10px', color: '#16A34A', fontWeight: 700 }}>
-                <Shield size={9} /> Verified
-              </span>
-            )}
+
+        {/* Right side info */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, marginBottom: '4px', lineHeight: 1.2 }}>{n.name}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '12px' }}>
+            <MapPin size={13} color={MUTED} strokeWidth={1.8} />
+            <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{n.proximity} · {n.distance}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: MUTED, fontWeight: 500 }}>
-              <MapPin size={10} color={MUTED} strokeWidth={2} />
-              {n.proximity}
-            </div>
-            <span style={{ fontSize: '11px', color: PRIMARY, fontWeight: 700 }}>{n.sharedCount} shared</span>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-            {n.sharedInterests.map(i => {
-              const c = INTEREST_COLORS[i] || { bg: '#FFF0EC', text: PRIMARY };
-              return (
-                <span key={i} style={{ padding: '3px 9px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, background: c.bg, color: c.text }}>
-                  {i}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-        <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <ChevronRight size={15} color={MUTED} />
+
+          {/* Say Hello button */}
+          <button
+            onClick={e => { e.stopPropagation(); onTap(); }}
+            style={{
+              width: '100%', padding: '10px 0', borderRadius: '14px',
+              background: 'white', border: `1.5px solid ${PRIMARY}`,
+              color: TEXT, fontSize: '14px', fontWeight: 700,
+              cursor: 'pointer', fontFamily: 'inherit',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            }}
+          >
+            👋 Say Hello
+          </button>
         </div>
       </div>
     </motion.div>

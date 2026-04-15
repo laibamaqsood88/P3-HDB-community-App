@@ -33,14 +33,14 @@ interface EventsPageProps {
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
 const MOCK_NEIGHBOURS = [
-  { id: 1, name: 'Alex Lim', distance: '0.1 km', unit: 'Blk 445 #12-34', interests: ['Fitness & Sports', 'Cooking & Baking'], avatar: 'AL', color: '#FF6B47', lastActive: '2 hours ago' },
-  { id: 2, name: 'Ben Tan', distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'], avatar: 'BT', color: '#7C3AED', lastActive: '5 hours ago' },
-  { id: 3, name: 'Clara Soh', distance: '0.3 km', unit: 'Blk 448 #03-22', interests: ['Cooking & Baking', 'Gardening & Plants'], avatar: 'CS', color: '#D97706', lastActive: '1 day ago' },
-  { id: 4, name: 'Diana Mak', distance: '0.4 km', unit: 'Blk 445 #15-01', interests: ['Gardening & Plants', 'Yoga & Mindfulness'], avatar: 'DM', color: '#059669', lastActive: '3 hours ago' },
-  { id: 5, name: 'Eli Ng', distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'], avatar: 'EN', color: '#0891B2', lastActive: 'Just now' },
-  { id: 6, name: 'Fiona Raj', distance: '0.6 km', unit: 'Blk 446 #11-18', interests: ['Music & Performing Arts', 'Dance'], avatar: 'FR', color: '#DB2777', lastActive: '30 min ago' },
-  { id: 7, name: 'Gary Koh', distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', color: '#EA580C', lastActive: '2 days ago' },
-  { id: 8, name: 'Hannah Lee', distance: '1.0 km', unit: 'Blk 445 #09-33', interests: ['Photography', 'Outdoor Activities'], avatar: 'HL', color: '#475569', lastActive: '4 hours ago' },
+  { id: 1, name: 'Alex Lim',   distance: '0.1 km', unit: 'Blk 445', interests: ['Fitness'],          avatar: 'AL', color: '#FF6B47', avatarUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop', lastActive: '2 hours ago' },
+  { id: 2, name: 'Ben Tan',    distance: '0.2 km', unit: 'Blk 447', interests: ['Gardening'],         avatar: 'BT', color: '#7C3AED', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop', lastActive: '5 hours ago' },
+  { id: 3, name: 'Clara Soh',  distance: '0.3 km', unit: 'Blk 448', interests: ['Cooking'],           avatar: 'CS', color: '#D97706', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop', lastActive: '1 day ago' },
+  { id: 4, name: 'Diana Mak',  distance: '0.4 km', unit: 'Blk 445', interests: ['Yoga'],              avatar: 'DM', color: '#059669', avatarUrl: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=200&h=200&fit=crop', lastActive: '3 hours ago' },
+  { id: 5, name: 'Eli Ng',     distance: '0.5 km', unit: 'Blk 449', interests: ['Art and Craft'],     avatar: 'EN', color: '#0891B2', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop', lastActive: 'Just now' },
+  { id: 6, name: 'Fiona Raj',  distance: '0.6 km', unit: 'Blk 446', interests: ['Music'],             avatar: 'FR', color: '#DB2777', avatarUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop', lastActive: '30 min ago' },
+  { id: 7, name: 'Gary Koh',   distance: '0.8 km', unit: 'Blk 450', interests: ['Photography'],       avatar: 'GK', color: '#EA580C', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop', lastActive: '2 days ago' },
+  { id: 8, name: 'Hannah Lee', distance: '1.0 km', unit: 'Blk 445', interests: ['Board Games'],       avatar: 'HL', color: '#475569', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop', lastActive: '4 hours ago' },
 ];
 
 // ---- Mock Data ----
@@ -543,7 +543,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
       </div>
 
       {/* Content */}
-      <div style={{ padding: '20px 20px 32px' }}>
+      <div style={{ padding: '20px 20px 100px' }}>
         {/* Interest Groups */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
@@ -638,42 +638,62 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '6px' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '14px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '12px', paddingTop: '16px' }}>
             {MOCK_NEIGHBOURS.slice(0, 6).map(neighbour => (
               <motion.div
                 key={neighbour.id}
                 whileTap={{ scale: 0.97 }}
-                style={{ flexShrink: 0, width: '154px', background: CARD, borderRadius: '14px', padding: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}
+                style={{
+                  flexShrink: 0, width: '220px', background: CARD,
+                  borderRadius: '20px', padding: '12px 14px 12px',
+                  boxShadow: '0 2px 14px rgba(0,0,0,0.07)',
+                  cursor: 'pointer', position: 'relative',
+                  display: 'flex', flexDirection: 'column', gap: '10px',
+                }}
               >
-                {/* Avatar */}
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: neighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>{neighbour.avatar}</span>
+                {/* Category tag — inside card, top-left, slightly rotated */}
+                <div style={{ display: 'flex' }}>
+                  <div style={{
+                    padding: '4px 12px', borderRadius: '10px',
+                    background: '#FFF0EC', color: PRIMARY,
+                    fontSize: '12px', fontWeight: 700,
+                    transform: 'rotate(-1.5deg)',
+                    whiteSpace: 'nowrap', alignSelf: 'flex-start',
+                  }}>
+                    {neighbour.interests[0]}
+                  </div>
                 </div>
-                <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '2px', lineHeight: '1.2' }}>{neighbour.name}</div>
-                <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '8px' }}>{neighbour.unit.split(' #')[0]} · {neighbour.distance}</div>
-                {/* Interest pills (first 1) */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '10px' }}>
-                  {neighbour.interests.slice(0, 1).map(interest => (
-                    <span key={interest} style={{ padding: '3px 8px', borderRadius: '20px', fontSize: '10px', fontWeight: 600, background: '#FFF0EC', color: PRIMARY }}>
-                      {interest.split(' ')[0]}
-                    </span>
-                  ))}
+
+                {/* Top row: photo LEFT + name/location RIGHT */}
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  {/* Square photo */}
+                  <div style={{ width: '72px', height: '72px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: neighbour.color }}>
+                    <img src={neighbour.avatarUrl} alt={neighbour.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+
+                  {/* Name + location */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT, lineHeight: 1.2, marginBottom: '6px' }}>{neighbour.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <MapPin size={12} color={MUTED} strokeWidth={1.8} />
+                      <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{neighbour.unit} · {neighbour.distance}</span>
+                    </div>
+                  </div>
                 </div>
-                {/* Buttons */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <button
-                    onClick={() => toast.success('Message sent!')}
-                    style={{ width: '100%', padding: '8px', borderRadius: '10px', background: PRIMARY, border: 'none', color: 'white', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
-                  >
-                    Say Hello
-                  </button>
-                  <button
-                    onClick={() => setSelectedNeighbour(neighbour)}
-                    style={{ width: '100%', padding: '8px', borderRadius: '10px', background: 'none', border: `1px solid ${BORDER}`, color: TEXT2, fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
-                  >
-                    View Profile
-                  </button>
-                </div>
+
+                {/* Say Hello — full-width outline button */}
+                <button
+                  onClick={() => toast.success(`Message sent to ${neighbour.name}!`)}
+                  style={{
+                    width: '100%', padding: '8px 0', borderRadius: '12px',
+                    background: 'white', border: `1.5px solid ${PRIMARY}`,
+                    color: TEXT, fontSize: '12px', fontWeight: 700,
+                    cursor: 'pointer', fontFamily: 'inherit',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                  }}
+                >
+                  👋 Say Hello
+                </button>
               </motion.div>
             ))}
           </div>

@@ -446,7 +446,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
         </div>
       )}
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 32px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 100px' }}>
         {/* My Groups */}
         {myGroups.length > 0 && (
           <div style={{ marginBottom: '24px' }}>
@@ -549,7 +549,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 50, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
             onClick={() => { setShowCategoryFilter(false); onFilterClose?.(); }}
           >
             <motion.div
