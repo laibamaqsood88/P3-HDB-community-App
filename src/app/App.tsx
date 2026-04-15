@@ -158,6 +158,27 @@ export default function App() {
           />
         )}
 
+        {/* Gradient fade — sits under the nav, fades content into it */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '140px',
+            pointerEvents: 'none',
+            zIndex: 40,
+            background: `linear-gradient(
+              to bottom,
+              transparent            0%,
+              rgba(245,244,240,0.18) 28%,
+              rgba(245,244,240,0.52) 55%,
+              rgba(245,244,240,0.82) 76%,
+              rgba(245,244,240,0.96) 100%
+            )`,
+          }}
+        />
+
         {/* Floating nav — overlays content */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 50, pointerEvents: 'none' }}>
           <div style={{ pointerEvents: 'auto' }}>
