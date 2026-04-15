@@ -42,10 +42,10 @@ const ITEMS_AND_SERVICES = [
   { id: 102, itemType: 'item' as const, name: 'Sharp Rice Cooker', condition: 'like new', distance: '0.6 km away', postedTime: '5 hours ago', price: '$20', category: 'TV & Home Appliances', brand: 'Sharp', verified: true, description: 'Sharp rice cooker, barely used. Moving to a larger unit and already have a bigger one. Comes with measuring cup and steam tray.', collectionAddress: 'Blk 448 Ang Mo Kio Ave 10, #02-08, Singapore 560448', collectionDistance: '0.6 km away', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Ahmad', avatarColor: '#3B82F6', rating: 4.5, reviews: 8 } },
   { id: 103, itemType: 'item' as const, name: 'Baby Stroller', condition: 'well used', distance: '1.1 km away', postedTime: '1 day ago', price: '$80', category: 'Babies & Kids', brand: 'Combi', verified: true, description: 'Combi stroller in good working condition. All parts intact. Child has outgrown it. Collection at void deck on weekend afternoons.', collectionAddress: 'Blk 451 Bishan Street 14, Void Deck, Singapore 570451', collectionDistance: '1.1 km away', image: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Mei Lin', avatarColor: '#8B5CF6', rating: 4.9, reviews: 21 } },
   { id: 104, itemType: 'item' as const, name: 'Assorted Books (10 pcs)', condition: 'well used', distance: '0.3 km away', postedTime: '3 days ago', price: 'Free', category: 'Learning', brand: '', verified: true, description: 'Mix of fiction and non-fiction. Pick what you like, return what you don\'t.', collectionAddress: 'Blk 445 Ang Mo Kio Ave 10, #04-22, Singapore 560445', collectionDistance: '0.3 km away', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', seller: { name: 'Rajan', avatarColor: '#059669', rating: 4.7, reviews: 5 } },
-  { id: 201, itemType: 'service' as const, name: 'Dog Walking', ServiceIcon: Heart, availability: 'Mon, Wed, Fri mornings (7–9 AM)', pastExchanges: 2, responseRate: '90%', verified: true, trust: false, trustNote: '', description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds.', avatarColor: '#F97316', category: 'Pet Care', collectionPoint: 'Estate Vicinity' },
-  { id: 202, itemType: 'service' as const, name: 'Babysitting', ServiceIcon: Smile, availability: 'Weekday evenings (5–9 PM)', pastExchanges: 5, responseRate: '95%', verified: true, trust: true, trustNote: 'DBS checked', description: 'Experienced babysitter, parent of 2. Happy to look after children aged 2–8.', avatarColor: '#8B5CF6', category: 'Babysitting & Childcare', collectionPoint: 'Bishan-AMK Estate' },
-  { id: 203, itemType: 'service' as const, name: 'Primary Math Tutoring', ServiceIcon: BookOpen, availability: 'Weekday evenings', pastExchanges: 8, responseRate: '100%', verified: true, trust: false, trustNote: '', description: 'Retired primary school teacher offering free maths help for P3–P6 students.', avatarColor: '#3B82F6', category: 'Tutoring & Coaching', collectionPoint: 'Blk 445 Community Room' },
-  { id: 204, itemType: 'service' as const, name: 'Elderly Companion', ServiceIcon: Users, availability: 'Weekends', pastExchanges: 3, responseRate: '85%', verified: true, trust: true, trustNote: 'First Aid certified', description: 'Volunteer companion for elderly residents who might enjoy some company or light assistance.', avatarColor: '#22C55E', category: 'Elderly Companion Care', collectionPoint: 'Bishan-AMK Estate' },
+  { id: 201, itemType: 'service' as const, name: 'Dog Walking', rate: '$15 per walk', distance: '0.5 km away', postedTime: '1 day ago', category: 'Pet Care', availability: 'Mon, Wed, Fri mornings (7–9 AM)', verified: true, trust: false, trustNote: '', description: 'Happy to walk your dog in the estate during weekday mornings. Have experience with medium-sized breeds. All dogs welcome — can handle up to 2 dogs per session.', responseTime: 'Replies within a few hours', completedServices: 12, yearsExperience: 3, image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'James', avatarColor: '#F97316', rating: 4.7, reviews: 9 } },
+  { id: 202, itemType: 'service' as const, name: 'Babysitting', rate: '$12 per hour', distance: '0.8 km away', postedTime: '2 days ago', category: 'Babysitting & Childcare', availability: 'Weekday evenings (5–9 PM)', verified: true, trust: true, trustNote: 'DBS checked', description: 'Experienced babysitter, parent of 2. Happy to look after children aged 2–8. Meals can be prepared on request. References available.', responseTime: 'Replies within 1 hour', completedServices: 28, yearsExperience: 5, image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Siti', avatarColor: '#8B5CF6', rating: 4.9, reviews: 18 } },
+  { id: 203, itemType: 'service' as const, name: 'Primary Math Tutoring', rate: 'Free', distance: '0.3 km away', postedTime: '3 days ago', category: 'Tutoring & Coaching', availability: 'Weekday evenings', verified: true, trust: false, trustNote: '', description: 'Retired primary school teacher offering free maths help for P3–P6 students. 25 years of teaching experience. Small group sessions available.', responseTime: 'Replies within a day', completedServices: 34, yearsExperience: 25, image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b6f2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Mr Tan', avatarColor: '#3B82F6', rating: 5.0, reviews: 22 } },
+  { id: 204, itemType: 'service' as const, name: 'Elderly Companion', rate: 'Free', distance: '1.2 km away', postedTime: '5 days ago', category: 'Elderly Companion Care', availability: 'Weekends', verified: true, trust: true, trustNote: 'First Aid certified', description: 'Volunteer companion for elderly residents who might enjoy some company or light assistance. Happy to accompany for walks, grocery runs, or just a chat.', responseTime: 'Replies within a few hours', completedServices: 15, yearsExperience: 2, image: 'https://images.unsplash.com/photo-1576765607924-3f7b8410a787?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', provider: { name: 'Priya', avatarColor: '#22C55E', rating: 4.8, reviews: 11 } },
 ];
 
 const MOCK_REVIEWS = [
@@ -167,7 +167,10 @@ function ReviewsSection() {
 }
 
 // ---- Map Component ----
-function CollectionPointMap({ address }: { address?: string }) {
+function CollectionPointMap({ address, distanceText }: { address?: string; distanceText?: string }) {
+  const isService = !!distanceText;
+  const footerLabel = isService ? 'Service Area' : 'Collection Point';
+  const footerText = distanceText || address || 'To be confirmed';
   return (
     <div style={{ borderRadius: '18px', overflow: 'hidden', border: `1px solid ${BORDER}` }}>
       <div style={{ position: 'relative', height: '140px', background: 'linear-gradient(135deg, #E8F5E9 0%, #DCEEFB 100%)' }}>
@@ -186,8 +189,8 @@ function CollectionPointMap({ address }: { address?: string }) {
           <MapPin size={14} color={PRIMARY} />
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '2px' }}>Collection Point</div>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{address || 'To be confirmed'}</div>
+          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '2px' }}>{footerLabel}</div>
+          <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{footerText}</div>
         </div>
       </div>
     </div>
@@ -290,8 +293,8 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
           onAddPost?.({
             id: Date.now(),
             type: 'service',
-            title: data.category ? `${data.category} Service` : 'New Service',
-            price: 'Free',
+            title: data.serviceTitle || (data.category ? `${data.category} Service` : 'New Service'),
+            price: data.rate || 'Free',
             status: 'Active',
             emoji: '🤝',
             date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -458,8 +461,10 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
             {displayServices.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No services found</div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {displayServices.map(s => <ServiceCard key={s.id} s={s} onClick={() => onSelectService(s)} />)}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                {displayServices.map(s => (
+                  <ServiceCard key={s.id} s={s} savedItems={savedItems || []} onSaveToggle={onSaveToggle || (() => {})} onClick={() => onSelectService(s)} />
+                ))}
               </div>
             )}
           </>
@@ -533,32 +538,39 @@ function ItemCard({ item, savedItems, onSaveToggle, onClick }: { item: any; save
   );
 }
 
-function ServiceCard({ s, onClick }: { s: any; onClick: () => void }) {
-  const IconComp = s.ServiceIcon || Users;
+function ServiceCard({ s, savedItems, onSaveToggle, onClick }: { s: any; savedItems: number[]; onSaveToggle: (id: number) => void; onClick: () => void }) {
   return (
-    <motion.div whileTap={{ scale: 0.97 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-        <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: s.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <IconComp size={22} color="white" />
+    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
+      {/* Image thumbnail */}
+      <div style={{ height: '120px', background: BG, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+        {s.image ? (
+          <img src={s.image} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px' }}>🤝</div>
+        )}
+        {/* Bookmark top-right */}
+        <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+          <SaveButton itemId={s.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={15} style={{ width: '32px', height: '32px', borderRadius: '10px' }} />
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '5px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{s.name}</span>
-            {s.verified && <Shield size={12} color="#22C55E" />}
+      </div>
+
+      {/* Card body */}
+      <div style={{ padding: '10px 12px 12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+        {/* Title */}
+        <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{s.name}</div>
+        {/* Rate */}
+        <div style={{ fontSize: '15px', fontWeight: 800, color: (s.rate === 'Free' || !s.rate) ? '#16A34A' : TEXT }}>{s.rate || 'Free'}</div>
+        {/* Distance */}
+        <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{s.distance}</div>
+        {/* Posted time */}
+        <div style={{ fontSize: '10px', color: MUTED, fontWeight: 400 }}>{s.postedTime}</div>
+        {/* Provider info row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: s.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(s.provider?.name || 'N')[0]}</span>
           </div>
-          <div style={{ fontSize: '12px', color: MUTED, marginBottom: '7px', fontWeight: 500 }}>📅 {s.availability}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>⭐ {s.responseRate}</span>
-            <span style={{ fontSize: '11px', color: MUTED }}>·</span>
-            <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{s.pastExchanges} exchanges</span>
-            {s.trust && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: '2px 8px', borderRadius: '8px', background: '#DCFCE7', fontSize: '10px', color: '#16A34A', fontWeight: 700 }}>
-                <Shield size={9} /> {s.trustNote}
-              </span>
-            )}
-          </div>
+          <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.provider?.name || 'Neighbour'}</span>
         </div>
-        <ChevronRight size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '4px' }} />
       </div>
     </motion.div>
   );
@@ -602,45 +614,107 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
   const IconComp = item.ServiceIcon || Users;
 
   if (type === 'service') {
-    // Service detail — minimal changes, kept intact
-    const subInfo = [{ label: 'Availability', value: item.availability }, { label: 'Response rate', value: item.responseRate }, { label: 'Past exchanges', value: `${item.pastExchanges} completed` }];
+    const trustRows = [
+      item.verified && { icon: <Shield size={14} color="#22C55E" />, label: 'Verified Resident', value: 'Singpass verified', valueColor: '#16A34A' },
+      item.trust && item.trustNote ? { icon: <Check size={14} color="#2563EB" />, label: 'Credentials', value: item.trustNote, valueColor: '#2563EB' } : null,
+      { icon: <Droplets size={14} color={MUTED} />, label: 'Response Time', value: item.responseTime || 'Replies within a few hours', valueColor: TEXT },
+      { icon: <Check size={14} color={PRIMARY} />, label: 'Completed Services', value: `${item.completedServices || 0} done`, valueColor: TEXT },
+    ].filter(Boolean) as { icon: React.ReactNode; label: string; value: string; valueColor: string }[];
+
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-        <div style={{ padding: '52px 20px 18px', borderBottom: `1px solid ${BG}` }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+        {/* 1. Hero image */}
+        <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, flexShrink: 0 }}>
+          {item.image ? (
+            <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px' }}>🤝</div>
+          )}
+          <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '12px', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ width: '68px', height: '68px', borderRadius: '22px', overflow: 'hidden', flexShrink: 0, background: item.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <IconComp size={28} color="white" />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '6px', lineHeight: '1.25' }}>{name}</div>
-              {item.verified && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: '4px 10px', borderRadius: '10px', background: '#DCFCE7', fontSize: '11px', color: '#16A34A', fontWeight: 700 }}><Shield size={10} /> Verified</span>}
-            </div>
+          <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
+            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '12px', backdropFilter: 'blur(8px)' }} />
           </div>
         </div>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-          <div style={{ background: BG, borderRadius: '18px', padding: '16px', marginBottom: '20px' }}>
-            {subInfo.map((info, i) => (
-              <div key={info.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < subInfo.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
-                <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{info.label}</span>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{info.value}</span>
+
+        {/* Scrollable content */}
+        <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
+          <div style={{ padding: '20px 20px 0' }}>
+            {/* 2. Basic info */}
+            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px' }}>{name}</div>
+            <div style={{ fontSize: '26px', fontWeight: 800, color: (item.rate === 'Free' || !item.rate) ? '#16A34A' : TEXT, marginBottom: '20px' }}>{item.rate || 'Free'}</div>
+
+            {/* 3. Details rows */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
+              <div style={{ background: BG, borderRadius: '18px', padding: '4px 16px' }}>
+                {[
+                  { label: 'Category', value: item.category },
+                  { label: 'Availability', value: item.availability },
+                  { label: 'Posted', value: item.postedTime },
+                ].map((row, i, arr) => (
+                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < arr.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+                    <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{row.label}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT, textAlign: 'right', maxWidth: '60%' }}>{row.value}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
-            <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
-          </div>
-          {item.trust && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '13px 16px', background: '#F0FDF4', borderRadius: '16px', marginBottom: '16px' }}>
-              <Shield size={16} color="#22C55E" />
-              <span style={{ fontSize: '13px', color: '#15803D', fontWeight: 600 }}>Trust signal: {item.trustNote}</span>
             </div>
-          )}
+
+            {/* 4. Description */}
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Description</div>
+              <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
+            </div>
+
+            {/* 5. Location — distance only */}
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Location</div>
+              <CollectionPointMap distanceText={item.distance} />
+            </div>
+
+            {/* 6. About the Neighbour */}
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
+              <div onClick={() => toast.info('Neighbour profile coming soon')} style={{ background: BG, borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.provider?.name || 'N')[0]}</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>{item.provider?.name || 'Neighbour'}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                    <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.provider?.rating ?? '4.8'}</span>
+                    <span style={{ fontSize: '12px', color: MUTED }}>· {item.provider?.reviews ?? 0} reviews</span>
+                  </div>
+                  {item.yearsExperience ? <div style={{ fontSize: '12px', color: MUTED }}>{item.yearsExperience} yrs experience</div> : null}
+                </div>
+                <ChevronRight size={16} color={MUTED} />
+              </div>
+            </div>
+
+            {/* 7. Trust Indicators */}
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Trust & Verification</div>
+              <div style={{ background: BG, borderRadius: '18px', padding: '4px 16px' }}>
+                {trustRows.map((row, i) => (
+                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < trustRows.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {row.icon}
+                      <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{row.label}</span>
+                    </div>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: row.valueColor, textAlign: 'right', maxWidth: '55%' }}>{row.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div style={{ height: '100px' }} />
         </div>
-        <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
+
+        {/* 8. Sticky footer — Chat only */}
+        <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BORDER}`, background: CARD, flexShrink: 0 }}>
           <button onClick={onExpressInterest} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', fontFamily: 'inherit' }}>
             Chat
           </button>
@@ -1211,55 +1285,153 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
 
 // ---- Service Post Screen ----
 function ServicePostScreen({ onBack, onPost }: any) {
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [serviceTitle, setServiceTitle] = useState('');
   const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
+  const [categoryOpen, setCategoryOpen] = useState(false);
   const [availability, setAvailability] = useState('');
-  const [notes, setNotes] = useState('');
-  const [collectionPoint, setCollectionPoint] = useState('');
+  const [description, setDescription] = useState('');
+  const [priceMode, setPriceMode] = useState<'free' | 'charge'>('free');
+  const [rate, setRate] = useState('');
+  const [rateUnit, setRateUnit] = useState<'hour' | 'session'>('hour');
+  const [yearsExp, setYearsExp] = useState('');
+  const [certifications, setCertifications] = useState('');
+  const [skills, setSkills] = useState('');
+  const [serviceLocation, setServiceLocation] = useState('');
+  const [showPickerSheet, setShowPickerSheet] = useState(false);
 
   const SERVICE_FORM_CATS = SERVICE_CATEGORIES.filter(c => c !== 'All');
-  const valid = category && description && availability;
+  const TILE_SIZE = '100px';
+  const valid = serviceTitle.trim() && category && availability.trim();
+
+  const removePhoto = (idx: number) => setPhotos(p => p.filter((_, i) => i !== idx));
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 18px' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD, position: 'relative' }}>
+      <div style={{ padding: '52px 20px 18px', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
-        <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>Offer a Service</div>
-        <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Share your skills with the community</div>
+        <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT }}>Offer a Service</div>
       </div>
+
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
-        <FormField label="Service Category">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {SERVICE_FORM_CATS.map(c => (
-              <button key={c} onClick={() => setCategory(c)} style={{ padding: '8px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${category === c ? PRIMARY : BORDER}`, background: category === c ? '#FFF0EC' : 'transparent', color: category === c ? PRIMARY : TEXT2, fontWeight: category === c ? 700 : 400 }}>
-                {c}
+
+        {/* 1. Images */}
+        <FormField label="Images">
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {photos.map((p, i) => (
+              <div key={i} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+                <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <button onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '5px', right: '5px', width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <X size={11} color="white" />
+                </button>
+              </div>
+            ))}
+            {photos.length < 6 && (
+              <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowPickerSheet(true)} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', border: `2px dashed ${BORDER}`, background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '4px', flexShrink: 0 }}>
+                <Plus size={20} color={MUTED} />
+              </motion.button>
+            )}
+          </div>
+        </FormField>
+
+        {/* 2. Service Title */}
+        <FormField label="Service Title">
+          <input value={serviceTitle} onChange={e => setServiceTitle(e.target.value)} placeholder="What service are you offering?" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+        </FormField>
+
+        {/* 3. Category */}
+        <FormField label="Category">
+          <div style={{ position: 'relative' }}>
+            <button onClick={() => setCategoryOpen(!categoryOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${categoryOpen ? PRIMARY : BORDER}`, fontSize: '14px', background: BG, color: category ? TEXT : MUTED, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 600 : 400, boxSizing: 'border-box' }}>
+              {category || 'Select category'}
+              <ChevronDown size={16} color={MUTED} style={{ transform: categoryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+            </button>
+            {categoryOpen && (
+              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '16px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}`, maxHeight: '200px', overflowY: 'auto' }}>
+                {SERVICE_FORM_CATS.map((cat, i) => (
+                  <button key={cat} onClick={() => { setCategory(cat); setCategoryOpen(false); }} style={{ width: '100%', padding: '12px 16px', border: 'none', background: category === cat ? '#FFF0EC' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'inherit', fontSize: '13px', color: category === cat ? PRIMARY : TEXT, fontWeight: category === cat ? 700 : 400, borderBottom: i < SERVICE_FORM_CATS.length - 1 ? `1px solid ${BG}` : 'none', textAlign: 'left' }}>
+                    {cat}
+                    {category === cat && <Check size={15} color={PRIMARY} />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </FormField>
+
+        {/* 4. Service Details — Availability */}
+        <FormField label="Availability">
+          <textarea value={availability} onChange={e => setAvailability(e.target.value)} placeholder="e.g. Weekday evenings (6–9 PM), Weekends" rows={2} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
+        </FormField>
+
+        {/* 5. Description */}
+        <FormField label="Description (optional)">
+          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your service, experience, or any useful notes..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
+        </FormField>
+
+        {/* 6. Pricing */}
+        <FormField label="Pricing">
+          <div style={{ display: 'flex', gap: '4px', background: BG, borderRadius: '16px', padding: '4px', marginBottom: priceMode === 'charge' ? '12px' : '0' }}>
+            {(['free', 'charge'] as const).map(mode => (
+              <button key={mode} onClick={() => setPriceMode(mode)} style={{ flex: 1, padding: '10px 4px', background: priceMode === mode ? CARD : 'transparent', border: 'none', cursor: 'pointer', borderRadius: '12px', fontFamily: 'inherit', color: priceMode === mode ? TEXT : MUTED, fontWeight: priceMode === mode ? 700 : 500, fontSize: '13px', boxShadow: priceMode === mode ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
+                {mode === 'free' ? 'Free' : 'Charge a fee'}
               </button>
             ))}
           </div>
+          {priceMode === 'charge' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
+              <span style={{ fontSize: '14px', color: MUTED, fontWeight: 600 }}>$</span>
+              <input value={rate} onChange={e => setRate(e.target.value)} placeholder="Rate" type="number" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit', minWidth: 0 }} />
+              <div style={{ display: 'flex', gap: '4px', background: CARD, borderRadius: '10px', padding: '3px', border: `1px solid ${BORDER}`, flexShrink: 0 }}>
+                {(['hour', 'session'] as const).map(u => (
+                  <button key={u} onClick={() => setRateUnit(u)} style={{ padding: '5px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '11px', fontWeight: 700, background: rateUnit === u ? PRIMARY : 'transparent', color: rateUnit === u ? 'white' : MUTED }}>
+                    /{u}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </FormField>
-        <FormField label="Description">
-          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the service you're offering..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
+
+        {/* 7. Experience / Credentials */}
+        <FormField label="Years of Experience">
+          <input value={yearsExp} onChange={e => setYearsExp(e.target.value)} placeholder="e.g. 3" type="number" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
-        <FormField label="Availability">
-          <input value={availability} onChange={e => setAvailability(e.target.value)} placeholder="e.g. Weekday evenings, Weekends" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+        <FormField label="Certifications (optional)">
+          <input value={certifications} onChange={e => setCertifications(e.target.value)} placeholder="e.g. DBS checked, First Aid certified" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
-        <FormField label="Service Location / Collection Point">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
+        <FormField label="Relevant Skills (optional)">
+          <input value={skills} onChange={e => setSkills(e.target.value)} placeholder="e.g. CPR, Bilingual, Pet first aid" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+        </FormField>
+
+        {/* 8. Service Location */}
+        <FormField label="Service Location">
+          <CollectionPointMap distanceText={serviceLocation || 'Bishan-AMK Estate'} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG, marginTop: '10px' }}>
             <MapPin size={16} color={MUTED} style={{ flexShrink: 0 }} />
-            <input value={collectionPoint} onChange={e => setCollectionPoint(e.target.value)} placeholder="e.g. Bishan-AMK Estate, your unit" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+            <input value={serviceLocation} onChange={e => setServiceLocation(e.target.value)} placeholder="e.g. Bishan-AMK Estate, your block" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
           </div>
         </FormField>
-        <FormField label="Trust Signal (optional)">
-          <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any relevant credentials, DBS check, references..." rows={2} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
-        </FormField>
       </div>
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
-        <button onClick={() => valid && onPost({ category, description, availability, notes, collectionPoint })} disabled={!valid} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}>
+
+      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}`, flexShrink: 0 }}>
+        <button
+          onClick={() => valid && onPost({ serviceTitle, category, availability, description, rate: priceMode === 'free' ? 'Free' : `$${rate} per ${rateUnit}`, yearsExp, certifications, skills, serviceLocation, photos })}
+          disabled={!valid}
+          style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}
+        >
           Post Service
         </button>
       </div>
+
+      {showPickerSheet && (
+        <PhotoPickerSheet
+          onSelect={url => { setPhotos(p => [...p, url]); setShowPickerSheet(false); }}
+          onClose={() => setShowPickerSheet(false)}
+        />
+      )}
     </div>
   );
 }
