@@ -61,7 +61,7 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
                 minWidth: 0,
               }}
             >
-              {/* Active pill highlight — slides behind icon + label */}
+              {/* Active liquid glass highlight */}
               {active && (
                 <motion.div
                   layoutId="activeNavPill"
@@ -70,7 +70,11 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
                     position: 'absolute',
                     inset: 0,
                     borderRadius: '999px',
-                    background: '#1C1C1E',
+                    background: 'rgba(255,255,255,0.62)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255,255,255,0.85)',
+                    boxShadow: '0 1px 6px rgba(255,107,71,0.10), 0 1px 0 rgba(255,255,255,0.9) inset',
                   }}
                 />
               )}
@@ -78,8 +82,8 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
               {/* Icon */}
               <Icon
                 size={20}
-                color={active ? '#FFFFFF' : '#8E8E93'}
-                strokeWidth={active ? 2.2 : 1.6}
+                color={active ? '#FF6B47' : '#8E8E93'}
+                strokeWidth={active ? 2.3 : 1.6}
                 style={{ position: 'relative', zIndex: 1 }}
               />
 
@@ -88,7 +92,7 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
                 style={{
                   fontSize: '10px',
                   lineHeight: '1.2',
-                  color: active ? '#FFFFFF' : '#8E8E93',
+                  color: active ? '#FF6B47' : '#8E8E93',
                   fontWeight: active ? 700 : 500,
                   letterSpacing: '0.1px',
                   position: 'relative',
