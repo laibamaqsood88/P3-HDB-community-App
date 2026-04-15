@@ -294,7 +294,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           {!searchMode ? (
             <>
               {/* Normal mode: Title + icons */}
-              <div style={{ padding: `${52 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+              <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
                 <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Explore</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => { setSearchScopeTab(activeSubTab); setSearchMode(true); }}
@@ -340,7 +340,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           ) : (
             <>
               {/* Search mode: Back + Sub-tabs row */}
-              <div style={{ padding: '52px 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ padding: '44px 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <button onClick={() => { setSearchMode(false); setSearchQuery(''); }}
                   style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <ChevronLeft size={20} color={TEXT} />
@@ -697,7 +697,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         {/* Header */}
-        <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
@@ -801,7 +801,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const ev: EventData = current.params?.event;
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-        <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
@@ -856,7 +856,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const ev: EventData = current.params?.event;
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-        <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>

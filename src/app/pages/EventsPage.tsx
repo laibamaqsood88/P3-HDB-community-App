@@ -416,7 +416,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
         {/* Header */}
-        <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
@@ -508,7 +508,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
   return (
     <div className="no-scrollbar" style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 14px', boxShadow: '0 1px 0 rgba(60,60,67,0.1)' }}>
+      <div style={{ background: CARD, padding: '44px 20px 14px', boxShadow: '0 1px 0 rgba(60,60,67,0.1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button
             onClick={onOpenProfile}
@@ -928,7 +928,7 @@ function GroupDetailScreen({ group, onBack }: { group: any; onBack: () => void }
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 0', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 20px 0', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronLeft size={20} color={TEXT} />

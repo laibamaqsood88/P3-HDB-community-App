@@ -254,7 +254,7 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        padding: '52px 24px 40px',
+        padding: '44px 24px 40px',
         background: CARD,
       }}
     >
@@ -341,7 +341,7 @@ function StepFamily({
 }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 24px 0', flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: '44px 24px 0', flex: 1, overflowY: 'auto' }}>
         <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
@@ -456,7 +456,7 @@ function StepInterests({
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD, minHeight: 0 }}>
-      <div style={{ padding: '52px 24px 0', flexShrink: 0 }}>
+      <div style={{ padding: '44px 24px 0', flexShrink: 0 }}>
         <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
@@ -689,7 +689,7 @@ function StepSpokenLanguage({
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD, minHeight: 0 }}>
-      <div style={{ padding: '52px 24px 48px', flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: '44px 24px 48px', flex: 1, overflowY: 'auto' }}>
         <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
@@ -1097,7 +1097,7 @@ function RecommendationsStep({
       <div
         style={{
           background: CARD,
-          padding: '52px 24px 20px',
+          padding: '44px 24px 20px',
           borderBottom: `1px solid ${BORDER}`,
         }}
       >

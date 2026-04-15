@@ -308,7 +308,7 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
-        <div style={{ padding: `${52 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', gap: '8px', transition: 'padding 0.1s linear' }}>
+        <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${12 - (scrollProgress * 4)}px`, display: 'flex', alignItems: 'center', gap: '8px', transition: 'padding 0.1s linear' }}>
           <AnimatePresence mode="wait" initial={false}>
             {!searchOpen ? (
               <motion.div key="title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}
@@ -514,7 +514,7 @@ function RequestNeighbourProfile({ poster, request, onBack }: { poster: any; req
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -646,7 +646,7 @@ function PostRequestScreen({ onBack, onPost }: any) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 16px 18px', borderBottom: `0.5px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 16px 18px', borderBottom: `0.5px solid ${BORDER}` }}>
         <button onClick={onBack} style={{ width: '38px', height: '38px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -852,7 +852,7 @@ function ChatScreen({ request, onBack }: any) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 16px 16px', borderBottom: `0.5px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 16px 16px', borderBottom: `0.5px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={onBack} style={{ width: '38px', height: '38px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />

@@ -239,7 +239,7 @@ function NeighbourProfilePage({ person, item, onBack }: { person: any; item: any
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -558,7 +558,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         {!searchOpen ? (
           <>
             {/* Normal mode: Title + icons */}
-            <div style={{ padding: `${52 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+            <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
               <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Market</span>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button onClick={() => setSearchOpen(true)}
@@ -595,7 +595,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         ) : (
           <>
             {/* Search mode: Back + Sub-tabs row */}
-            <div style={{ padding: '52px 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div style={{ padding: '44px 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
                 style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <ChevronLeft size={20} color={TEXT} />
@@ -764,7 +764,7 @@ function CategorySelect({ onBack, onSelectCategory }: any) {
   ];
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 20px' }}>
+      <div style={{ padding: '44px 20px 20px' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -1009,7 +1009,7 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
 function PosterNotification({ onBack, onConfirm, onDecline }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 20px 18px', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 20px 18px', borderBottom: `1px solid ${BORDER}` }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -1048,7 +1048,7 @@ function PosterNotification({ onBack, onConfirm, onDecline }: any) {
 function MutualConfirm({ onBack, onOpenChat }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 18px' }}>
+      <div style={{ padding: '44px 20px 18px' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -1073,7 +1073,7 @@ function MutualConfirm({ onBack, onOpenChat }: any) {
 function HelpChat({ messages, input, onInputChange, onSend, onBack, item }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
@@ -1144,7 +1144,7 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 18px' }}>
+      <div style={{ padding: '44px 20px 18px' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -1325,7 +1325,7 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD, position: 'relative' }}>
-      <div style={{ padding: '52px 20px 18px', flexShrink: 0 }}>
+      <div style={{ padding: '44px 20px 18px', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -1478,7 +1478,7 @@ function ServicePostScreen({ onBack, onPost }: any) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD, position: 'relative' }}>
-      <div style={{ padding: '52px 20px 18px', flexShrink: 0 }}>
+      <div style={{ padding: '44px 20px 18px', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>

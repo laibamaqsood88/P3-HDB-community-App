@@ -175,7 +175,7 @@ export function NeighboursPage() {
 function TagSetupScreen({ myInterests, onToggle, onConfirm }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 24px 0' }}>
+      <div style={{ padding: '44px 24px 0' }}>
         <div style={{ width: '56px', height: '56px', borderRadius: '18px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
           <Hash size={26} color={PRIMARY} />
         </div>
@@ -217,7 +217,7 @@ function NeighboursFeed({ neighbours, activeFilter, myInterests, onFilterChange,
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 0' }}>
+      <div style={{ background: CARD, padding: '44px 20px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
@@ -459,7 +459,7 @@ function NeighbourCard({ neighbour: n, onTap }: { neighbour: Neighbour; onTap: (
 function NeighbourProfile({ neighbour: n, onBack, onJio }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 20px 22px' }}>
+      <div style={{ background: CARD, padding: '44px 20px 22px' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -529,7 +529,7 @@ function NeighbourProfile({ neighbour: n, onBack, onJio }: any) {
 function InviteFlow({ neighbour: n, selectedPrompt, onSelectPrompt, onBack, onSend }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 20px' }}>
+      <div style={{ padding: '44px 20px 20px' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -572,7 +572,7 @@ function InviteFlow({ neighbour: n, selectedPrompt, onSelectPrompt, onBack, onSe
 function InAppChat({ neighbour: n, messages, input, onInputChange, onSend, onBack, onCreateGroup }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
@@ -626,7 +626,7 @@ function GroupCreateScreen({ onBack, onCreateGroup }: any) {
   const tags = ['Running', 'Gardening', 'Board Games', 'Cooking', 'Cycling', 'Music'];
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 20px' }}>
+      <div style={{ padding: '44px 20px 20px' }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
@@ -702,7 +702,7 @@ function GroupSpace({ group, messages, input, onInputChange, onSend, onBack }: a
   ];
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 20px 0', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 20px 0', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />

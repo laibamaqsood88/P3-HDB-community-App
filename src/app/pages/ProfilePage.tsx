@@ -193,7 +193,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
   return (
     <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* ---- Hero Header ---- */}
-      <div style={{ background: `linear-gradient(150deg, #FF6B47 0%, #FF9068 60%, #FFB08A 100%)`, padding: '52px 20px 28px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: `linear-gradient(150deg, #FF6B47 0%, #FF9068 60%, #FFB08A 100%)`, padding: '44px 20px 28px', position: 'relative', overflow: 'hidden' }}>
         {/* Decorative circles */}
         <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
         <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
@@ -638,7 +638,7 @@ function MyPostsScreen({ onBack, posts }: { onBack: () => void; posts: any[] }) 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 16px', flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '44px 20px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
@@ -741,7 +741,7 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 20px', flexShrink: 0, borderBottom: `0.5px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 20px 20px', flexShrink: 0, borderBottom: `0.5px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
@@ -994,7 +994,7 @@ function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRe
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 16px', flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '44px 20px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
@@ -1097,7 +1097,7 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `0.5px solid ${BORDER}`, position: 'relative', flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `0.5px solid ${BORDER}`, position: 'relative', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
           <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
         </button>

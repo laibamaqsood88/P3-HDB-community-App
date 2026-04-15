@@ -314,7 +314,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
           {!searchOpen ? (
             <>
               {/* Normal mode: Title + search icon */}
-              <div style={{ padding: `${52 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+              <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
                 <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Messages</span>
                 <button onClick={() => setSearchOpen(true)}
                   style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -366,7 +366,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
           ) : (
             <>
               {/* Search mode: Back + Filter tabs row */}
-              <div style={{ paddingTop: '52px', display: 'flex', alignItems: 'center' }}>
+              <div style={{ paddingTop: '44px', display: 'flex', alignItems: 'center' }}>
                 <div style={{ padding: '0 8px 0 12px', flexShrink: 0 }}>
                   <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
                     style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -674,7 +674,7 @@ function ChatScreen({
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)` }}>
-        <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ padding: '44px 16px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={onBack}
             style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}

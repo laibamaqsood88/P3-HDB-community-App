@@ -409,7 +409,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Search + category pills — only shown when NOT in embedded (hideHeader) mode */}
       {!hideHeader && (
-        <div style={{ background: CARD, padding: '52px 16px 0', borderBottom: `0.5px solid ${BORDER}` }}>
+        <div style={{ background: CARD, padding: '44px 16px 0', borderBottom: `0.5px solid ${BORDER}` }}>
           {/* Search bar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(120,120,128,0.12)', borderRadius: '12px', padding: '10px 14px', marginBottom: '12px' }}>
             <Search size={16} color={MUTED} />
