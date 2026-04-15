@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Award, Lock, ShoppingBag, CalendarDays, FileText, Settings, ChevronRight,
   Bell, Shield as ShieldIcon, HelpCircle, LogOut, Bookmark, Tag, MessageCircle,
@@ -46,6 +47,7 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
 const LANGUAGE_COLORS: Record<string, { bg: string; text: string }> = {
   English:       { bg: '#FFF0EC', text: '#FF6B47' },
   Mandarin:      { bg: '#FAE8FF', text: '#A21CAF' },
+  Chinese:       { bg: '#FAE8FF', text: '#A21CAF' },
   Malay:         { bg: '#FEF3C7', text: '#D97706' },
   Tamil:         { bg: '#D1FAE5', text: '#059669' },
   Japanese:      { bg: '#EDE9FE', text: '#7C3AED' },
@@ -54,6 +56,28 @@ const LANGUAGE_COLORS: Record<string, { bg: string; text: string }> = {
   Spanish:       { bg: '#DBEAFE', text: '#2563EB' },
   German:        { bg: '#F5D0A9', text: '#92400E' },
 };
+
+const SPOKEN_LANGUAGES = ['English', 'Chinese', 'Malay', 'Tamil'];
+
+const AUTOCOMPLETE_LANGUAGES = [
+  'Afrikaans', 'Albanian', 'Amharic', 'Arabic', 'Armenian', 'Azerbaijani',
+  'Basque', 'Belarusian', 'Bengali', 'Bosnian', 'Bulgarian', 'Burmese',
+  'Catalan', 'Cebuano', 'Croatian', 'Czech', 'Danish', 'Dutch',
+  'English', 'Esperanto', 'Estonian', 'Finnish', 'French', 'Galician',
+  'Georgian', 'German', 'Greek', 'Gujarati', 'Hausa', 'Hebrew',
+  'Hindi', 'Hungarian', 'Icelandic', 'Igbo', 'Indonesian', 'Irish',
+  'Italian', 'Japanese', 'Javanese', 'Kannada', 'Kazakh', 'Khmer',
+  'Korean', 'Kurdish', 'Kyrgyz', 'Lao', 'Latin', 'Latvian',
+  'Lithuanian', 'Luxembourgish', 'Macedonian', 'Malagasy', 'Malay', 'Malayalam',
+  'Maltese', 'Marathi', 'Mongolian', 'Nepali', 'Norwegian', 'Odia',
+  'Pashto', 'Persian', 'Polish', 'Portuguese', 'Punjabi', 'Romanian',
+  'Russian', 'Samoan', 'Sanskrit', 'Serbian', 'Shona', 'Sindhi',
+  'Sinhala', 'Slovak', 'Slovenian', 'Somali', 'Spanish', 'Sundanese',
+  'Swahili', 'Swedish', 'Tagalog', 'Tajik', 'Tamil', 'Tatar',
+  'Telugu', 'Thai', 'Tigrinya', 'Tok Pisin', 'Turkish', 'Turkmen',
+  'Twi', 'Ukrainian', 'Urdu', 'Uyghur', 'Uzbek', 'Vietnamese',
+  'Welsh', 'Wolof', 'Xhosa', 'Yiddish', 'Yoruba', 'Zulu'
+];
 
 const SAVED_ITEMS = [
   { id: 1, sourceId: 1, type: 'Event', title: 'Morning Run at Bishan-AMK Park', sub: 'Sat, 12 Apr', category: 'Fitness', categoryColor: '#16A34A', categoryBg: '#DCFCE7', image: 'https://images.unsplash.com/photo-1746046318036-b091b95b02bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
@@ -95,12 +119,23 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
   const [draftInterests, setDraftInterests] = useState<string[]>(userInterests);
   const [showLanguageEdit, setShowLanguageEdit] = useState(false);
   const [draftLanguages, setDraftLanguages] = useState<string[]>(userLanguages);
+  const [query, setQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDraft = (item: string) =>
     setDraftInterests(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
 
   const toggleDraftLanguage = (lang: string) =>
     setDraftLanguages(prev => prev.includes(lang) ? prev.filter(x => x !== lang) : [...prev, lang]);
+
+  const addLanguage = (lang: string) => {
+    const trimmed = lang.trim();
+    if (trimmed && !draftLanguages.includes(trimmed)) {
+      setDraftLanguages(prev => [...prev, trimmed]);
+      setQuery('');
+      setShowDropdown(false);
+    }
+  };
 
   const saveInterests = () => {
     onUpdateInterests?.(draftInterests);
@@ -110,7 +145,16 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
   const saveLanguages = () => {
     onUpdateLanguages?.(draftLanguages);
     setShowLanguageEdit(false);
+    setQuery('');
+    setShowDropdown(false);
   };
+
+  // Calculate suggestions for language autocomplete
+  const suggestions = query.trim().length > 0
+    ? AUTOCOMPLETE_LANGUAGES.filter(
+        l => l.toLowerCase().includes(query.toLowerCase()) && !draftLanguages.includes(l)
+      ).slice(0, 6)
+    : [];
 
   if (activeSection === 'settings') {
     return <SettingsScreen onBack={() => setActiveSection('main')} />;
@@ -226,7 +270,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
                   );
                 })}
                 <button
-                  onClick={() => { setDraftLanguages(userLanguages); setShowLanguageEdit(true); }}
+                  onClick={() => { setDraftLanguages(userLanguages); setQuery(''); setShowDropdown(false); setShowLanguageEdit(true); }}
                   style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: BG, color: MUTED, border: `1.5px dashed ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
                 >
                   + Edit
@@ -397,6 +441,194 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
               style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'Nunito', sans-serif", marginTop: '8px' }}
             >
               Save Interests
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ---- Language Edit Bottom Sheet ---- */}
+      {showLanguageEdit && (
+        <div
+          onClick={() => setShowLanguageEdit(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px', maxHeight: '85vh', overflowY: 'auto' }}
+          >
+            <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Edit Languages</div>
+              <button onClick={() => setShowLanguageEdit(false)} style={{ width: '34px', height: '34px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <X size={16} color={TEXT2} />
+              </button>
+            </div>
+
+            {/* Preset Languages */}
+            {SPOKEN_LANGUAGES.length > 0 && (
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '10px' }}>Common Languages</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {SPOKEN_LANGUAGES.map(lang => {
+                    const selected = draftLanguages.includes(lang);
+                    const c = LANGUAGE_COLORS[lang] || { bg: '#FFF0EC', text: PRIMARY };
+                    return (
+                      <button
+                        key={lang}
+                        onClick={() => toggleDraftLanguage(lang)}
+                        style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${selected ? c.text : BORDER}`, background: selected ? c.bg : 'transparent', color: selected ? c.text : TEXT2 }}
+                      >
+                        {lang}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Search & Add More Languages */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '10px' }}>Add More Languages</div>
+              <div style={{ position: 'relative' }}>
+                <div
+                  style={{
+                    background: BG,
+                    borderRadius: '18px',
+                    border: `2px solid ${showDropdown ? PRIMARY : BORDER}`,
+                    padding: '10px 14px',
+                    transition: 'border-color 0.2s',
+                  }}
+                >
+                  <div style={{ fontSize: '12px', color: MUTED, marginBottom: '8px', fontWeight: 500 }}>
+                    Type to search or add languages
+                  </div>
+
+                  {/* Current selections chips */}
+                  {draftLanguages.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                      {draftLanguages.map(lang => (
+                        <motion.span
+                          key={lang}
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.8, opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '5px',
+                            padding: '5px 10px', borderRadius: '20px',
+                            background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
+                            color: PRIMARY, fontSize: '13px', fontWeight: 700,
+                          }}
+                        >
+                          {lang}
+                          <button
+                            onClick={() => toggleDraftLanguage(lang)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: PRIMARY }}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                          </button>
+                        </motion.span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Input field */}
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={e => { setQuery(e.target.value); setShowDropdown(true); }}
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                    placeholder="e.g. Japanese, Hindi..."
+                    style={{
+                      width: '100%', background: 'transparent', border: 'none', outline: 'none',
+                      fontSize: '14px', color: TEXT, fontFamily: "'Nunito', sans-serif",
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
+
+                {/* Suggestions dropdown */}
+                <AnimatePresence>
+                  {showDropdown && suggestions.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      style={{
+                        position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+                        background: CARD, borderRadius: '14px', border: `1.5px solid ${BORDER}`,
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.10)', zIndex: 20, overflow: 'hidden',
+                      }}
+                    >
+                      {suggestions.map((lang, i) => (
+                        <button
+                          key={lang}
+                          onMouseDown={() => addLanguage(lang)}
+                          style={{
+                            width: '100%', padding: '13px 16px', background: 'none',
+                            border: 'none', borderTop: i > 0 ? `1px solid ${BORDER}` : 'none',
+                            textAlign: 'left', fontSize: '14px', fontWeight: 500,
+                            color: TEXT, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                          }}
+                        >
+                          {lang}
+                        </button>
+                      ))}
+                      {/* Add custom if not in list */}
+                      {query.trim() && !AUTOCOMPLETE_LANGUAGES.some(l => l.toLowerCase() === query.trim().toLowerCase()) && !draftLanguages.includes(query.trim()) && (
+                        <button
+                          onMouseDown={() => addLanguage(query)}
+                          style={{
+                            width: '100%', padding: '13px 16px', background: '#FFF8F6',
+                            border: 'none', borderTop: `1px solid ${BORDER}`,
+                            textAlign: 'left', fontSize: '14px', fontWeight: 600,
+                            color: PRIMARY, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                          }}
+                        >
+                          <span style={{ fontSize: '16px' }}>+</span> Add "{query.trim()}"
+                        </button>
+                      )}
+                    </motion.div>
+                  )}
+                  {/* Show "Add" option when dropdown is open but no suggestions (pure custom entry) */}
+                  {showDropdown && suggestions.length === 0 && query.trim() && !draftLanguages.includes(query.trim()) && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      style={{
+                        position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+                        background: CARD, borderRadius: '14px', border: `1.5px solid ${BORDER}`,
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.10)', zIndex: 20, overflow: 'hidden',
+                      }}
+                    >
+                      <button
+                        onMouseDown={() => addLanguage(query)}
+                        style={{
+                          width: '100%', padding: '13px 16px', background: '#FFF8F6',
+                          border: 'none', textAlign: 'left', fontSize: '14px', fontWeight: 600,
+                          color: PRIMARY, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
+                          display: 'flex', alignItems: 'center', gap: '6px',
+                        }}
+                      >
+                        <span style={{ fontSize: '16px' }}>+</span> Add "{query.trim()}"
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Save button */}
+            <button
+              onClick={saveLanguages}
+              style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'Nunito', sans-serif", marginTop: '8px' }}
+            >
+              Save Languages
             </button>
           </div>
         </div>
