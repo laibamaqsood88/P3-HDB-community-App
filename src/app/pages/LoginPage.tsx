@@ -81,7 +81,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '60px 32px 28px',
+          padding: '52px 32px 28px',
           position: 'relative',
           zIndex: 1,
         }}

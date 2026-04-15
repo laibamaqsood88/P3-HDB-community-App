@@ -175,7 +175,7 @@ export function NeighboursPage() {
 function TagSetupScreen({ myInterests, onToggle, onConfirm }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '60px 24px 0' }}>
+      <div style={{ padding: '52px 24px 0' }}>
         <div style={{ width: '56px', height: '56px', borderRadius: '18px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
           <Hash size={26} color={PRIMARY} />
         </div>
@@ -263,7 +263,7 @@ function NeighboursFeed({ neighbours, activeFilter, myInterests, onFilterChange,
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 8px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
         {/* My active group banner */}
         {myGroup && (
           <motion.div
@@ -483,7 +483,7 @@ function NeighbourProfile({ neighbour: n, onBack, onJio }: any) {
           </div>
         </div>
       </div>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 100px' }}>
         {/* Shared interests */}
         <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
           <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '14px' }}>

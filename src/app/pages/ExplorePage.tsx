@@ -707,7 +707,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           </div>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
           {/* Horizontal bar chart */}
           <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>

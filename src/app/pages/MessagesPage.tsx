@@ -743,7 +743,7 @@ function ChatScreen({
 
       {/* Activity Board — groups only */}
       {isGroup && groupTab === 'activity' && activity && (
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
           <div style={{ fontSize: '11px', fontWeight: 700, color: MUTED, letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '14px' }}>
             Upcoming Activity
           </div>

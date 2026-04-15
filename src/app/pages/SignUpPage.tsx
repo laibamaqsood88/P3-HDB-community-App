@@ -254,7 +254,7 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        padding: '64px 24px 40px',
+        padding: '52px 24px 40px',
         background: CARD,
       }}
     >

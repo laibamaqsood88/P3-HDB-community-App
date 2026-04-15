@@ -251,7 +251,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
       </div>
 
       {/* ---- Main Content ---- */}
-      <div style={{ padding: '24px 0 40px' }}>
+      <div style={{ padding: '24px 0 100px' }}>
 
         {/* ---- Languages Spoken ---- */}
         {userLanguages.length > 0 && (

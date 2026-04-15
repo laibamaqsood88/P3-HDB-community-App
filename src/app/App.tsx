@@ -103,6 +103,7 @@ export default function App() {
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
+        overflow: 'hidden',
         background: '#F5F4F0',
         fontFamily: "'Nunito', sans-serif",
       }}

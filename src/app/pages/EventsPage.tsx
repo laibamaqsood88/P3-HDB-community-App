@@ -426,7 +426,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </div>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
           {/* Stacked bar chart section */}
           <div style={{ background: CARD, borderRadius: '14px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -798,7 +798,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               </div>
 
               {/* Notification list */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 36px' }}>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 100px' }}>
                 {NOTIFICATIONS.map((notif, i) => {
                   const isRead = readNotifs.includes(notif.id);
                   const colors = NOTIF_COLORS[notif.type] || { bg: BG, text: TEXT2 };
