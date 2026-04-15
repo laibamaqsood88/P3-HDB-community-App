@@ -595,6 +595,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
                           </button>
                         );
                       })}
+                      {/* Padding below suggestions */}
+                      <div style={{ height: '8px' }} />
                     </motion.div>
                   )}
                 </AnimatePresence>
