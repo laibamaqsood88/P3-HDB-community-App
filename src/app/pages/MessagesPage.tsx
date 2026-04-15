@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Send, Shield, Users, Search, X } from 'lucide-react';
+import { ChevronLeft, Send, Shield, Users, Search, X, MessageCircle, MapPin, ClipboardList, Target } from 'lucide-react';
 
 // ---- Design tokens ----
-const BG = '#F5F4F0';
+const BG = '#F2F2F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
-const TEXT = '#0D0D0D';
-const TEXT2 = '#6B6B72';
-const MUTED = '#AEAEB2';
-const BORDER = '#EDEDEC';
+const TEXT = '#1C1C1E';
+const TEXT2 = '#636366';
+const MUTED = '#8E8E93';
+const BORDER = 'rgba(60,60,67,0.12)';
 
 // ---- Mock conversation list ----
 type ConvType = 'group' | 'marketplace' | 'direct';
@@ -31,7 +31,7 @@ const CONVERSATIONS: Conversation[] = [
     id: 1,
     type: 'group',
     name: 'Morning Runners',
-    avatar: '🏃',
+    avatar: 'MR',
     avatarBg: '#FF6B47',
     lastMessage: "Who's joining this Saturday at 7 AM?",
     time: '9:20 AM',
@@ -42,7 +42,7 @@ const CONVERSATIONS: Conversation[] = [
     id: 2,
     type: 'group',
     name: 'Backyard Gardeners',
-    avatar: '🌿',
+    avatar: 'BG',
     avatarBg: '#059669',
     lastMessage: 'Community garden session this weekend!',
     time: 'Yesterday',
@@ -53,7 +53,7 @@ const CONVERSATIONS: Conversation[] = [
     id: 3,
     type: 'group',
     name: 'Board Game Sundays',
-    avatar: '🎲',
+    avatar: 'BG',
     avatarBg: '#7C3AED',
     lastMessage: "Anyone up for Ticket to Ride this Sunday? 🚂",
     time: '3:30 PM',
@@ -64,7 +64,7 @@ const CONVERSATIONS: Conversation[] = [
     id: 3,
     type: 'marketplace',
     name: 'IKEA Bookshelf',
-    avatar: '📚',
+    avatar: 'IB',
     avatarBg: '#3B82F6',
     lastMessage: 'Hi! Is the bookshelf still available?',
     time: '2:15 PM',
@@ -86,7 +86,7 @@ const CONVERSATIONS: Conversation[] = [
     id: 5,
     type: 'marketplace',
     name: 'Plant Watering Request',
-    avatar: '🪴',
+    avatar: 'PW',
     avatarBg: '#22C55E',
     lastMessage: 'Thanks for your offer! Saturday works.',
     time: 'Mon',
@@ -247,16 +247,23 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
       {/* Main messages list */}
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
-        <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          {/* Search pill */}
-          <div style={{ padding: '52px 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 16px', borderRadius: '50px', background: CARD, border: `1px solid ${BORDER}`, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
-              <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+        <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)`, flexShrink: 0 }}>
+          {/* Large title */}
+          <div style={{ padding: '52px 16px 0' }}>
+            <div style={{ padding: '0 16px', marginBottom: '10px', fontSize: '28px', fontWeight: 700, color: TEXT, letterSpacing: '-0.3px' }}>
+              Messages
+            </div>
+          </div>
+
+          {/* iOS-style search bar */}
+          <div style={{ padding: '0 16px 10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '12px', background: 'rgba(120,120,128,0.12)' }}>
+              <Search size={15} color={MUTED} strokeWidth={2.2} style={{ flexShrink: 0 }} />
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search messages..."
-                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: TEXT, outline: 'none', fontFamily: "'Nunito', sans-serif" }}
+                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', fontWeight: 500, color: TEXT, outline: 'none', fontFamily: "'Nunito', sans-serif" }}
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
@@ -265,18 +272,23 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
               )}
             </div>
           </div>
+
           {/* Filter tabs */}
-          <div style={{ display: 'flex', marginTop: '12px' }}>
+          <div style={{ display: 'flex' }}>
             {FILTER_TABS.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveFilter(tab)}
                 style={{
-                  flex: 1, padding: '10px 4px',
-                  background: 'none', border: 'none',
-                  borderBottom: `2.5px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
-                  cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
-                  fontSize: '13px', fontWeight: activeFilter === tab ? 700 : 500,
+                  flex: 1,
+                  padding: '8px 4px',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
+                  cursor: 'pointer',
+                  fontFamily: "'Nunito', sans-serif",
+                  fontSize: '13px',
+                  fontWeight: activeFilter === tab ? 600 : 500,
                   color: activeFilter === tab ? PRIMARY : MUTED,
                   whiteSpace: 'nowrap',
                 }}
@@ -294,10 +306,15 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
               style={{
                 padding: '60px 24px',
                 textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px',
                 color: MUTED,
                 fontSize: '14px',
               }}
             >
+              <MessageCircle size={32} color={MUTED} />
               No conversations here yet
             </div>
           )}
@@ -318,23 +335,23 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                 gap: '14px',
                 padding: '14px 20px',
                 background: CARD,
-                borderBottom: `1px solid ${BORDER}`,
+                borderBottom: `0.5px solid rgba(60,60,67,0.10)`,
                 cursor: 'pointer',
               }}
             >
               {/* Avatar */}
               <div
                 style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: '18px',
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '50%',
                   background: conv.avatarBg,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  fontSize: conv.avatar.length > 2 ? '22px' : '14px',
-                  fontWeight: 800,
+                  fontSize: '15px',
+                  fontWeight: 700,
                   color: 'white',
                   position: 'relative',
                 }}
@@ -348,7 +365,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                       right: '-3px',
                       width: '18px',
                       height: '18px',
-                      borderRadius: '6px',
+                      borderRadius: '50%',
                       background: CARD,
                       border: `2px solid ${CARD}`,
                       display: 'flex',
@@ -376,7 +393,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                     <span
                       style={{
                         fontSize: '15px',
-                        fontWeight: 700,
+                        fontWeight: 600,
                         color: TEXT,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -406,7 +423,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                   </div>
                   <span
                     style={{
-                      fontSize: '11px',
+                      fontSize: '13px',
                       color: MUTED,
                       fontWeight: 500,
                       flexShrink: 0,
@@ -425,8 +442,8 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                 >
                   <span
                     style={{
-                      fontSize: '13px',
-                      color: conv.unread > 0 ? TEXT : TEXT2,
+                      fontSize: '14px',
+                      color: TEXT2,
                       fontWeight: conv.unread > 0 ? 600 : 400,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -447,7 +464,7 @@ export function MessagesPage({ initialConvId, extraConversations = [] }: Message
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        padding: '0 6px',
+                        padding: '0 5px',
                       }}
                     >
                       <span style={{ fontSize: '11px', fontWeight: 700, color: 'white' }}>
@@ -520,18 +537,18 @@ function ChatScreen({
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
       {/* Header */}
-      <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}` }}>
-        <div style={{ padding: '52px 20px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)` }}>
+        <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={onBack}
-            style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
           >
             <ChevronLeft size={20} color={TEXT} />
           </button>
 
           {/* Avatar */}
           <div
-            style={{ width: '44px', height: '44px', borderRadius: '14px', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: conv.avatar.length > 2 ? '20px' : '15px', fontWeight: 800, color: 'white', flexShrink: 0 }}
+            style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0 }}
           >
             {conv.avatar}
           </div>
@@ -562,7 +579,7 @@ function ChatScreen({
 
         {/* Chat / Activity Board tabs — groups only */}
         {isGroup && (
-          <div style={{ display: 'flex', borderTop: `1px solid ${BORDER}` }}>
+          <div style={{ display: 'flex', borderTop: `0.5px solid rgba(60,60,67,0.12)` }}>
             {(['chat', 'activity'] as const).map(tab => (
               <button
                 key={tab}
@@ -570,7 +587,7 @@ function ChatScreen({
                 style={{
                   flex: 1, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer',
                   fontFamily: "'Nunito', sans-serif", fontSize: '13px',
-                  fontWeight: groupTab === tab ? 700 : 500,
+                  fontWeight: groupTab === tab ? 600 : 500,
                   color: groupTab === tab ? PRIMARY : MUTED,
                   borderBottom: `2px solid ${groupTab === tab ? PRIMARY : 'transparent'}`,
                   transition: 'all 0.15s',
@@ -591,15 +608,15 @@ function ChatScreen({
           </div>
 
           {[
-            { emoji: '📍', label: 'Next Meetup', value: activity.meetup },
-            { emoji: '📋', label: 'Upcoming Plan', value: activity.plan },
-            { emoji: '🎯', label: 'Group Goal', value: activity.goal },
+            { icon: <MapPin size={16} color={PRIMARY} />, label: 'Next Meetup', value: activity.meetup },
+            { icon: <ClipboardList size={16} color="#7C3AED" />, label: 'Upcoming Plan', value: activity.plan },
+            { icon: <Target size={16} color="#059669" />, label: 'Group Goal', value: activity.goal },
           ].map(item => (
             <div
               key={item.label}
-              style={{ background: CARD, borderRadius: '18px', padding: '16px 18px', display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}
+              style={{ background: CARD, borderRadius: '14px', padding: '16px 18px', display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)' }}
             >
-              <span style={{ fontSize: '22px', lineHeight: 1, marginTop: '1px' }}>{item.emoji}</span>
+              <div style={{ marginTop: '2px', flexShrink: 0 }}>{item.icon}</div>
               <div>
                 <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>{item.label}</div>
                 <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5' }}>{item.value}</div>
@@ -618,147 +635,151 @@ function ChatScreen({
       )}
 
       {/* Messages */}
-      {(!isGroup || groupTab === 'chat') && <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px',
-        }}
-      >
-        {messages.map(msg => {
-          if (msg.from === 'system') {
+      {(!isGroup || groupTab === 'chat') && (
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+          }}
+        >
+          {messages.map(msg => {
+            if (msg.from === 'system') {
+              return (
+                <div key={msg.id} style={{ textAlign: 'center', padding: '4px 0' }}>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      background: 'rgba(120,120,128,0.1)',
+                      borderRadius: '10px',
+                      padding: '6px 12px',
+                      fontSize: '12px',
+                      color: TEXT2,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {msg.text}
+                  </span>
+                </div>
+              );
+            }
+
+            const isMe = msg.from === 'me';
             return (
-              <div key={msg.id} style={{ textAlign: 'center', padding: '4px 0' }}>
-                <span
-                  style={{
-                    padding: '6px 16px',
-                    borderRadius: '20px',
-                    background: '#F0FDF4',
-                    fontSize: '12px',
-                    color: '#16A34A',
-                    fontWeight: 700,
-                  }}
-                >
-                  {msg.text}
-                </span>
+              <div
+                key={msg.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: isMe ? 'flex-end' : 'flex-start',
+                  alignItems: 'flex-end',
+                  gap: '8px',
+                }}
+              >
+                {/* Sender avatar for group "them" messages */}
+                {!isMe && isGroup && (
+                  <div
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      background: conv.avatarBg,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      color: 'white',
+                      marginBottom: '14px',
+                    }}
+                  >
+                    {msg.sender}
+                  </div>
+                )}
+
+                <div style={{ maxWidth: '72%' }}>
+                  <div
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                      background: isMe ? PRIMARY : CARD,
+                      color: isMe ? 'white' : TEXT,
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      ...(isMe ? {} : { border: '0.5px solid rgba(60,60,67,0.10)' }),
+                    }}
+                  >
+                    {msg.text}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '10px',
+                      color: MUTED,
+                      marginTop: '3px',
+                      textAlign: isMe ? 'right' : 'left',
+                      paddingLeft: isMe ? 0 : '4px',
+                      paddingRight: isMe ? '4px' : 0,
+                    }}
+                  >
+                    {msg.time}
+                  </div>
+                </div>
               </div>
             );
-          }
-
-          const isMe = msg.from === 'me';
-          return (
-            <div
-              key={msg.id}
-              style={{
-                display: 'flex',
-                justifyContent: isMe ? 'flex-end' : 'flex-start',
-                alignItems: 'flex-end',
-                gap: '8px',
-              }}
-            >
-              {/* Sender avatar for group "them" messages */}
-              {!isMe && isGroup && (
-                <div
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '10px',
-                    background: conv.avatarBg,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    fontSize: '12px',
-                    fontWeight: 800,
-                    color: 'white',
-                    marginBottom: '14px',
-                  }}
-                >
-                  {msg.sender}
-                </div>
-              )}
-
-              <div style={{ maxWidth: '75%' }}>
-                <div
-                  style={{
-                    padding: '11px 15px',
-                    borderRadius: isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                    background: isMe ? PRIMARY : CARD,
-                    color: isMe ? 'white' : TEXT,
-                    fontSize: '14px',
-                    lineHeight: '1.5',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-                  }}
-                >
-                  {msg.text}
-                </div>
-                <div
-                  style={{
-                    fontSize: '10px',
-                    color: MUTED,
-                    marginTop: '3px',
-                    textAlign: isMe ? 'right' : 'left',
-                    paddingLeft: isMe ? 0 : '4px',
-                    paddingRight: isMe ? '4px' : 0,
-                  }}
-                >
-                  {msg.time}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>}
+          })}
+        </div>
+      )}
 
       {/* Input bar — chat tab only */}
-      {(!isGroup || groupTab === 'chat') && <div
-        style={{
-          padding: '12px 16px 28px',
-          background: CARD,
-          borderTop: `1px solid ${BORDER}`,
-        }}
-      >
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <input
-            value={input}
-            onChange={e => onInputChange(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && onSend()}
-            placeholder="Type a message..."
-            style={{
-              flex: 1,
-              padding: '12px 18px',
-              borderRadius: '22px',
-              border: `1.5px solid ${BORDER}`,
-              background: BG,
-              fontSize: '14px',
-              outline: 'none',
-              color: TEXT,
-              fontFamily: "'Nunito', sans-serif",
-            }}
-          />
-          <button
-            onClick={onSend}
-            style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '50%',
-              background: PRIMARY,
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              boxShadow: '0 4px 14px rgba(255,107,71,0.35)',
-            }}
-          >
-            <Send size={18} color="white" />
-          </button>
+      {(!isGroup || groupTab === 'chat') && (
+        <div
+          style={{
+            padding: '10px 16px 28px',
+            background: CARD,
+            borderTop: `0.5px solid rgba(60,60,67,0.12)`,
+          }}
+        >
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <input
+              value={input}
+              onChange={e => onInputChange(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onSend()}
+              placeholder="Type a message..."
+              style={{
+                flex: 1,
+                padding: '10px 16px',
+                borderRadius: '22px',
+                background: 'rgba(120,120,128,0.12)',
+                border: 'none',
+                fontSize: '15px',
+                outline: 'none',
+                color: TEXT,
+                fontFamily: "'Nunito', sans-serif",
+              }}
+            />
+            <button
+              onClick={onSend}
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                background: PRIMARY,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Send size={16} color="white" />
+            </button>
+          </div>
         </div>
-      </div>}
+      )}
     </div>
   );
 }

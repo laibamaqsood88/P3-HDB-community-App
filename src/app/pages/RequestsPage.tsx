@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Plus, Shield, X, SlidersHorizontal, MapPin, MessageCircle, Heart, ChevronDown, Check, Send, Search } from 'lucide-react';
+import {
+  ChevronLeft, Plus, X, SlidersHorizontal, MapPin, MessageCircle, Heart,
+  ChevronDown, Check, Send, Search,
+  Home as HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake,
+  ShoppingBag, Search as SearchIcon, ClipboardList, CheckCircle,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
-const BG = '#F5F4F0';
+const BG = '#F2F2F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
-const TEXT = '#0D0D0D';
-const TEXT2 = '#6B6B72';
-const MUTED = '#AEAEB2';
-const BORDER = '#EDEDEC';
+const TEXT = '#1C1C1E';
+const TEXT2 = '#636366';
+const MUTED = '#8E8E93';
+const BORDER = 'rgba(60,60,67,0.12)';
 
 type RequestScreen = 'feed' | 'detail' | 'post' | 'chat';
 interface NavFrame { screen: RequestScreen; params?: any; }
@@ -21,6 +26,17 @@ const REQUEST_TYPES = ['Borrow', 'Free Request', 'Paid Request'];
 const CAT_EMOJIS: Record<string, string> = {
   'Home Help': '🏠', 'Errands': '🛒', 'Repairs': '🔧', 'Moving': '📦',
   'Learning': '📚', 'Community': '🤝', 'Items Needed': '🛍️', 'Lost Items': '🔍',
+};
+
+const CAT_ICON_MAP: Record<string, React.FC<any>> = {
+  'Home Help': HomeIcon,
+  'Errands': ShoppingCart,
+  'Repairs': Wrench,
+  'Moving': Package,
+  'Learning': BookOpen,
+  'Community': Handshake,
+  'Items Needed': ShoppingBag,
+  'Lost Items': SearchIcon,
 };
 
 const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
@@ -50,7 +66,7 @@ export { INITIAL_REQUESTS as REQUESTS_DATA, CAT_EMOJIS as REQUESTS_CAT_EMOJIS };
 // ---- Map Component ----
 function CollectionPointMap({ address }: { address: string }) {
   return (
-    <div style={{ borderRadius: '18px', overflow: 'hidden', border: `1px solid ${BORDER}` }}>
+    <div style={{ borderRadius: '14px', overflow: 'hidden', border: `1px solid ${BORDER}` }}>
       <div style={{ position: 'relative', height: '150px', background: 'linear-gradient(135deg, #E8F5E9 0%, #DCEEFB 100%)' }}>
         {[...Array(6)].map((_, i) => (
           <div key={`h${i}`} style={{ position: 'absolute', left: 0, right: 0, top: `${i * 27}px`, height: '1px', background: 'rgba(0,0,0,0.05)' }} />
@@ -91,28 +107,37 @@ function PosterAvatar({ poster, size = 34 }: { poster: any; size?: number }) {
 // ---- Request Card ----
 function RequestCard({ r, onClick }: { r: any; onClick: () => void }) {
   const typeStyle = TYPE_COLORS[r.type] || { bg: BG, text: TEXT2 };
+  const CatIcon = CAT_ICON_MAP[r.category] || ClipboardList;
   return (
-    <motion.div whileTap={{ scale: 0.97 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer', marginBottom: '10px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-        <PosterAvatar poster={r.poster} size={30} />
-        <span style={{ fontSize: '12px', fontWeight: 700, color: TEXT }}>{r.poster.name}</span>
-        {r.verified && (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: '2px 7px', borderRadius: '8px', background: '#DCFCE7', fontSize: '10px', color: '#16A34A', fontWeight: 700 }}>
-            <Shield size={8} /> Verified
-          </span>
-        )}
-        <span style={{ marginLeft: 'auto', padding: '3px 9px', borderRadius: '10px', fontSize: '10px', background: typeStyle.bg, color: typeStyle.text, fontWeight: 700 }}>{r.type}</span>
-      </div>
+    <motion.div
+      whileTap={{ scale: 0.97 }}
+      onClick={onClick}
+      style={{
+        background: CARD, borderRadius: '14px', padding: '14px 16px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)',
+        cursor: 'pointer', marginBottom: '10px',
+      }}
+    >
+      {/* Icon + content row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-        <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
-          {CAT_EMOJIS[r.category] || '📋'}
+        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <CatIcon size={20} color={PRIMARY} />
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, marginBottom: '5px', lineHeight: '1.3' }}>{r.title}</div>
-          <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.5', marginBottom: '8px' }}>{r.description.slice(0, 80)}...</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ padding: '3px 9px', borderRadius: '10px', fontSize: '10px', background: BG, color: TEXT2, fontWeight: 700 }}>{CAT_EMOJIS[r.category]} {r.category}</span>
-            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Expires {r.expiresOn}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Type badge row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px', flexWrap: 'wrap' }}>
+            <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, background: typeStyle.bg, color: typeStyle.text }}>{r.type}</span>
+          </div>
+          <div style={{ fontSize: '15px', fontWeight: 600, color: TEXT, marginBottom: '5px', lineHeight: '1.35' }}>{r.title}</div>
+          <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5', marginBottom: '10px' }}>{r.description.slice(0, 80)}...</div>
+          {/* Poster row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: r.poster.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{r.poster.initials}</span>
+            </div>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT }}>{r.poster.name}</span>
+            {r.verified && <CheckCircle size={12} color="#34C759" />}
+            <span style={{ marginLeft: 'auto', fontSize: '12px', color: MUTED }}>Expires {r.expiresOn}</span>
           </div>
         </div>
       </div>
@@ -125,15 +150,26 @@ const DISTANCE_OPTIONS = ['< 0.5 km', '< 1 km', '< 2 km', 'Any'];
 // ---- Filter Panel ----
 function FilterPanel({ activeCategories, activeTypes, activeDistance, sort, onCategoryToggle, onTypeToggle, onDistanceChange, onSortChange, onClose, onClear }: any) {
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20, background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto' }}>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 30 }}
+      style={{
+        position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20,
+        background: CARD, borderRadius: '20px 20px 0 0', padding: '16px 16px 40px',
+        boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto',
+      }}
+    >
+      {/* Handle */}
+      <div style={{ width: '36px', height: '4px', background: 'rgba(60,60,67,0.15)', borderRadius: '2px', margin: '0 auto 20px' }} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}>
-        <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter Requests</div>
+        <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Filter Requests</div>
         <button onClick={onClose} style={{ width: '34px', height: '34px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <X size={16} color={TEXT2} />
         </button>
       </div>
       <div style={{ marginBottom: '20px' }}>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Distance</div>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT2, marginBottom: '10px' }}>Distance</div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {DISTANCE_OPTIONS.map(d => {
             const active = activeDistance === d;
@@ -146,7 +182,7 @@ function FilterPanel({ activeCategories, activeTypes, activeDistance, sort, onCa
         </div>
       </div>
       <div style={{ marginBottom: '20px' }}>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Sort By</div>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT2, marginBottom: '10px' }}>Sort By</div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {(['Latest', 'Distance'] as const).map(s => {
             const active = sort === s;
@@ -159,20 +195,22 @@ function FilterPanel({ activeCategories, activeTypes, activeDistance, sort, onCa
         </div>
       </div>
       <div style={{ marginBottom: '20px' }}>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Category</div>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT2, marginBottom: '10px' }}>Category</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {REQUEST_CATEGORIES.map(cat => {
             const active = activeCategories.includes(cat);
+            const CatIcon = CAT_ICON_MAP[cat] || ClipboardList;
             return (
               <button key={cat} onClick={() => onCategoryToggle(cat)} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '8px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? '#FFF0EC' : 'transparent', color: active ? PRIMARY : TEXT2, fontWeight: active ? 700 : 500 }}>
-                {CAT_EMOJIS[cat]} {cat}
+                <CatIcon size={13} color={active ? PRIMARY : MUTED} />
+                {cat}
               </button>
             );
           })}
         </div>
       </div>
       <div style={{ marginBottom: '24px' }}>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Type of Request</div>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT2, marginBottom: '10px' }}>Type of Request</div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {REQUEST_TYPES.map(type => {
             const active = activeTypes.includes(type);
@@ -186,10 +224,10 @@ function FilterPanel({ activeCategories, activeTypes, activeDistance, sort, onCa
         </div>
       </div>
       <div style={{ display: 'flex', gap: '12px' }}>
-        <button onClick={onClear} style={{ flex: 1, padding: '14px', borderRadius: '18px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>
+        <button onClick={onClear} style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>
           Clear All
         </button>
-        <button onClick={onClose} style={{ flex: 2, padding: '14px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
+        <button onClick={onClose} style={{ flex: 2, padding: '14px', borderRadius: '14px', background: PRIMARY, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
           Apply Filters
         </button>
       </div>
@@ -221,38 +259,41 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
-      <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-        {/* Search pill + filter */}
-        <div style={{ padding: '52px 16px 14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 16px', borderRadius: '50px', background: CARD, border: `1px solid ${BORDER}`, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
-            <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search requests..."
-              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: TEXT, outline: 'none', fontFamily: 'inherit' }}
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
-                <X size={14} color={MUTED} />
-              </button>
-            )}
+      {/* Header */}
+      <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
+        <div style={{ padding: '52px 16px 0' }}>
+          {/* Search pill + filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '14px' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '12px', background: 'rgba(120,120,128,0.12)' }}>
+              <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search requests..."
+                style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', fontWeight: 500, color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
+                  <X size={14} color={MUTED} />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setFilterVisible(true)}
+              style={{ position: 'relative', width: '46px', height: '46px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            >
+              <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
+              {filterCount > 0 && (
+                <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
+                  <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+                </div>
+              )}
+            </button>
           </div>
-          <button
-            onClick={() => setFilterVisible(true)}
-            style={{ position: 'relative', width: '46px', height: '46px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-          >
-            <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
-            {filterCount > 0 && (
-              <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
-                <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
-              </div>
-            )}
-          </button>
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No requests match your filters</div>
         ) : (
@@ -281,8 +322,18 @@ function RequestsFeed({ requests, onSelectRequest, onPost }: { requests: any[]; 
         )}
       </AnimatePresence>
 
-      <button onClick={onPost} style={{ position: 'absolute', bottom: '20px', right: '20px', width: '58px', height: '58px', borderRadius: '50%', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 28px rgba(255,107,71,0.45)', zIndex: 10 }}>
-        <Plus size={26} color="white" />
+      {/* FAB */}
+      <button
+        onClick={onPost}
+        style={{
+          position: 'absolute', bottom: '20px', right: '20px',
+          width: '54px', height: '54px', borderRadius: '50%',
+          background: PRIMARY, border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 4px 16px rgba(255,107,71,0.38)', zIndex: 10,
+        }}
+      >
+        <Plus size={24} color="white" />
       </button>
     </div>
   );
@@ -293,60 +344,91 @@ function RequestDetail({ request, onBack, onChat }: any) {
   const [saved, setSaved] = useState(false);
   if (!request) return null;
   const typeStyle = TYPE_COLORS[request.type] || { bg: BG, text: TEXT2 };
+  const CatIcon = CAT_ICON_MAP[request.category] || ClipboardList;
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 18px', borderBottom: `1px solid ${BG}` }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+      {/* Header */}
+      <div style={{ background: CARD, padding: '52px 16px 18px', borderBottom: `0.5px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <button
+            onClick={onBack}
+            style={{ width: '38px', height: '38px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+          >
             <ChevronLeft size={20} color={TEXT} />
           </button>
           <div style={{ flex: 1 }} />
-          <button onClick={() => { setSaved(s => !s); toast.success(saved ? 'Removed from saved' : 'Saved!'); }} style={{ width: '36px', height: '36px', borderRadius: '12px', background: saved ? '#FFF0EC' : BG, border: `1.5px solid ${saved ? '#FFD8CC' : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button
+            onClick={() => { setSaved(s => !s); toast.success(saved ? 'Removed from saved' : 'Saved!'); }}
+            style={{ width: '38px', height: '38px', borderRadius: '50%', background: saved ? '#FFF0EC' : BG, border: `1.5px solid ${saved ? '#FFD8CC' : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
             <Heart size={16} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
           </button>
         </div>
+
+        {/* Poster row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
           <PosterAvatar poster={request.poster} size={48} />
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
               <span style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{request.poster.name}</span>
-              {request.verified && <Shield size={13} color="#22C55E" />}
+              {request.verified && <CheckCircle size={14} color="#34C759" />}
             </div>
             <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Bishan-AMK Estate · Verified Resident</div>
           </div>
-          <span style={{ padding: '5px 12px', borderRadius: '12px', fontSize: '11px', background: typeStyle.bg, color: typeStyle.text, fontWeight: 700 }}>{request.type}</span>
+          <span style={{ padding: '5px 12px', borderRadius: '8px', fontSize: '11px', background: typeStyle.bg, color: typeStyle.text, fontWeight: 700 }}>{request.type}</span>
         </div>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 12px', borderRadius: '12px', fontSize: '12px', background: BG, color: TEXT2, fontWeight: 700 }}>
-          {CAT_EMOJIS[request.category]} {request.category}
-        </span>
+
+        {/* Category badge */}
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', borderRadius: '8px', fontSize: '12px', background: '#FFF0EC', color: PRIMARY, fontWeight: 700 }}>
+          <CatIcon size={13} color={PRIMARY} />
+          {request.category}
+        </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-        <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, marginBottom: '12px', lineHeight: '1.3' }}>{request.title}</div>
-        <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7', marginBottom: '20px' }}>{request.description}</div>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 20px' }}>
+        {/* Title */}
+        <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, marginBottom: '12px', lineHeight: '1.3' }}>{request.title}</div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '13px 16px', background: '#FEF2F2', borderRadius: '14px', marginBottom: '20px' }}>
+        {/* Description card */}
+        <div style={{ background: CARD, borderRadius: '14px', padding: '16px', marginBottom: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Description</div>
+          <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{request.description}</div>
+        </div>
+
+        {/* Expiry */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '13px 16px', background: '#FEF2F2', borderRadius: '14px', marginBottom: '14px' }}>
           <span style={{ fontSize: '16px' }}>⏰</span>
           <span style={{ fontSize: '13px', color: '#EF4444', fontWeight: 600 }}>Expires on {request.expiresOn}</span>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
+        {/* Map card */}
+        <div style={{ borderRadius: '14px', overflow: 'hidden', marginBottom: '14px' }}>
           <CollectionPointMap address={request.collectionPoint} />
         </div>
 
-        <div style={{ padding: '14px 16px', background: '#FFF0EC', borderRadius: '16px', border: '1px solid #FFD8CC', marginBottom: '20px' }}>
+        {/* Privacy note */}
+        <div style={{ padding: '14px 16px', background: '#FFF0EC', borderRadius: '14px', border: '1px solid #FFD8CC', marginBottom: '8px' }}>
           <div style={{ fontSize: '13px', color: PRIMARY, fontWeight: 500 }}>
             🔒 Contact details only shared after both parties confirm. No obligation to proceed.
           </div>
         </div>
       </div>
 
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
-        <button onClick={onChat} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', marginBottom: '10px', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+      <div style={{ padding: '12px 16px 32px', borderTop: `0.5px solid ${BORDER}`, background: CARD }}>
+        <button
+          onClick={onChat}
+          style={{
+            width: '100%', padding: '16px', borderRadius: '14px',
+            background: PRIMARY, border: 'none', color: 'white',
+            fontWeight: 700, fontSize: '16px', cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(255,107,71,0.35)', marginBottom: '10px',
+            fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          }}
+        >
           <MessageCircle size={18} color="white" /> Chat with Neighbour
         </button>
-        <button onClick={onBack} style={{ width: '100%', padding: '12px', borderRadius: '18px', background: 'none', border: 'none', cursor: 'pointer', color: MUTED, fontSize: '14px', fontFamily: 'inherit' }}>
+        <button onClick={onBack} style={{ width: '100%', padding: '12px', borderRadius: '14px', background: 'none', border: 'none', cursor: 'pointer', color: MUTED, fontSize: '14px', fontFamily: 'inherit' }}>
           Go Back
         </button>
       </div>
@@ -368,47 +450,86 @@ function PostRequestScreen({ onBack, onPost }: any) {
   const SUGGESTED = ['Home Help', 'Errands', 'Items Needed'];
   const valid = title.trim() && category && requestType && description.trim() && expiryDate;
 
+  const inputStyle = {
+    width: '100%',
+    padding: '14px 16px',
+    borderRadius: '12px',
+    border: 'none',
+    fontSize: '15px',
+    outline: 'none',
+    color: TEXT,
+    background: 'rgba(120,120,128,0.1)',
+    boxSizing: 'border-box' as const,
+    fontFamily: 'inherit',
+  };
+
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '52px 20px 18px' }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
+      <div style={{ background: CARD, padding: '52px 16px 18px', borderBottom: `0.5px solid ${BORDER}` }}>
+        <button onClick={onBack} style={{ width: '38px', height: '38px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
-        <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>Post a Request</div>
+        <div style={{ fontSize: '24px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Post a Request</div>
         <div style={{ fontSize: '14px', color: MUTED, fontWeight: 500 }}>Ask your neighbours for help</div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 20px' }}>
         <FormField label="Title">
-          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Need help moving boxes" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="e.g. Need help moving boxes"
+            style={inputStyle}
+          />
         </FormField>
 
         <FormField label="Category">
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setDropdownOpen(!dropdownOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${dropdownOpen ? PRIMARY : BORDER}`, fontSize: '14px', background: BG, color: category ? TEXT : MUTED, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 700 : 400, boxSizing: 'border-box' }}>
-              {category ? `${CAT_EMOJIS[category]} ${category}` : 'Select a category'}
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              style={{ ...inputStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 600 : 400, color: category ? TEXT : MUTED, cursor: 'pointer' }}
+            >
+              {category
+                ? (() => { const CatIcon = CAT_ICON_MAP[category] || ClipboardList; return <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><CatIcon size={15} color={PRIMARY} />{category}</span>; })()
+                : 'Select a category'
+              }
               <ChevronDown size={16} color={MUTED} style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
             </button>
             {dropdownOpen && (
-              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '16px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}` }}>
-                {REQUEST_CATEGORIES.map((cat, i) => (
-                  <button key={cat} onClick={() => { setCategory(cat); setDropdownOpen(false); }} style={{ width: '100%', padding: '13px 16px', border: 'none', background: category === cat ? '#FFF0EC' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'inherit', fontSize: '14px', color: category === cat ? PRIMARY : TEXT, fontWeight: category === cat ? 700 : 400, borderBottom: i < REQUEST_CATEGORIES.length - 1 ? `1px solid ${BG}` : 'none', textAlign: 'left' }}>
-                    <span style={{ fontSize: '18px' }}>{CAT_EMOJIS[cat]}</span>
-                    <span style={{ flex: 1 }}>{cat}</span>
-                    {category === cat && <Check size={15} color={PRIMARY} />}
-                  </button>
-                ))}
+              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '14px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}` }}>
+                {REQUEST_CATEGORIES.map((cat, i) => {
+                  const CatIcon = CAT_ICON_MAP[cat] || ClipboardList;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => { setCategory(cat); setDropdownOpen(false); }}
+                      style={{ width: '100%', padding: '13px 16px', border: 'none', background: category === cat ? '#FFF0EC' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'inherit', fontSize: '14px', color: category === cat ? PRIMARY : TEXT, fontWeight: category === cat ? 700 : 400, borderBottom: i < REQUEST_CATEGORIES.length - 1 ? `0.5px solid ${BORDER}` : 'none', textAlign: 'left' }}
+                    >
+                      <CatIcon size={16} color={category === cat ? PRIMARY : MUTED} />
+                      <span style={{ flex: 1 }}>{cat}</span>
+                      {category === cat && <Check size={15} color={PRIMARY} />}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
           <div style={{ marginTop: '10px' }}>
             <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '7px' }}>Suggested</div>
             <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap' }}>
-              {SUGGESTED.map(s => (
-                <button key={s} onClick={() => setCategory(s)} style={{ padding: '6px 12px', borderRadius: '16px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${category === s ? PRIMARY : BORDER}`, background: category === s ? '#FFF0EC' : CARD, color: category === s ? PRIMARY : TEXT2, fontWeight: category === s ? 700 : 500 }}>
-                  {CAT_EMOJIS[s]} {s}
-                </button>
-              ))}
+              {SUGGESTED.map(s => {
+                const CatIcon = CAT_ICON_MAP[s] || ClipboardList;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setCategory(s)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${category === s ? PRIMARY : BORDER}`, background: category === s ? '#FFF0EC' : CARD, color: category === s ? PRIMARY : TEXT2, fontWeight: category === s ? 700 : 500 }}
+                  >
+                    <CatIcon size={12} color={category === s ? PRIMARY : MUTED} />
+                    {s}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </FormField>
@@ -433,7 +554,7 @@ function PostRequestScreen({ onBack, onPost }: any) {
             onChange={e => e.target.value.length <= MAX_CHARS && setDescription(e.target.value)}
             placeholder="Describe what you need in detail..."
             rows={4}
-            style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${description.length >= MAX_CHARS - 30 ? '#F59E0B' : BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }}
+            style={{ ...inputStyle, resize: 'none', lineHeight: '1.5', border: description.length >= MAX_CHARS - 30 ? '1.5px solid #F59E0B' : 'none' }}
           />
           {description.length >= MAX_CHARS - 30 && (
             <div style={{ fontSize: '11px', color: '#F59E0B', fontWeight: 600, marginTop: '5px' }}>{MAX_CHARS - description.length} characters remaining</div>
@@ -441,21 +562,39 @@ function PostRequestScreen({ onBack, onPost }: any) {
         </FormField>
 
         <FormField label="Location">
-          <input value={collectionPoint} onChange={e => setCollectionPoint(e.target.value)} placeholder="Location of request" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input
+            value={collectionPoint}
+            onChange={e => setCollectionPoint(e.target.value)}
+            placeholder="Location of request"
+            style={inputStyle}
+          />
         </FormField>
 
         <FormField label="Post expires on">
-          <input type="date" value={expiryDate} onChange={e => setExpiryDate(e.target.value)} min={new Date().toISOString().split('T')[0]} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input
+            type="date"
+            value={expiryDate}
+            onChange={e => setExpiryDate(e.target.value)}
+            min={new Date().toISOString().split('T')[0]}
+            style={inputStyle}
+          />
         </FormField>
       </div>
 
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
+      <div style={{ padding: '12px 16px 32px', borderTop: `0.5px solid ${BORDER}`, background: CARD }}>
         <button
           onClick={() => {
             if (valid) onPost({ title, category, requestType, description, collectionPoint, expiryDate });
           }}
           disabled={!valid}
-          style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}
+          style={{
+            width: '100%', padding: '16px', borderRadius: '14px',
+            background: valid ? PRIMARY : BORDER, border: 'none',
+            color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '16px',
+            cursor: valid ? 'pointer' : 'not-allowed',
+            boxShadow: valid ? '0 4px 16px rgba(255,107,71,0.35)' : 'none',
+            fontFamily: 'inherit',
+          }}
         >
           Post Request
         </button>
@@ -479,9 +618,9 @@ function ChatScreen({ request, onBack }: any) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '52px 16px 16px', borderBottom: `0.5px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={onBack} style={{ width: '38px', height: '38px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
           {request && <PosterAvatar poster={request.poster} size={38} />}
@@ -506,9 +645,15 @@ function ChatScreen({ request, onBack }: any) {
           </div>
         ))}
       </div>
-      <div style={{ padding: '12px 16px 24px', background: CARD, borderTop: `1px solid ${BORDER}` }}>
+      <div style={{ padding: '12px 16px 24px', background: CARD, borderTop: `0.5px solid ${BORDER}` }}>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Type a message..." style={{ flex: 1, padding: '12px 18px', borderRadius: '22px', border: `1.5px solid ${BORDER}`, background: BG, fontSize: '14px', outline: 'none', color: TEXT, fontFamily: 'inherit' }} />
+          <input
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && send()}
+            placeholder="Type a message..."
+            style={{ flex: 1, padding: '12px 18px', borderRadius: '22px', border: `1.5px solid ${BORDER}`, background: BG, fontSize: '14px', outline: 'none', color: TEXT, fontFamily: 'inherit' }}
+          />
           <button onClick={send} style={{ width: '46px', height: '46px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(255,107,71,0.35)' }}>
             <Send size={18} color="white" />
           </button>
@@ -522,7 +667,7 @@ function ChatScreen({ request, onBack }: any) {
 function FormField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: '22px' }}>
-      <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>{label}</div>
+      <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT2, marginBottom: '6px' }}>{label}</div>
       {children}
     </div>
   );

@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Shield } from 'lucide-react';
+import { Shield, MapPin, CheckCircle } from 'lucide-react';
 
-// ---- Design tokens ----
-const BG = '#F5F4F0';
+// ---- Design tokens (Apple HIG) ----
+const BG = '#F2F2F7';
 const PRIMARY = '#FF6B47';
-const TEXT = '#0D0D0D';
-const TEXT2 = '#6B6B72';
-const MUTED = '#AEAEB2';
+const TEXT = '#1C1C1E';
+const TEXT2 = '#636366';
+const MUTED = '#8E8E93';
+const BORDER = 'rgba(60,60,67,0.12)';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -27,23 +28,23 @@ export function LoginPage({ onLogin }: LoginPageProps) {
     const w = canvas.offsetWidth;
     const h = canvas.offsetHeight;
 
-    // Blob 1 — warm orange
-    const g1 = ctx.createRadialGradient(w * 0.75, h * 0.2, 0, w * 0.75, h * 0.2, w * 0.65);
-    g1.addColorStop(0, 'rgba(255,107,71,0.35)');
-    g1.addColorStop(0.6, 'rgba(255,144,104,0.18)');
+    // Soft warm blob top-right
+    const g1 = ctx.createRadialGradient(w * 0.8, h * 0.15, 0, w * 0.8, h * 0.15, w * 0.6);
+    g1.addColorStop(0, 'rgba(255,107,71,0.18)');
+    g1.addColorStop(0.5, 'rgba(255,144,104,0.09)');
     g1.addColorStop(1, 'rgba(255,176,138,0)');
     ctx.fillStyle = g1;
     ctx.beginPath();
-    ctx.ellipse(w * 0.75, h * 0.2, w * 0.65, h * 0.45, Math.PI / 5, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.8, h * 0.15, w * 0.6, h * 0.4, Math.PI / 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Blob 2 — softer bottom left
-    const g2 = ctx.createRadialGradient(w * 0.1, h * 0.7, 0, w * 0.1, h * 0.7, w * 0.45);
-    g2.addColorStop(0, 'rgba(255,107,71,0.18)');
+    // Softer blob bottom-left
+    const g2 = ctx.createRadialGradient(w * 0.05, h * 0.75, 0, w * 0.05, h * 0.75, w * 0.4);
+    g2.addColorStop(0, 'rgba(255,107,71,0.10)');
     g2.addColorStop(1, 'rgba(255,107,71,0)');
     ctx.fillStyle = g2;
     ctx.beginPath();
-    ctx.ellipse(w * 0.1, h * 0.7, w * 0.45, h * 0.3, -Math.PI / 6, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.05, h * 0.75, w * 0.4, h * 0.25, -Math.PI / 6, 0, Math.PI * 2);
     ctx.fill();
   }, []);
 
@@ -59,7 +60,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         overflow: 'hidden',
       }}
     >
-      {/* Illustrated background canvas */}
+      {/* Background gradient canvas */}
       <canvas
         ref={canvasRef}
         style={{
@@ -67,12 +68,12 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           top: 0,
           left: 0,
           width: '100%',
-          height: '55%',
+          height: '60%',
           pointerEvents: 'none',
         }}
       />
 
-      {/* Top hero area */}
+      {/* Hero area */}
       <div
         style={{
           flex: 1,
@@ -80,45 +81,44 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '60px 32px 24px',
+          padding: '60px 32px 28px',
           position: 'relative',
           zIndex: 1,
         }}
       >
-        {/* Logo */}
+        {/* App icon */}
         <motion.div
-          initial={{ scale: 0.7, opacity: 0 }}
+          initial={{ scale: 0.72, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.08 }}
           style={{
-            width: '88px',
-            height: '88px',
-            borderRadius: '28px',
-            background: 'white',
+            width: '96px',
+            height: '96px',
+            borderRadius: '26px',
+            background: 'linear-gradient(145deg, #FF6B47 0%, #FF8C6B 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '42px',
-            boxShadow: '0 8px 32px rgba(255,107,71,0.22), 0 2px 8px rgba(0,0,0,0.08)',
-            marginBottom: '20px',
+            boxShadow: '0 8px 28px rgba(255,107,71,0.32), 0 2px 8px rgba(0,0,0,0.08)',
+            marginBottom: '28px',
           }}
         >
-          🏘️
+          <MapPin size={44} color="white" strokeWidth={1.8} />
         </motion.div>
 
-        {/* App name */}
+        {/* Text content */}
         <motion.div
-          initial={{ y: 16, opacity: 0 }}
+          initial={{ y: 18, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.22, duration: 0.5 }}
-          style={{ textAlign: 'center' }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          style={{ textAlign: 'center', width: '100%' }}
         >
           <div
             style={{
-              fontSize: '32px',
+              fontSize: '34px',
               fontWeight: 800,
               color: TEXT,
-              letterSpacing: '-0.5px',
+              letterSpacing: '-0.6px',
               lineHeight: 1.1,
               marginBottom: '10px',
             }}
@@ -127,106 +127,97 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           </div>
           <div
             style={{
-              fontSize: '15px',
+              fontSize: '16px',
               color: TEXT2,
               fontWeight: 500,
-              lineHeight: '1.5',
-              marginBottom: '8px',
+              lineHeight: 1.5,
+              marginBottom: '6px',
             }}
           >
-            Connect with neighbours
+            Connect with your neighbours
           </div>
           <div
             style={{
-              fontSize: '12px',
+              fontSize: '13px',
               color: MUTED,
               fontWeight: 500,
-              letterSpacing: '0.1px',
+              marginBottom: '40px',
             }}
           >
-            Estate-verified · Privacy-first · Singpass secured
+            Estate-verified · Singpass secured
           </div>
 
-          {/* Singpass button */}
+          {/* Singpass login button */}
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={onLogin}
             style={{
               width: '100%',
-              padding: '18px 24px',
-              borderRadius: '16px',
+              padding: '17px 24px',
+              borderRadius: '14px',
               background: '#FFFFFF',
-              border: '1.5px solid #D1D5DB',
+              border: `1px solid ${BORDER}`,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0px',
-              boxShadow: 'none',
-              marginTop: '28px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)',
               fontFamily: "'Nunito', sans-serif",
             }}
           >
-            <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111', letterSpacing: '0.1px' }}>
+            <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111' }}>
               Log in with&nbsp;
             </span>
-            <span style={{ fontSize: '16px', fontWeight: 700, color: '#E30613', letterSpacing: '0.1px' }}>
+            <span style={{ fontSize: '16px', fontWeight: 700, color: '#E30613' }}>
               singpass
             </span>
           </motion.button>
         </motion.div>
-
       </div>
 
-      {/* Bottom CTA area */}
+      {/* Bottom trust strip */}
       <motion.div
-        initial={{ y: 40, opacity: 0 }}
+        initial={{ y: 32, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
+        transition={{ delay: 0.55, duration: 0.45 }}
         style={{
-          padding: '0 24px 40px',
+          padding: '0 24px 44px',
           position: 'relative',
           zIndex: 1,
         }}
       >
-        {/* Privacy note */}
         <div
           style={{
-            textAlign: 'center',
             fontSize: '12px',
             color: MUTED,
             fontWeight: 500,
+            textAlign: 'center',
             marginBottom: '14px',
-            lineHeight: '1.6',
+            lineHeight: 1.6,
           }}
         >
-          Your identity is verified. No personal data is stored.
+          Your identity is verified and no personal data is stored.
         </div>
 
-        {/* Singpass badge */}
+        {/* Trust row */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            padding: '10px 18px',
-            background: 'white',
+            gap: '10px',
+            padding: '12px 20px',
+            background: '#FFFFFF',
             borderRadius: '14px',
-            border: '1px solid #EDEDEC',
+            border: `1px solid ${BORDER}`,
           }}
         >
-          <span style={{ fontSize: '16px' }}>🦁</span>
-          <Shield size={13} color="#22C55E" />
-          <span
-            style={{
-              fontSize: '12px',
-              color: TEXT2,
-              fontWeight: 500,
-            }}
-          >
+          <CheckCircle size={15} color="#34C759" strokeWidth={2} />
+          <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 600 }}>
             MyInfo data is not accessed
           </span>
+          <Shield size={14} color={MUTED} strokeWidth={1.8} />
         </div>
       </motion.div>
     </div>
