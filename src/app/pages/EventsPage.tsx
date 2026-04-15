@@ -638,24 +638,25 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '14px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '12px', paddingTop: '14px' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '14px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '12px', paddingTop: '16px' }}>
             {MOCK_NEIGHBOURS.slice(0, 6).map(neighbour => (
               <motion.div
                 key={neighbour.id}
                 whileTap={{ scale: 0.97 }}
                 style={{
-                  flexShrink: 0, width: '160px', background: CARD,
-                  borderRadius: '20px', padding: '14px',
+                  flexShrink: 0, width: '220px', background: CARD,
+                  borderRadius: '20px', padding: '14px 14px 12px',
                   boxShadow: '0 2px 14px rgba(0,0,0,0.07)',
                   cursor: 'pointer', position: 'relative', overflow: 'visible',
+                  display: 'flex', flexDirection: 'column', gap: '12px',
                 }}
               >
                 {/* Category sticker — top-left, slightly rotated */}
                 <div style={{
                   position: 'absolute', top: '-11px', left: '12px',
-                  padding: '4px 10px', borderRadius: '8px',
+                  padding: '4px 12px', borderRadius: '10px',
                   background: '#FFF0EC', color: PRIMARY,
-                  fontSize: '11px', fontWeight: 700,
+                  fontSize: '12px', fontWeight: 700,
                   transform: 'rotate(-1.5deg)',
                   boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
                   zIndex: 1, whiteSpace: 'nowrap',
@@ -663,33 +664,32 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   {neighbour.interests[0]}
                 </div>
 
-                {/* Square photo */}
-                <div style={{ width: '100%', height: '112px', borderRadius: '14px', overflow: 'hidden', background: neighbour.color, marginBottom: '10px', marginTop: '4px' }}>
-                  <img
-                    src={neighbour.avatarUrl}
-                    alt={neighbour.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                {/* Top row: photo LEFT + name/location RIGHT */}
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
+                  {/* Square photo */}
+                  <div style={{ width: '90px', height: '90px', borderRadius: '14px', overflow: 'hidden', flexShrink: 0, background: neighbour.color }}>
+                    <img src={neighbour.avatarUrl} alt={neighbour.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+
+                  {/* Name + location */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT, lineHeight: 1.2, marginBottom: '6px' }}>{neighbour.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <MapPin size={12} color={MUTED} strokeWidth={1.8} />
+                      <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{neighbour.unit} · {neighbour.distance}</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Name */}
-                <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '4px', lineHeight: 1.2 }}>{neighbour.name}</div>
-
-                {/* Location */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '10px' }}>
-                  <MapPin size={11} color={MUTED} strokeWidth={2} />
-                  <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{neighbour.unit} · {neighbour.distance}</span>
-                </div>
-
-                {/* Say Hello — outline button */}
+                {/* Say Hello — full-width outline button */}
                 <button
                   onClick={() => toast.success(`Message sent to ${neighbour.name}!`)}
                   style={{
-                    width: '100%', padding: '9px 0', borderRadius: '12px',
+                    width: '100%', padding: '11px 0', borderRadius: '14px',
                     background: 'white', border: `1.5px solid ${PRIMARY}`,
-                    color: TEXT, fontSize: '12px', fontWeight: 700,
+                    color: TEXT, fontSize: '14px', fontWeight: 700,
                     cursor: 'pointer', fontFamily: 'inherit',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                   }}
                 >
                   👋 Say Hello
