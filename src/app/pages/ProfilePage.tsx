@@ -1,15 +1,20 @@
 import { useState } from 'react';
-import { Shield, ChevronRight, Bell, Lock, HelpCircle, LogOut, Bookmark, Settings, X, Tag, FileText, MessageCircle, Trash2, RefreshCw, CheckCircle, Edit3, Search } from 'lucide-react';
+import {
+  Award, Lock, ShoppingBag, CalendarDays, FileText, Settings, ChevronRight,
+  Bell, Shield as ShieldIcon, HelpCircle, LogOut, Bookmark, Tag, MessageCircle,
+  Trash2, RefreshCw, CheckCircle, Edit3, Search, MapPin, Star, Home as HomeIcon,
+  Users, X, Leaf, Package, Wrench,
+} from 'lucide-react';
 import { INTEREST_CATEGORIES } from './SignUpPage';
 
 // ---- Design tokens ----
-const BG = '#F5F4F0';
+const BG = '#F7F7F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
-const TEXT = '#0D0D0D';
-const TEXT2 = '#6B6B72';
-const MUTED = '#AEAEB2';
-const BORDER = '#EDEDEC';
+const TEXT = '#1C1C1E';
+const TEXT2 = '#636366';
+const MUTED = '#8E8E93';
+const BORDER = 'rgba(60,60,67,0.12)';
 
 // ---- Types ----
 interface ProfilePageProps {
@@ -43,62 +48,30 @@ const SAVED_ITEMS = [
   { id: 4, sourceId: 1, type: 'Request', title: 'Need someone to water my plants', sub: 'Free Request · Home Help', category: 'Request', categoryColor: '#7C3AED', categoryBg: '#EDE9FE', image: null },
 ];
 
+// Post icon map: icon name string -> Lucide component
+const POST_ICON_MAP: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+  Leaf,
+  Package,
+  Wrench,
+};
+
 const MY_POSTS = [
-  { id: 1, sourceType: 'request', type: 'Request', emoji: '🪴', title: 'Plant watering while away', status: 'Active', statusBg: '#DCFCE7', statusColor: '#16A34A', expiresOn: '25 Apr 2026', isExpired: false, category: 'Home Help', description: 'Need someone to water my 4 potted plants while I\'m away. Easy — just water once every 2 days.' },
-  { id: 2, sourceType: 'listing', type: 'Listing', emoji: '🪑', title: 'IKEA Side Table', status: 'In Progress', statusBg: '#FEF3C7', statusColor: '#D97706', expiresOn: null, isExpired: false, category: 'Furniture', description: 'White IKEA side table in good condition. Self-collect from Level 5.' },
-  { id: 3, sourceType: 'request', type: 'Request', emoji: '🔧', title: 'Help fixing kitchen shelf', status: 'Expired', statusBg: '#FEE2E2', statusColor: '#DC2626', expiresOn: '1 Apr 2026', isExpired: true, category: 'Repairs', description: 'Looking for someone to help re-mount a kitchen shelf that fell.' },
+  { id: 1, sourceType: 'request', type: 'Request', icon: 'Leaf', title: 'Plant watering while away', status: 'Active', statusBg: '#DCFCE7', statusColor: '#16A34A', expiresOn: '25 Apr 2026', isExpired: false, category: 'Home Help', description: 'Need someone to water my 4 potted plants while I\'m away. Easy — just water once every 2 days.' },
+  { id: 2, sourceType: 'listing', type: 'Listing', icon: 'Package', title: 'IKEA Side Table', status: 'In Progress', statusBg: '#FEF3C7', statusColor: '#D97706', expiresOn: null, isExpired: false, category: 'Furniture', description: 'White IKEA side table in good condition. Self-collect from Level 5.' },
+  { id: 3, sourceType: 'request', type: 'Request', icon: 'Wrench', title: 'Help fixing kitchen shelf', status: 'Expired', statusBg: '#FEE2E2', statusColor: '#DC2626', expiresOn: '1 Apr 2026', isExpired: true, category: 'Repairs', description: 'Looking for someone to help re-mount a kitchen shelf that fell.' },
 ];
 
 const STATS = [
-  { label: 'Items\nSaved', value: '4', emoji: '🔖', bg: '#FFF0EC', text: PRIMARY },
-  { label: 'Neighbours\nJio\'d', value: '3', emoji: '👋', bg: '#EDE9FE', text: '#7C3AED' },
-  { label: 'Exchanges\nDone', value: '5', emoji: '🤝', bg: '#D1FAE5', text: '#059669' },
-];
-
-const SETTINGS_ITEMS = [
-  { Icon: Bell, label: 'Notification Preferences', sub: 'Manage alerts & reminders' },
-  { Icon: Lock, label: 'Privacy & Data', sub: 'Control your visibility' },
-  { Icon: Shield, label: 'Verification', sub: 'Singpass verified' },
-  { Icon: HelpCircle, label: 'Help & Support', sub: 'FAQs & contact us' },
+  { label: 'Items\nSaved', value: '4', bg: '#FFF0EC', text: PRIMARY },
+  { label: 'Neighbours\nJio\'d', value: '3', bg: '#EDE9FE', text: '#7C3AED' },
+  { label: 'Exchanges\nDone', value: '5', bg: '#D1FAE5', text: '#059669' },
 ];
 
 const BADGES = [
-  {
-    id: 1,
-    emoji: '🎟️',
-    name: 'Event Joiner',
-    desc: 'Join your first event',
-    unlocked: true,
-    bg: '#FFF0EC',
-    color: '#FF6B47',
-  },
-  {
-    id: 2,
-    emoji: '👥',
-    name: 'Group Member',
-    desc: 'Join an interest group',
-    unlocked: true,
-    bg: '#EDE9FE',
-    color: '#7C3AED',
-  },
-  {
-    id: 3,
-    emoji: '🛍️',
-    name: 'Trader',
-    desc: '5 exchanges done',
-    unlocked: true,
-    bg: '#CCFBF1',
-    color: '#0D9488',
-  },
-  {
-    id: 4,
-    emoji: '🌟',
-    name: 'Community Builder',
-    desc: 'Create a new group',
-    unlocked: false,
-    bg: '#F5F5F5',
-    color: '#AEAEB2',
-  },
+  { id: 1, name: 'Event Joiner', desc: 'Join your first event', unlocked: true, bg: '#FFF0EC', color: PRIMARY },
+  { id: 2, name: 'Group Member', desc: 'Join an interest group', unlocked: true, bg: '#EDE9FE', color: '#7C3AED' },
+  { id: 3, name: 'Trader', desc: '5 exchanges done', unlocked: true, bg: '#CCFBF1', color: '#059669' },
+  { id: 4, name: 'Community Builder', desc: 'Create a new group', unlocked: false, bg: '#F5F5F5', color: MUTED },
 ];
 
 // ---- Main Component ----
@@ -124,7 +97,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
       id: p.id,
       sourceType: p.type,
       type: p.type === 'listing' ? 'Listing' : p.type === 'service' ? 'Service' : 'Request',
-      emoji: p.emoji || '📋',
+      icon: p.icon || null,
       title: p.title,
       status: p.status || 'Active',
       statusBg: '#DCFCE7',
@@ -151,21 +124,22 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
 
   return (
     <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-      {/* Hero Header */}
+      {/* ---- Hero Header ---- */}
       <div style={{ background: `linear-gradient(150deg, #FF6B47 0%, #FF9068 60%, #FFB08A 100%)`, padding: '52px 20px 28px', position: 'relative', overflow: 'hidden' }}>
         {/* Decorative circles */}
         <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
         <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
 
-        {/* Close button (when shown as overlay) */}
+        {/* Close button */}
         {onClose && (
           <button
             onClick={onClose}
             style={{
-              position: 'absolute', top: '54px', left: '20px', width: '38px', height: '38px',
-              borderRadius: '13px', background: 'rgba(255,255,255,0.2)', border: 'none',
+              position: 'absolute', top: '54px', left: '20px',
+              width: '36px', height: '36px', borderRadius: '50%',
+              background: 'rgba(0,0,0,0.25)', border: 'none',
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              backdropFilter: 'blur(8px)', zIndex: 2,
+              zIndex: 2,
             }}
           >
             <X size={18} color="white" />
@@ -176,137 +150,156 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
         <button
           onClick={() => setActiveSection('settings')}
           style={{
-            position: 'absolute', top: '54px', right: '20px', width: '38px', height: '38px',
-            borderRadius: '13px', background: 'rgba(255,255,255,0.2)', border: 'none',
+            position: 'absolute', top: '54px', right: '20px',
+            width: '36px', height: '36px', borderRadius: '50%',
+            background: 'rgba(0,0,0,0.25)', border: 'none',
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backdropFilter: 'blur(8px)',
           }}
         >
           <Settings size={18} color="white" />
         </button>
 
         {/* Avatar + name */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginBottom: '20px', marginTop: onClose ? '52px' : '0' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginBottom: '16px', marginTop: onClose ? '52px' : '0' }}>
           <div style={{ position: 'relative' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '26px', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid rgba(255,255,255,0.45)', backdropFilter: 'blur(10px)' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: PRIMARY, border: '4px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <span style={{ fontSize: '34px', fontWeight: 800, color: 'white', lineHeight: 1 }}>Y</span>
-            </div>
-            <div style={{ position: 'absolute', bottom: '-4px', right: '-4px', width: '24px', height: '24px', borderRadius: '50%', background: '#22C55E', border: '3px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Shield size={11} color="white" />
             </div>
           </div>
           <div style={{ paddingBottom: '6px' }}>
             <div style={{ fontSize: '22px', fontWeight: 800, color: 'white', marginBottom: '4px' }}>You</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', width: 'fit-content' }}>
-              <Shield size={11} color="rgba(255,255,255,0.9)" />
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(255,255,255,0.2)' }}>
+              <CheckCircle size={13} color="#34C759" />
               <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.95)', fontWeight: 600 }}>Singpass Verified</span>
             </div>
           </div>
         </div>
 
         {/* Estate pill */}
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 13px', borderRadius: '20px', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', marginBottom: '22px', border: '1px solid rgba(255,255,255,0.2)' }}>
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>📍 Bishan-AMK Estate</span>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 13px', borderRadius: '20px', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)' }}>
+          <MapPin size={11} color="rgba(255,255,255,0.9)" />
+          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>Bishan-AMK Estate</span>
         </div>
-
       </div>
 
-      {/* Content */}
-      <div style={{ padding: '20px 20px 32px' }}>
+      {/* ---- Main Content ---- */}
+      <div style={{ padding: '24px 0 40px' }}>
 
-        {/* My Interests */}
-        <div style={{ marginBottom: '24px' }}>
-          <SectionHeader label="My Interests" count={userInterests.length} />
-          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {userInterests.map(i => {
-                const c = INTEREST_COLORS[i] || { bg: '#FFF0EC', text: PRIMARY };
-                return (
-                  <span key={i} style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', fontWeight: 700, background: c.bg, color: c.text }}>
-                    {i}
-                  </span>
-                );
-              })}
-              <button
-                onClick={() => { setDraftInterests(userInterests); setShowInterestEdit(true); }}
-                style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', fontWeight: 600, background: BG, color: MUTED, border: `1.5px dashed ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
-              >
-                + Edit
-              </button>
-            </div>
+        {/* ---- My Interests ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Interests
+        </div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 24px', padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {userInterests.map(i => {
+              const c = INTEREST_COLORS[i] || { bg: '#FFF0EC', text: PRIMARY };
+              return (
+                <span key={i} style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, background: c.bg, color: c.text }}>
+                  {i}
+                </span>
+              );
+            })}
+            <button
+              onClick={() => { setDraftInterests(userInterests); setShowInterestEdit(true); }}
+              style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: BG, color: MUTED, border: `1.5px dashed ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              + Edit
+            </button>
           </div>
         </div>
 
-        {/* Rewards & Badges */}
-        <div style={{ marginBottom: '24px' }}>
-          <SectionHeader label="Rewards & Badges" count={BADGES.filter(b => b.unlocked).length} />
-          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              {BADGES.map(badge => (
+        {/* ---- Rewards & Badges ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Rewards &amp; Badges
+        </div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 24px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            {BADGES.map(badge => {
+              let BadgeIcon;
+              if (badge.id === 1) BadgeIcon = <CalendarDays size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
+              else if (badge.id === 2) BadgeIcon = <Users size={20} color={badge.unlocked ? '#7C3AED' : MUTED} />;
+              else if (badge.id === 3) BadgeIcon = <ShoppingBag size={20} color={badge.unlocked ? '#059669' : MUTED} />;
+              else BadgeIcon = <Lock size={20} color={MUTED} />;
+
+              return (
                 <div
                   key={badge.id}
                   style={{
-                    borderRadius: '16px',
-                    padding: '14px 12px',
+                    padding: '14px',
                     background: badge.unlocked ? badge.bg : '#F5F5F5',
-                    position: 'relative',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
                     opacity: badge.unlocked ? 1 : 0.7,
+                    position: 'relative',
                   }}
                 >
-                  {/* Lock/unlock indicator */}
+                  {/* Unlock indicator dot */}
                   <div style={{
                     position: 'absolute', top: '10px', right: '10px',
-                    width: '18px', height: '18px', borderRadius: '50%',
+                    width: '16px', height: '16px', borderRadius: '50%',
                     background: badge.unlocked ? '#22C55E' : BORDER,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     {badge.unlocked ? (
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                        <path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                    ) : (
-                      <svg width="9" height="10" viewBox="0 0 9 10" fill="none">
-                        <rect x="0.5" y="4" width="8" height="5.5" rx="1.5" stroke={MUTED} strokeWidth="1.2" />
-                        <path d="M2 4V3C2 1.9 2.9 1 4 1H5C6.1 1 7 1.9 7 3V4" stroke={MUTED} strokeWidth="1.2" strokeLinecap="round" />
-                      </svg>
-                    )}
+                    ) : null}
                   </div>
 
-                  <div style={{ fontSize: '26px', marginBottom: '6px' }}>{badge.emoji}</div>
-                  <div style={{ fontSize: '12px', fontWeight: 800, color: badge.unlocked ? badge.color : MUTED, marginBottom: '3px', lineHeight: '1.2' }}>{badge.name}</div>
-                  <div style={{ fontSize: '10px', color: badge.unlocked ? TEXT2 : MUTED, fontWeight: 500, lineHeight: '1.3' }}>{badge.desc}</div>
+                  {BadgeIcon}
+                  <div style={{ fontSize: '11px', fontWeight: 800, color: badge.unlocked ? badge.color : MUTED, textAlign: 'center', lineHeight: '1.2' }}>{badge.name}</div>
+                  <div style={{ fontSize: '10px', color: badge.unlocked ? TEXT2 : MUTED, fontWeight: 500, lineHeight: '1.3', textAlign: 'center' }}>{badge.desc}</div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Saved Items — nav row */}
-        <div style={{ marginBottom: '24px' }}>
-          <div
+        {/* ---- Saved Items + My Posts (grouped card) ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          My Content
+        </div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          {/* Saved Items row */}
+          <button
             onClick={() => setActiveSection('saved-items')}
-            style={{ background: CARD, borderRadius: '22px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', padding: '18px', cursor: 'pointer' }}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer' }}
           >
-            <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '14px', flexShrink: 0 }}>
-              <Bookmark size={17} color={PRIMARY} />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Bookmark size={16} color={PRIMARY} />
             </div>
-            <span style={{ flex: 1, fontSize: '15px', fontWeight: 700, color: TEXT }}>Saved Items</span>
-            <ChevronRight size={18} color={MUTED} />
-          </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left', fontFamily: 'inherit' }}>Saved Items</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
+          {/* My Posts row */}
+          <button
+            onClick={() => setActiveSection('my-posts')}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <FileText size={16} color="#7C3AED" />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left', fontFamily: 'inherit' }}>My Posts</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
         </div>
 
-        {/* My Posts — nav row */}
-        <div style={{ marginBottom: '24px' }}>
-          <div
-            onClick={() => setActiveSection('my-posts')}
-            style={{ background: CARD, borderRadius: '22px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', padding: '18px', cursor: 'pointer' }}
+        {/* ---- Settings (separate grouped card) ---- */}
+        <div style={{ background: CARD, borderRadius: '14px', margin: '16px 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <button
+            onClick={() => setActiveSection('settings')}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '14px', flexShrink: 0 }}>
-              <FileText size={17} color="#7C3AED" />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Settings size={16} color={TEXT2} />
             </div>
-            <span style={{ flex: 1, fontSize: '15px', fontWeight: 700, color: TEXT }}>My Posts</span>
-            <ChevronRight size={18} color={MUTED} />
-          </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left', fontFamily: 'inherit' }}>Settings</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
         </div>
 
       </div>
@@ -321,7 +314,6 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             onClick={e => e.stopPropagation()}
             style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px', maxHeight: '85vh', overflowY: 'auto' }}
           >
-            {/* Handle */}
             <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
               <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Edit Interests</div>
@@ -357,20 +349,6 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             </button>
           </div>
         </div>
-      )}
-    </div>
-  );
-}
-
-// ---- Section Header ----
-function SectionHeader({ label, count }: { label: string; count?: number }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-      <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>{label}</span>
-      {count !== undefined && (
-        <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: BORDER, color: MUTED }}>
-          {count}
-        </span>
       )}
     </div>
   );
@@ -412,31 +390,44 @@ function MyPostsScreen({ onBack, posts }: { onBack: () => void; posts: any[] }) 
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
           </button>
-          <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>My Posts</div>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: TEXT }}>My Posts</div>
         </div>
-        {/* Search */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '16px', padding: '10px 14px', border: `1.5px solid ${BORDER}`, marginBottom: '14px' }}>
+        {/* Search bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(120,120,128,0.12)', borderRadius: '12px', padding: '10px 14px', marginBottom: '14px' }}>
           <Search size={15} color={MUTED} style={{ flexShrink: 0 }} />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search posts..." style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '13px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
           {search && <button onClick={() => setSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}><X size={14} color={MUTED} /></button>}
         </div>
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: '8px' }}>
+        {/* Tabs — underline style */}
+        <div style={{ display: 'flex', gap: '0', borderBottom: `1px solid ${BORDER}` }}>
           {tabs.map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} style={{ flexShrink: 0, padding: '8px 16px', borderRadius: '22px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${activeTab === tab ? PRIMARY : BORDER}`, background: activeTab === tab ? '#FFF0EC' : 'transparent', color: activeTab === tab ? PRIMARY : TEXT2 }}>
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                flexShrink: 0, padding: '8px 16px', background: 'none', border: 'none',
+                borderBottom: activeTab === tab ? `2px solid ${PRIMARY}` : '2px solid transparent',
+                fontSize: '14px', fontWeight: activeTab === tab ? 700 : 500,
+                cursor: 'pointer', fontFamily: 'inherit',
+                color: activeTab === tab ? PRIMARY : TEXT2,
+                marginBottom: '-1px',
+              }}
+            >
               {tab}
             </button>
           ))}
         </div>
       </div>
       {/* List */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 20px' }}>
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>📋</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <FileText size={32} color={MUTED} />
+            </div>
             <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>No posts yet</div>
             <div style={{ fontSize: '12px', color: MUTED }}>Your marketplace listings and requests will appear here</div>
           </div>
@@ -444,10 +435,13 @@ function MyPostsScreen({ onBack, posts }: { onBack: () => void; posts: any[] }) 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {filtered.map(p => {
               const tc = TYPE_COLORS[p.type] || { bg: BG, text: TEXT2 };
+              const PostIconComp = p.icon && POST_ICON_MAP[p.icon] ? POST_ICON_MAP[p.icon] : FileText;
+              const iconBgColor = p.type === 'Listing' ? '#DBEAFE' : p.type === 'Service' ? '#DCFCE7' : '#EDE9FE';
+              const iconColor = p.type === 'Listing' ? '#2563EB' : p.type === 'Service' ? '#16A34A' : '#7C3AED';
               return (
-                <div key={p.id} onClick={() => setSelectedPost(p)} style={{ background: CARD, borderRadius: '20px', padding: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '16px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
-                    {p.emoji}
+                <div key={p.id} onClick={() => setSelectedPost(p)} style={{ background: CARD, borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
+                  <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: iconBgColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <PostIconComp size={20} color={iconColor} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', flexWrap: 'wrap' }}>
@@ -490,36 +484,40 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
   };
   const tc = TYPE_COLORS[currentPost.type] || { bg: BG, text: TEXT2 };
 
+  const PostIconComp = currentPost.icon && POST_ICON_MAP[currentPost.icon] ? POST_ICON_MAP[currentPost.icon] : FileText;
+  const iconBgColor = currentPost.type === 'Listing' ? '#DBEAFE' : currentPost.type === 'Service' ? '#DCFCE7' : '#EDE9FE';
+  const iconColor = currentPost.type === 'Listing' ? '#2563EB' : currentPost.type === 'Service' ? '#16A34A' : '#7C3AED';
+
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 20px', flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '52px 20px 20px', flexShrink: 0, borderBottom: `0.5px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
           </button>
-          <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>Post Details</div>
+          <div style={{ fontSize: '20px', fontWeight: 700, color: TEXT }}>Post Details</div>
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px' }}>
         {/* Post card */}
-        <div style={{ background: CARD, borderRadius: '22px', padding: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', marginBottom: '16px' }}>
+        <div style={{ background: CARD, borderRadius: '14px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '14px' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '26px', flexShrink: 0 }}>
-              {currentPost.emoji}
+            <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: iconBgColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <PostIconComp size={22} color={iconColor} />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '11px', fontWeight: 700, background: tc.bg, color: tc.text, padding: '3px 9px', borderRadius: '8px' }}>{currentPost.type}</span>
                 <span style={{ fontSize: '10px', fontWeight: 700, background: currentPost.statusBg || '#DCFCE7', color: currentPost.statusColor || '#16A34A', padding: '3px 9px', borderRadius: '8px' }}>{currentPost.status}</span>
               </div>
-              <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '4px' }}>{currentPost.title}</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '4px' }}>{currentPost.title}</div>
               {currentPost.category && <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{currentPost.category}</div>}
             </div>
           </div>
           {currentPost.description ? (
-            <div style={{ background: BG, borderRadius: '14px', padding: '12px 14px' }}>
+            <div style={{ background: BG, borderRadius: '12px', padding: '12px 14px' }}>
               <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT2, marginBottom: '4px' }}>Description</div>
               <div style={{ fontSize: '13px', color: TEXT, lineHeight: '1.5' }}>{currentPost.description}</div>
             </div>
@@ -527,24 +525,25 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
           {currentPost.expiresOn && (
             <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{ fontSize: '12px', color: isExpired ? '#DC2626' : TEXT2, fontWeight: 600 }}>
-                {isExpired ? `⚠️ Expired on ${currentPost.expiresOn}` : `Expires: ${currentPost.expiresOn}`}
+                {isExpired ? `Expired on ${currentPost.expiresOn}` : `Expires: ${currentPost.expiresOn}`}
               </div>
             </div>
           )}
         </div>
 
-        {/* Actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {/* Actions — grouped card */}
+        <div style={{ padding: '0 0 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Actions</div>
+        <div style={{ background: CARD, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
           {/* Renew (expired requests only) */}
           {isExpired && isRequest && (
             <button
               onClick={() => setShowRenewSheet(true)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: CARD, borderRadius: '18px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
             >
-              <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <RefreshCw size={17} color="#16A34A" />
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <RefreshCw size={16} color="#16A34A" />
               </div>
-              <span style={{ flex: 1, fontSize: '14px', fontWeight: 700, color: '#16A34A', textAlign: 'left' }}>Renew Request</span>
+              <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: '#16A34A', textAlign: 'left' }}>Renew Request</span>
               <ChevronRight size={16} color={MUTED} />
             </button>
           )}
@@ -553,12 +552,12 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
           {!isExpired && (
             <button
               onClick={() => setShowEditSheet(true)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: CARD, borderRadius: '18px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
             >
-              <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Edit3 size={17} color={PRIMARY} />
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Edit3 size={16} color={PRIMARY} />
               </div>
-              <span style={{ flex: 1, fontSize: '14px', fontWeight: 700, color: TEXT, textAlign: 'left' }}>Edit Details</span>
+              <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Edit Details</span>
               <ChevronRight size={16} color={MUTED} />
             </button>
           )}
@@ -571,37 +570,36 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
                 setCurrentPost(updated);
                 onUpdate(updated);
               }}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: CARD, borderRadius: '18px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
             >
-              <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#CCFBF1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <CheckCircle size={17} color="#0D9488" />
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#CCFBF1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <CheckCircle size={16} color="#0D9488" />
               </div>
-              <span style={{ flex: 1, fontSize: '14px', fontWeight: 700, color: TEXT, textAlign: 'left' }}>Mark as Sold</span>
+              <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Mark as Sold</span>
               <ChevronRight size={16} color={MUTED} />
             </button>
           )}
 
           {/* View Chat */}
           <button
-            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: CARD, borderRadius: '18px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
           >
-            <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <MessageCircle size={17} color="#7C3AED" />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <MessageCircle size={16} color="#7C3AED" />
             </div>
-            <span style={{ flex: 1, fontSize: '14px', fontWeight: 700, color: TEXT, textAlign: 'left' }}>View Chat</span>
-            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>No messages yet</span>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>View Chat</span>
+            <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>No messages yet</span>
           </button>
 
           {/* Delete */}
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: CARD, borderRadius: '18px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
           >
-            <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Trash2 size={17} color="#DC2626" />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Trash2 size={16} color="#FF3B30" />
             </div>
-            <span style={{ flex: 1, fontSize: '14px', fontWeight: 700, color: '#DC2626', textAlign: 'left' }}>Delete Listing</span>
-            <ChevronRight size={16} color={MUTED} />
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: '#FF3B30', textAlign: 'left' }}>Delete Listing</span>
           </button>
         </div>
       </div>
@@ -614,8 +612,8 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
             <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '8px' }}>Delete this listing?</div>
             <div style={{ fontSize: '13px', color: TEXT2, marginBottom: '24px' }}>This action cannot be undone. The post will be permanently removed.</div>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, padding: '14px', borderRadius: '18px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>Cancel</button>
-              <button onClick={() => { setShowDeleteConfirm(false); onBack(); }} style={{ flex: 1, padding: '14px', borderRadius: '18px', background: '#DC2626', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}>Delete</button>
+              <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>Cancel</button>
+              <button onClick={() => { setShowDeleteConfirm(false); onBack(); }} style={{ flex: 1, padding: '14px', borderRadius: '14px', background: '#FF3B30', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}>Delete</button>
             </div>
           </div>
         </div>
@@ -635,7 +633,7 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
                 value={newExpiry}
                 onChange={e => setNewExpiry(e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                style={{ width: '100%', padding: '12px 14px', borderRadius: '14px', border: `1.5px solid ${BORDER}`, fontSize: '14px', color: TEXT, fontFamily: 'inherit', background: BG, boxSizing: 'border-box' as any }}
+                style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: `1px solid ${BORDER}`, fontSize: '14px', color: TEXT, fontFamily: 'inherit', background: BG, boxSizing: 'border-box' as any }}
               />
             </div>
             <button
@@ -648,7 +646,7 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
                 setShowRenewSheet(false);
               }}
               disabled={!newExpiry}
-              style={{ width: '100%', padding: '15px', borderRadius: '18px', background: newExpiry ? PRIMARY : BORDER, border: 'none', cursor: newExpiry ? 'pointer' : 'not-allowed', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
+              style={{ width: '100%', padding: '15px', borderRadius: '14px', background: newExpiry ? PRIMARY : BORDER, border: 'none', cursor: newExpiry ? 'pointer' : 'not-allowed', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
             >
               Renew Request
             </button>
@@ -669,11 +667,11 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
             </div>
             <div style={{ marginBottom: '16px' }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>Title</div>
-              <input value={editTitle} onChange={e => setEditTitle(e.target.value)} style={{ width: '100%', padding: '12px 14px', borderRadius: '14px', border: `1.5px solid ${BORDER}`, fontSize: '14px', color: TEXT, fontFamily: 'inherit', background: BG, boxSizing: 'border-box' as any }} />
+              <input value={editTitle} onChange={e => setEditTitle(e.target.value)} style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: `1px solid ${BORDER}`, fontSize: '14px', color: TEXT, fontFamily: 'inherit', background: BG, boxSizing: 'border-box' as any }} />
             </div>
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>Description</div>
-              <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} rows={4} style={{ width: '100%', padding: '12px 14px', borderRadius: '14px', border: `1.5px solid ${BORDER}`, fontSize: '14px', color: TEXT, fontFamily: 'inherit', background: BG, resize: 'none', boxSizing: 'border-box' as any }} />
+              <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} rows={4} style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: `1px solid ${BORDER}`, fontSize: '14px', color: TEXT, fontFamily: 'inherit', background: BG, resize: 'none', boxSizing: 'border-box' as any }} />
             </div>
             <button
               onClick={() => {
@@ -682,7 +680,7 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
                 onUpdate(updated);
                 setShowEditSheet(false);
               }}
-              style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
+              style={{ width: '100%', padding: '15px', borderRadius: '14px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
             >
               Save Changes
             </button>
@@ -748,14 +746,14 @@ function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRe
       {/* Header */}
       <div style={{ background: CARD, padding: '52px 20px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
           </button>
-          <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>Saved Items</div>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: TEXT }}>Saved</div>
         </div>
-        {/* Search bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '16px', padding: '10px 14px', border: `1.5px solid ${BORDER}`, marginBottom: '14px' }}>
-          <Bookmark size={15} color={MUTED} style={{ flexShrink: 0 }} />
+        {/* Search bar — iOS pill style */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(120,120,128,0.12)', borderRadius: '12px', padding: '10px 14px', marginBottom: '14px' }}>
+          <Search size={15} color={MUTED} style={{ flexShrink: 0 }} />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -768,24 +766,34 @@ function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRe
             </button>
           )}
         </div>
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto' }} className="no-scrollbar">
+        {/* Tabs — underline style */}
+        <div style={{ display: 'flex', gap: '0', borderBottom: `1px solid ${BORDER}`, overflowX: 'auto' }} className="no-scrollbar">
           {tabs.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              style={{ flexShrink: 0, padding: '8px 16px', borderRadius: '22px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${activeTab === tab ? PRIMARY : BORDER}`, background: activeTab === tab ? '#FFF0EC' : 'transparent', color: activeTab === tab ? PRIMARY : TEXT2 }}
+              style={{
+                flexShrink: 0, padding: '8px 16px', background: 'none', border: 'none',
+                borderBottom: activeTab === tab ? `2px solid ${PRIMARY}` : '2px solid transparent',
+                fontSize: '14px', fontWeight: activeTab === tab ? 700 : 500,
+                cursor: 'pointer', fontFamily: 'inherit',
+                color: activeTab === tab ? PRIMARY : TEXT2,
+                marginBottom: '-1px',
+              }}
             >
               {tab}
             </button>
           ))}
         </div>
       </div>
+
       {/* List */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 20px' }}>
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>🔖</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <Bookmark size={32} color={MUTED} />
+            </div>
             <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>Nothing saved yet</div>
             <div style={{ fontSize: '12px', color: MUTED }}>Items you save will appear here</div>
           </div>
@@ -799,13 +807,13 @@ function SavedItemsScreen({ onBack, onOpenEvent, onOpenMarketplaceItem, onOpenRe
                 else if (item.type === 'Request') onOpenRequest?.(item.sourceId);
               };
               return (
-                <div key={item.id} onClick={handleTap} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                <div key={item.id} onClick={handleTap} style={{ background: CARD, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                   <div style={{ width: '80px', height: '72px', flexShrink: 0 }}>
                     {item.image ? (
                       <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', background: tc.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>
-                        {item.type === 'Request' ? '🙋' : '🛍️'}
+                      <div style={{ width: '100%', height: '100%', background: tc.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <FileText size={24} color={MUTED} />
                       </div>
                     )}
                   </div>
@@ -838,69 +846,90 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-      <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `1px solid ${BORDER}`, position: 'relative' }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke={TEXT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      {/* Header */}
+      <div style={{ background: CARD, padding: '52px 20px 20px', borderBottom: `0.5px solid ${BORDER}`, position: 'relative', flexShrink: 0 }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
+          <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
         </button>
-        <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, paddingLeft: '48px' }}>Settings</div>
+        <div style={{ fontSize: '28px', fontWeight: 700, color: TEXT, paddingLeft: '48px' }}>Settings</div>
       </div>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-        {/* Account */}
-        <div style={{ marginBottom: '22px' }}>
-          <SectionHeader label="Account" />
-          <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            {SETTINGS_ITEMS.map(({ Icon, label, sub }, i) => (
-              <button key={label} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: 'none', border: 'none', borderTop: i > 0 ? `1px solid ${BG}` : 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
-                <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={17} color={TEXT2} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{label}</div>
-                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
-                </div>
-                <ChevronRight size={16} color={MUTED} />
-              </button>
-            ))}
-            <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 18px', background: 'none', border: 'none', borderTop: `1px solid ${BG}`, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
-              <div style={{ width: '38px', height: '38px', borderRadius: '13px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <LogOut size={17} color={PRIMARY} />
-              </div>
-              <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, color: PRIMARY }}>Sign Out</span>
-            </button>
-          </div>
+
+      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '40px' }}>
+        {/* ---- Account section ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Account</div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          {/* Edit Profile */}
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Edit3 size={16} color="#0284C7" />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Edit Profile</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
+          {/* Change Password */}
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Lock size={16} color={TEXT2} />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Change Password</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
+          {/* Log Out */}
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <LogOut size={16} color="#FF3B30" />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: '#FF3B30', textAlign: 'left' }}>Log Out</span>
+          </button>
         </div>
 
-        {/* Notifications */}
-        <div style={{ marginBottom: '22px' }}>
-          <SectionHeader label="Notifications" />
-          <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            {[
-              { label: 'Event reminders', sub: 'Alerts for saved events', val: notifEvents, set: setNotifEvents },
-              { label: 'Neighbour invites', sub: "When a neighbour Jio's you", val: notifNeighbours, set: setNotifNeighbours },
-              { label: 'Help & Share', sub: 'Matches for your requests', val: notifHelp, set: setNotifHelp },
-            ].map(({ label, sub, val, set }, i) => (
-              <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px', borderTop: i > 0 ? `1px solid ${BG}` : 'none' }}>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{label}</div>
-                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
-                </div>
-                <div
-                  onClick={() => set(!val)}
-                  style={{ width: '46px', height: '26px', borderRadius: '13px', background: val ? PRIMARY : BORDER, cursor: 'pointer', position: 'relative', transition: 'background 0.2s ease', flexShrink: 0 }}
-                >
-                  <div style={{ position: 'absolute', top: '3px', left: val ? '23px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s ease', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
-                </div>
+        {/* ---- Notifications section ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Notifications</div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          {/* Notifications row (nav) */}
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FFE4E6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Bell size={16} color="#E11D48" />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Notifications</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
+          {/* Toggles */}
+          {[
+            { label: 'Event reminders', sub: 'Alerts for saved events', val: notifEvents, set: setNotifEvents },
+            { label: 'Neighbour invites', sub: "When a neighbour Jio's you", val: notifNeighbours, set: setNotifNeighbours },
+            { label: 'Help & Share', sub: 'Matches for your requests', val: notifHelp, set: setNotifHelp },
+          ].map(({ label, sub, val, set }, i) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: i < 2 ? `0.5px solid ${BORDER}` : 'none' }}>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 500, color: TEXT }}>{label}</div>
+                <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
               </div>
-            ))}
-          </div>
+              <div
+                onClick={() => set(!val)}
+                style={{ width: '46px', height: '26px', borderRadius: '13px', background: val ? PRIMARY : BORDER, cursor: 'pointer', position: 'relative', transition: 'background 0.2s ease', flexShrink: 0 }}
+              >
+                <div style={{ position: 'absolute', top: '3px', left: val ? '23px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s ease', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Privacy */}
-        <div style={{ marginBottom: '22px' }}>
-          <SectionHeader label="Privacy" />
-          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', gap: '12px', padding: '14px', background: '#F0FDF4', borderRadius: '16px' }}>
-              <Shield size={18} color="#22C55E" style={{ flexShrink: 0, marginTop: '1px' }} />
+        {/* ---- Privacy section ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Privacy</div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          {/* Privacy row */}
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <ShieldIcon size={16} color={TEXT2} />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Privacy &amp; Data</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
+          {/* Singpass verified banner */}
+          <div style={{ padding: '14px 16px' }}>
+            <div style={{ display: 'flex', gap: '12px', padding: '14px', background: '#F0FDF4', borderRadius: '12px' }}>
+              <ShieldIcon size={18} color="#22C55E" style={{ flexShrink: 0, marginTop: '1px' }} />
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#15803D', marginBottom: '4px' }}>Singpass Verified</div>
                 <div style={{ fontSize: '12px', color: '#166534', lineHeight: '1.55' }}>
@@ -911,15 +940,27 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
           </div>
         </div>
 
-        {/* About */}
-        <div>
-          <SectionHeader label="About" />
-          <div style={{ background: CARD, borderRadius: '22px', padding: '18px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', textAlign: 'center' }}>
-            <div style={{ fontSize: '28px', marginBottom: '8px' }}>🏘️</div>
-            <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>NeighbourHood</div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500, marginBottom: '12px' }}>Version 1.0.0 · Made for Singapore HDB Estates</div>
-            <div style={{ fontSize: '11px', color: '#C0C0CC' }}>All data is estate-gated. No PII shared without mutual consent.</div>
+        {/* ---- Support section ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Support</div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <HelpCircle size={16} color="#16A34A" />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Help &amp; Support</span>
+            <ChevronRight size={16} color={MUTED} />
+          </button>
+        </div>
+
+        {/* ---- About section ---- */}
+        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>About</div>
+        <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', padding: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', textAlign: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+            <HomeIcon size={28} color={PRIMARY} />
           </div>
+          <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>NeighbourHood</div>
+          <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500, marginBottom: '12px' }}>Version 1.0.0 · Made for Singapore HDB Estates</div>
+          <div style={{ fontSize: '11px', color: '#C0C0CC' }}>All data is estate-gated. No PII shared without mutual consent.</div>
         </div>
       </div>
     </div>

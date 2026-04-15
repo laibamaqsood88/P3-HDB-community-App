@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Users, X, Check, MapPin, Bell } from 'lucide-react';
+import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Smile, Heart, Camera, BookOpen, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
-const BG = '#F5F4F0';
+const BG = '#F7F7F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
-const TEXT = '#0D0D0D';
-const TEXT2 = '#6B6B72';
-const MUTED = '#AEAEB2';
-const BORDER = '#EDEDEC';
+const TEXT = '#1C1C1E';
+const TEXT2 = '#636366';
+const MUTED = '#8E8E93';
+const BORDER = 'rgba(60,60,67,0.12)';
 
 // ---- Types ----
 interface GroupMember { name: string; block: string; avatar: string; color: string; }
@@ -32,6 +32,21 @@ interface Group {
 
 type GroupScreen = 'feed' | 'detail';
 interface NavFrame { screen: GroupScreen; params?: any; }
+
+// ---- Helper function to get icon color based on emoji ----
+const getGroupIconElement = (emoji: string, color: string, size: number = 14) => {
+  const iconMap: { [key: string]: any } = {
+    '🏃': <Activity size={size} color={color} strokeWidth={2} />,
+    '🍳': <Utensils size={size} color={color} strokeWidth={2} />,
+    '🌱': <Leaf size={size} color={color} strokeWidth={2} />,
+    '🎲': <Dices size={size} color={color} strokeWidth={2} />,
+    '🧘': <Smile size={size} color={color} strokeWidth={2} />,
+    '👨‍👩‍👧': <Heart size={size} color={color} strokeWidth={2} />,
+    '📸': <Camera size={size} color={color} strokeWidth={2} />,
+    '📚': <BookOpen size={size} color={color} strokeWidth={2} />,
+  };
+  return iconMap[emoji] || <Users size={size} color={color} strokeWidth={2} />;
+};
 
 // ---- Mock Data ----
 const GROUPS: Group[] = [
@@ -241,7 +256,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
   const toggleJoin = (id: number) => {
     setJoinedGroups(p => {
       const joined = p.includes(id);
-      toast.success(joined ? 'Left group' : 'Joined! Welcome to the group 🎉');
+      toast.success(joined ? 'Left group' : 'Joined! Welcome to the group');
       return joined ? p.filter(x => x !== id) : [...p, id];
     });
   };
@@ -270,52 +285,64 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
           {/* Hero */}
           <div style={{ height: '240px', position: 'relative' }}>
             <img src={group.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 50%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 55%)' }} />
             <button
               onClick={goBack}
-              style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
+              style={{
+                position: 'absolute', top: '52px', left: '16px',
+                width: '38px', height: '38px', borderRadius: '50%',
+                background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                backdropFilter: 'blur(8px)',
+              }}
             >
-              <X size={18} color={TEXT} />
+              <ChevronLeft size={20} color={TEXT} />
             </button>
           </div>
 
-          <div style={{ padding: '20px 20px 32px' }}>
+          <div style={{ padding: '0 16px 100px' }}>
             {/* Category badge */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 12px', borderRadius: '20px', background: group.categoryBg, marginBottom: '10px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: group.categoryColor }}>{group.emoji} {group.category}</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '8px', background: group.categoryBg, marginTop: '20px', marginBottom: '8px' }}>
+              {getGroupIconElement(group.emoji, group.categoryColor, 12)}
+              <span style={{ fontSize: '11px', fontWeight: 700, color: group.categoryColor }}>{group.category}</span>
             </div>
 
-            <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT, marginBottom: '6px', lineHeight: '1.3' }}>{group.name}</div>
+            <div style={{ fontSize: '26px', fontWeight: 700, color: TEXT, marginBottom: '6px', lineHeight: '1.25', letterSpacing: '-0.3px' }}>{group.name}</div>
 
-            {/* Members pill */}
+            {/* Members count */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '20px' }}>
               <Users size={14} color={MUTED} />
-              <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>{group.members + (isJoined ? 1 : 0)} members</span>
+              <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{group.members + (isJoined ? 1 : 0)} members</span>
             </div>
 
             {/* Info cards */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-              {[
-                { icon: '🕐', label: 'Meets', value: group.meetFrequency },
-                { icon: '📍', label: 'Location', value: group.location },
-              ].map(({ icon, label, value }) => (
-                <div key={label} style={{ background: CARD, borderRadius: '16px', padding: '12px 14px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
-                  <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{icon} {label}</div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{value}</div>
+              <div style={{ background: CARD, borderRadius: '14px', padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+                  <Clock size={16} color={PRIMARY} strokeWidth={2} />
                 </div>
-              ))}
+                <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '3px' }}>Meets</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{group.meetFrequency}</div>
+              </div>
+              <div style={{ background: CARD, borderRadius: '14px', padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+                  <MapPin size={16} color={PRIMARY} strokeWidth={2} />
+                </div>
+                <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '3px' }}>Location</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{group.location}</div>
+              </div>
             </div>
 
             {/* About */}
-            <div style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', marginBottom: '16px' }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this group</div>
+            <div style={{ background: CARD, borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', marginBottom: '16px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>About</div>
               <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.6' }}>{group.description}</div>
             </div>
 
             {/* Tags */}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
               {group.tags.map(tag => (
-                <span key={tag} style={{ padding: '5px 12px', borderRadius: '20px', background: BG, fontSize: '12px', fontWeight: 600, color: TEXT2, border: `1px solid ${BORDER}` }}>
+                <span key={tag} style={{ padding: '5px 12px', borderRadius: '8px', background: CARD, fontSize: '12px', fontWeight: 600, color: TEXT2, border: `1px solid ${BORDER}` }}>
                   #{tag}
                 </span>
               ))}
@@ -323,24 +350,28 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
 
             {/* Members list */}
             {group.membersList && group.membersList.length > 0 && (
-              <div style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>Members</div>
+              <div style={{ background: CARD, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px 10px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Members</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Users size={12} color={MUTED} />
-                    <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{group.membersList.length}</span>
+                    <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{group.membersList.length}</span>
                   </div>
                 </div>
                 {group.membersList.map((member, i) => (
                   <div
                     key={i}
-                    style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '12px', borderBottom: i < group.membersList!.length - 1 ? `1px solid ${BORDER}` : 'none', marginTop: i > 0 ? '12px' : '0' }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '12px 16px',
+                      borderBottom: i < group.membersList!.length - 1 ? '0.5px solid rgba(60,60,67,0.10)' : 'none',
+                    }}
                   >
-                    <div style={{ width: '40px', height: '40px', borderRadius: '14px', background: member.color + '22', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <span style={{ fontSize: '13px', fontWeight: 800, color: member.color }}>{member.avatar}</span>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: member.color + '22', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: '12px', fontWeight: 800, color: member.color }}>{member.avatar}</span>
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{member.name}</div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: TEXT }}>{member.name}</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
                         <MapPin size={11} color={MUTED} />
                         <span style={{ fontSize: '12px', color: TEXT2 }}>{member.block}</span>
@@ -354,13 +385,14 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
         </div>
 
         {/* Join / Leave button */}
-        <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}` }}>
+        <div style={{ padding: '12px 16px 28px', background: CARD, borderTop: `0.5px solid ${BORDER}` }}>
           <button
             onClick={() => toggleJoin(group.id)}
             style={{
-              width: '100%', padding: '16px', borderRadius: '18px', border: isJoined ? `2px solid ${BORDER}` : 'none',
+              width: '100%', padding: '16px', borderRadius: '14px',
+              border: isJoined ? `1.5px solid ${BORDER}` : 'none',
               background: isJoined ? CARD : PRIMARY,
-              cursor: 'pointer', fontSize: '15px', fontWeight: 800,
+              cursor: 'pointer', fontSize: '16px', fontWeight: 700,
               color: isJoined ? TEXT2 : 'white', fontFamily: 'inherit',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
             }}
@@ -368,7 +400,6 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
             {isJoined ? <><Check size={16} /> Leave Group</> : <>Join Group</>}
           </button>
         </div>
-
       </div>
     );
   }
@@ -378,14 +409,15 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Search + category pills — only shown when NOT in embedded (hideHeader) mode */}
       {!hideHeader && (
-        <div style={{ background: CARD, padding: '14px 20px 0px', borderBottom: `1px solid ${BORDER}` }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: BG, borderRadius: '14px', padding: '10px 14px', marginBottom: '12px' }}>
+        <div style={{ background: CARD, padding: '52px 16px 0', borderBottom: `0.5px solid ${BORDER}` }}>
+          {/* Search bar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(120,120,128,0.12)', borderRadius: '12px', padding: '10px 14px', marginBottom: '12px' }}>
             <Search size={16} color={MUTED} />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search interest groups..."
-              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: TEXT, fontFamily: 'inherit' }}
+              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: '15px', color: TEXT, fontFamily: 'inherit' }}
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
@@ -394,16 +426,16 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
             )}
           </div>
           {/* Category pills */}
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '14px' }}>
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '14px', scrollbarWidth: 'none' }}>
             {CATEGORIES.map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 style={{
-                  flexShrink: 0, padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
+                  flexShrink: 0, padding: '7px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 600,
                   background: activeCategory === cat ? PRIMARY : CARD,
                   color: activeCategory === cat ? 'white' : TEXT2,
-                  border: activeCategory === cat ? 'none' : `1px solid ${BORDER}`,
+                  border: activeCategory === cat ? 'none' : '1px solid ' + BORDER,
                   cursor: 'pointer', fontFamily: 'inherit',
                 }}
               >
@@ -414,61 +446,70 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
         </div>
       )}
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 32px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 32px' }}>
         {/* My Groups */}
         {myGroups.length > 0 && (
           <div style={{ marginBottom: '24px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>My Groups</div>
-            <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '4px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0 16px', marginBottom: '10px' }}>My Groups</div>
+            <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
               {myGroups.map(g => (
                 <motion.button
                   key={g.id}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => goTo('detail', { group: g })}
                   style={{
-                    flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-                    padding: '12px 16px', background: CARD, borderRadius: '18px', border: `2px solid ${PRIMARY}`,
-                    cursor: 'pointer', fontFamily: 'inherit', width: '90px',
+                    flexShrink: 0, width: '130px', borderRadius: '14px', overflow: 'hidden',
+                    border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0,
+                    position: 'relative', height: '100px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
                   }}
                 >
-                  <span style={{ fontSize: '24px' }}>{g.emoji}</span>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: TEXT, textAlign: 'center', lineHeight: '1.3' }}>{g.name.split(' ').slice(0, 2).join(' ')}</span>
+                  <img src={g.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.62) 0%, transparent 55%)' }} />
+                  <div style={{ position: 'absolute', bottom: '8px', left: '8px', right: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'white', lineHeight: '1.3', display: 'block', textAlign: 'left' }}>{g.name.split(' ').slice(0, 2).join(' ')}</span>
+                  </div>
                 </motion.button>
               ))}
             </div>
           </div>
         )}
 
-        {/* All Groups */}
-        <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
+        {/* All Groups header */}
+        <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0 16px', marginBottom: '10px' }}>
           {effectiveCategory === 'All' ? 'All Groups' : 'Groups'} · {filteredGroups.length}
         </div>
 
         {filteredGroups.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
+            <Search size={36} color={MUTED} style={{ marginBottom: '12px' }} />
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '6px' }}>No groups found</div>
             <div style={{ fontSize: '13px', color: TEXT2 }}>Try a different search or category</div>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {filteredGroups.map(group => {
               const isJoined = joinedGroups.includes(group.id);
               return (
                 <motion.div
                   key={group.id}
                   whileTap={{ scale: 0.98 }}
-                  style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+                  style={{
+                    background: CARD, borderRadius: '14px', overflow: 'hidden',
+                    marginBottom: '12px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+                    cursor: 'pointer',
+                  }}
                   onClick={() => goTo('detail', { group })}
                 >
                   {/* Image */}
-                  <div style={{ height: '130px', position: 'relative' }}>
+                  <div style={{ height: '140px', position: 'relative' }}>
                     <img src={group.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '20px', background: group.categoryBg, color: group.categoryColor, fontSize: '11px', fontWeight: 700 }}>
+                    <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '8px', background: group.categoryBg, color: group.categoryColor, fontSize: '11px', fontWeight: 700 }}>
                       {group.emoji} {group.category}
                     </div>
                     {isJoined && (
-                      <div style={{ position: 'absolute', top: '10px', right: '10px', padding: '4px 10px', borderRadius: '20px', background: PRIMARY, fontSize: '11px', fontWeight: 700, color: 'white' }}>
+                      <div style={{ position: 'absolute', top: '10px', right: '10px', padding: '4px 10px', borderRadius: '8px', background: PRIMARY, fontSize: '11px', fontWeight: 700, color: 'white' }}>
                         ✓ Joined
                       </div>
                     )}
@@ -476,22 +517,22 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
 
                   {/* Content */}
                   <div style={{ padding: '14px 16px' }}>
-                    <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '4px', lineHeight: '1.3' }}>{group.name}</div>
-                    <div style={{ fontSize: '12px', color: TEXT2, marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.5' }}>
+                    <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT, marginBottom: '5px', lineHeight: '1.3' }}>{group.name}</div>
+                    <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5 }}>
                       {group.description}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', gap: '12px' }}>
+                      <div style={{ display: 'flex', gap: '14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Users size={12} color={MUTED} />
-                          <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{group.members + (isJoined ? 1 : 0)} members</span>
+                          <Users size={13} color={MUTED} />
+                          <span style={{ fontSize: '13px', color: MUTED }}>{group.members + (isJoined ? 1 : 0)} members</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <MapPin size={12} color={MUTED} />
-                          <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{group.location.split(',')[0]}</span>
+                          <MapPin size={13} color={MUTED} />
+                          <span style={{ fontSize: '13px', color: MUTED }}>{group.location.split(',')[0]}</span>
                         </div>
                       </div>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY }}>View →</span>
+                      <ChevronRight size={18} color={MUTED} />
                     </div>
                   </div>
                 </motion.div>
@@ -517,10 +558,12 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
               onClick={e => e.stopPropagation()}
-              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', maxHeight: '70vh', overflowY: 'auto' }}
+              style={{ background: CARD, borderRadius: '20px 20px 0 0', padding: '16px 16px 40px', maxHeight: '70vh', overflowY: 'auto' }}
             >
+              {/* Handle */}
+              <div style={{ width: '36px', height: '4px', background: 'rgba(60,60,67,0.15)', borderRadius: '2px', margin: '0 auto 20px' }} />
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter Groups</span>
+                <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Filter Groups</span>
                 <button
                   onClick={() => { setShowCategoryFilter(false); onFilterClose?.(); }}
                   style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -528,7 +571,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                   <X size={16} color={TEXT} />
                 </button>
               </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
                 {CATEGORIES.map(cat => {
                   const sel = activeCategory === cat;
@@ -537,7 +580,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
                       style={{
-                        padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 600,
+                        padding: '7px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 600,
                         background: sel ? '#FFF0EC' : BG,
                         color: sel ? PRIMARY : TEXT2,
                         border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid transparent`,
@@ -552,13 +595,13 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
                   onClick={() => { setActiveCategory('All'); onCategoryChange?.('All'); }}
-                  style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
+                  style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
                 >
                   Clear
                 </button>
                 <button
                   onClick={() => { setShowCategoryFilter(false); onFilterClose?.(); onCategoryChange?.(activeCategory); }}
-                  style={{ flex: 2, padding: '14px', borderRadius: '16px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}
+                  style={{ flex: 2, padding: '14px', borderRadius: '14px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}
                 >
                   Apply
                 </button>

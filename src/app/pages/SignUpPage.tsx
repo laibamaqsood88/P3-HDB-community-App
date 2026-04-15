@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, ChevronLeft, ChevronDown, Users, Bookmark } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronDown, Users, Bookmark, Home } from 'lucide-react';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -246,11 +246,10 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '48px',
           marginBottom: '28px',
         }}
       >
-        🏘️
+        <Home size={52} color={PRIMARY} strokeWidth={1.5} />
       </div>
 
       <div
@@ -262,7 +261,7 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
           marginBottom: '14px',
         }}
       >
-        Welcome to NeighbourHood 🏘️
+        Welcome to NeighbourHood
       </div>
       <div
         style={{

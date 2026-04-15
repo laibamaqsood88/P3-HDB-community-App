@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X } from 'lucide-react';
+import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList } from 'lucide-react';
 import { toast } from 'sonner';
 import { REQUESTS_DATA, REQUESTS_CAT_EMOJIS } from './RequestsPage';
 
 // ---- Design tokens ----
-const BG = '#F5F4F0';
+const BG = '#F7F7F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
-const TEXT = '#0D0D0D';
-const TEXT2 = '#6B6B72';
-const MUTED = '#AEAEB2';
-const BORDER = '#EDEDEC';
+const TEXT = '#1C1C1E';
+const TEXT2 = '#636366';
+const MUTED = '#8E8E93';
+const BORDER = 'rgba(60,60,67,0.12)';
+
+// ---- Group Icon Map ----
+const GROUP_ICON_MAP: Record<string, React.FC<any>> = { Activity, Leaf, Dice5 };
 
 // ---- Types ----
 type EventsScreen = 'feed' | 'detail' | 'going' | 'group-detail';
@@ -152,7 +155,7 @@ const EVENTS = [
 const INTEREST_GROUPS = [
   {
     id: 1, name: 'Morning Runners', interest: 'Running', members: 14,
-    nextActivity: 'Run this Sat 7AM', gradient: 'linear-gradient(135deg, #FF6B47 0%, #FF9068 100%)', emoji: '🏃',
+    nextActivity: 'Run this Sat 7AM', gradient: 'linear-gradient(135deg, #FF6B47 0%, #FF9068 100%)', icon: 'Activity',
     categoryColor: '#FF6B47', categoryBg: '#FFF0EC',
     meetup: 'Saturday 7 AM · Bishan-AMK Park Pavilion',
     plan: 'Bring water and comfortable shoes',
@@ -167,7 +170,7 @@ const INTEREST_GROUPS = [
   },
   {
     id: 2, name: 'Backyard Gardeners', interest: 'Gardening', members: 9,
-    nextActivity: 'Garden session Sat 8AM', gradient: 'linear-gradient(135deg, #059669 0%, #34D399 100%)', emoji: '🌱',
+    nextActivity: 'Garden session Sat 8AM', gradient: 'linear-gradient(135deg, #059669 0%, #34D399 100%)', icon: 'Leaf',
     categoryColor: '#059669', categoryBg: '#D1FAE5',
     meetup: 'Saturday 8 AM · Rooftop Garden, Blk 450',
     plan: 'Bring gloves — we are pruning herbs this week',
@@ -180,7 +183,7 @@ const INTEREST_GROUPS = [
   },
   {
     id: 3, name: 'Board Game Sundays', interest: 'Board Games', members: 11,
-    nextActivity: 'Games this Sun 2PM', gradient: 'linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)', emoji: '🎲',
+    nextActivity: 'Games this Sun 2PM', gradient: 'linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)', icon: 'Dice5',
     categoryColor: '#7C3AED', categoryBg: '#EDE9FE',
     meetup: 'Sunday 2 PM · RC Multi-Purpose Hall, Blk 447',
     plan: 'Bring snacks — we have Catan and Codenames ready',
@@ -216,12 +219,12 @@ const NEIGHBOURS_GOING = [
 
 // ---- Notifications mock data ----
 const NOTIFICATIONS = [
-  { id: 1, type: 'event', emoji: '🏃', title: 'Morning Run tomorrow at 7 AM', body: 'Your registered event starts in less than 24 hours. Meet at Bishan-AMK Park Pavilion.', time: '10 min ago', read: false, route: { to: 'event', eventId: 1 } },
-  { id: 2, type: 'group', emoji: '🌱', title: 'New message in Backyard Gardeners', body: 'Diana M.: "The tomatoes are looking great this week! 🍅"', time: '32 min ago', read: false, route: { to: 'group', groupId: 2 } },
-  { id: 3, type: 'marketplace', emoji: '🪴', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false, route: { to: 'messages', convId: 5 } },
-  { id: 4, type: 'event', emoji: '📅', title: 'New event near you', body: 'Peranakan Cooking Workshop on Sun 13 Apr — 12 neighbours are going!', time: '3 hrs ago', read: true, route: { to: 'event', eventId: 2 } },
-  { id: 5, type: 'group', emoji: '🎲', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true, route: { to: 'group', groupId: 3 } },
-  { id: 6, type: 'marketplace', emoji: '📚', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true, route: { to: 'marketplace' } },
+  { id: 1, type: 'event', icon: 'Activity', title: 'Morning Run tomorrow at 7 AM', body: 'Your registered event starts in less than 24 hours. Meet at Bishan-AMK Park Pavilion.', time: '10 min ago', read: false, route: { to: 'event', eventId: 1 } },
+  { id: 2, type: 'group', icon: 'Users', title: 'New message in Backyard Gardeners', body: 'Diana M.: "The tomatoes are looking great this week! 🍅"', time: '32 min ago', read: false, route: { to: 'group', groupId: 2 } },
+  { id: 3, type: 'marketplace', icon: 'ShoppingBag', title: 'Neighbour replied to your request', body: 'Someone offered to help with your plant watering request. Tap to chat.', time: '1 hr ago', read: false, route: { to: 'messages', convId: 5 } },
+  { id: 4, type: 'event', icon: 'Activity', title: 'New event near you', body: 'Peranakan Cooking Workshop on Sun 13 Apr — 12 neighbours are going!', time: '3 hrs ago', read: true, route: { to: 'event', eventId: 2 } },
+  { id: 5, type: 'group', icon: 'Users', title: 'Board Game Sundays this Sunday', body: 'Eli N. posted: "Anyone up for Ticket to Ride this Sunday? 🚂"', time: 'Yesterday', read: true, route: { to: 'group', groupId: 3 } },
+  { id: 6, type: 'marketplace', icon: 'ShoppingBag', title: 'Item you saved is still available', body: 'IKEA Billy Bookshelf from Blk 445 has not been claimed yet.', time: '2 days ago', read: true, route: { to: 'marketplace' } },
 ];
 
 const NOTIF_COLORS: Record<string, { bg: string; text: string }> = {
@@ -229,6 +232,17 @@ const NOTIF_COLORS: Record<string, { bg: string; text: string }> = {
   group:       { bg: '#D1FAE5', text: '#059669' },
   marketplace: { bg: '#DBEAFE', text: '#2563EB' },
   community:   { bg: '#FEF3C7', text: '#D97706' },
+};
+
+// Notification icon map (using imported Lucide icons where available, fallback for ShoppingBag inline)
+const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
+  Activity,
+  Users,
+  ShoppingBag: ({ size, color, strokeWidth }: any) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+    </svg>
+  ),
 };
 
 // ---- Main Component ----
@@ -267,14 +281,14 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           <div style={{ height: '260px', position: 'relative' }}>
             <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 45%)' }} />
-            <button onClick={goBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+            <button onClick={goBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
               <ChevronLeft size={20} color={TEXT} />
             </button>
             <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
-              <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+              <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
                 <Share2 size={17} color={TEXT} />
               </button>
-              <button onClick={() => toast.success('Saved!')} style={{ width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+              <button onClick={() => toast.success('Saved!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
                 <Bookmark size={17} color={TEXT} />
               </button>
             </div>
@@ -282,15 +296,15 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
           <div style={{ padding: '20px 20px 32px' }}>
             {/* Category */}
-            <div style={{ display: 'inline-flex', padding: '4px 12px', borderRadius: '20px', background: ev.categoryBg, marginBottom: '10px' }}>
+            <div style={{ display: 'inline-flex', padding: '4px 12px', borderRadius: '8px', background: ev.categoryBg, marginBottom: '10px' }}>
               <span style={{ fontSize: '11px', fontWeight: 700, color: ev.categoryColor }}>{ev.category}</span>
             </div>
 
             {/* Title */}
-            <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT, marginBottom: '18px', lineHeight: '1.3' }}>{ev.title}</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: TEXT, marginBottom: '18px', lineHeight: '1.3', letterSpacing: '-0.3px' }}>{ev.title}</div>
 
             {/* Date row */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '14px', padding: '14px 16px', background: CARD, borderRadius: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '14px', padding: '14px 16px', background: CARD, borderRadius: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Calendar size={16} color={PRIMARY} />
               </div>
@@ -301,7 +315,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             </div>
 
             {/* Location row */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '18px', padding: '14px 16px', background: CARD, borderRadius: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '18px', padding: '14px 16px', background: CARD, borderRadius: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <MapPin size={16} color={PRIMARY} />
               </div>
@@ -312,7 +326,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             </div>
 
             {/* Organizer card */}
-            <div style={{ background: CARD, borderRadius: '18px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px', boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
+            <div style={{ background: CARD, borderRadius: '14px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
               <img src={ev.organizerImage} alt="" style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, marginBottom: '2px' }}>{ev.organizer}</div>
@@ -326,7 +340,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             </div>
 
             {/* Description */}
-            <div style={{ background: CARD, borderRadius: '18px', padding: '16px', marginBottom: '20px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div style={{ background: CARD, borderRadius: '14px', padding: '16px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this event</div>
               <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.65' }}>{ev.description}</div>
             </div>
@@ -334,7 +348,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             {/* Hosting & Going */}
             <div style={{ display: 'flex', gap: '12px' }}>
               {/* Hosting */}
-              <div style={{ flex: 1, background: CARD, borderRadius: '18px', padding: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+              <div style={{ flex: 1, background: CARD, borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT2, marginBottom: '10px' }}>Hosting ({ev.hosting})</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
@@ -351,7 +365,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <motion.div
                 whileTap={{ scale: 0.97 }}
                 onClick={() => goTo('going', { event: ev })}
-                style={{ flex: 1, background: CARD, borderRadius: '18px', padding: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', cursor: 'pointer' }}
+                style={{ flex: 1, background: CARD, borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', cursor: 'pointer' }}
               >
                 <div style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY, marginBottom: '10px' }}>Going ({ev.going + (isRegistered ? 1 : 0)}) →</div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -378,7 +392,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             whileTap={{ scale: 0.97 }}
             onClick={() => toggleRegister(ev.id)}
             style={{
-              flex: 1, padding: '15px', borderRadius: '18px',
+              flex: 1, padding: '15px', borderRadius: '14px',
               background: isRegistered ? '#D1FAE5' : PRIMARY,
               border: 'none', cursor: 'pointer',
               fontSize: '15px', fontWeight: 800,
@@ -414,7 +428,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
           {/* Stacked bar chart section */}
-          <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <div style={{ background: CARD, borderRadius: '14px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>By Household Type</span>
               <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{total} going</span>
@@ -452,7 +466,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
           {/* Neighbours attending */}
           <div style={{ marginBottom: '8px' }}>
-            <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '12px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
               Neighbours Attending
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -460,7 +474,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 <motion.div
                   key={n.id}
                   whileTap={{ scale: 0.98 }}
-                  style={{ background: CARD, borderRadius: '18px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
+                  style={{ background: CARD, borderRadius: '14px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}
                 >
                   {/* Avatar */}
                   <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -494,7 +508,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
   return (
     <div className="no-scrollbar" style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '52px 20px 14px', boxShadow: '0 1px 0 rgba(60,60,67,0.1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button
             onClick={onOpenProfile}
@@ -504,10 +518,15 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </button>
           <div style={{ flex: 1, textAlign: 'center', padding: '0 12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', marginBottom: '3px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>📍 Bishan-AMK Estate</span>
-              <span style={{ padding: '2px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#D1FAE5', color: '#059669' }}>✓ Verified</span>
+              <MapPinIcon size={11} color={TEXT2} />
+              <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>Bishan-AMK Estate</span>
+              <span style={{ padding: '2px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#D1FAE5', color: '#059669', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                <Check size={9} />Verified
+              </span>
             </div>
-            <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Good morning ☀️</div>
+            <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              Good morning <Sun size={16} color="#FF9500" />
+            </div>
           </div>
           <button
             onClick={() => setShowNotifications(true)}
@@ -528,7 +547,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         {/* Interest Groups */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Your Interest Groups</span>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Interest Groups</span>
             <button
               onClick={onOpenGroups}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
@@ -538,28 +557,33 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             </button>
           </div>
           <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
-            {INTEREST_GROUPS.map(group => (
-              <motion.div
-                key={group.id}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => onOpenGroupChat(group.id)}
-                style={{ flexShrink: 0, width: '150px', borderRadius: '20px', background: group.gradient, padding: '16px', cursor: 'pointer' }}
-              >
-                <div style={{ fontSize: '28px', marginBottom: '8px' }}>{group.emoji}</div>
-                <div style={{ fontSize: '14px', fontWeight: 800, color: 'white', marginBottom: '4px', lineHeight: '1.2' }}>{group.name}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', fontWeight: 500, marginBottom: '6px' }}>{group.members} members</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)', fontWeight: 600, background: 'rgba(255,255,255,0.15)', borderRadius: '10px', padding: '3px 8px' }}>
-                  {group.nextActivity}
-                </div>
-              </motion.div>
-            ))}
+            {INTEREST_GROUPS.map(group => {
+              const IconComp = GROUP_ICON_MAP[group.icon] || Activity;
+              return (
+                <motion.div
+                  key={group.id}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => onOpenGroupChat(group.id)}
+                  style={{ flexShrink: 0, width: '148px', borderRadius: '16px', background: group.gradient, padding: '16px 14px', cursor: 'pointer' }}
+                >
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+                    <IconComp size={20} color="white" strokeWidth={1.8} />
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginBottom: '4px', lineHeight: '1.2' }}>{group.name}</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', fontWeight: 500, marginBottom: '6px' }}>{group.members} members</div>
+                  <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)', fontWeight: 600, background: 'rgba(255,255,255,0.15)', borderRadius: '10px', padding: '3px 8px' }}>
+                    {group.nextActivity}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
         {/* Latest Requests */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Latest Requests</span>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Latest Requests</span>
             <button
               onClick={() => onOpenRequest && onOpenRequest(0)}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
@@ -581,10 +605,10 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   key={r.id}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onOpenRequest ? onOpenRequest(r.id) : undefined}
-                  style={{ flexShrink: 0, width: '200px', background: CARD, borderRadius: '20px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+                  style={{ flexShrink: 0, width: '196px', background: CARD, borderRadius: '14px', padding: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', cursor: 'pointer' }}
                 >
-                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', marginBottom: '10px' }}>
-                    {REQUESTS_CAT_EMOJIS[r.category] || '📋'}
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+                    <ClipboardList size={20} color={PRIMARY} />
                   </div>
                   <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '5px', lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
                     {r.title}
@@ -605,7 +629,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         {/* Connect with Neighbours */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>Connect with Neighbours</span>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Connect with Neighbours</span>
             <button
               onClick={onOpenNeighbours}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
@@ -619,7 +643,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <motion.div
                 key={neighbour.id}
                 whileTap={{ scale: 0.97 }}
-                style={{ flexShrink: 0, width: '160px', background: CARD, borderRadius: '20px', padding: '14px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }}
+                style={{ flexShrink: 0, width: '154px', background: CARD, borderRadius: '14px', padding: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}
               >
                 {/* Avatar */}
                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: neighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
@@ -638,14 +662,14 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 {/* Buttons */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <button
-                    onClick={() => toast.success('Message sent! 👋')}
-                    style={{ width: '100%', padding: '8px', borderRadius: '12px', background: PRIMARY, border: 'none', color: 'white', fontSize: '11px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                    onClick={() => toast.success('Message sent!')}
+                    style={{ width: '100%', padding: '8px', borderRadius: '10px', background: PRIMARY, border: 'none', color: 'white', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
                   >
-                    Say Hello 👋
+                    Say Hello
                   </button>
                   <button
                     onClick={() => setSelectedNeighbour(neighbour)}
-                    style={{ width: '100%', padding: '8px', borderRadius: '12px', background: 'none', border: `1.5px solid ${BORDER}`, color: TEXT2, fontSize: '11px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+                    style={{ width: '100%', padding: '8px', borderRadius: '10px', background: 'none', border: `1px solid ${BORDER}`, color: TEXT2, fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
                   >
                     View Profile
                   </button>
@@ -659,7 +683,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>My Events</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Events</span>
               {signedUpEvents.length > 0 && (
                 <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: '#FFF0EC', color: PRIMARY }}>{signedUpEvents.length}</span>
               )}
@@ -667,8 +691,10 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </div>
 
           {signedUpEvents.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '32px 20px', background: CARD, borderRadius: '22px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize: '32px', marginBottom: '10px' }}>📅</div>
+            <div style={{ textAlign: 'center', padding: '32px 20px', background: CARD, borderRadius: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                <Calendar size={32} color={MUTED} />
+              </div>
               <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>No events signed up yet</div>
               <div style={{ fontSize: '12px', color: MUTED }}>Browse the Explore tab to find events</div>
             </div>
@@ -679,9 +705,9 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   key={ev.id}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => goTo('detail', { event: ev })}
-                  style={{ flexShrink: 0, width: '220px', background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', cursor: 'pointer' }}
+                  style={{ flexShrink: 0, width: '210px', background: CARD, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', cursor: 'pointer' }}
                 >
-                  <div style={{ height: '120px', position: 'relative' }}>
+                  <div style={{ height: '114px', position: 'relative' }}>
                     <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, transparent 50%)' }} />
                     <div style={{ position: 'absolute', top: '8px', left: '8px', padding: '3px 9px', borderRadius: '16px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 700 }}>
@@ -726,10 +752,10 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
               onClick={e => e.stopPropagation()}
-              style={{ background: CARD, borderRadius: '28px 28px 0 0', maxHeight: '82vh', display: 'flex', flexDirection: 'column' }}
+              style={{ background: CARD, borderRadius: '20px 20px 0 0', maxHeight: '82vh', display: 'flex', flexDirection: 'column' }}
             >
               {/* Handle */}
-              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '16px auto 0' }} />
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'rgba(60,60,67,0.15)', margin: '16px auto 0' }} />
 
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px 12px' }}>
@@ -756,6 +782,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 {NOTIFICATIONS.map((notif, i) => {
                   const isRead = readNotifs.includes(notif.id);
                   const colors = NOTIF_COLORS[notif.type] || { bg: BG, text: TEXT2 };
+                  const NotifIcon = NOTIF_ICON_MAP[notif.icon] || Activity;
                   return (
                     <motion.div
                       key={notif.id}
@@ -786,8 +813,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                       }}
                     >
                       {/* Icon */}
-                      <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: colors.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>
-                        {notif.emoji}
+                      <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: colors.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <NotifIcon size={20} color={colors.text} strokeWidth={1.8} />
                       </div>
 
                       {/* Content */}
@@ -826,9 +853,9 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
               onClick={e => e.stopPropagation()}
-              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px' }}
+              style={{ background: CARD, borderRadius: '20px 20px 0 0', padding: '24px 20px 44px' }}
             >
-              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 24px' }} />
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: 'rgba(60,60,67,0.15)', margin: '0 auto 24px' }} />
               {/* Avatar + name */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: selectedNeighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
@@ -850,10 +877,10 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               </div>
               {/* Action button */}
               <button
-                onClick={() => { toast.success(`Message sent to ${selectedNeighbour.name}! 👋`); setSelectedNeighbour(null); }}
+                onClick={() => { toast.success(`Message sent to ${selectedNeighbour.name}!`); setSelectedNeighbour(null); }}
                 style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: "'Nunito', sans-serif" }}
               >
-                Say Hello 👋
+                Say Hello
               </button>
             </motion.div>
           </motion.div>

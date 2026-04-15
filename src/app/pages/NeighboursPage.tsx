@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Shield, Users, Hash, MessageCircle, Plus, X, Send, Compass, ChevronRight } from 'lucide-react';
+import { ChevronLeft, Shield, Users, Hash, MessageCircle, Plus, X, Send, Compass, ChevronRight, MapPin, ClipboardList, Target } from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
@@ -129,7 +129,7 @@ export function NeighboursPage() {
             neighbour={currentNeighbour} selectedPrompt={selectedPrompt}
             onSelectPrompt={setSelectedPrompt} onBack={goBack}
             onSend={() => {
-              toast.success('Invite sent! We\'ll notify your neighbour 🎉');
+              toast.success('Invite sent! We\'ll notify your neighbour');
               setTimeout(() => goTo('chat', { neighbour: currentNeighbour }), 1000);
             }}
           />
@@ -220,7 +220,7 @@ function NeighboursFeed({ neighbours, activeFilter, myInterests, onFilterChange,
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
-              <span style={{ fontSize: '12px', color: MUTED }}>📍</span>
+              <MapPin size={12} color={MUTED} strokeWidth={2} />
               <span style={{ fontSize: '12px', color: MUTED }}>Bishan-AMK Estate</span>
             </div>
             <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, lineHeight: 1.15 }}>Neighbours</div>
@@ -359,7 +359,10 @@ function MatchCard({ neighbour: n, onTap }: { neighbour: Neighbour; onTap: () =>
       {/* Name + proximity */}
       <div>
         <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>Neighbour #{n.id}</div>
-        <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>📍 {n.proximity}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: MUTED, fontWeight: 500 }}>
+          <MapPin size={10} color={MUTED} strokeWidth={2} />
+          {n.proximity}
+        </div>
       </div>
       {/* Shared interests chips */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
@@ -400,7 +403,10 @@ function NeighbourCard({ neighbour: n, onTap }: { neighbour: Neighbour; onTap: (
             )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>📍 {n.proximity}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: MUTED, fontWeight: 500 }}>
+              <MapPin size={10} color={MUTED} strokeWidth={2} />
+              {n.proximity}
+            </div>
             <span style={{ fontSize: '11px', color: PRIMARY, fontWeight: 700 }}>{n.sharedCount} shared</span>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
@@ -443,7 +449,10 @@ function NeighbourProfile({ neighbour: n, onBack, onJio }: any) {
                 </span>
               )}
             </div>
-            <div style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>📍 {n.proximity}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: MUTED, fontWeight: 500 }}>
+              <MapPin size={12} color={MUTED} strokeWidth={2} />
+              {n.proximity}
+            </div>
           </div>
         </div>
       </div>
@@ -650,10 +659,19 @@ function GroupCreateScreen({ onBack, onCreateGroup }: any) {
 // ---- Group Space ----
 function GroupSpace({ group, messages, input, onInputChange, onSend, onBack }: any) {
   const [activeTab, setActiveTab] = useState<'chat' | 'activity'>('chat');
+  const getActivityIcon = (iconName: string) => {
+    const icons: { [key: string]: any } = {
+      'location': <MapPin size={20} color={PRIMARY} strokeWidth={2} />,
+      'clipboard': <ClipboardList size={20} color={PRIMARY} strokeWidth={2} />,
+      'target': <Target size={20} color={PRIMARY} strokeWidth={2} />,
+    };
+    return icons[iconName] || null;
+  };
+
   const activities = [
-    { id: 1, title: 'Next Meetup', detail: 'Saturday 7 AM · Bishan-AMK Park Pavilion', emoji: '📍' },
-    { id: 2, title: 'Upcoming Plan', detail: 'Bring water and comfortable shoes', emoji: '📋' },
-    { id: 3, title: 'Group Goal', detail: 'Hit 5K in under 30 minutes together', emoji: '🎯' },
+    { id: 1, title: 'Next Meetup', detail: 'Saturday 7 AM · Bishan-AMK Park Pavilion', iconName: 'location' },
+    { id: 2, title: 'Upcoming Plan', detail: 'Bring water and comfortable shoes', iconName: 'clipboard' },
+    { id: 3, title: 'Group Goal', detail: 'Hit 5K in under 30 minutes together', iconName: 'target' },
   ];
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
@@ -714,8 +732,8 @@ function GroupSpace({ group, messages, input, onInputChange, onSend, onBack }: a
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {activities.map(a => (
               <div key={a.id} style={{ background: CARD, borderRadius: '20px', padding: '18px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
-                  {a.emoji}
+                <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {getActivityIcon(a.iconName)}
                 </div>
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>{a.title}</div>

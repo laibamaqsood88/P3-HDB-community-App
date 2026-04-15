@@ -1,16 +1,21 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Plus, Shield, X, Send, Check, Star, ChevronRight, Search, Heart, Wrench, BookOpen, Users, Home, Package, Monitor, Smile, Droplets, MapPin, ChevronDown, Camera, SlidersHorizontal, Bookmark } from 'lucide-react';
+import {
+  ChevronLeft, Plus, Shield, X, Send, Check, Star, ChevronRight, Search,
+  Wrench, BookOpen, Users, Home, Package, Monitor, Droplets, MapPin,
+  ChevronDown, Camera, SlidersHorizontal, Bookmark, Heart, Leaf, Dog,
+  Baby, GraduationCap, UserCheck
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 // ---- Design tokens ----
-const BG = '#F5F4F0';
+const BG = '#F7F7F7';
 const CARD = '#FFFFFF';
 const PRIMARY = '#FF6B47';
-const TEXT = '#0D0D0D';
-const TEXT2 = '#6B6B72';
-const MUTED = '#AEAEB2';
-const BORDER = '#EDEDEC';
+const TEXT = '#1C1C1E';
+const TEXT2 = '#636366';
+const MUTED = '#8E8E93';
+const BORDER = 'rgba(60,60,67,0.12)';
 
 type HelpScreen =
   | 'feed' | 'item-detail' | 'service-detail'
@@ -119,7 +124,7 @@ function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
   return (
     <div style={{ display: 'flex', gap: '2px' }}>
       {Array.from({ length: max }).map((_, i) => (
-        <Star key={i} size={12} color={i < rating ? '#F59E0B' : BORDER} fill={i < rating ? '#F59E0B' : 'none'} />
+        <Star key={i} size={12} color={i < rating ? '#FF9500' : BORDER} fill={i < rating ? '#FF9500' : 'none'} />
       ))}
     </div>
   );
@@ -131,7 +136,7 @@ function SaveButton({ itemId, savedItems, onSaveToggle, size = 18, style: extraS
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onSaveToggle(itemId); toast.success(saved ? 'Removed from saved' : 'Item saved'); }}
-      style={{ width: '40px', height: '40px', borderRadius: '12px', background: saved ? '#FFF0EC' : 'rgba(255,255,255,0.92)', border: `1.5px solid ${saved ? '#FFD8CC' : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...extraStyle }}
+      style={{ width: '30px', height: '30px', borderRadius: '50%', background: saved ? '#FFF0EC' : 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...extraStyle }}
     >
       <Bookmark size={size} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
     </button>
@@ -145,9 +150,9 @@ function ReviewsSection() {
       <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Reviews</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {MOCK_REVIEWS.map(review => (
-          <div key={review.id} style={{ background: BG, borderRadius: '16px', padding: '14px 16px' }}>
+          <div key={review.id} style={{ background: BG, borderRadius: '14px', padding: '14px 16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: review.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: review.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <span style={{ fontSize: '12px', fontWeight: 800, color: 'white' }}>N</span>
               </div>
               <div style={{ flex: 1 }}>
@@ -172,7 +177,7 @@ function CollectionPointMap({ address, distanceText }: { address?: string; dista
   const footerLabel = isService ? 'Service Area' : 'Collection Point';
   const footerText = distanceText || address || 'To be confirmed';
   return (
-    <div style={{ borderRadius: '18px', overflow: 'hidden', border: `1px solid ${BORDER}` }}>
+    <div style={{ borderRadius: '14px', overflow: 'hidden', border: `1px solid ${BORDER}` }}>
       <div style={{ position: 'relative', height: '140px', background: 'linear-gradient(135deg, #E8F5E9 0%, #DCEEFB 100%)' }}>
         {[...Array(6)].map((_, i) => <div key={`h${i}`} style={{ position: 'absolute', left: 0, right: 0, top: `${i * 25}px`, height: '1px', background: 'rgba(0,0,0,0.05)' }} />)}
         {[...Array(5)].map((_, i) => <div key={`v${i}`} style={{ position: 'absolute', top: 0, bottom: 0, left: `${i * 25}%`, width: '1px', background: 'rgba(0,0,0,0.05)' }} />)}
@@ -214,7 +219,7 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
   const [chatMessages, setChatMessages] = useState([
     { id: 1, from: 'them', text: "Hi! I saw you're interested. When would work for you?", time: '2:15 PM' },
     { id: 2, from: 'me', text: 'Great! How about Saturday afternoon around 3 PM?', time: '2:17 PM' },
-    { id: 3, from: 'system', text: '📞 Contact details have been shared', time: '2:17 PM' },
+    { id: 3, from: 'system', text: 'Contact details have been shared', time: '2:17 PM' },
   ]);
   const [chatInput, setChatInput] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
@@ -280,7 +285,6 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
                 title: data.itemName || 'New Listing',
                 price: data.price ? `$${data.price}` : 'Free',
                 status: 'Active',
-                emoji: '📦',
                 date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
               });
               setShowConfetti(true);
@@ -296,7 +300,6 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
             title: data.serviceTitle || (data.category ? `${data.category} Service` : 'New Service'),
             price: data.rate || 'Free',
             status: 'Active',
-            emoji: '🤝',
             date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
           });
           toast.success('Your service offer is live!');
@@ -323,7 +326,8 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
   const onCategoryChange = mainFilter === 'Items' ? onItemCategoryChange : onServiceCategoryChange;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20, background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto' }}>
+    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 20, background: CARD, borderRadius: '20px 20px 0 0', padding: '24px 20px 40px', boxShadow: '0 -8px 40px rgba(0,0,0,0.12)', maxHeight: '80vh', overflowY: 'auto' }}>
+      <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px' }}>
         <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Filter {mainFilter}</div>
         <button onClick={onClose} style={{ width: '34px', height: '34px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -336,7 +340,7 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
           {MARKETPLACE_DISTANCE_OPTIONS.map(d => {
             const active = activeDistance === d;
             return (
-              <button key={d} onClick={() => onDistanceChange(d)} style={{ padding: '8px 16px', borderRadius: '22px', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? '#FFF0EC' : 'transparent', color: active ? PRIMARY : TEXT2, fontWeight: active ? 700 : 500 }}>
+              <button key={d} onClick={() => onDistanceChange(d)} style={{ padding: '8px 16px', borderRadius: '20px', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? PRIMARY : 'transparent', color: active ? 'white' : TEXT2, fontWeight: active ? 700 : 500 }}>
                 {d}
               </button>
             );
@@ -349,7 +353,7 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
           {categories.map((cat: string) => {
             const active = activeCategory === cat;
             return (
-              <button key={cat} onClick={() => onCategoryChange(cat)} style={{ padding: '7px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', border: `1.5px solid ${active ? PRIMARY : BORDER}`, background: active ? '#FFF0EC' : 'transparent', color: active ? PRIMARY : TEXT2, fontWeight: active ? 700 : 500 }}>
+              <button key={cat} onClick={() => onCategoryChange(cat)} style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', border: `1px solid ${active ? PRIMARY : BORDER}`, background: active ? PRIMARY : 'transparent', color: active ? 'white' : TEXT2, fontWeight: active ? 700 : 500 }}>
                 {cat}
               </button>
             );
@@ -357,10 +361,10 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
         </div>
       </div>
       <div style={{ display: 'flex', gap: '12px' }}>
-        <button onClick={onClear} style={{ flex: 1, padding: '14px', borderRadius: '18px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>
+        <button onClick={onClear} style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>
           Clear All
         </button>
-        <button onClick={onClose} style={{ flex: 2, padding: '14px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
+        <button onClick={onClose} style={{ flex: 2, padding: '14px', borderRadius: '14px', background: PRIMARY, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'inherit' }}>
           Apply Filters
         </button>
       </div>
@@ -399,16 +403,16 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
-      <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
+      <div style={{ background: CARD, flexShrink: 0 }}>
         {/* Search pill + filter */}
         <div style={{ padding: '52px 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 16px', borderRadius: '50px', background: CARD, border: `1px solid ${BORDER}`, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '12px', background: 'rgba(120,120,128,0.12)', border: 'none' }}>
             <Search size={15} color={MUTED} strokeWidth={2.5} style={{ flexShrink: 0 }} />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={`Search ${mainFilter.toLowerCase()}...`}
-              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+              style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', fontWeight: 500, color: TEXT, outline: 'none', fontFamily: 'inherit' }}
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>
@@ -418,7 +422,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
           </div>
           <button
             onClick={() => setShowFilterPanel(true)}
-            style={{ position: 'relative', width: '46px', height: '46px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : BG, border: `1.5px solid ${filterCount > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            style={{ position: 'relative', width: '44px', height: '44px', borderRadius: '50%', background: CARD, border: `1px solid ${BORDER}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
           >
             <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
             {filterCount > 0 && (
@@ -428,19 +432,18 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
             )}
           </button>
         </div>
-        {/* Items | Services tabs */}
-        <div style={{ display: 'flex', marginTop: '12px' }}>
+        {/* Items | Services underline tabs */}
+        <div style={{ display: 'flex', borderBottom: `0.5px solid ${BORDER}`, background: CARD }}>
           {(['Items', 'Services'] as MainFilter[]).map(tab => (
             <button
               key={tab}
               onClick={() => setMainFilter(tab)}
               style={{
-                flex: 1, padding: '10px 4px',
-                background: 'none', border: 'none',
-                borderBottom: `2.5px solid ${mainFilter === tab ? PRIMARY : 'transparent'}`,
-                cursor: 'pointer', fontFamily: 'inherit',
-                fontSize: '13px', fontWeight: mainFilter === tab ? 700 : 500,
+                flex: 1, padding: '12px', background: 'none', border: 'none',
+                borderBottom: `2px solid ${mainFilter === tab ? PRIMARY : 'transparent'}`,
+                fontSize: '15px', fontWeight: mainFilter === tab ? 700 : 500,
                 color: mainFilter === tab ? PRIMARY : MUTED,
+                cursor: 'pointer', fontFamily: 'inherit',
               }}
             >
               {tab}
@@ -449,7 +452,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px' }}>
         {mainFilter === 'Items' && (
           <>
             {displayItems.length === 0 ? (
@@ -500,8 +503,9 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         )}
       </AnimatePresence>
 
-      <button onClick={onPost} style={{ position: 'absolute', bottom: '20px', right: '20px', width: '58px', height: '58px', borderRadius: '50%', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 28px rgba(255,107,71,0.45)', zIndex: 10 }}>
-        <Plus size={26} color="white" />
+      {/* FAB — z-index 60 sits above nav (50) + gradient (40); bottom offset clears the floating pill */}
+      <button onClick={onPost} style={{ position: 'absolute', bottom: '96px', right: '20px', width: '54px', height: '54px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(255,107,71,0.38)', zIndex: 60 }}>
+        <Plus size={24} color="white" />
       </button>
     </div>
   );
@@ -510,36 +514,29 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
 // ---- Card sub-components ----
 function ItemCard({ item, savedItems, onSaveToggle, onClick }: { item: any; savedItems: number[]; onSaveToggle: (id: number) => void; onClick: () => void }) {
   return (
-    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
-      {/* Image thumbnail */}
+    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
       <div style={{ height: '120px', background: BG, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         {item.image ? (
           <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px' }}>📦</div>
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Package size={40} color={MUTED} />
+          </div>
         )}
-        {/* Bookmark icon top-right */}
         <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
-          <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={15} style={{ width: '32px', height: '32px', borderRadius: '10px' }} />
+          <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={14} />
         </div>
       </div>
-
-      {/* Card body */}
-      <div style={{ padding: '10px 12px 12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
-        {/* Title */}
-        <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name}</div>
-        {/* Price */}
-        <div style={{ fontSize: '15px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT }}>{item.price}</div>
-        {/* Distance */}
-        <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{item.distance}</div>
-        {/* Posted time */}
-        <div style={{ fontSize: '10px', color: MUTED, fontWeight: 400 }}>{item.postedTime}</div>
-        {/* Seller info row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '3px', flex: 1 }}>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name}</div>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: item.price === 'Free' ? '#34C759' : TEXT }}>{item.price}</div>
+        <div style={{ fontSize: '12px', color: MUTED }}>{item.distance}</div>
+        <div style={{ fontSize: '11px', color: MUTED }}>{item.postedTime}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
+          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
           </div>
-          <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.seller?.name || 'Neighbour'}</span>
+          <span style={{ fontSize: '12px', color: TEXT2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.seller?.name || 'Neighbour'}</span>
         </div>
       </div>
     </motion.div>
@@ -548,36 +545,29 @@ function ItemCard({ item, savedItems, onSaveToggle, onClick }: { item: any; save
 
 function ServiceCard({ s, savedItems, onSaveToggle, onClick }: { s: any; savedItems: number[]; onSaveToggle: (id: number) => void; onClick: () => void }) {
   return (
-    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.055)', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
-      {/* Image thumbnail */}
+    <motion.div whileTap={{ scale: 0.96 }} onClick={onClick} style={{ background: CARD, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}>
       <div style={{ height: '120px', background: BG, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         {s.image ? (
           <img src={s.image} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px' }}>🤝</div>
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Users size={40} color={MUTED} />
+          </div>
         )}
-        {/* Bookmark top-right */}
         <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
-          <SaveButton itemId={s.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={15} style={{ width: '32px', height: '32px', borderRadius: '10px' }} />
+          <SaveButton itemId={s.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={14} />
         </div>
       </div>
-
-      {/* Card body */}
-      <div style={{ padding: '10px 12px 12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
-        {/* Title */}
-        <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{s.name}</div>
-        {/* Rate */}
-        <div style={{ fontSize: '15px', fontWeight: 800, color: (s.rate === 'Free' || !s.rate) ? '#16A34A' : TEXT }}>{s.rate || 'Free'}</div>
-        {/* Distance */}
-        <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{s.distance}</div>
-        {/* Posted time */}
-        <div style={{ fontSize: '10px', color: MUTED, fontWeight: 400 }}>{s.postedTime}</div>
-        {/* Provider info row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: s.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '3px', flex: 1 }}>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{s.name}</div>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: (s.rate === 'Free' || !s.rate) ? '#34C759' : TEXT }}>{s.rate || 'Free'}</div>
+        <div style={{ fontSize: '12px', color: MUTED }}>{s.distance}</div>
+        <div style={{ fontSize: '11px', color: MUTED }}>{s.postedTime}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
+          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: s.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(s.provider?.name || 'N')[0]}</span>
           </div>
-          <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.provider?.name || 'Neighbour'}</span>
+          <span style={{ fontSize: '12px', color: TEXT2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.provider?.name || 'Neighbour'}</span>
         </div>
       </div>
     </motion.div>
@@ -587,13 +577,13 @@ function ServiceCard({ s, savedItems, onSaveToggle, onClick }: { s: any; savedIt
 // ---- Category Select ----
 function CategorySelect({ onBack, onSelectCategory }: any) {
   const cats = [
-    { id: 'item', title: 'List an Item', desc: 'Share an item for free or for sale', emoji: '📦', bg: '#F0FDF4', border: '#A3E6B8', text: '#16A34A' },
-    { id: 'service', title: 'Offer a Service', desc: 'Share a skill or help you can offer', emoji: '🤝', bg: '#EFF6FF', border: '#BFDBFE', text: '#2563EB' },
+    { id: 'item', title: 'List an Item', desc: 'Share an item for free or for sale', Icon: Package, bg: '#F0FDF4', border: '#A3E6B8', text: '#16A34A', iconBg: '#DCFCE7' },
+    { id: 'service', title: 'Offer a Service', desc: 'Share a skill or help you can offer', Icon: UserCheck, bg: '#EFF6FF', border: '#BFDBFE', text: '#2563EB', iconBg: '#DBEAFE' },
   ];
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
       <div style={{ padding: '52px 20px 20px' }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
         <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, marginBottom: '6px' }}>What would you like to post?</div>
@@ -601,8 +591,10 @@ function CategorySelect({ onBack, onSelectCategory }: any) {
       </div>
       <div style={{ flex: 1, padding: '0 20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
         {cats.map(c => (
-          <motion.button key={c.id} whileTap={{ scale: 0.97 }} onClick={() => onSelectCategory(c.id)} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '22px 20px', borderRadius: '22px', background: c.bg, border: `1.5px solid ${c.border}`, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
-            <span style={{ fontSize: '38px', flexShrink: 0 }}>{c.emoji}</span>
+          <motion.button key={c.id} whileTap={{ scale: 0.97 }} onClick={() => onSelectCategory(c.id)} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '22px 20px', borderRadius: '14px', background: c.bg, border: `1.5px solid ${c.border}`, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: c.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <c.Icon size={20} color={c.text} />
+            </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{c.title}</div>
               <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400 }}>{c.desc}</div>
@@ -619,7 +611,6 @@ function CategorySelect({ onBack, onSelectCategory }: any) {
 function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveToggle }: any) {
   if (!item) return null;
   const name = item.title || item.name || '';
-  const IconComp = item.ServiceIcon || Users;
 
   if (type === 'service') {
     const trustRows = [
@@ -631,38 +622,36 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
 
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-        {/* 1. Hero image */}
         <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, flexShrink: 0 }}>
           {item.image ? (
             <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <div style={{ width: '100%', height: '100%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px' }}>🤝</div>
+            <div style={{ width: '100%', height: '100%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Users size={64} color="white" />
+            </div>
           )}
-          <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '12px', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+          <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
           <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
-            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '12px', backdropFilter: 'blur(8px)' }} />
+            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
           </div>
         </div>
 
-        {/* Scrollable content */}
         <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
           <div style={{ padding: '20px 20px 0' }}>
-            {/* 2. Basic info */}
-            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px' }}>{name}</div>
-            <div style={{ fontSize: '26px', fontWeight: 800, color: (item.rate === 'Free' || !item.rate) ? '#16A34A' : TEXT, marginBottom: '20px' }}>{item.rate || 'Free'}</div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
+            <div style={{ fontSize: '26px', fontWeight: 700, color: (item.rate === 'Free' || !item.rate) ? '#34C759' : TEXT, marginBottom: '20px' }}>{item.rate || 'Free'}</div>
 
-            {/* 3. Details rows */}
             <div style={{ marginBottom: '20px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
-              <div style={{ background: BG, borderRadius: '18px', padding: '4px 16px' }}>
+              <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '0 16px' }}>
                 {[
                   { label: 'Category', value: item.category },
                   { label: 'Availability', value: item.availability },
                   { label: 'Posted', value: item.postedTime },
                 ].map((row, i, arr) => (
-                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < arr.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < arr.length - 1 ? `0.5px solid rgba(60,60,67,0.10)` : 'none' }}>
                     <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{row.label}</span>
                     <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT, textAlign: 'right', maxWidth: '60%' }}>{row.value}</span>
                   </div>
@@ -670,29 +659,30 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
               </div>
             </div>
 
-            {/* 4. Description */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Description</div>
-              <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
+              <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px' }}>
+                <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
+              </div>
             </div>
 
-            {/* 5. Location — distance only */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Location</div>
-              <CollectionPointMap distanceText={item.distance} />
+              <div style={{ borderRadius: '14px', overflow: 'hidden' }}>
+                <CollectionPointMap distanceText={item.distance} />
+              </div>
             </div>
 
-            {/* 6. About the Neighbour */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
-              <div onClick={() => toast.info('Neighbour profile coming soon')} style={{ background: BG, borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
+              <div onClick={() => toast.info('Neighbour profile coming soon')} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.provider?.name || 'N')[0]}</span>
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>{item.provider?.name || 'Neighbour'}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
-                    <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                    <Star size={13} color="#FF9500" fill="#FF9500" />
                     <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.provider?.rating ?? '4.8'}</span>
                     <span style={{ fontSize: '12px', color: MUTED }}>· {item.provider?.reviews ?? 0} reviews</span>
                   </div>
@@ -702,12 +692,11 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
               </div>
             </div>
 
-            {/* 7. Trust Indicators */}
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Trust & Verification</div>
-              <div style={{ background: BG, borderRadius: '18px', padding: '4px 16px' }}>
+              <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '0 16px' }}>
                 {trustRows.map((row, i) => (
-                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < trustRows.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+                  <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < trustRows.length - 1 ? `0.5px solid rgba(60,60,67,0.10)` : 'none' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {row.icon}
                       <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{row.label}</span>
@@ -721,9 +710,8 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
           <div style={{ height: '100px' }} />
         </div>
 
-        {/* 8. Sticky footer — Chat only */}
-        <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BORDER}`, background: CARD, flexShrink: 0 }}>
-          <button onClick={onExpressInterest} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', fontFamily: 'inherit' }}>
+        <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BORDER}`, background: CARD, borderRadius: '0', flexShrink: 0 }}>
+          <button onClick={onExpressInterest} style={{ width: '100%', height: '50px', borderRadius: '14px', background: PRIMARY, border: 'none', color: 'white', fontWeight: 700, fontSize: '16px', cursor: 'pointer', fontFamily: 'inherit' }}>
             Chat
           </button>
         </div>
@@ -731,76 +719,75 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
     );
   }
 
-  // ---- ITEM detail layout (strict spec) ----
+  // ---- ITEM detail layout ----
   const condStyle = CONDITION_COLORS[item.condition] || { bg: BG, text: MUTED };
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      {/* 1. Hero image — full width */}
       <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, flexShrink: 0 }}>
         {item.image ? (
           <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px' }}>📦</div>
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Package size={64} color={MUTED} />
+          </div>
         )}
-        {/* Back button floating */}
         <button
           onClick={onBack}
-          style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '12px', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
+          style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
         >
           <ChevronLeft size={20} color={TEXT} />
         </button>
-        {/* Bookmark button floating */}
         <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
-          <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '12px', backdropFilter: 'blur(8px)' }} />
+          <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
         </div>
       </div>
 
-      {/* Scrollable content */}
       <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
         <div style={{ padding: '20px 20px 0' }}>
-          {/* 2. Title */}
-          <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px' }}>{name}</div>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
+          <div style={{ fontSize: '26px', fontWeight: 700, color: item.price === 'Free' ? '#34C759' : TEXT, marginBottom: '20px' }}>{item.price}</div>
 
-          {/* 3. Price */}
-          <div style={{ fontSize: '26px', fontWeight: 800, color: item.price === 'Free' ? '#16A34A' : TEXT, marginBottom: '20px' }}>{item.price}</div>
-
-          {/* 4. Details card — rows */}
           <div style={{ marginBottom: '20px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
-            <div style={{ background: BG, borderRadius: '18px', padding: '4px 16px' }}>
+            <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '0 16px' }}>
               {[
-                { label: 'Condition', value: item.condition, valueStyle: { color: condStyle.text, fontWeight: 700 } },
-                ...(item.brand ? [{ label: 'Brand', value: item.brand, valueStyle: {} }] : []),
-                { label: 'Posted', value: item.postedTime, valueStyle: {} },
-                { label: 'Category', value: item.category, valueStyle: {} },
+                { label: 'Condition', value: item.condition, valueStyle: { color: condStyle.text, fontWeight: 700 }, badge: true },
+                ...(item.brand ? [{ label: 'Brand', value: item.brand, valueStyle: {}, badge: false }] : []),
+                { label: 'Posted', value: item.postedTime, valueStyle: {}, badge: false },
+                { label: 'Category', value: item.category, valueStyle: {}, badge: false },
               ].map((row, i, arr) => (
-                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < arr.length - 1 ? `1px solid ${BORDER}` : 'none' }}>
+                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < arr.length - 1 ? `0.5px solid rgba(60,60,67,0.10)` : 'none' }}>
                   <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{row.label}</span>
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT, textAlign: 'right', maxWidth: '55%', ...row.valueStyle }}>{row.value}</span>
+                  {row.badge ? (
+                    <span style={{ padding: '4px 10px', borderRadius: '8px', background: condStyle.bg, fontSize: '12px', fontWeight: 700, color: condStyle.text }}>{row.value}</span>
+                  ) : (
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: TEXT, textAlign: 'right', maxWidth: '55%', ...row.valueStyle }}>{row.value}</span>
+                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 5. Description */}
           <div style={{ marginBottom: '24px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Description</div>
-            <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
+            <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px' }}>
+              <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.7' }}>{item.description}</div>
+            </div>
           </div>
 
-          {/* 6. Collection point — address + map */}
           <div style={{ marginBottom: '24px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>Collection Point</div>
-            <CollectionPointMap address={item.collectionAddress} />
+            <div style={{ borderRadius: '14px', overflow: 'hidden' }}>
+              <CollectionPointMap address={item.collectionAddress} />
+            </div>
           </div>
 
-          {/* 7. About the neighbour */}
           <div style={{ marginBottom: '24px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
             <div
               onClick={() => toast.info('Neighbour profile coming soon')}
-              style={{ background: BG, borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
+              style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
             >
               <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
@@ -808,7 +795,7 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>{item.seller?.name || 'Neighbour'}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                  <Star size={13} color="#FF9500" fill="#FF9500" />
                   <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.seller?.rating || '4.8'}</span>
                   <span style={{ fontSize: '12px', color: MUTED }}>· {item.seller?.reviews || 0} reviews</span>
                 </div>
@@ -820,11 +807,10 @@ function ItemDetail({ item, type, onBack, onExpressInterest, savedItems, onSaveT
         <div style={{ height: '100px' }} />
       </div>
 
-      {/* Sticky footer — Chat only */}
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BORDER}`, background: CARD, flexShrink: 0 }}>
+      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BORDER}`, background: CARD, borderRadius: '0', flexShrink: 0 }}>
         <button
           onClick={onExpressInterest}
-          style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', fontFamily: 'inherit' }}
+          style={{ width: '100%', height: '50px', borderRadius: '14px', background: PRIMARY, border: 'none', color: 'white', fontWeight: 700, fontSize: '16px', cursor: 'pointer', fontFamily: 'inherit' }}
         >
           Chat
         </button>
@@ -838,17 +824,19 @@ function PosterNotification({ onBack, onConfirm, onDecline }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
       <div style={{ background: CARD, padding: '52px 20px 18px', borderBottom: `1px solid ${BORDER}` }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px 80px' }}>
-        <div style={{ width: '80px', height: '80px', borderRadius: '26px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '22px', fontSize: '36px' }}>🔔</div>
+        <div style={{ width: '80px', height: '80px', borderRadius: '26px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '22px' }}>
+          <Heart size={36} color={PRIMARY} />
+        </div>
         <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT, textAlign: 'center', marginBottom: '10px' }}>Someone's Interested!</div>
         <div style={{ fontSize: '14px', color: TEXT2, textAlign: 'center', lineHeight: '1.65', marginBottom: '28px', fontWeight: 400 }}>A verified resident has expressed interest in your listing.</div>
-        <div style={{ width: '100%', background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '22px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+        <div style={{ width: '100%', background: CARD, borderRadius: '14px', padding: '20px', marginBottom: '22px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
-            <div style={{ width: '50px', height: '50px', borderRadius: '16px', background: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>N2</span>
             </div>
             <div>
@@ -860,8 +848,8 @@ function PosterNotification({ onBack, onConfirm, onDecline }: any) {
             </div>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={onConfirm} style={{ flex: 1, padding: '14px', borderRadius: '16px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '14px', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 14px rgba(255,107,71,0.3)' }}>Confirm</button>
-            <button onClick={onDecline} style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: `1.5px solid ${BORDER}`, color: TEXT2, fontWeight: 600, fontSize: '14px', cursor: 'pointer', fontFamily: 'inherit' }}>Decline</button>
+            <button onClick={onConfirm} style={{ flex: 1, padding: '14px', borderRadius: '14px', background: PRIMARY, border: 'none', color: 'white', fontWeight: 700, fontSize: '14px', cursor: 'pointer', fontFamily: 'inherit' }}>Confirm</button>
+            <button onClick={onDecline} style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: `1px solid ${BORDER}`, color: TEXT2, fontWeight: 600, fontSize: '14px', cursor: 'pointer', fontFamily: 'inherit' }}>Decline</button>
           </div>
         </div>
         <div style={{ fontSize: '12px', color: MUTED, textAlign: 'center', fontWeight: 500 }}>No contact details shared until confirmed.</div>
@@ -875,19 +863,21 @@ function MutualConfirm({ onBack, onOpenChat }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
       <div style={{ padding: '52px 20px 18px' }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 28px 100px' }}>
-        <div style={{ width: '88px', height: '88px', borderRadius: '28px', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '22px', fontSize: '40px' }}>🤝</div>
+        <div style={{ width: '88px', height: '88px', borderRadius: '28px', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '22px' }}>
+          <Check size={44} color="#22C55E" strokeWidth={2.5} />
+        </div>
         <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, textAlign: 'center', marginBottom: '10px' }}>You're Both Confirmed!</div>
         <div style={{ fontSize: '14px', color: TEXT2, textAlign: 'center', lineHeight: '1.65', marginBottom: '28px' }}>A chat has been opened. Contact details will be shared inside.</div>
-        <div style={{ width: '100%', background: '#F0FDF4', borderRadius: '18px', padding: '16px 18px', marginBottom: '28px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+        <div style={{ width: '100%', background: '#F0FDF4', borderRadius: '14px', padding: '16px 18px', marginBottom: '28px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
           <Shield size={16} color="#22C55E" style={{ marginTop: '2px', flexShrink: 0 }} />
           <span style={{ fontSize: '13px', color: '#15803D', lineHeight: '1.55', fontWeight: 500 }}>Both parties confirmed. Contact details are now securely shared.</span>
         </div>
-        <button onClick={onOpenChat} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, border: 'none', color: 'white', fontWeight: 700, fontSize: '16px', cursor: 'pointer', boxShadow: '0 8px 24px rgba(255,107,71,0.38)', fontFamily: 'inherit' }}>Open Chat</button>
+        <button onClick={onOpenChat} style={{ width: '100%', height: '50px', borderRadius: '14px', background: PRIMARY, border: 'none', color: 'white', fontWeight: 700, fontSize: '16px', cursor: 'pointer', fontFamily: 'inherit' }}>Open Chat</button>
       </div>
     </div>
   );
@@ -899,10 +889,10 @@ function HelpChat({ messages, input, onInputChange, onSend, onBack, item }: any)
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
       <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
-          <div style={{ width: '42px', height: '42px', borderRadius: '14px', background: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>N2</span>
           </div>
           <div>
@@ -913,8 +903,9 @@ function HelpChat({ messages, input, onInputChange, onSend, onBack, item }: any)
             <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>Verified resident</span>
           </div>
         </div>
-        <div style={{ padding: '9px 13px', background: BG, borderRadius: '12px', fontSize: '12px', color: TEXT2, fontWeight: 500 }}>
-          📦 Re: {item?.name || item?.type || 'Your listing'}
+        <div style={{ padding: '9px 13px', background: BG, borderRadius: '12px', fontSize: '12px', color: TEXT2, fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Package size={13} color={TEXT2} />
+          Re: {item?.name || item?.type || 'Your listing'}
         </div>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -940,8 +931,8 @@ function HelpChat({ messages, input, onInputChange, onSend, onBack, item }: any)
       </div>
       <div style={{ padding: '12px 16px 24px', background: CARD, borderTop: `1px solid ${BORDER}` }}>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <input value={input} onChange={e => onInputChange(e.target.value)} onKeyDown={(e: any) => e.key === 'Enter' && onSend()} placeholder="Type a message..." style={{ flex: 1, padding: '12px 18px', borderRadius: '22px', border: `1.5px solid ${BORDER}`, background: BG, fontSize: '14px', outline: 'none', color: TEXT, fontFamily: 'inherit' }} />
-          <button onClick={onSend} style={{ width: '46px', height: '46px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(255,107,71,0.35)' }}>
+          <input value={input} onChange={e => onInputChange(e.target.value)} onKeyDown={(e: any) => e.key === 'Enter' && onSend()} placeholder="Type a message..." style={{ flex: 1, padding: '12px 18px', borderRadius: '22px', border: `1px solid ${BORDER}`, background: BG, fontSize: '14px', outline: 'none', color: TEXT, fontFamily: 'inherit' }} />
+          <button onClick={onSend} style={{ width: '46px', height: '46px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Send size={18} color="white" />
           </button>
         </div>
@@ -968,7 +959,7 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD }}>
       <div style={{ padding: '52px 20px 18px' }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
         <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>Add Photos</div>
@@ -977,7 +968,7 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
 
       <div style={{ flex: 1, padding: '0 20px 20px' }}>
         {photos.length === 0 ? (
-          <motion.button whileTap={{ scale: 0.97 }} onClick={addPhoto} style={{ width: '100%', height: '240px', borderRadius: '24px', border: `2.5px dashed ${BORDER}`, background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '12px' }}>
+          <motion.button whileTap={{ scale: 0.97 }} onClick={addPhoto} style={{ width: '100%', height: '240px', borderRadius: '12px', border: '1.5px dashed rgba(60,60,67,0.2)', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '12px' }}>
             <div style={{ width: '60px', height: '60px', borderRadius: '20px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Camera size={26} color={PRIMARY} />
             </div>
@@ -990,7 +981,7 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: photos.length === 1 ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
               {photos.map((photo, i) => (
-                <div key={i} style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: photos.length === 1 ? '220px' : '140px' }}>
+                <div key={i} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: photos.length === 1 ? '220px' : '140px' }}>
                   <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button onClick={() => setPhotos(p => p.filter((_, idx) => idx !== i))} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <X size={13} color="white" />
@@ -998,7 +989,7 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
                 </div>
               ))}
               {photos.length < 3 && (
-                <motion.button whileTap={{ scale: 0.96 }} onClick={addPhoto} style={{ height: photos.length === 0 ? '220px' : '140px', borderRadius: '16px', border: `2px dashed ${BORDER}`, background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '6px' }}>
+                <motion.button whileTap={{ scale: 0.96 }} onClick={addPhoto} style={{ height: photos.length === 0 ? '220px' : '140px', borderRadius: '12px', border: '1.5px dashed rgba(60,60,67,0.2)', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '6px' }}>
                   <Camera size={22} color={MUTED} />
                   <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Add more</span>
                 </motion.button>
@@ -1008,8 +999,8 @@ function ItemPhotoUploadScreen({ onBack, onContinue }: any) {
         )}
       </div>
 
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}` }}>
-        <button onClick={() => photos.length > 0 && onContinue(photos)} disabled={photos.length === 0} style={{ width: '100%', padding: '17px', borderRadius: '22px', background: photos.length > 0 ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: photos.length > 0 ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: photos.length > 0 ? 'pointer' : 'not-allowed', boxShadow: photos.length > 0 ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}>
+      <div style={{ padding: '12px 20px 32px', borderTop: `0.5px solid ${BORDER}` }}>
+        <button onClick={() => photos.length > 0 && onContinue(photos)} disabled={photos.length === 0} style={{ width: '100%', height: '52px', borderRadius: '14px', background: photos.length > 0 ? PRIMARY : BORDER, border: 'none', color: photos.length > 0 ? 'white' : MUTED, fontWeight: 700, fontSize: '16px', cursor: photos.length > 0 ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}>
           Continue
         </button>
       </div>
@@ -1042,35 +1033,30 @@ function PhotoPickerSheet({ onSelect, onClose }: { onSelect: (url: string) => vo
           initial={{ y: 300 }} animate={{ y: 0 }} exit={{ y: 300 }}
           transition={{ type: 'spring', damping: 28, stiffness: 300 }}
           onClick={e => e.stopPropagation()}
-          style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '20px 20px 40px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+          style={{ background: CARD, borderRadius: '20px 20px 0 0', padding: '20px 20px 40px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
         >
-          {/* Handle */}
           <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
-
           <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT, marginBottom: '16px' }}>Add Photo</div>
 
-          {/* Camera / Library actions */}
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             <button
               onClick={() => onSelect(RECENT_PHOTOS[Math.floor(Math.random() * RECENT_PHOTOS.length)])}
-              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 12px', borderRadius: '18px', background: '#FFF0EC', border: `1.5px solid #FFD8CC`, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#FFF0EC', border: `1.5px solid #FFD8CC`, cursor: 'pointer', fontFamily: 'inherit', justifyContent: 'center' }}
             >
-              <Camera size={22} color={PRIMARY} />
-              <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY }}>Take Photo</span>
+              <Camera size={20} color={PRIMARY} />
+              <span style={{ fontSize: '14px', fontWeight: 700, color: PRIMARY, marginLeft: '8px' }}>Take Photo</span>
             </button>
             <button
               onClick={() => onSelect(RECENT_PHOTOS[Math.floor(Math.random() * RECENT_PHOTOS.length)])}
-              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 12px', borderRadius: '18px', background: '#EDE9FE', border: `1.5px solid #DDD6FE`, cursor: 'pointer', fontFamily: 'inherit' }}
+              style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', height: '52px', padding: '0 12px', borderRadius: '14px', background: '#EDE9FE', border: `1.5px solid #DDD6FE`, cursor: 'pointer', fontFamily: 'inherit', justifyContent: 'center' }}
             >
-              <Monitor size={22} color="#7C3AED" />
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#7C3AED' }}>Library</span>
+              <Monitor size={20} color="#7C3AED" />
+              <span style={{ fontSize: '14px', fontWeight: 700, color: '#7C3AED', marginLeft: '8px' }}>Library</span>
             </button>
           </div>
 
-          {/* Recent photos label */}
           <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px' }}>Recent Photos</div>
 
-          {/* Photo grid */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '3px' }}>
               {RECENT_PHOTOS.map((photo, i) => (
@@ -1086,8 +1072,7 @@ function PhotoPickerSheet({ onSelect, onClose }: { onSelect: (url: string) => vo
             </div>
           </div>
 
-          {/* Cancel */}
-          <button onClick={onClose} style={{ width: '100%', padding: '14px', borderRadius: '18px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit', marginTop: '16px' }}>
+          <button onClick={onClose} style={{ width: '100%', padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit', marginTop: '16px' }}>
             Cancel
           </button>
         </motion.div>
@@ -1115,7 +1100,6 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
   const CONDITIONS = ['brand new', 'like new', 'lightly used', 'well used', 'heavily used'];
   const TILE_SIZE = '100px';
 
-  // AI auto-generate on mount
   useEffect(() => {
     const t = setTimeout(() => {
       setItemName('Pre-loved Item in Great Condition');
@@ -1129,16 +1113,15 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
   const removePhoto = (idx: number) => setPhotos(p => p.filter((_, i) => i !== idx));
   const valid = itemName.trim() && category && condition;
 
-  // ---- AI generating screen ----
   if (isGenerating) {
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: CARD, gap: '20px', padding: '40px' }}>
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
-          style={{ width: '60px', height: '60px', borderRadius: '20px', background: `linear-gradient(135deg, ${PRIMARY}, #FF8C70)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ width: '60px', height: '60px', borderRadius: '20px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          <span style={{ fontSize: '28px' }}>✨</span>
+          <Star size={28} color="white" fill="white" />
         </motion.div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '8px' }}>Analysing your photos...</div>
@@ -1157,7 +1140,7 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD, position: 'relative' }}>
       <div style={{ padding: '52px 20px 18px', flexShrink: 0 }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
         <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT }}>List an Item</div>
@@ -1165,11 +1148,10 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
 
-        {/* 1. Images */}
         <FormField label="Images">
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             {photos.map((p, i) => (
-              <div key={i} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+              <div key={i} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '12px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
                 <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 <button onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '5px', right: '5px', width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <X size={11} color="white" />
@@ -1180,7 +1162,7 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
               <motion.button
                 whileTap={{ scale: 0.96 }}
                 onClick={() => setShowPickerSheet(true)}
-                style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', border: `2px dashed ${BORDER}`, background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '4px', flexShrink: 0 }}
+                style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '12px', border: '1.5px dashed rgba(60,60,67,0.2)', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '4px', flexShrink: 0 }}
               >
                 <Plus size={20} color={MUTED} />
               </motion.button>
@@ -1188,20 +1170,18 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
           </div>
         </FormField>
 
-        {/* 2. Title */}
         <FormField label="Title">
-          <input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="What are you listing?" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="What are you listing?" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
 
-        {/* 3. Category */}
         <FormField label="Category">
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setCategoryOpen(!categoryOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${categoryOpen ? PRIMARY : BORDER}`, fontSize: '14px', background: BG, color: category ? TEXT : MUTED, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 600 : 400, boxSizing: 'border-box' }}>
+            <button onClick={() => setCategoryOpen(!categoryOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', background: 'rgba(120,120,128,0.1)', color: category ? TEXT : MUTED, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 600 : 400, boxSizing: 'border-box' }}>
               {category || 'Select category'}
               <ChevronDown size={16} color={MUTED} style={{ transform: categoryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
             </button>
             {categoryOpen && (
-              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '16px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}`, maxHeight: '200px', overflowY: 'auto' }}>
+              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '14px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}`, maxHeight: '200px', overflowY: 'auto' }}>
                 {FORM_ITEM_CATEGORIES.map((cat, i) => (
                   <button key={cat} onClick={() => { setCategory(cat); setCategoryOpen(false); }} style={{ width: '100%', padding: '12px 16px', border: 'none', background: category === cat ? '#FFF0EC' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'inherit', fontSize: '13px', color: category === cat ? PRIMARY : TEXT, fontWeight: category === cat ? 700 : 400, borderBottom: i < FORM_ITEM_CATEGORIES.length - 1 ? `1px solid ${BG}` : 'none', textAlign: 'left' }}>
                     {cat}
@@ -1213,14 +1193,12 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
           </div>
         </FormField>
 
-        {/* 4. Condition */}
         <FormField label="Condition">
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {CONDITIONS.map(c => {
               const active = condition === c;
-              const cs = CONDITION_COLORS[c] || { bg: BG, text: TEXT2 };
               return (
-                <button key={c} onClick={() => setCondition(c)} style={{ padding: '9px 14px', borderRadius: '22px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: `1.5px solid ${active ? cs.text : BORDER}`, background: active ? cs.bg : 'transparent', color: active ? cs.text : TEXT2, fontWeight: active ? 700 : 400 }}>
+                <button key={c} onClick={() => setCondition(c)} style={{ padding: '9px 14px', borderRadius: '8px', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', border: 'none', background: active ? PRIMARY : 'rgba(120,120,128,0.1)', color: active ? 'white' : TEXT2, fontWeight: active ? 700 : 400 }}>
                   {c}
                 </button>
               );
@@ -1228,36 +1206,35 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
           </div>
         </FormField>
 
-        {/* 5. Description (AI-generated, editable) */}
         <FormField label="Description (optional)">
-          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your item..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
+          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your item..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
         </FormField>
 
-        {/* 6. Price toggle */}
         <FormField label="Price">
-          <div style={{ display: 'flex', gap: '4px', background: BG, borderRadius: '16px', padding: '4px', marginBottom: priceMode === 'sale' ? '12px' : '0' }}>
-            {(['free', 'sale'] as const).map(mode => (
-              <button key={mode} onClick={() => setPriceMode(mode)} style={{ flex: 1, padding: '10px 4px', background: priceMode === mode ? CARD : 'transparent', border: 'none', cursor: 'pointer', borderRadius: '12px', fontFamily: 'inherit', color: priceMode === mode ? TEXT : MUTED, fontWeight: priceMode === mode ? 700 : 500, fontSize: '13px', boxShadow: priceMode === mode ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
-                {mode === 'free' ? 'For free' : 'For sale'}
-              </button>
-            ))}
-          </div>
-          {priceMode === 'sale' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
-              <span style={{ fontSize: '14px', color: MUTED, fontWeight: 600 }}>$</span>
-              <input value={price} onChange={e => setPrice(e.target.value)} placeholder="Enter price" type="number" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+          <div style={{ background: CARD, borderRadius: '14px', border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', gap: '4px', background: 'rgba(120,120,128,0.08)', padding: '4px', margin: '8px 8px 4px' }}>
+              {(['free', 'sale'] as const).map(mode => (
+                <button key={mode} onClick={() => setPriceMode(mode)} style={{ flex: 1, padding: '10px 4px', background: priceMode === mode ? CARD : 'transparent', border: 'none', cursor: 'pointer', borderRadius: '10px', fontFamily: 'inherit', color: priceMode === mode ? TEXT : MUTED, fontWeight: priceMode === mode ? 700 : 500, fontSize: '13px', boxShadow: priceMode === mode ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
+                  {mode === 'free' ? 'For free' : 'For sale'}
+                </button>
+              ))}
             </div>
-          )}
+            {priceMode === 'sale' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px' }}>
+                <span style={{ fontSize: '14px', color: MUTED, fontWeight: 600 }}>$</span>
+                <input value={price} onChange={e => setPrice(e.target.value)} placeholder="Enter price" type="number" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+              </div>
+            )}
+            {priceMode === 'free' && <div style={{ height: '8px' }} />}
+          </div>
         </FormField>
 
-        {/* 7. Brand (optional) */}
         <FormField label="Brand (optional)">
-          <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. IKEA, Samsung" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. IKEA, Samsung" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
 
-        {/* 8. Collection address */}
         <FormField label="Collection Address">
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '14px 16px', borderRadius: '12px', border: 'none', background: 'rgba(120,120,128,0.1)' }}>
             <MapPin size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '2px' }} />
             <textarea
               value={collectionAddress}
@@ -1270,17 +1247,16 @@ function ItemPostScreen({ onBack, photos: initialPhotos, onPost }: any) {
         </FormField>
       </div>
 
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}`, flexShrink: 0 }}>
+      <div style={{ padding: '12px 20px 32px', borderTop: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
         <button
           onClick={() => valid && onPost({ itemName, description, category, condition, price: priceMode === 'free' ? 'Free' : `$${price}`, brand, collectionAddress, photos })}
           disabled={!valid}
-          style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}
+          style={{ width: '100%', height: '52px', borderRadius: '14px', background: valid ? PRIMARY : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '16px', cursor: valid ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}
         >
           Post Listing
         </button>
       </div>
 
-      {/* Photo picker bottom sheet */}
       {showPickerSheet && (
         <PhotoPickerSheet
           onSelect={url => { setPhotos(p => [...p, url]); setShowPickerSheet(false); }}
@@ -1317,7 +1293,7 @@ function ServicePostScreen({ onBack, onPost }: any) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD, position: 'relative' }}>
       <div style={{ padding: '52px 20px 18px', flexShrink: 0 }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
           <ChevronLeft size={20} color={TEXT} />
         </button>
         <div style={{ fontSize: '24px', fontWeight: 800, color: TEXT }}>Offer a Service</div>
@@ -1325,11 +1301,10 @@ function ServicePostScreen({ onBack, onPost }: any) {
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
 
-        {/* 1. Images */}
         <FormField label="Images">
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             {photos.map((p, i) => (
-              <div key={i} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+              <div key={i} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '12px', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
                 <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 <button onClick={() => removePhoto(i)} style={{ position: 'absolute', top: '5px', right: '5px', width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <X size={11} color="white" />
@@ -1337,27 +1312,25 @@ function ServicePostScreen({ onBack, onPost }: any) {
               </div>
             ))}
             {photos.length < 6 && (
-              <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowPickerSheet(true)} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '14px', border: `2px dashed ${BORDER}`, background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '4px', flexShrink: 0 }}>
+              <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowPickerSheet(true)} style={{ width: TILE_SIZE, height: TILE_SIZE, borderRadius: '12px', border: '1.5px dashed rgba(60,60,67,0.2)', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit', gap: '4px', flexShrink: 0 }}>
                 <Plus size={20} color={MUTED} />
               </motion.button>
             )}
           </div>
         </FormField>
 
-        {/* 2. Service Title */}
         <FormField label="Service Title">
-          <input value={serviceTitle} onChange={e => setServiceTitle(e.target.value)} placeholder="What service are you offering?" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input value={serviceTitle} onChange={e => setServiceTitle(e.target.value)} placeholder="What service are you offering?" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
 
-        {/* 3. Category */}
         <FormField label="Category">
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setCategoryOpen(!categoryOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${categoryOpen ? PRIMARY : BORDER}`, fontSize: '14px', background: BG, color: category ? TEXT : MUTED, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 600 : 400, boxSizing: 'border-box' }}>
+            <button onClick={() => setCategoryOpen(!categoryOpen)} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', background: 'rgba(120,120,128,0.1)', color: category ? TEXT : MUTED, fontFamily: 'inherit', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontWeight: category ? 600 : 400, boxSizing: 'border-box' }}>
               {category || 'Select category'}
               <ChevronDown size={16} color={MUTED} style={{ transform: categoryOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
             </button>
             {categoryOpen && (
-              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '16px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}`, maxHeight: '200px', overflowY: 'auto' }}>
+              <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, background: CARD, borderRadius: '14px', boxShadow: '0 8px 28px rgba(0,0,0,0.12)', zIndex: 10, overflow: 'hidden', border: `1px solid ${BORDER}`, maxHeight: '200px', overflowY: 'auto' }}>
                 {SERVICE_FORM_CATS.map((cat, i) => (
                   <button key={cat} onClick={() => { setCategory(cat); setCategoryOpen(false); }} style={{ width: '100%', padding: '12px 16px', border: 'none', background: category === cat ? '#FFF0EC' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'inherit', fontSize: '13px', color: category === cat ? PRIMARY : TEXT, fontWeight: category === cat ? 700 : 400, borderBottom: i < SERVICE_FORM_CATS.length - 1 ? `1px solid ${BG}` : 'none', textAlign: 'left' }}>
                     {cat}
@@ -1369,66 +1342,64 @@ function ServicePostScreen({ onBack, onPost }: any) {
           </div>
         </FormField>
 
-        {/* 4. Service Details — Availability */}
         <FormField label="Availability">
-          <textarea value={availability} onChange={e => setAvailability(e.target.value)} placeholder="e.g. Weekday evenings (6–9 PM), Weekends" rows={2} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
+          <textarea value={availability} onChange={e => setAvailability(e.target.value)} placeholder="e.g. Weekday evenings (6–9 PM), Weekends" rows={2} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
         </FormField>
 
-        {/* 5. Description */}
         <FormField label="Description (optional)">
-          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your service, experience, or any useful notes..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
+          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your service, experience, or any useful notes..." rows={3} style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', resize: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit', lineHeight: '1.5' }} />
         </FormField>
 
-        {/* 6. Pricing */}
         <FormField label="Pricing">
-          <div style={{ display: 'flex', gap: '4px', background: BG, borderRadius: '16px', padding: '4px', marginBottom: priceMode === 'charge' ? '12px' : '0' }}>
-            {(['free', 'charge'] as const).map(mode => (
-              <button key={mode} onClick={() => setPriceMode(mode)} style={{ flex: 1, padding: '10px 4px', background: priceMode === mode ? CARD : 'transparent', border: 'none', cursor: 'pointer', borderRadius: '12px', fontFamily: 'inherit', color: priceMode === mode ? TEXT : MUTED, fontWeight: priceMode === mode ? 700 : 500, fontSize: '13px', boxShadow: priceMode === mode ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
-                {mode === 'free' ? 'Free' : 'Charge a fee'}
-              </button>
-            ))}
-          </div>
-          {priceMode === 'charge' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG }}>
-              <span style={{ fontSize: '14px', color: MUTED, fontWeight: 600 }}>$</span>
-              <input value={rate} onChange={e => setRate(e.target.value)} placeholder="Rate" type="number" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit', minWidth: 0 }} />
-              <div style={{ display: 'flex', gap: '4px', background: CARD, borderRadius: '10px', padding: '3px', border: `1px solid ${BORDER}`, flexShrink: 0 }}>
-                {(['hour', 'session'] as const).map(u => (
-                  <button key={u} onClick={() => setRateUnit(u)} style={{ padding: '5px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '11px', fontWeight: 700, background: rateUnit === u ? PRIMARY : 'transparent', color: rateUnit === u ? 'white' : MUTED }}>
-                    /{u}
-                  </button>
-                ))}
-              </div>
+          <div style={{ background: CARD, borderRadius: '14px', border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', gap: '4px', background: 'rgba(120,120,128,0.08)', padding: '4px', margin: '8px 8px 4px' }}>
+              {(['free', 'charge'] as const).map(mode => (
+                <button key={mode} onClick={() => setPriceMode(mode)} style={{ flex: 1, padding: '10px 4px', background: priceMode === mode ? CARD : 'transparent', border: 'none', cursor: 'pointer', borderRadius: '10px', fontFamily: 'inherit', color: priceMode === mode ? TEXT : MUTED, fontWeight: priceMode === mode ? 700 : 500, fontSize: '13px', boxShadow: priceMode === mode ? '0 2px 8px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.2s' }}>
+                  {mode === 'free' ? 'Free' : 'Charge a fee'}
+                </button>
+              ))}
             </div>
-          )}
+            {priceMode === 'charge' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px' }}>
+                <span style={{ fontSize: '14px', color: MUTED, fontWeight: 600 }}>$</span>
+                <input value={rate} onChange={e => setRate(e.target.value)} placeholder="Rate" type="number" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit', minWidth: 0 }} />
+                <div style={{ display: 'flex', gap: '4px', background: BG, borderRadius: '10px', padding: '3px', border: `1px solid ${BORDER}`, flexShrink: 0 }}>
+                  {(['hour', 'session'] as const).map(u => (
+                    <button key={u} onClick={() => setRateUnit(u)} style={{ padding: '5px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '11px', fontWeight: 700, background: rateUnit === u ? PRIMARY : 'transparent', color: rateUnit === u ? 'white' : MUTED }}>
+                      /{u}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {priceMode === 'free' && <div style={{ height: '8px' }} />}
+          </div>
         </FormField>
 
-        {/* 7. Experience / Credentials */}
         <FormField label="Years of Experience">
-          <input value={yearsExp} onChange={e => setYearsExp(e.target.value)} placeholder="e.g. 3" type="number" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input value={yearsExp} onChange={e => setYearsExp(e.target.value)} placeholder="e.g. 3" type="number" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
         <FormField label="Certifications (optional)">
-          <input value={certifications} onChange={e => setCertifications(e.target.value)} placeholder="e.g. DBS checked, First Aid certified" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input value={certifications} onChange={e => setCertifications(e.target.value)} placeholder="e.g. DBS checked, First Aid certified" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
         <FormField label="Relevant Skills (optional)">
-          <input value={skills} onChange={e => setSkills(e.target.value)} placeholder="e.g. CPR, Bilingual, Pet first aid" style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, fontSize: '14px', outline: 'none', color: TEXT, background: BG, boxSizing: 'border-box', fontFamily: 'inherit' }} />
+          <input value={skills} onChange={e => setSkills(e.target.value)} placeholder="e.g. CPR, Bilingual, Pet first aid" style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', fontSize: '14px', outline: 'none', color: TEXT, background: 'rgba(120,120,128,0.1)', boxSizing: 'border-box', fontFamily: 'inherit' }} />
         </FormField>
 
-        {/* 8. Service Location */}
         <FormField label="Service Location">
           <CollectionPointMap distanceText={serviceLocation || 'Bishan-AMK Estate'} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '16px', border: `1.5px solid ${BORDER}`, background: BG, marginTop: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderRadius: '12px', border: 'none', background: 'rgba(120,120,128,0.1)', marginTop: '10px' }}>
             <MapPin size={16} color={MUTED} style={{ flexShrink: 0 }} />
             <input value={serviceLocation} onChange={e => setServiceLocation(e.target.value)} placeholder="e.g. Bishan-AMK Estate, your block" style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '14px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
           </div>
         </FormField>
       </div>
 
-      <div style={{ padding: '12px 20px 32px', borderTop: `1px solid ${BG}`, flexShrink: 0 }}>
+      <div style={{ padding: '12px 20px 32px', borderTop: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
         <button
           onClick={() => valid && onPost({ serviceTitle, category, availability, description, rate: priceMode === 'free' ? 'Free' : `$${rate} per ${rateUnit}`, yearsExp, certifications, skills, serviceLocation, photos })}
           disabled={!valid}
-          style={{ width: '100%', padding: '17px', borderRadius: '22px', background: valid ? `linear-gradient(135deg, ${PRIMARY}, #FF8C70)` : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', boxShadow: valid ? '0 8px 24px rgba(255,107,71,0.38)' : 'none', fontFamily: 'inherit' }}
+          style={{ width: '100%', height: '52px', borderRadius: '14px', background: valid ? PRIMARY : BORDER, border: 'none', color: valid ? 'white' : MUTED, fontWeight: 700, fontSize: '16px', cursor: valid ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}
         >
           Post Service
         </button>
