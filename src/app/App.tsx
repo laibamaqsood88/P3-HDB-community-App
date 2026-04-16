@@ -49,6 +49,11 @@ export default function App() {
   };
   const savedMarketplaceIds = savedMarketplaceItems.map(i => i.id);
 
+  const openExploreEvents = () => {
+    setExploreInitialSubTab('events');
+    setActiveTab('explore');
+  };
+
   const openExploreGroups = () => {
     setExploreInitialSubTab('groups');
     setActiveTab('explore');
@@ -126,6 +131,7 @@ export default function App() {
           <EventsPage
             onOpenProfile={() => setShowProfile(true)}
             onOpenEvent={(id) => { setActiveTab('explore'); }}
+            onOpenExploreEvents={openExploreEvents}
             onOpenGroups={openExploreGroups}
             onOpenGroupChat={openGroupChat}
             joinedGroups={joinedGroups}

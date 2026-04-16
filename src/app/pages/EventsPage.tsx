@@ -52,6 +52,7 @@ interface EventsPageProps {
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
   onSayHello?: (neighbour: any) => void;
   joinedGroups?: any[];
+  onOpenExploreEvents?: () => void;
 }
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
@@ -269,7 +270,7 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 };
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [] }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
   const [showNotifications, setShowNotifications] = useState(false);
@@ -578,7 +579,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               )}
             </div>
             <button
-              onClick={() => {}}
+              onClick={() => onOpenExploreEvents?.()}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
             >
               <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>Find more events</span>
