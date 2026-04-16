@@ -186,6 +186,7 @@ export default function App() {
                 memberCount: group.members,
                 meetFrequency: group.meetFrequency,
                 location: group.location,
+                imageUrl: group.image,
               };
               onAddConversation(conv);
               setJoinedGroups(prev => {

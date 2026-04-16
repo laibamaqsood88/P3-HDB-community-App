@@ -29,6 +29,7 @@ interface Conversation {
   memberCount?: number;    // for dynamically joined groups
   meetFrequency?: string;  // for dynamically joined groups
   location?: string;       // for dynamically joined groups
+  imageUrl?: string;       // group cover photo
 }
 
 const CONVERSATIONS: Conversation[] = [
@@ -42,6 +43,7 @@ const CONVERSATIONS: Conversation[] = [
     time: '9:20 AM',
     unread: 2,
     tag: 'Running',
+    imageUrl: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
   {
     id: 2,
@@ -53,6 +55,7 @@ const CONVERSATIONS: Conversation[] = [
     time: 'Yesterday',
     unread: 0,
     tag: 'Gardening',
+    imageUrl: 'https://images.unsplash.com/photo-1621460248083-6271cc4437a8?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
   {
     id: 3,
@@ -200,8 +203,8 @@ const INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
   Request:       { bg: '#DCFCE7', text: '#16A34A' },
 };
 
-type FilterTab = 'All' | 'Groups' | 'Marketplace' | 'Requests' | 'Direct';
-const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Marketplace', 'Requests', 'Direct'];
+type FilterTab = 'All' | 'Groups' | 'Market' | 'Requests' | 'Neighbour';
+const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Market', 'Requests', 'Neighbour'];
 
 interface MessagesPageProps {
   initialConvId?: number;
@@ -240,6 +243,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
     memberCount: c.memberCount,
     meetFrequency: c.meetFrequency,
     location: c.location,
+    imageUrl: c.imageUrl,
   }));
 
   const [openConv, setOpenConv] = useState<Conversation | null>(
@@ -312,9 +316,9 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
 
   const filteredConvs = allConversations.filter(c => {
     if (activeFilter === 'Groups' && c.type !== 'group') return false;
-    if (activeFilter === 'Marketplace' && c.type !== 'marketplace') return false;
+    if (activeFilter === 'Market' && c.type !== 'marketplace') return false;
     if (activeFilter === 'Requests' && c.type !== 'request') return false;
-    if (activeFilter === 'Direct' && c.type !== 'direct') return false;
+    if (activeFilter === 'Neighbour' && c.type !== 'direct') return false;
     if (searchQuery && !c.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
@@ -322,9 +326,9 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
   const unreadFor = (filter: FilterTab) => {
     return allConversations.filter(c => {
       if (filter === 'Groups') return c.type === 'group';
-      if (filter === 'Marketplace') return c.type === 'marketplace';
+      if (filter === 'Market') return c.type === 'marketplace';
       if (filter === 'Requests') return c.type === 'request';
-      if (filter === 'Direct') return c.type === 'direct';
+      if (filter === 'Neighbour') return c.type === 'direct';
       return true; // All
     }).reduce((sum, c) => sum + c.unread, 0);
   };
@@ -513,9 +517,14 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                   fontWeight: 700,
                   color: 'white',
                   position: 'relative',
+                  overflow: 'hidden',
                 }}
               >
-                {conv.avatar}
+                {conv.imageUrl ? (
+                  <img src={conv.imageUrl} alt={conv.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                ) : (
+                  conv.avatar
+                )}
                 {conv.type === 'group' && (
                   <div
                     style={{
