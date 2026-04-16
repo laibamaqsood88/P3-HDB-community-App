@@ -658,21 +658,86 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 </motion.div>
               );
             })}
-            {/* Grey + box — always shown to the right */}
+            {/* Animated Find-a-group card */}
+            <style>{`
+              @keyframes floatGroups {
+                0%, 100% { transform: translateY(0px) rotateX(0deg); }
+                50% { transform: translateY(-6px) rotateX(8deg); }
+              }
+              @keyframes pulseRing {
+                0%, 100% { transform: scale(1); opacity: 0.5; }
+                50% { transform: scale(1.18); opacity: 0.15; }
+              }
+              @keyframes shimmerOrb {
+                0% { background-position: -80px 0; }
+                100% { background-position: 80px 0; }
+              }
+              @keyframes dotBounce1 { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
+              @keyframes dotBounce2 { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
+              @keyframes dotBounce3 { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
+            `}</style>
             <motion.div
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
               onClick={onOpenGroups}
               style={{
                 flexShrink: 0, width: '148px', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
-                background: 'rgba(120,120,128,0.10)', border: '1.5px dashed rgba(60,60,67,0.18)',
+                background: 'linear-gradient(145deg, #fff8f6 0%, #fff3ef 100%)',
+                border: '1.5px dashed rgba(255,107,71,0.35)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: '8px', cursor: 'pointer',
+                gap: '10px', cursor: 'pointer', position: 'relative', overflow: 'hidden',
               }}
             >
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Plus size={20} color={MUTED} />
+              {/* Soft background glow */}
+              <div style={{
+                position: 'absolute', width: '90px', height: '90px', borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(255,107,71,0.18) 0%, transparent 70%)',
+                animation: 'pulseRing 2.4s ease-in-out infinite',
+                pointerEvents: 'none',
+              }} />
+
+              {/* 3D floating icon group */}
+              <div style={{
+                perspective: '300px',
+                animation: 'floatGroups 3s ease-in-out infinite',
+              }}>
+                {/* Orb container */}
+                <div style={{
+                  width: '56px', height: '56px', borderRadius: '50%',
+                  background: 'linear-gradient(145deg, #FF8A6A 0%, #FF6B47 50%, #e8522a 100%)',
+                  boxShadow: '0 8px 20px rgba(255,107,71,0.45), 0 2px 6px rgba(255,107,71,0.3), inset 0 2px 4px rgba(255,255,255,0.35)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative',
+                }}>
+                  {/* Highlight shine */}
+                  <div style={{
+                    position: 'absolute', top: '8px', left: '10px',
+                    width: '18px', height: '10px', borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.45)',
+                    transform: 'rotate(-30deg)',
+                    filter: 'blur(2px)',
+                    pointerEvents: 'none',
+                  }} />
+                  <Users size={28} color="white" strokeWidth={2} />
+                </div>
               </div>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: MUTED, textAlign: 'center', lineHeight: '1.3' }}>Find a group</span>
+
+              {/* Animated dots */}
+              <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                {[0, 0.2, 0.4].map((delay, i) => (
+                  <div key={i} style={{
+                    width: '5px', height: '5px', borderRadius: '50%',
+                    background: PRIMARY,
+                    opacity: 0.7,
+                    animation: `dotBounce${i + 1} 1.4s ease-in-out infinite`,
+                    animationDelay: `${delay}s`,
+                  }} />
+                ))}
+              </div>
+
+              <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY, textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
+                Find a group
+              </span>
             </motion.div>
           </div>
         </div>
