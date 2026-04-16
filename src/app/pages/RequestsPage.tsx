@@ -315,29 +315,38 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
-      <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
+      <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
         <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${12 - (scrollProgress * 4)}px`, display: 'flex', alignItems: 'center', gap: '8px', transition: 'padding 0.1s linear' }}>
           <div style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Requests</span>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => setSearchOpen(true)}
+            {searchOpen ? (
+              <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
                 style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Search size={18} color={TEXT2} />
+                <ChevronLeft size={22} color={TEXT} />
               </button>
-              <button onClick={() => setFilterVisible(true)}
-                style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
-                {filterCount > 0 && (
-                  <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
-                    <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
-                  </div>
-                )}
-              </button>
-              <button onClick={onPost}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Plus size={20} color="white" />
-              </button>
-            </div>
+            ) : (
+              <>
+                <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Requests</span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setSearchOpen(true)}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Search size={18} color={TEXT2} />
+                  </button>
+                  <button onClick={() => setFilterVisible(true)}
+                    style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
+                    {filterCount > 0 && (
+                      <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
+                        <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+                      </div>
+                    )}
+                  </button>
+                  <button onClick={onPost}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Plus size={20} color="white" />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -361,7 +370,7 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={() => setSearchOpen(false)}
+              onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
               style={{
                 position: 'absolute', inset: 0,
                 background: 'rgba(10,10,20,0.45)',
@@ -371,17 +380,17 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
               }}
             />
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                position: 'absolute', top: 0, left: 0, right: 0,
+                position: 'absolute', top: '90px', left: '12px', right: '12px',
                 background: 'white',
-                borderRadius: '0 0 24px 24px',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
+                borderRadius: '16px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
                 zIndex: 201,
-                padding: '52px 16px 24px',
+                padding: '16px 16px 20px',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(120,120,128,0.10)', borderRadius: '14px', padding: '12px 14px', marginBottom: recentSearches.length > 0 ? '20px' : 0 }}>
@@ -394,13 +403,9 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
                   placeholder="Search requests..."
                   style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '16px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
                 />
-                {searchQuery ? (
+                {searchQuery && (
                   <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
                     <X size={15} color={MUTED} />
-                  </button>
-                ) : (
-                  <button onClick={() => setSearchOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '14px', fontWeight: 600, color: PRIMARY, fontFamily: 'inherit' }}>
-                    Cancel
                   </button>
                 )}
               </div>
