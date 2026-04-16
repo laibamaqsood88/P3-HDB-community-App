@@ -396,8 +396,12 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           {/* Events */}
           {activeSubTab === 'events' && (
             <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: '#F7F7F7' }} onScroll={handleScroll}>
-              <div style={{ fontSize: '14px', color: TEXT2, fontWeight: 400, marginBottom: '16px', lineHeight: '1.5' }}>
-                Explore events happening in your neighbourhood.
+              {/* Welcome banner */}
+              <div style={{ border: '1.5px solid #E5E5EA', borderRadius: '14px', padding: '14px 16px', marginBottom: '16px', background: CARD }}>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Events</div>
+                <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
+                  Explore events happening in your neighbourhood.
+                </div>
               </div>
               {filteredEvents.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
