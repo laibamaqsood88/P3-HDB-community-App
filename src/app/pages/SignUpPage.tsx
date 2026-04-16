@@ -325,8 +325,9 @@ function StepFamily({
   onBack: () => void;
 }) {
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: CARD }}>
-      <div style={{ padding: '44px 24px 0', flex: 1, overflowY: 'auto' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: CARD, overflow: 'hidden' }}>
+      {/* Scrollable content */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '44px 24px 24px' }}>
         <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px', fontFamily: 'inherit', color: TEXT2 }}>
           <ChevronLeft size={18} color={TEXT2} />
           <span style={{ fontSize: '13px', fontWeight: 600 }}>Back</span>
@@ -387,7 +388,8 @@ function StepFamily({
         </div>
       </div>
 
-      <div style={{ padding: '16px 24px 40px', borderTop: `1px solid ${BG}` }}>
+      {/* Sticky Next button */}
+      <div style={{ padding: '16px 24px 40px', borderTop: `1px solid ${BG}`, background: CARD, flexShrink: 0 }}>
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onNext}
