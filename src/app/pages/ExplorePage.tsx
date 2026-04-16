@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Bookmark, Share2, X, Shield,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, ChevronDown
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, ChevronDown, SquareArrowOutUpRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -234,10 +234,20 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const [filterGroupInterests, setFilterGroupInterests] = useState<string[]>([]);
 
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
   const handleSubTabChange = (tab: 'events' | 'groups' | 'neighbours') => {
     setActiveSubTab(tab);
     onSubTabChange?.(tab);
+  };
+
+  const submitSearch = (q: string) => {
+    const trimmed = q.trim();
+    if (!trimmed) return;
+    setRecentSearches(prev => [trimmed, ...prev.filter(s => s !== trimmed)].slice(0, 6));
+    setSearchQuery(trimmed);
+    handleSubTabChange(searchScopeTab);
+    setSearchMode(false);
   };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -301,8 +311,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
         {/* ── Shared Header ── */}
         {!(activeSubTab === 'groups' && groupInDetail) && <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
-          {!searchMode ? (
-            <>
+          <>
               {/* Normal mode: Title + icons */}
               <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
                 <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Explore</span>
@@ -347,47 +356,6 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 })}
               </div>
             </>
-          ) : (
-            <>
-              {/* Search mode: Back + Sub-tabs row */}
-              <div style={{ padding: '44px 12px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <button onClick={() => { setSearchMode(false); setSearchQuery(''); }}
-                  style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <ChevronLeft size={20} color={TEXT} />
-                </button>
-                <div style={{ flex: 1, display: 'flex' }}>
-                  {(['events', 'groups', 'neighbours'] as const).map(tab => {
-                    const isActive = searchScopeTab === tab;
-                    return (
-                      <button key={tab}
-                        onClick={() => { setSearchScopeTab(tab); handleSubTabChange(tab); }}
-                        style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
-                          {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        </span>
-                        {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              {/* Search mode: Search input row */}
-              <div style={{ padding: '8px 16px 12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '50px', background: 'rgba(120,120,128,0.10)' }}>
-                  <Search size={14} color={MUTED} />
-                  <input autoFocus value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                    placeholder={`Search ${searchScopeTab}...`}
-                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
-                    onKeyDown={e => { if (e.key === 'Enter') { handleSubTabChange(searchScopeTab); setSearchMode(false); } }} />
-                  {searchQuery && (
-                    <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
-                      <X size={14} color={MUTED} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
         </div>}
 
         {/* ── Tab content ── */}
@@ -552,6 +520,90 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
             />
           )}
         </div>
+
+        {/* Search Overlay */}
+        <AnimatePresence>
+          {searchMode && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setSearchMode(false)}
+                style={{
+                  position: 'absolute', inset: 0,
+                  background: 'rgba(10,10,20,0.45)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  zIndex: 200,
+                }}
+              />
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  position: 'absolute', top: 0, left: 0, right: 0,
+                  background: 'white',
+                  borderRadius: '0 0 24px 24px',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
+                  zIndex: 201,
+                  padding: '52px 16px 24px',
+                }}
+              >
+                {/* Scope tabs */}
+                <div style={{ display: 'flex', marginBottom: '16px', borderBottom: `1px solid rgba(60,60,67,0.12)` }}>
+                  {(['events', 'groups', 'neighbours'] as const).map(tab => (
+                    <button key={tab} onClick={() => setSearchScopeTab(tab)}
+                      style={{ flex: 1, padding: '6px 0 10px', background: 'none', border: 'none', borderBottom: `2px solid ${searchScopeTab === tab ? PRIMARY : 'transparent'}`, cursor: 'pointer', fontFamily: 'inherit', fontSize: '13px', fontWeight: searchScopeTab === tab ? 700 : 500, color: searchScopeTab === tab ? PRIMARY : MUTED, marginBottom: '-1px' }}>
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
+                </div>
+                {/* Search bar */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(120,120,128,0.10)', borderRadius: '14px', padding: '12px 14px', marginBottom: recentSearches.length > 0 ? '20px' : 0 }}>
+                  <Search size={16} color={MUTED} />
+                  <input
+                    autoFocus
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') submitSearch(searchQuery); }}
+                    placeholder={`Search ${searchScopeTab}...`}
+                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '16px', color: TEXT, outline: 'none', fontFamily: 'inherit' }}
+                  />
+                  {searchQuery ? (
+                    <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+                      <X size={15} color={MUTED} />
+                    </button>
+                  ) : (
+                    <button onClick={() => setSearchMode(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '14px', fontWeight: 600, color: PRIMARY, fontFamily: 'inherit' }}>
+                      Cancel
+                    </button>
+                  )}
+                </div>
+                {recentSearches.length > 0 && (
+                  <div>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: MUTED, letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      Recent Searches
+                    </div>
+                    {recentSearches.map((s, i) => (
+                      <button
+                        key={i}
+                        onClick={() => submitSearch(s)}
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 4px', background: 'none', border: 'none', borderBottom: i < recentSearches.length - 1 ? `0.5px solid rgba(60,60,67,0.12)` : 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                      >
+                        <span style={{ fontSize: '15px', color: TEXT, fontWeight: 500 }}>{s}</span>
+                        <SquareArrowOutUpRight size={15} color={MUTED} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         {/* ── Events filter panel ── */}
         <AnimatePresence>
