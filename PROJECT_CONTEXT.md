@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-16 (Session 6)
+2026-04-16 (Session 7)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -103,6 +103,13 @@ marketplace  → Market     (ShoppingBag icon)
 requests     → Requests   (ClipboardList icon)
 messages     → Messages   (MessageCircle icon)
 ```
+
+---
+
+## Login Page (`LoginPage.tsx`)
+- Singpass login button (white card, full width)
+- **"supported by" + MCCY logo**: displayed below the Singpass button — `"supported by"` muted text (12px) inline with the MCCY logo image (`src/imports/mccy-logo-v2.webp`, height 22px)
+- Bottom trust strip: "Your identity is verified..." + MyInfo data badge
 
 ---
 
@@ -209,7 +216,7 @@ joinedGroups  // any[] — each item: { ...Group from ConnectPage, convId: numbe
 ### Sub-tabs: Events | Groups | Neighbours
 
 ### Events Sub-tab
-- Description liner: *"Explore events happening in your neighbourhood."*
+- **Welcome banner**: full-width white bordered rectangle card (`border: 1.5px solid #E5E5EA, borderRadius: 14px`) with bold title "Welcome to Events" and subtitle "Explore events happening in your neighbourhood." — replaces the old plain description text
 - Search bar + filter button
 - Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness
 - Featured event card (large image) + upcoming list
@@ -219,7 +226,7 @@ joinedGroups  // any[] — each item: { ...Group from ConnectPage, convId: numbe
 - **By Household Type labels**: `['Living alone', 'Couple', 'Family with children', 'With parents', 'Shared housing', 'Multigenerational']`
 
 ### Groups Sub-tab (→ `ConnectPage.tsx`)
-- Description liner above "All Groups" header
+- **Welcome banner**: full-width white bordered rectangle card (`border: 1.5px solid #E5E5EA, borderRadius: 14px`) with bold title "Welcome to Groups" and subtitle "Find and join groups in your neighbourhood that match your interests." — replaces the old plain description text
 - 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
 - **Group feed card UI**:
   - Left: **circular image** (72×72px, `borderRadius: '50%'`) — WhatsApp-style
