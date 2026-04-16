@@ -667,10 +667,9 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
                   {/* Right column */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* Name + address */}
-                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '6px', marginBottom: '3px' }}>
-                      <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT, flexShrink: 0 }}>{neighbour.name}</span>
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, flexShrink: 0 }}>{neighbour.unit} · {neighbour.distance}</span>
+                    {/* Name */}
+                    <div style={{ marginBottom: '3px' }}>
+                      <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>{neighbour.name}</span>
                     </div>
                     {/* Interests as pipe text */}
                     <div style={{ fontSize: '13px', color: MUTED, fontWeight: 500, marginBottom: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
