@@ -31,6 +31,7 @@ interface EventsPageProps {
   onOpenNeighbours?: () => void;
   onOpenRequest?: (id: number) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
+  onSayHello?: (neighbour: any) => void;
 }
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
@@ -200,12 +201,12 @@ const INTEREST_GROUPS = [
 
 // Going breakdown data
 const FAMILY_STATUS_BREAKDOWN = [
-  { label: 'Single',             count: 8,  color: '#FF6B47' },
-  { label: 'Couple',             count: 5,  color: '#7C3AED' },
-  { label: 'Living with kids',   count: 6,  color: '#D97706' },
-  { label: 'Living with parents',count: 3,  color: '#0891B2' },
-  { label: 'Multigenerational',  count: 2,  color: '#059669' },
-  { label: 'Senior (60+)',       count: 7,  color: '#DB2777' },
+  { label: 'Living alone',                        count: 8,  color: '#FF6B47' },
+  { label: 'Couple (no children)',                count: 5,  color: '#7C3AED' },
+  { label: 'Family with children',               count: 6,  color: '#D97706' },
+  { label: 'Living with parents',                count: 3,  color: '#0891B2' },
+  { label: 'Shared housing',                     count: 2,  color: '#059669' },
+  { label: 'Multigenerational household',        count: 7,  color: '#DB2777' },
 ];
 
 const NEIGHBOURS_GOING = [
@@ -248,7 +249,7 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 };
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
   const [showNotifications, setShowNotifications] = useState(false);
@@ -546,10 +547,74 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
       {/* Content */}
       <div style={{ padding: '20px 20px 100px' }}>
-        {/* Interest Groups */}
+
+        {/* My Events */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Interest Groups</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Events</span>
+              {signedUpEvents.length > 0 && (
+                <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: '#FFF0EC', color: PRIMARY }}>{signedUpEvents.length}</span>
+              )}
+            </div>
+          </div>
+
+          {signedUpEvents.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '32px 20px', background: CARD, borderRadius: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                <Calendar size={32} color={MUTED} />
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>No events signed up yet</div>
+              <div style={{ fontSize: '12px', color: MUTED }}>Browse the Explore tab to find events</div>
+            </div>
+          ) : (
+            <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
+              {signedUpEvents.map(ev => (
+                <motion.div
+                  key={ev.id}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => goTo('detail', { event: ev })}
+                  style={{
+                    flexShrink: 0, width: '270px', background: CARD, borderRadius: '16px',
+                    boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '12px', padding: '12px',
+                  }}
+                >
+                  {/* Left: square thumbnail */}
+                  <div style={{ width: '84px', height: '84px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                    <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ position: 'absolute', bottom: '5px', left: '5px', padding: '2px 6px', borderRadius: '6px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '9px', fontWeight: 800 }}>
+                      {ev.category}
+                    </div>
+                  </div>
+                  {/* Right: info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '8px', padding: '2px 6px' }}>
+                        <Check size={9} color="#16A34A" strokeWidth={2.5} />
+                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
+                      <Calendar size={11} color={MUTED} />
+                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <MapPin size={11} color={MUTED} />
+                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* My Groups */}
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Groups</span>
             <button
               onClick={onOpenGroups}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
@@ -677,7 +742,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     </div>
                     {/* Say Hello button */}
                     <button
-                      onClick={e => { e.stopPropagation(); toast.success(`Message sent to ${neighbour.name}!`); }}
+                      onClick={e => { e.stopPropagation(); onSayHello ? onSayHello(neighbour) : toast.success(`Message sent to ${neighbour.name}!`); }}
                       style={{
                         padding: '6px 16px', borderRadius: '20px',
                         background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
@@ -695,68 +760,6 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </div>
         </div>
 
-        {/* Signed-Up Events — horizontal scroll */}
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Events</span>
-              {signedUpEvents.length > 0 && (
-                <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: '#FFF0EC', color: PRIMARY }}>{signedUpEvents.length}</span>
-              )}
-            </div>
-          </div>
-
-          {signedUpEvents.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '32px 20px', background: CARD, borderRadius: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                <Calendar size={32} color={MUTED} />
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>No events signed up yet</div>
-              <div style={{ fontSize: '12px', color: MUTED }}>Browse the Explore tab to find events</div>
-            </div>
-          ) : (
-            <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
-              {signedUpEvents.map(ev => (
-                <motion.div
-                  key={ev.id}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => goTo('detail', { event: ev })}
-                  style={{
-                    flexShrink: 0, width: '270px', background: CARD, borderRadius: '16px',
-                    boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '12px', padding: '12px',
-                  }}
-                >
-                  {/* Left: square thumbnail */}
-                  <div style={{ width: '84px', height: '84px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
-                    <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', bottom: '5px', left: '5px', padding: '2px 6px', borderRadius: '6px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '9px', fontWeight: 800 }}>
-                      {ev.category}
-                    </div>
-                  </div>
-                  {/* Right: info */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '8px', padding: '2px 6px' }}>
-                        <Check size={9} color="#16A34A" strokeWidth={2.5} />
-                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
-                      <Calendar size={11} color={MUTED} />
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <MapPin size={11} color={MUTED} />
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
 
       {/* ---- Notifications Bottom Sheet ---- */}

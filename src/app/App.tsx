@@ -132,6 +132,22 @@ export default function App() {
             onOpenNeighbours={openExploreNeighbours}
             onOpenRequest={openRequest}
             onOpenNeighbourProfile={openNeighbourProfile}
+            onSayHello={(neighbour) => {
+              const conv = {
+                id: Date.now(),
+                type: 'direct',
+                name: neighbour.name,
+                avatar: neighbour.avatar || neighbour.name?.substring(0, 2) || '??',
+                avatarBg: neighbour.color || '#8B5CF6',
+                lastMessage: '👋 Say Hello!',
+                time: 'Just now',
+                unread: 0,
+                tag: null,
+              };
+              onAddConversation(conv);
+              setInitialGroupChatId(conv.id);
+              setActiveTab('messages');
+            }}
           />
         )}
         {activeTab === 'explore' && (

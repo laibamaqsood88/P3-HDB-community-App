@@ -41,15 +41,15 @@ interface NavFrame { screen: EventScreen; params?: any; }
 // ---- Mock Data ----
 const EVENTS: EventData[] = [
   {
-    id: 1, title: 'Morning Run at Bishan-AMK Park', date: 'Sat, 12 Apr 2026', time: '7:00 AM – 9:00 AM',
-    location: 'Bishan-AMK Park, Main Pavilion', address: '1384 Ang Mo Kio Ave 1, S569931',
-    language: 'English', audience: 'Adults 25–45',
-    attendees: 8, signups: 24, going: 24, price: 'Free',
+    id: 1, title: 'Durian Party', date: 'Sat, 26 Apr 2026', time: '5:00 PM – 8:00 PM',
+    location: 'Void Deck, Blk 445', address: 'Blk 445 Ang Mo Kio Ave 10, S560445',
+    language: 'English / Mandarin / Malay', audience: 'All Ages',
+    attendees: 18, signups: 40, going: 40, price: 'Free',
     organizer: 'Bishan-AMK RC', organizerRating: 4.8, organizerReviews: 124,
     organizerImage: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
-    categoryColor: '#16A34A', categoryBg: '#DCFCE7', category: 'Fitness',
-    image: 'https://images.unsplash.com/photo-1746046318036-b091b95b02bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    description: 'Join your neighbours for a refreshing morning run around Bishan-AMK Park. Suitable for casual joggers and experienced runners alike. Meet at the main pavilion at 6:50 AM. Water stations provided along the route. All fitness levels welcome — we run at a conversational pace so no one gets left behind.',
+    categoryColor: '#D97706', categoryBg: '#FEF3C7', category: 'Food & Drinks',
+    image: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    description: "Calling all durian lovers! Join your neighbours for a community durian feast at the void deck. Multiple varieties including Mao Shan Wang, D24, and Black Thorn will be served. Come hungry and bring the family — it's going to be a smelly good time! Limited seats, sign up early.",
   },
   {
     id: 2, title: 'Peranakan Cooking Workshop', date: 'Sun, 13 Apr 2026', time: '10:00 AM – 1:00 PM',
@@ -63,26 +63,26 @@ const EVENTS: EventData[] = [
     description: 'Learn to cook traditional Peranakan dishes with your neighbours! Mrs Lim will guide you through making Ayam Buah Keluak and Kueh Pie Tee. Ingredients provided. Limited to 15 participants. Perfect for families and food enthusiasts who want to connect over Singapore heritage food.',
   },
   {
-    id: 3, title: 'Community Garden Morning', date: 'Sat, 19 Apr 2026', time: '8:00 AM – 11:00 AM',
-    location: 'Rooftop Garden, Blk 450', address: 'Blk 450 Ang Mo Kio Ave 10, S560450',
-    language: 'English', audience: 'All Ages',
-    attendees: 5, signups: 18, going: 18, price: 'Free',
-    organizer: 'Green Thumbs SG', organizerRating: 4.7, organizerReviews: 88,
-    organizerImage: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
-    categoryColor: '#059669', categoryBg: '#D1FAE5', category: 'Gardening',
-    image: 'https://images.unsplash.com/photo-1759716705272-8d1697eccf7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    description: "Help tend the estate's shared rooftop garden! Activities include planting vegetables, pruning herbs, and composting. No experience needed — seasoned gardeners and curious beginners are both welcome. Gloves and tools provided. We meet every fortnight to grow our community garden together.",
+    id: 3, title: '1 Day Trip to Johor Bahru', date: 'Sat, 3 May 2026', time: '7:00 AM – 9:00 PM',
+    location: 'Bus Pickup, Blk 445 Void Deck', address: 'Blk 445 Ang Mo Kio Ave 10, S560445',
+    language: 'English / Mandarin / Malay', audience: 'All Ages',
+    attendees: 22, signups: 35, going: 35, price: '$15',
+    organizer: 'Bishan-AMK RC', organizerRating: 4.8, organizerReviews: 124,
+    organizerImage: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
+    categoryColor: '#2563EB', categoryBg: '#DBEAFE', category: 'Outing',
+    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    description: "Join your neighbours on a fun day trip across the Causeway to Johor Bahru! Includes a chartered bus, guided shopping stops at City Square Mall and Angsana, and a group dinner at a local seafood restaurant. Great opportunity to bond with neighbours and enjoy affordable food and shopping. Payment collected at signup.",
   },
   {
-    id: 4, title: 'Saturday Board Game Afternoon', date: 'Sat, 19 Apr 2026', time: '2:00 PM – 5:00 PM',
-    location: 'RC Multi-Purpose Hall, Blk 447', address: 'Blk 447 Ang Mo Kio Ave 10, S560447',
-    language: 'English', audience: 'Adults 20–40',
-    attendees: 6, signups: 15, going: 15, price: 'Free',
-    organizer: 'Bishan-AMK RC', organizerRating: 4.6, organizerReviews: 72,
-    organizerImage: 'https://images.unsplash.com/photo-1632501641765-e568d28b0015?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
-    categoryColor: '#7C3AED', categoryBg: '#EDE9FE', category: 'Board Games',
-    image: 'https://images.unsplash.com/photo-1762068383473-f59f4dc614e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    description: "Bring your favourite board games or try something new from the communal game library. From Catan to Codenames, there's something for everyone. Snacks and drinks provided. Great way to meet neighbours who love strategy and fun in a relaxed Saturday afternoon setting.",
+    id: 4, title: 'Hari Raya Dinner with Community and MP', date: 'Fri, 25 Apr 2026', time: '6:30 PM – 9:30 PM',
+    location: 'Bishan-AMK Community Club', address: '1384 Ang Mo Kio Ave 1, S569931',
+    language: 'English / Malay', audience: 'All Ages',
+    attendees: 35, signups: 80, going: 80, price: 'Free',
+    organizer: 'Bishan-AMK RC', organizerRating: 4.9, organizerReviews: 201,
+    organizerImage: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100',
+    categoryColor: '#059669', categoryBg: '#D1FAE5', category: 'Community',
+    image: 'https://images.unsplash.com/photo-1555244162-803834f70033?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    description: "Celebrate Hari Raya Aidilfitri with your neighbours and our Member of Parliament! Enjoy a festive dinner featuring traditional Malay cuisine, cultural performances, and a warm open-house atmosphere. All residents of Bishan-AMK estate are warmly welcome regardless of race or religion. Dress smart casual.",
   },
   {
     id: 5, title: 'Seniors Tai Chi Morning', date: 'Wed, 16 Apr 2026', time: '7:30 AM – 9:00 AM',
@@ -100,16 +100,16 @@ const EVENTS: EventData[] = [
 const AGE_GROUPS = ['All Ages', '20–35', '35–50', '55+'];
 const LANGUAGES = ['English', 'Mandarin', 'Malay', 'Tamil', 'Multilingual'];
 const INTERESTS = ['Fitness', 'Cooking', 'Gardening', 'Board Games', 'Arts & Crafts', 'Music'];
-const FAMILY_STATUS = ['Single', 'Couple', 'Living with kids', 'Living with parents', 'Multigenerational', 'Senior (60 and above)'];
+const FAMILY_STATUS = ['Living alone', 'Couple (no children)', 'Family with children', 'Living with parents', 'Shared housing (roommates/housemates)', 'Multigenerational household'];
 const CATEGORIES = ['All', '🏃 Fitness', '🍳 Cooking', '🌱 Gardening', '🎲 Board Games', '💆 Wellness'];
 
 const FAMILY_STATUS_BREAKDOWN = [
-  { label: 'Single',              count: 8,  color: '#FF6B47' },
-  { label: 'Couple',              count: 5,  color: '#7C3AED' },
-  { label: 'Living with kids',    count: 6,  color: '#D97706' },
-  { label: 'Living with parents', count: 3,  color: '#0891B2' },
-  { label: 'Multigenerational',   count: 2,  color: '#059669' },
-  { label: 'Senior (60+)',        count: 7,  color: '#DB2777' },
+  { label: 'Living alone',                  count: 8,  color: '#FF6B47' },
+  { label: 'Couple (no children)',          count: 5,  color: '#7C3AED' },
+  { label: 'Family with children',         count: 6,  color: '#D97706' },
+  { label: 'Living with parents',          count: 3,  color: '#0891B2' },
+  { label: 'Shared housing',               count: 2,  color: '#059669' },
+  { label: 'Multigenerational household',  count: 7,  color: '#DB2777' },
 ];
 
 const LANGUAGE_BREAKDOWN = [
@@ -1043,7 +1043,7 @@ function NeighboursTab({
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: BG }}>
         <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500, marginBottom: '12px' }}>
-          {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} in your estate with shared interests
+          {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} in your estate
         </div>
 
         {/* Matched by interest section header */}

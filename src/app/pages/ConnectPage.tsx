@@ -327,22 +327,10 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
               <span style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>{group.members + (isJoined ? 1 : 0)} members</span>
             </div>
 
-            {/* Info cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-              <div style={{ background: CARD, borderRadius: '14px', padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
-                  <Clock size={16} color={PRIMARY} strokeWidth={2} />
-                </div>
-                <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '3px' }}>Meets</div>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{group.meetFrequency}</div>
-              </div>
-              <div style={{ background: CARD, borderRadius: '14px', padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
-                  <MapPin size={16} color={PRIMARY} strokeWidth={2} />
-                </div>
-                <div style={{ fontSize: '10px', color: MUTED, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '3px' }}>Location</div>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT, lineHeight: '1.4' }}>{group.location}</div>
-              </div>
+            {/* Meets */}
+            <div style={{ background: CARD, borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', marginBottom: '16px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>Meets</div>
+              <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.6' }}>{group.meetFrequency}</div>
             </div>
 
             {/* About */}
@@ -351,14 +339,6 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
               <div style={{ fontSize: '14px', color: TEXT2, lineHeight: '1.6' }}>{group.description}</div>
             </div>
 
-            {/* Tags */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
-              {group.tags.map(tag => (
-                <span key={tag} style={{ padding: '5px 12px', borderRadius: '8px', background: CARD, fontSize: '12px', fontWeight: 600, color: TEXT2, border: `1px solid ${BORDER}` }}>
-                  #{tag}
-                </span>
-              ))}
-            </div>
 
             {/* Members list */}
             {group.membersList && group.membersList.length > 0 && (
@@ -533,16 +513,16 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                   }}
                   onClick={() => goTo('detail', { group })}
                 >
-                  {/* Left: square thumbnail */}
-                  <div style={{ width: '88px', height: '88px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                  {/* Left: circle thumbnail */}
+                  <div style={{ width: '72px', height: '72px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
                     <img src={group.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', bottom: '5px', left: '5px', padding: '2px 6px', borderRadius: '6px', background: group.categoryBg, color: group.categoryColor, fontSize: '9px', fontWeight: 800, lineHeight: '1.4' }}>
-                      {group.category}
-                    </div>
                   </div>
 
                   {/* Right: info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '6px', background: group.categoryBg, color: group.categoryColor, fontSize: '9px', fontWeight: 800, lineHeight: '1.4', marginBottom: '4px' }}>
+                      {group.category}
+                    </div>
                     <div style={{ fontSize: '11px', color: MUTED, fontWeight: 600, marginBottom: '3px' }}>
                       {group.members + (isJoined ? 1 : 0)} members
                     </div>
@@ -551,10 +531,6 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                     </div>
                     <div style={{ fontSize: '11px', color: TEXT2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '4px' }}>
                       {group.description}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <MapPin size={11} color={MUTED} />
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{group.location.split(',')[0]}</span>
                     </div>
                   </div>
 
