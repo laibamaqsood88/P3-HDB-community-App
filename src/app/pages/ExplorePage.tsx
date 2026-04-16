@@ -1107,21 +1107,9 @@ function NeighboursTab({
 
                   {/* Main content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* Name row + Say Hello pill */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                    {/* Name row */}
+                    <div style={{ marginBottom: '2px' }}>
                       <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>{n.name}</span>
-                      <motion.button
-                        whileTap={{ scale: 0.96 }}
-                        onClick={() => handleMessage(n)}
-                        style={{
-                          padding: '5px 12px', borderRadius: '20px',
-                          background: 'white', border: `1.5px solid ${PRIMARY}`,
-                          color: TEXT, fontSize: '12px', fontWeight: 700,
-                          cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
-                        }}
-                      >
-                        👋 Say Hello
-                      </motion.button>
                     </div>
 
                     {/* Location */}
@@ -1137,7 +1125,7 @@ function NeighboursTab({
                     )}
 
                     {/* Interest pills */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '8px' }}>
                       {n.interests.map(interest => {
                         const isShared = userInterests.includes(interest);
                         const colors = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
@@ -1158,6 +1146,21 @@ function NeighboursTab({
                           </span>
                         );
                       })}
+                    </div>
+
+                    {/* Say Hello — text link bottom right */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleMessage(n)}
+                        style={{
+                          background: 'none', border: 'none', padding: '0',
+                          color: PRIMARY, fontSize: '13px', fontWeight: 700,
+                          cursor: 'pointer', fontFamily: 'inherit',
+                        }}
+                      >
+                        👋 Say Hello
+                      </motion.button>
                     </div>
                   </div>
                 </div>
