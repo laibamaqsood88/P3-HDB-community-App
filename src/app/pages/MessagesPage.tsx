@@ -342,15 +342,15 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
               <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
                 <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Messages</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }} ref={newChatRef}>
-                  {/* + button */}
-                  <button onClick={() => setShowNewChat(v => !v)}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Plus size={20} color={TEXT2} />
-                  </button>
                   {/* Search button */}
                   <button onClick={() => setSearchOpen(true)}
                     style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Search size={18} color={TEXT2} />
+                  </button>
+                  {/* + button */}
+                  <button onClick={() => setShowNewChat(v => !v)}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Plus size={20} color="white" />
                   </button>
                   {/* New chat popup */}
                   <AnimatePresence>

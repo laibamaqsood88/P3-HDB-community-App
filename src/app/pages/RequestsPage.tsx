@@ -315,10 +315,6 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
                 style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Requests</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={onPost}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Plus size={20} color="white" />
-                  </button>
                   <button onClick={() => setSearchOpen(true)}
                     style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Search size={18} color={TEXT2} />
@@ -331,6 +327,10 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
                         <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
                       </div>
                     )}
+                  </button>
+                  <button onClick={onPost}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Plus size={20} color="white" />
                   </button>
                 </div>
               </motion.div>
