@@ -47,12 +47,12 @@ export const INTEREST_CATEGORIES = [
 const ALL_INTERESTS = Object.keys(INTEREST_COLORS);
 
 const FAMILY_OPTIONS = [
-  'Single',
-  'Couple',
-  'Living with kids',
+  'Living alone',
+  'Couple (no children)',
+  'Family with children',
   'Living with parents',
-  'Multigenerational',
-  'Senior (60 and above)',
+  'Shared housing (roommates/housemates)',
+  'Multigenerational household',
 ];
 
 const SPOKEN_LANGUAGES = ['English', 'Chinese', 'Malay', 'Tamil'];
@@ -333,7 +333,7 @@ function StepFamily({
         </button>
         <ProgressBar step={1} total={3} />
         <div style={{ fontSize: '26px', fontWeight: 800, color: TEXT, lineHeight: '1.2', marginBottom: '8px' }}>
-          What's your family status?
+          What is your current living situation?
         </div>
         <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '28px', lineHeight: '1.5' }}>
           Helps us match you with relevant community groups and events.
