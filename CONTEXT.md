@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-16 (session 5 - Neighbour Profile page, Request card tweaks, Explore search/detail fixes)
+2026-04-17 (session 6 - Search overlay UI, liquid glass search mode, group images in Messages, filter/nav updates)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -84,7 +84,9 @@ onUpdateLanguages(languages)          // callback from ProfilePage to update lan
 - **Dynamic Rendering**: ProfilePage only shows Languages Spoken section if `userLanguages.length > 0`
 
 ### Cross-tab Navigation Callbacks
+- `openExploreEvents()` — switches to Explore tab, opens Events sub-tab
 - `openExploreGroups()` — switches to Explore tab, opens Groups sub-tab
+- `openExploreNeighbours()` — switches to Explore tab, opens Neighbours sub-tab
 - `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat
 - `onOpenMarketplace()` — switches to Marketplace tab
 - `onOpenDirectChat(conv)` — adds `conv` to `conversations` state, sets `initialGroupChatId` to `conv.id`, switches to Messages tab (passed to `ExplorePage` → `NeighboursTab`)
@@ -136,7 +138,7 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 ## Tab 1 — Home Dashboard (`EventsPage.tsx`)
 
 ### Header
-- Profile avatar button (orange "Y") top-left → opens Profile overlay
+- Profile avatar button (real photo — Unsplash `photo-1507003211169`) top-left → opens Profile overlay
 - App name "NeighbourHood" centered
 - Bell icon top-right → opens notification bottom sheet
 
@@ -148,11 +150,12 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 ### Content Sections
 1. **Greeting** — "Good morning ☀️", estate + Verified badge
 2. **Your Interest Groups** — horizontal scroll (Morning Runners, Backyard Gardeners, Board Game Sundays) + "More →"
-3. **Latest Request** — single card showing newest marketplace request
+3. **Community Latest Requests** — single card showing newest marketplace request (renamed from "Latest Request")
 4. **Marketplace Picks** — horizontal scroll of 4 recommended items/services
-5. **Recommended Events** — vertical list of event cards
-6. **Saved Events** — shown if any saved
-7. **My Wishlist** — horizontal scroll of saved marketplace items
+5. **My Events** — heading row with **"Find more events ›"** button (right-aligned) → navigates to Explore > Events sub-tab via `onOpenExploreEvents`
+6. **Recommended Events** — vertical list of event cards
+7. **Saved Events** — shown if any saved
+8. **My Wishlist** — horizontal scroll of saved marketplace items
 
 ### Sub-tabs
 - **Upcoming** — shows all above sections
@@ -160,7 +163,9 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 
 ### Props
 ```ts
-{ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, onOpenNeighbours, onOpenRequest, savedEvents }
+{ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace,
+  onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello,
+  joinedGroups, savedEvents, onOpenExploreEvents }
 ```
 
 ---
@@ -168,50 +173,59 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 ## Tab 2 — Explore (`ExplorePage.tsx`)
 
 ### Shared Header (all sub-tabs)
-- Explore-style **search pill**: rounded pill (border-radius 50px), search icon left, label text, shows `"query"` subtitle when active, clear X button, box-shadow. Tapping opens a full-screen search overlay.
-- **Filter button**: circular (46px), `SlidersHorizontal` icon, orange when active with count badge
-- **Sub-tabs**: underline style — `2.5px solid PRIMARY` on active, transparent otherwise; `PRIMARY` colour when active, `MUTED` when not
-- No location subtitle ("Singapore" removed) — label shows filter context only
+- Title "Explore" + Search icon button (circular) + Filter button (circular, `SlidersHorizontal`, orange when active with count badge)
+- **Sub-tabs**: Events | Groups | Neighbours — underline style, active tab **black** (`TEXT` colour), inactive `MUTED`. Indicator bar `background: TEXT` (black, not orange).
+- Header hidden entirely when Groups sub-tab shows a group detail page
 
-### Shared Header behaviour
-- Hidden entirely when the Groups sub-tab is showing a group detail page (ConnectPage notifies ExplorePage via `onDetailModeChange` callback; bottom nav also hidden)
-- **Search mode**: switching subtabs in search mode immediately updates the content area (Events/Groups/Neighbours listings switch as you tap tabs; previously only updated `searchScopeTab` but not the rendered content)
+### Search Mode (liquid glass overlay)
+- Tapping the search icon enters search mode
+- Header background becomes **transparent** (no white), border removed — back button and subtabs render directly on the glass
+- **Back button** (`ChevronLeft`, white icon, `rgba(255,255,255,0.20)` pill background) replaces the title text in the top row
+- Subtabs remain visible above the popup in white/faded-white; tapping a subtab in search mode changes **both** `searchScopeTab` AND the active content sub-tab
+- **Full-screen backdrop**: `rgba(10,10,20,0.45)` + `backdropFilter: blur(16px)` covers whole page at `zIndex: 200`; header is at `zIndex: 202` so it shows above the blur
+- **White popup card**: `position: absolute, top: 144px, left/right: 12px`, `borderRadius: 16px`, `zIndex: 201` — floats below the header with clear spacing
+  - Search input (autofocus)
+  - `✕` button to clear text (no Cancel button — Back button in header handles exit)
+  - **Recent Searches** list: label + rows each with `SquareArrowOutUpRight` icon; tapping a row triggers that search
+- Tapping the backdrop dismisses search mode
 
 ### Sub-tabs: Events | Groups | Neighbours
 
 #### Events Sub-tab
-- Search bar + Filter button
-- Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness, Age filter
+- **"Welcome to Events"** bordered card above the events list
+- Filter button → bottom sheet filter panel:
+  - **Interests** (collapsible INTEREST_CATEGORIES dropdowns — 5 categories from onboarding, 17 interests total)
+  - **Age Groups**
+  - **Distance** (Any Distance / < 0.5 km / < 1 km) — single-select chips
+  - Language and Family Status sections **removed**
 - Events listed in date-grouped horizontal Luma-style cards
 - **Event Detail**: Date row, Location row, Organizer card, About card, Hosting/Going panels, Price + Attend toggle
-- **Going Breakdown screen**: Stacked bar chart by family status + neighbours attending list (tapping an attendee row opens NeighbourProfilePage overlay)
+- **Going Breakdown screen**: Stacked bar chart by family status + neighbours attending list
 
 #### Groups Sub-tab (`ConnectPage.tsx`)
-- 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
-- Search bar + category filter pills
+- 8 groups: Morning Runners Club, **Cooking & Sharing Circle** (renamed from Peranakan Cooking Circle), Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
+- Filter panel: **Category section removed**; only Interest accordion (collapsible INTEREST_CATEGORIES) remains
 - "My Groups" horizontal scroll
 - Group detail: hero image, name, members, MEETS + LOCATION info, About, hashtags, Join/Leave button
-- **Header + bottom nav hidden on group detail** — ConnectPage exposes `onDetailModeChange?: (isDetail: boolean) => void` prop; ExplorePage hides its header and calls `onNavVisibilityChange(false)` while in detail mode
-- **Member rows** are tappable → opens NeighbourProfilePage overlay (ChevronRight icon on each row)
+- **Header + bottom nav hidden on group detail**
+- **Member rows** tappable → opens NeighbourProfilePage overlay
 
 #### Neighbours Sub-tab
-- Lists `MOCK_NEIGHBOURS` (10 neighbours) with name, unit, distance, interests, languages, last active time
-- Search + filter (distance / shared interests / recently active)
-- Each card shows interest pills (shared ones highlighted), **Message** button + **View Profile** button
-- **View Profile button**: calls `onOpenNeighbourProfile` directly (removed old bottom sheet popup)
-- **Message button**: creates a direct conversation object, calls `onOpenDirectChat(conv)` → adds conv to `extraConversations` in `MessagesPage` and switches app to Messages tab, opening that chat
+- Lists `MOCK_NEIGHBOURS` with name, unit, distance, interests, last active time
+- Filter panel: Distance / Interests (collapsible INTEREST_CATEGORIES) / Preferences (Shared Interests, Recently Active — **emojis removed** from labels)
+- Each card: interest pills, **Message** + **View Profile** buttons
 
 ---
 
 ## Tab 3 — Marketplace (`HelpSharePage.tsx`)
 
 ### Overview
-- Two tabs: **Items** | **Services** — underline style (matching Explore page tabs), not pill/toggle
-- **Header**: no location pin, no large "Marketplace" heading, no description subtitle
-- **Search bar**: explore-style rounded pill (border-radius 50px, shadow, search icon, inline input, clear X). Filter button is circular (46px).
+- Two tabs: **Items** | **Services** — underline style, not pill/toggle
+- **Header**: title "Market", Search icon button + Filter button + **+** (Post) button — **+ button is rightmost**
+- **Search mode**: same liquid glass overlay pattern as Explore. Header transparent on glass, back button (white ChevronLeft) replaces title, Items/Services subtabs remain visible above popup in white. White popup at `top: 144px`.
 - Both Items and Services use a **2-column grid**
-- Save system: **Bookmark icon only** (no hearts anywhere). State lifted to `App.tsx` and synced to Profile → Saved Items
-- Post button (orange FAB) → Category Select → Item or Service post flow
+- Save system: **Bookmark icon only**. State lifted to `App.tsx`
+- Post button → Category Select → Item or Service post flow
 
 ### Props
 ```ts
@@ -388,32 +402,57 @@ SERVICE_CATEGORIES = [
 ---
 
 ## Requests (`RequestsPage.tsx`)
-- Navigated to from Home (Latest Request card) or Profile (My Posts)
-- **Header**: no location pin, no large "Requests" heading, no description subtitle
-- **Search bar**: explore-style rounded pill (same structure as Marketplace/Messages)
+- Navigated to from Home (Community Latest Requests card) or Profile (My Posts)
+- **Header**: title "Requests", Search icon + Filter + **+ button (rightmost)**
+- **Search mode**: liquid glass overlay, header transparent on glass, back button (white ChevronLeft) replaces title, no subtabs (single-level header). White popup at `top: 106px` (shorter than pages with subtabs).
 - Filter button: circular (46px), opens filter bottom sheet (categories, type, distance, sort)
-- **Request cards**: type badge top-left + save button top-right; distance ("x km away") on its own line below the type badge (left-aligned); title; description snippet; poster avatar + name; time ago
-- **Request detail**: full description, collection point map, **About the Neighbour** tappable card → opens NeighbourProfilePage; Chat button; **type badge removed from below title** (type still appears in the Details section rows)
+- **Request cards**: type badge top-left + save button top-right; distance ("x km away") on its own line; title; description snippet; poster avatar + name; time ago
+- **Request detail**: full description, collection point map, **About the Neighbour** tappable card → opens NeighbourProfilePage; Chat button
 - Post flow: title, category, type (Borrow / Free / Paid), description, expiry, location
-- Uses shared `NeighbourProfilePage` for the `'neighbour-profile'` nav screen (normalises `poster` data)
 
 ## Tab 4 — Messages (`MessagesPage.tsx`)
-- **Header**: no large "Messages" heading
-- **Search pill**: explore-style rounded pill — filters conversation list by name in real time
-- **Filter tabs**: All | Groups | Marketplace | Direct — underline style (matching Explore page)
-- No bell icon
+- **Header**: title "Messages", Search icon + **+ button (rightmost, orange/PRIMARY background)**
+- **Search mode**: liquid glass overlay, header transparent on glass, back button (white ChevronLeft) replaces title. Filter tabs (All/Groups/Market/Requests/Neighbour) remain visible above popup in white/faded-white. White popup at `top: 144px`.
+- **Filter tabs**: `All | Groups | Market | Requests | Neighbour` — underline style
+  - `'Market'` maps to `type === 'marketplace'`
+  - `'Neighbour'` maps to `type === 'direct'`
+- **Group avatars**: if the `Conversation` has `imageUrl`, an `<img>` is rendered instead of the coloured initials circle. The small `Users` badge icon still overlays bottom-right.
 - **Direct chat header**: tapping the name/avatar opens NeighbourProfilePage overlay
-- **Group chat members sheet**: tapping any member (except "You") opens NeighbourProfilePage overlay, then closes the sheet
-- Conversations:
-  - ID 1: Morning Runners Club (group, `#16A34A`)
-  - ID 2: Backyard Gardeners (group, `#059669`)
-  - ID 3: Board Game Sundays (group, `#7C3AED`)
-  - IKEA Bookshelf (marketplace)
-  - Neighbour #2 (direct)
-  - Plant Watering Request (marketplace)
-- **Group chat screen** has two tabs: **Chat** | **Activity Board**
-  - Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal + discoverability notice
-- Props: `{ initialConvId?: number; extraConversations?: any[] }` — opens directly to a specific conversation (searches both `extraConversations` and static `CONVERSATIONS`)
+- **Group chat members sheet**: tapping any member (except "You") opens NeighbourProfilePage overlay
+
+### Conversation interface
+```ts
+interface Conversation {
+  id: number;
+  type: 'group' | 'marketplace' | 'request' | 'direct';
+  name: string;
+  avatar: string;        // initials fallback
+  avatarBg: string;      // background colour for initials circle
+  imageUrl?: string;     // group cover photo (renders <img> when present)
+  lastMessage: string;
+  time: string;
+  unread: number;
+  tag: string | null;
+  subtitle?: string;     // seller/provider name for marketplace chats
+  memberCount?: number;
+  meetFrequency?: string;
+  location?: string;
+}
+```
+
+### Static conversations (CONVERSATIONS)
+- ID 1: **Morning Runners** (group) — `imageUrl`: Unsplash running photo (`photo-1571008887538-b36bb32f4571`)
+- ID 2: **Backyard Gardeners** (group) — `imageUrl`: Unsplash garden photo (`photo-1621460248083-6271cc4437a8`)
+- ID 3: IKEA Bookshelf (marketplace)
+- ID 4: Neighbour #2 (direct)
+- ID 5: Plant Watering Request (request)
+
+### Dynamic groups (from Explore → join)
+When a user joins a group from ExplorePage, `onJoinGroup` in App.tsx creates a conv with `imageUrl: group.image`, so the Messages avatar uses the same photo shown in the Explore groups page. `extraMapped` in MessagesPage passes through `imageUrl: c.imageUrl`.
+
+### Group chat screen
+Two tabs: **Chat** | **Activity Board**
+- Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal + discoverability notice
 
 ### GROUP_ACTIVITY mock data
 ```ts
@@ -428,6 +467,7 @@ SERVICE_CATEGORIES = [
 - Opened via avatar button on Home tab (not in bottom nav)
 - Orange gradient hero, avatar "Y", Singpass Verified badge, estate pill
 - Stats: Items Saved, Neighbours Jio'd, Exchanges Done
+- **Rewards & Badges**: shows count `(unlocked/total)`, 3-column grid, collapsed to first 3 by default with **"View more"** button to expand all
 - **Languages Spoken section** (shows only if languages selected during onboarding)
   - Displays selected languages as coloured pills with language-specific background and text colors
   - Uses LANGUAGE_COLORS mapping for visual distinction (English, Chinese, Malay, Tamil, Japanese, Korean, French, Spanish, German)
@@ -552,6 +592,48 @@ Lifestyle & Hobbies:
   Fashion & Beauty:           bg #FCE7F3, text #BE185D
   Photography:                bg #FAE8FF, text #A21CAF
 ```
+
+---
+
+## Shared Search Mode Pattern (Explore, Market, Requests, Messages)
+
+All four tabs use the same liquid glass search overlay. When search icon is tapped:
+
+### Visual structure
+```
+Header (zIndex 202, transparent bg, no border)
+  Top row:  [← Back (white, rgba(255,255,255,0.20) bg)]
+  Subtabs:  [Tab1] [Tab2] ...  (white active, rgba(255,255,255,0.55) inactive)
+
+Backdrop (zIndex 200): rgba(10,10,20,0.45) + blur(16px) — inset:0, tapping dismisses
+Popup card (zIndex 201):
+  top: 144px (pages with subtabs) | top: 106px (Requests — no subtabs)
+  left/right: 12px, borderRadius: 16px, background: white
+  ├─ Search input (autoFocus)
+  ├─ [✕] clear button (only when text present)
+  └─ Recent Searches list (SquareArrowOutUpRight icon on each row)
+```
+
+### State
+- `searchOpen` / `searchMode` — controls overlay visibility
+- `recentSearches: string[]` — persists within session (max 6 entries)
+- `submitSearch(q)` — saves to recents, sets `searchQuery`, closes overlay
+- Tapping Back button clears query + closes
+
+### Explore-specific
+- Subtabs scope the search: tapping Events/Groups/Neighbours in search mode changes both `searchScopeTab` AND `activeSubTab`
+- Scope tabs were inside the popup previously — now only in the header
+
+---
+
+## Header Button Order Convention
+All page headers follow: `[Title] → [Search] → [Filter] → [+/Post]`
+- **+/Post button is always the rightmost** button
+- **Messages + button** uses `background: PRIMARY` (orange)
+- **Explore**: Search + Filter (no + button)
+- **Market**: Search + Filter + Post (+)
+- **Requests**: Search + Filter + Post (+)
+- **Messages**: Search + New Chat (+, orange)
 
 ---
 
