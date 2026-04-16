@@ -170,8 +170,7 @@ function RequestCard({ r, savedItems, onSaveToggle, onClick }: { r: any; savedIt
             <SaveButton itemId={r.id} savedItems={savedItems} onSaveToggle={onSaveToggle} />
           </div>
           <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '4px' }}>{r.distance}</div>
-          <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, lineHeight: '1.35', marginBottom: '4px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{r.title}</div>
-          <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.45', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>{r.description}</div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, lineHeight: '1.35', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{r.title}</div>
         </div>
 
         {/* Bottom row: poster + time ago */}
