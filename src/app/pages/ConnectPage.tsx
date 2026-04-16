@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Smile, Heart, Camera, BookOpen, Clock } from 'lucide-react';
+import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Smile, Heart, Camera, BookOpen, Clock, ChevronDown } from 'lucide-react';
+import { INTEREST_CATEGORIES } from './SignUpPage';
 import { toast } from 'sonner';
 import { NeighbourProfile } from './NeighbourProfilePage';
 
@@ -226,6 +227,27 @@ const GROUPS: Group[] = [
 
 const CATEGORIES = ['All', 'Fitness', 'Food', 'Gardening', 'Games', 'Wellness', 'Family', 'Arts', 'Reading'];
 
+// interest item → group category names
+const INTEREST_TO_GROUP_CATS: Record<string, string[]> = {
+  'Fitness & Sports': ['Fitness', 'Wellness'],
+  'Yoga & Mindfulness': ['Wellness'],
+  'Outdoor Activities': ['Fitness', 'Gardening'],
+  'Arts & Crafts': ['Arts'],
+  'Music & Performing Arts': ['Arts'],
+  'Dance': ['Arts'],
+  'Photography': ['Arts'],
+  'Cooking & Baking': ['Food'],
+  'Language Learning': ['Reading'],
+  'Gardening & Plants': ['Gardening'],
+  'Gaming': ['Games'],
+  'Fashion & Beauty': ['Arts'],
+  'Community Volunteering': ['Family'],
+  'Cultural Heritage & Festivals': ['Food', 'Arts'],
+  'DIY & Home Improvement': [],
+  'Technology & Digital Skills': [],
+  'Pets & Animals': [],
+};
+
 // ---- Props ----
 interface ConnectPageProps {
   hideHeader?: boolean;
@@ -237,14 +259,17 @@ interface ConnectPageProps {
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
   onDetailModeChange?: (isDetail: boolean) => void;
   onJoinGroup?: (group: Group) => void;
+  filterGroupInterests?: string[];
+  onGroupInterestChange?: (interests: string[]) => void;
 }
 
-export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile, onDetailModeChange, onJoinGroup }: ConnectPageProps) {
+export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile, onDetailModeChange, onJoinGroup, filterGroupInterests = [], onGroupInterestChange }: ConnectPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [joinedGroups, setJoinedGroups] = useState<number[]>([]);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
+  const [expandedInterestCats, setExpandedInterestCats] = useState<Set<string>>(new Set());
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: GroupScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
@@ -280,6 +305,10 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
   const filteredGroups = GROUPS.filter(g => {
     if (effectiveCategory !== 'All' && g.category !== effectiveCategory) return false;
     if (effectiveQuery && !g.name.toLowerCase().includes(effectiveQuery.toLowerCase()) && !g.category.toLowerCase().includes(effectiveQuery.toLowerCase())) return false;
+    if (filterGroupInterests.length > 0) {
+      const matchedCats = new Set(filterGroupInterests.flatMap(i => INTEREST_TO_GROUP_CATS[i] || []));
+      if (matchedCats.size === 0 || !matchedCats.has(g.category)) return false;
+    }
     return true;
   });
 
@@ -609,9 +638,69 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                   );
                 })}
               </div>
+              {/* Interest section */}
+              <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Interests</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '24px' }}>
+                {INTEREST_CATEGORIES.map(cat => {
+                  const isOpen = expandedInterestCats.has(cat.label);
+                  const selectedInCat = cat.items.filter(t => filterGroupInterests.includes(t)).length;
+                  return (
+                    <div key={cat.label} style={{ background: BG, borderRadius: '14px', overflow: 'hidden' }}>
+                      <motion.button
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setExpandedInterestCats(prev => {
+                          const next = new Set(prev);
+                          isOpen ? next.delete(cat.label) : next.add(cat.label);
+                          return next;
+                        })}
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Nunito', sans-serif" }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{cat.label}</span>
+                          {selectedInCat > 0 && (
+                            <div style={{ minWidth: '18px', height: '18px', borderRadius: '9px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                              <span style={{ fontSize: '10px', fontWeight: 800, color: 'white' }}>{selectedInCat}</span>
+                            </div>
+                          )}
+                        </div>
+                        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown size={15} color={MUTED} />
+                        </motion.div>
+                      </motion.button>
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0 14px 14px' }}>
+                              {cat.items.map(t => {
+                                const sel = filterGroupInterests.includes(t);
+                                return (
+                                  <button
+                                    key={t}
+                                    onClick={() => onGroupInterestChange?.(sel ? filterGroupInterests.filter(x => x !== t) : [...filterGroupInterests, t])}
+                                    style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: sel ? '#FFF0EC' : CARD, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid rgba(60,60,67,0.12)`, cursor: 'pointer', fontFamily: 'inherit' }}
+                                  >
+                                    {t}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
-                  onClick={() => { setActiveCategory('All'); onCategoryChange?.('All'); }}
+                  onClick={() => { setActiveCategory('All'); onCategoryChange?.('All'); onGroupInterestChange?.([]); setExpandedInterestCats(new Set()); }}
                   style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
                 >
                   Clear

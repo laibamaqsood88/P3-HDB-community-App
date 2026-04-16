@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Bookmark, Share2, X, Shield,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, UserRound
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, ChevronDown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
 import { NeighbourProfile } from './NeighbourProfilePage';
+import { INTEREST_CATEGORIES } from './SignUpPage';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -99,7 +100,15 @@ const EVENTS: EventData[] = [
 
 const AGE_GROUPS = ['All Ages', '20–35', '35–50', '55+'];
 const LANGUAGES = ['English', 'Mandarin', 'Malay', 'Tamil', 'Multilingual'];
-const INTERESTS = ['Fitness', 'Cooking', 'Gardening', 'Board Games', 'Arts & Crafts', 'Music'];
+// Interest → event category mapping
+const INTEREST_TO_EVENT_CATS: Record<string, string[]> = {
+  'Fitness & Sports': ['Wellness'],
+  'Yoga & Mindfulness': ['Wellness'],
+  'Outdoor Activities': ['Outing', 'Wellness'],
+  'Cooking & Baking': ['Cooking', 'Food & Drinks'],
+  'Community Volunteering': ['Community'],
+  'Cultural Heritage & Festivals': ['Community', 'Food & Drinks'],
+};
 const FAMILY_STATUS = ['Living alone', 'Couple (no children)', 'Family with children', 'Living with parents', 'Shared housing (roommates/housemates)', 'Multigenerational household'];
 const CATEGORIES = ['All', '🏃 Fitness', '🍳 Cooking', '🌱 Gardening', '🎲 Board Games', '💆 Wellness'];
 
@@ -220,6 +229,9 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const [filterSharedOnly, setFilterSharedOnly] = useState(false);
   const [filterRecentOnly, setFilterRecentOnly] = useState(false);
   const [groupInDetail, setGroupInDetail] = useState(false);
+  const [expandedEventInterestCats, setExpandedEventInterestCats] = useState<Set<string>>(new Set());
+  const [filterNeighbourInterests, setFilterNeighbourInterests] = useState<string[]>([]);
+  const [filterGroupInterests, setFilterGroupInterests] = useState<string[]>([]);
 
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -277,7 +289,10 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   };
 
   const filteredEvents = EVENTS.filter(ev => {
-    if (filters.interests.length > 0 && !filters.interests.includes(ev.category)) return false;
+    if (filters.interests.length > 0) {
+      const matchedCats = new Set(filters.interests.flatMap(i => INTEREST_TO_EVENT_CATS[i] || []));
+      if (matchedCats.size === 0 || !matchedCats.has(ev.category)) return false;
+    }
     if (filters.languages.length > 0 && !filters.languages.some(l => ev.language.includes(l))) return false;
     if (filters.ageGroups.length > 0 && !matchesAgeGroup(ev)) return false;
     if (filters.familyStatus.length > 0 && !matchesFamilyStatus(ev)) return false;
@@ -291,8 +306,8 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
   // ---- Feed screen (unified for all 3 sub-tabs) ----
   if (current.screen === 'feed' || current.screen === 'filtered') {
-    const groupFilterActive = activeGroupCategory !== 'All';
-    const neighbourFilterActive = distanceFilter !== 'Any' || filterSharedOnly || filterRecentOnly;
+    const groupFilterActive = activeGroupCategory !== 'All' || filterGroupInterests.length > 0;
+    const neighbourFilterActive = distanceFilter !== 'Any' || filterSharedOnly || filterRecentOnly || filterNeighbourInterests.length > 0;
     const filterLabel = activeSubTab === 'events' ? 'Events' : activeSubTab === 'groups' ? 'Groups' : 'Neighbours';
     const isFilterActive = activeSubTab === 'events' ? activeFilterCount > 0 : activeSubTab === 'groups' ? groupFilterActive : neighbourFilterActive;
 
@@ -355,28 +370,17 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                   style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <ChevronLeft size={20} color={TEXT} />
                 </button>
-                <div style={{ flex: 1, display: 'flex', gap: '6px' }}>
-                  {([
-                    { id: 'events',     label: 'Events',     Icon: Calendar,  activeColor: '#D97706', activeBg: '#FEF3C7', activeBorder: '#F59E0B' },
-                    { id: 'groups',     label: 'Groups',     Icon: Users,     activeColor: '#059669', activeBg: '#D1FAE5', activeBorder: '#34D399' },
-                    { id: 'neighbours', label: 'Neighbours', Icon: UserRound,  activeColor: '#FF6B47', activeBg: '#FFF0EC', activeBorder: '#FF6B47' },
-                  ] as const).map(({ id, label, Icon, activeColor, activeBg, activeBorder }) => {
-                    const isActive = searchScopeTab === id;
+                <div style={{ flex: 1, display: 'flex' }}>
+                  {(['events', 'groups', 'neighbours'] as const).map(tab => {
+                    const isActive = searchScopeTab === tab;
                     return (
-                      <button key={id}
-                        onClick={() => { setSearchScopeTab(id); handleSubTabChange(id); }}
-                        style={{
-                          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                          padding: '8px 6px',
-                          borderRadius: '14px',
-                          background: isActive ? activeBg : '#FFFFFF',
-                          border: `1.5px solid ${isActive ? activeBorder : '#E0DAD2'}`,
-                          cursor: 'pointer', fontFamily: 'inherit',
-                        }}>
-                        <Icon size={13} color={isActive ? activeColor : MUTED} strokeWidth={isActive ? 2.2 : 1.8} />
-                        <span style={{ fontSize: '12px', fontWeight: isActive ? 700 : 500, color: isActive ? activeColor : MUTED, whiteSpace: 'nowrap' }}>
-                          {label}
+                      <button key={tab}
+                        onClick={() => { setSearchScopeTab(tab); handleSubTabChange(tab); }}
+                        style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
+                          {tab.charAt(0).toUpperCase() + tab.slice(1)}
                         </span>
+                        {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
                       </button>
                     );
                   })}
@@ -407,17 +411,8 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           {/* Events */}
           {activeSubTab === 'events' && (
             <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: '#F7F7F7' }} onScroll={handleScroll}>
-              <div style={{
-                border: '1.5px solid #E5E5EA',
-                borderRadius: '14px',
-                padding: '14px 16px',
-                marginBottom: '16px',
-                background: 'white',
-              }}>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Events</div>
-                <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
-                  Explore events happening in your neighbourhood.
-                </div>
+              <div style={{ fontSize: '14px', color: TEXT2, fontWeight: 400, marginBottom: '16px', lineHeight: '1.5' }}>
+                Explore events happening in your neighbourhood.
               </div>
               {filteredEvents.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
@@ -541,6 +536,8 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 onOpenNeighbourProfile={onOpenNeighbourProfile}
                 onDetailModeChange={setGroupInDetail}
                 onJoinGroup={onJoinGroup}
+                filterGroupInterests={filterGroupInterests}
+                onGroupInterestChange={setFilterGroupInterests}
               />
             </div>
           )}
@@ -561,6 +558,8 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               onSharedOnlyChange={setFilterSharedOnly}
               onRecentOnlyChange={setFilterRecentOnly}
               onOpenNeighbourProfile={onOpenNeighbourProfile}
+              filterInterests={filterNeighbourInterests}
+              onInterestChange={setFilterNeighbourInterests}
             />
           )}
         </div>
@@ -592,7 +591,6 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 {[
                   { label: 'Age Group', key: 'ageGroups' as keyof Filters, options: AGE_GROUPS },
                   { label: 'Language', key: 'languages' as keyof Filters, options: LANGUAGES },
-                  { label: 'Interest', key: 'interests' as keyof Filters, options: INTERESTS },
                   { label: 'Family Status', key: 'familyStatus' as keyof Filters, options: FAMILY_STATUS },
                 ].map(({ label, key, options }) => (
                   <div key={key} style={{ marginBottom: '20px' }}>
@@ -613,9 +611,72 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                     </div>
                   </div>
                 ))}
+
+                {/* Interest — collapsible categories */}
+                <div style={{ marginBottom: '20px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Interest</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {INTEREST_CATEGORIES.map(cat => {
+                      const isOpen = expandedEventInterestCats.has(cat.label);
+                      const selectedInCat = cat.items.filter(t => tempFilters.interests.includes(t)).length;
+                      return (
+                        <div key={cat.label} style={{ background: BG, borderRadius: '14px', overflow: 'hidden' }}>
+                          <motion.button
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setExpandedEventInterestCats(prev => {
+                              const next = new Set(prev);
+                              isOpen ? next.delete(cat.label) : next.add(cat.label);
+                              return next;
+                            })}
+                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Nunito', sans-serif" }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{cat.label}</span>
+                              {selectedInCat > 0 && (
+                                <div style={{ minWidth: '18px', height: '18px', borderRadius: '9px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                                  <span style={{ fontSize: '10px', fontWeight: 800, color: 'white' }}>{selectedInCat}</span>
+                                </div>
+                              )}
+                            </div>
+                            <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                              <ChevronDown size={15} color={MUTED} />
+                            </motion.div>
+                          </motion.button>
+                          <AnimatePresence>
+                            {isOpen && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                style={{ overflow: 'hidden' }}
+                              >
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0 14px 14px' }}>
+                                  {cat.items.map(t => {
+                                    const sel = tempFilters.interests.includes(t);
+                                    return (
+                                      <button
+                                        key={t}
+                                        onClick={() => setTempFilters(p => ({ ...p, interests: sel ? p.interests.filter(x => x !== t) : [...p.interests, t] }))}
+                                        style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: sel ? '#FFF0EC' : CARD, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
+                                      >
+                                        {t}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                   <button
-                    onClick={() => setTempFilters({ ageGroups: [], languages: [], interests: [], familyStatus: [] })}
+                    onClick={() => { setTempFilters({ ageGroups: [], languages: [], interests: [], familyStatus: [] }); setExpandedEventInterestCats(new Set()); }}
                     style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
                   >
                     Clear All
@@ -1001,6 +1062,7 @@ function NeighboursTab({
   showExternalFilter, onFilterClose,
   onDistanceChange, onSharedOnlyChange, onRecentOnlyChange,
   onOpenNeighbourProfile,
+  filterInterests, onInterestChange,
 }: {
   userInterests: string[];
   onAddConversation?: (conv: any) => void;
@@ -1015,8 +1077,11 @@ function NeighboursTab({
   onSharedOnlyChange: (v: boolean) => void;
   onRecentOnlyChange: (v: boolean) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
+  filterInterests: string[];
+  onInterestChange: (v: string[]) => void;
 }) {
   const [visibleCount, setVisibleCount] = useState(5);
+  const [expandedInterestCats, setExpandedInterestCats] = useState<Set<string>>(new Set());
 
   const recentActiveValues = ['Just now', '30 min ago', '1 hour ago', '2 hours ago', '3 hours ago', '4 hours ago', '5 hours ago'];
 
@@ -1034,6 +1099,9 @@ function NeighboursTab({
     }
     if (filterRecentOnly) {
       if (!recentActiveValues.includes(n.lastActive)) return false;
+    }
+    if (filterInterests.length > 0) {
+      if (!n.interests.some(i => filterInterests.includes(i))) return false;
     }
     if (externalSearchQuery && !n.name.toLowerCase().includes(externalSearchQuery.toLowerCase())) return false;
     return true;
@@ -1271,9 +1339,69 @@ function NeighboursTab({
                 </div>
               ))}
 
+              {/* Interests */}
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Interests</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                {INTEREST_CATEGORIES.map(cat => {
+                  const isOpen = expandedInterestCats.has(cat.label);
+                  const selectedInCat = cat.items.filter(t => filterInterests.includes(t)).length;
+                  return (
+                    <div key={cat.label} style={{ background: BG, borderRadius: '14px', overflow: 'hidden' }}>
+                      <motion.button
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setExpandedInterestCats(prev => {
+                          const next = new Set(prev);
+                          isOpen ? next.delete(cat.label) : next.add(cat.label);
+                          return next;
+                        })}
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Nunito', sans-serif" }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{cat.label}</span>
+                          {selectedInCat > 0 && (
+                            <div style={{ minWidth: '18px', height: '18px', borderRadius: '9px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                              <span style={{ fontSize: '10px', fontWeight: 800, color: 'white' }}>{selectedInCat}</span>
+                            </div>
+                          )}
+                        </div>
+                        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown size={15} color={MUTED} />
+                        </motion.div>
+                      </motion.button>
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0 14px 14px' }}>
+                              {cat.items.map(t => {
+                                const sel = filterInterests.includes(t);
+                                return (
+                                  <button
+                                    key={t}
+                                    onClick={() => onInterestChange(sel ? filterInterests.filter(x => x !== t) : [...filterInterests, t])}
+                                    style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: sel ? '#FFF0EC' : CARD, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
+                                  >
+                                    {t}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+
               <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button
-                  onClick={() => { onDistanceChange('Any'); onSharedOnlyChange(false); onRecentOnlyChange(false); }}
+                  onClick={() => { onDistanceChange('Any'); onSharedOnlyChange(false); onRecentOnlyChange(false); onInterestChange([]); setExpandedInterestCats(new Set()); }}
                   style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
                 >
                   Clear
