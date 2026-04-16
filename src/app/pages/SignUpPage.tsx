@@ -92,10 +92,10 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
     );
   };
 
-  // Step 4 -> 5 auto-transition (loading -> recommendations)
+  // Step 4: loading -> complete (skip recommendations page)
   useEffect(() => {
     if ((step as number) === 4) {
-      const t = setTimeout(() => setStep(5 as any), 2000);
+      const t = setTimeout(() => onComplete({ familyStatus, interests, spokenLanguages }), 2000);
       return () => clearTimeout(t);
     }
   }, [step]);
@@ -199,21 +199,6 @@ export function SignUpPage({ onComplete }: SignUpPageProps) {
           </motion.div>
         )}
 
-        {(step as number) === 5 && (
-          <motion.div
-            key="recommendations"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-          >
-            <RecommendationsStep
-              interests={interests}
-              onGetStarted={() => onComplete({ familyStatus, interests, spokenLanguages })}
-            />
-          </motion.div>
-        )}
       </AnimatePresence>
     </div>
   );
