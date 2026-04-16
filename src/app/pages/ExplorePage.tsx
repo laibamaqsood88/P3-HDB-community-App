@@ -1124,7 +1124,7 @@ function NeighboursTab({
                     )}
 
                     {/* Row 3: interests as plain pipe-separated text */}
-                    <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '13px', color: MUTED, fontWeight: 500, marginBottom: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {n.interests.join(' | ')}
                     </div>
 
