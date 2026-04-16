@@ -451,55 +451,42 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                             onClick={() => goTo('detail', { event: ev })}
                             style={{
                               background: CARD,
-                              borderRadius: '16px',
+                              borderRadius: '14px',
                               overflow: 'hidden',
-                              boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+                              boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
                               cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                              padding: '12px',
-                              marginBottom: idx < groups[label].length - 1 ? '10px' : '0',
+                              marginBottom: idx < groups[label].length - 1 ? '12px' : '0',
                             }}
                           >
-                            {/* Left: square thumbnail */}
-                            <div style={{ width: '88px', height: '88px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                            {/* Top image */}
+                            <div style={{ height: '140px', position: 'relative' }}>
                               <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                              <div style={{
-                                position: 'absolute', bottom: '5px', left: '5px',
-                                padding: '2px 6px', borderRadius: '6px',
-                                background: ev.categoryBg, color: ev.categoryColor,
-                                fontSize: '9px', fontWeight: 800, lineHeight: '1.4',
-                              }}>
+                              <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '8px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '11px', fontWeight: 700 }}>
                                 {ev.category}
                               </div>
+                              <button
+                                onClick={e => { e.stopPropagation(); toggleSave(ev.id); }}
+                                style={{ position: 'absolute', top: '8px', right: '8px', width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.88)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                              >
+                                <Bookmark size={13} color={savedEvents.includes(ev.id) ? PRIMARY : MUTED} fill={savedEvents.includes(ev.id) ? PRIMARY : 'none'} />
+                              </button>
                             </div>
 
-                            {/* Right: info */}
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: '11px', color: MUTED, fontWeight: 600, marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {ev.organizer}
-                              </div>
-                              <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '7px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
-                                {ev.title}
-                              </div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
-                                <Clock size={11} color={MUTED} />
-                                <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
+                            {/* Content */}
+                            <div style={{ padding: '14px 16px' }}>
+                              <div style={{ fontSize: '11px', color: MUTED, fontWeight: 600, marginBottom: '4px' }}>{ev.organizer}</div>
+                              <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT, marginBottom: '8px', lineHeight: '1.3' }}>{ev.title}</div>
+                              <div style={{ display: 'flex', gap: '14px', marginBottom: '4px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <Clock size={13} color={MUTED} />
+                                  <span style={{ fontSize: '13px', color: MUTED }}>{ev.time}</span>
+                                </div>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <MapPin size={11} color={MUTED} />
-                                <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.location}</span>
+                                <MapPin size={13} color={MUTED} />
+                                <span style={{ fontSize: '13px', color: MUTED }}>{ev.location.split(',')[0]}</span>
                               </div>
                             </div>
-
-                            {/* Bookmark */}
-                            <button
-                              onClick={e => { e.stopPropagation(); toggleSave(ev.id); }}
-                              style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(120,120,128,0.08)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-                            >
-                              <Bookmark size={14} color={savedEvents.includes(ev.id) ? PRIMARY : MUTED} fill={savedEvents.includes(ev.id) ? PRIMARY : 'none'} />
-                            </button>
                           </motion.div>
                         ))}
                       </div>

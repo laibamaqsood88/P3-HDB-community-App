@@ -510,43 +510,50 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                   key={group.id}
                   whileTap={{ scale: 0.98 }}
                   style={{
-                    background: CARD, borderRadius: '14px', overflow: 'hidden',
-                    marginBottom: '12px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+                    background: CARD,
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
                     cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px',
+                    marginBottom: '10px',
                   }}
                   onClick={() => goTo('detail', { group })}
                 >
-                  {/* Image */}
-                  <div style={{ height: '140px', position: 'relative' }}>
+                  {/* Left: square thumbnail */}
+                  <div style={{ width: '88px', height: '88px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
                     <img src={group.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: '10px', left: '10px', padding: '4px 10px', borderRadius: '8px', background: group.categoryBg, color: group.categoryColor, fontSize: '11px', fontWeight: 700 }}>
+                    <div style={{ position: 'absolute', bottom: '5px', left: '5px', padding: '2px 6px', borderRadius: '6px', background: group.categoryBg, color: group.categoryColor, fontSize: '9px', fontWeight: 800, lineHeight: '1.4' }}>
                       {group.category}
                     </div>
-                    {isJoined && (
-                      <div style={{ position: 'absolute', top: '10px', right: '10px', padding: '4px 10px', borderRadius: '8px', background: PRIMARY, fontSize: '11px', fontWeight: 700, color: 'white' }}>
-                        ✓ Joined
-                      </div>
-                    )}
                   </div>
 
-                  {/* Content */}
-                  <div style={{ padding: '14px 16px' }}>
-                    <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT, marginBottom: '5px', lineHeight: '1.3' }}>{group.name}</div>
-                    <div style={{ fontSize: '14px', color: TEXT2, marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5 }}>
+                  {/* Right: info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '11px', color: MUTED, fontWeight: 600, marginBottom: '3px' }}>
+                      {group.members + (isJoined ? 1 : 0)} members
+                    </div>
+                    <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                      {group.name}
+                    </div>
+                    <div style={{ fontSize: '11px', color: TEXT2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '4px' }}>
                       {group.description}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', gap: '14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Users size={13} color={MUTED} />
-                          <span style={{ fontSize: '13px', color: MUTED }}>{group.members + (isJoined ? 1 : 0)} members</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <MapPin size={13} color={MUTED} />
-                          <span style={{ fontSize: '13px', color: MUTED }}>{group.location.split(',')[0]}</span>
-                        </div>
-                      </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <MapPin size={11} color={MUTED} />
+                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{group.location.split(',')[0]}</span>
+                    </div>
+                  </div>
+
+                  {/* Joined badge + chevron */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', flexShrink: 0 }}>
+                    {isJoined && (
+                      <div style={{ padding: '3px 8px', borderRadius: '8px', background: PRIMARY, fontSize: '10px', fontWeight: 700, color: 'white' }}>✓ Joined</div>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                       <ChevronRight size={18} color={MUTED} />
                     </div>
                   </div>
