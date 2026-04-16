@@ -535,9 +535,9 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button
             onClick={onOpenProfile}
-            style={{ width: '42px', height: '42px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            style={{ width: '42px', height: '42px', borderRadius: '50%', border: 'none', cursor: 'pointer', padding: 0, overflow: 'hidden', flexShrink: 0 }}
           >
-            <span style={{ fontSize: '18px', fontWeight: 800, color: 'white', lineHeight: 1 }}>Y</span>
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </button>
           <div style={{ flex: 1, textAlign: 'center', padding: '0 12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', marginBottom: '3px' }}>
@@ -577,6 +577,13 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 <span style={{ padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 700, background: '#FFF0EC', color: PRIMARY }}>{signedUpEvents.length}</span>
               )}
             </div>
+            <button
+              onClick={() => {}}
+              style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
+            >
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>Find more events</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>›</span>
+            </button>
           </div>
 
           {signedUpEvents.length === 0 ? (
@@ -745,7 +752,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         {/* Latest Requests */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Latest Requests</span>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Community Latest Requests</span>
             <button
               onClick={() => onOpenRequest && onOpenRequest(0)}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}

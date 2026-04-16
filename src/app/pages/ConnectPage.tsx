@@ -76,7 +76,7 @@ const GROUPS: Group[] = [
   },
   {
     id: 2,
-    name: 'Peranakan Cooking Circle',
+    name: 'Cooking & Sharing Circle',
     emoji: '🍳',
     category: 'Food',
     categoryColor: '#D97706',
