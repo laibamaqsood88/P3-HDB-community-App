@@ -235,9 +235,10 @@ interface ConnectPageProps {
   onFilterClose?: () => void;
   onCategoryChange?: (cat: string) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
+  onDetailModeChange?: (isDetail: boolean) => void;
 }
 
-export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile }: ConnectPageProps) {
+export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile, onDetailModeChange }: ConnectPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -247,6 +248,10 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
   const current = navStack[navStack.length - 1];
   const goTo = (screen: GroupScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
   const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
+
+  useEffect(() => {
+    onDetailModeChange?.(current.screen === 'detail');
+  }, [current.screen]);
 
   // Sync external filter open signal
   useEffect(() => {

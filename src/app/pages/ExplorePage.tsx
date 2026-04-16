@@ -218,6 +218,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const [distanceFilter, setDistanceFilter] = useState('Any');
   const [filterSharedOnly, setFilterSharedOnly] = useState(false);
   const [filterRecentOnly, setFilterRecentOnly] = useState(false);
+  const [groupInDetail, setGroupInDetail] = useState(false);
 
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -238,6 +239,12 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const atRoot = current.screen === 'feed' || current.screen === 'filtered';
     onNavVisibilityChange?.(atRoot);
   }, [current.screen]);
+
+  useEffect(() => {
+    if (activeSubTab === 'groups') {
+      onNavVisibilityChange?.(!groupInDetail);
+    }
+  }, [groupInDetail, activeSubTab]);
 
   const activeFilterCount = Object.values(filters).flat().length;
 
@@ -292,7 +299,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
         {/* ── Shared Header ── */}
-        <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
+        {!(activeSubTab === 'groups' && groupInDetail) && <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0 }}>
           {!searchMode ? (
             <>
               {/* Normal mode: Title + icons */}
@@ -352,7 +359,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                     const isActive = searchScopeTab === tab;
                     return (
                       <button key={tab}
-                        onClick={() => setSearchScopeTab(tab)}
+                        onClick={() => { setSearchScopeTab(tab); handleSubTabChange(tab); }}
                         style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
                           {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -380,7 +387,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               </div>
             </>
           )}
-        </div>
+        </div>}
 
         {/* ── Tab content ── */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -514,6 +521,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 onFilterClose={() => setShowGroupFilter(false)}
                 onCategoryChange={setActiveGroupCategory}
                 onOpenNeighbourProfile={onOpenNeighbourProfile}
+                onDetailModeChange={setGroupInDetail}
               />
             </div>
           )}
