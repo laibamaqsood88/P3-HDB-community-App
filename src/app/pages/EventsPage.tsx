@@ -645,67 +645,52 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <motion.div
                 key={neighbour.id}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => onOpenNeighbourProfile?.({
-                  name: neighbour.name,
-                  avatar: neighbour.avatar,
-                  avatarUrl: neighbour.avatarUrl,
-                  color: neighbour.color,
-                  block: neighbour.unit,
-                  distance: neighbour.distance,
-                  interests: neighbour.interests,
-                  languages: ['English', 'Chinese'],
-                })}
                 style={{
                   flexShrink: 0, width: '220px', background: CARD,
-                  borderRadius: '20px', padding: '12px 14px 12px',
-                  boxShadow: '0 2px 14px rgba(0,0,0,0.07)',
-                  cursor: 'pointer', position: 'relative',
-                  display: 'flex', flexDirection: 'column', gap: '10px',
+                  borderRadius: '18px', padding: '14px 14px 12px',
+                  boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+                  cursor: 'pointer',
                 }}
               >
-                {/* Category tag — inside card, top-left, slightly rotated */}
-                <div style={{ display: 'flex' }}>
-                  <div style={{
-                    padding: '4px 12px', borderRadius: '10px',
-                    background: '#FFF0EC', color: PRIMARY,
-                    fontSize: '12px', fontWeight: 700,
-                    transform: 'rotate(-1.5deg)',
-                    whiteSpace: 'nowrap', alignSelf: 'flex-start',
-                  }}>
-                    {neighbour.interests[0]}
-                  </div>
-                </div>
-
-                {/* Top row: photo LEFT + name/location RIGHT */}
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  {/* Square photo */}
-                  <div style={{ width: '72px', height: '72px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, background: neighbour.color }}>
-                    <img src={neighbour.avatarUrl} alt={neighbour.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {/* Two-column: avatar left, content right */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  {/* Avatar */}
+                  <div
+                    onClick={() => onOpenNeighbourProfile?.({ name: neighbour.name, avatar: neighbour.avatar, avatarUrl: neighbour.avatarUrl, color: neighbour.color, block: neighbour.unit, distance: neighbour.distance, interests: neighbour.interests, languages: ['English', 'Chinese'] })}
+                    style={{ width: '46px', height: '46px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: neighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    {neighbour.avatarUrl
+                      ? <img src={neighbour.avatarUrl} alt={neighbour.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span style={{ fontSize: '15px', fontWeight: 800, color: 'white' }}>{neighbour.avatar}</span>
+                    }
                   </div>
 
-                  {/* Name + location */}
+                  {/* Right column */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT, lineHeight: 1.2, marginBottom: '6px' }}>{neighbour.name}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <MapPin size={12} color={MUTED} strokeWidth={1.8} />
-                      <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{neighbour.unit} · {neighbour.distance}</span>
+                    {/* Name + address */}
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '6px', marginBottom: '3px' }}>
+                      <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT, flexShrink: 0 }}>{neighbour.name}</span>
+                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, flexShrink: 0 }}>{neighbour.unit} · {neighbour.distance}</span>
                     </div>
+                    {/* Interests as pipe text */}
+                    <div style={{ fontSize: '13px', color: MUTED, fontWeight: 500, marginBottom: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {neighbour.interests.join(' | ')}
+                    </div>
+                    {/* Say Hello button */}
+                    <button
+                      onClick={e => { e.stopPropagation(); toast.success(`Message sent to ${neighbour.name}!`); }}
+                      style={{
+                        padding: '6px 16px', borderRadius: '20px',
+                        background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
+                        color: PRIMARY, fontSize: '12px', fontWeight: 700,
+                        cursor: 'pointer', fontFamily: 'inherit',
+                        display: 'flex', alignItems: 'center', gap: '5px',
+                      }}
+                    >
+                      👋 Say Hello
+                    </button>
                   </div>
                 </div>
-
-                {/* Say Hello — full-width outline button */}
-                <button
-                  onClick={e => { e.stopPropagation(); toast.success(`Message sent to ${neighbour.name}!`); }}
-                  style={{
-                    width: '100%', padding: '8px 0', borderRadius: '12px',
-                    background: 'white', border: `1.5px solid ${PRIMARY}`,
-                    color: TEXT, fontSize: '12px', fontWeight: 700,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                  }}
-                >
-                  👋 Say Hello
-                </button>
               </motion.div>
             ))}
           </div>
