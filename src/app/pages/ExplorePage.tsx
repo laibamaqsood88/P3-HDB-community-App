@@ -393,52 +393,109 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                   <div style={{ fontSize: '13px', color: TEXT2 }}>Try adjusting your filters</div>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  {filteredEvents.map(ev => (
-                    <motion.div
-                      key={ev.id}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => goTo('detail', { event: ev })}
-                      style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-                    >
-                      <div style={{ height: '160px', position: 'relative' }}>
-                        <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        <div style={{ position: 'absolute', top: '12px', left: '12px', padding: '4px 10px', borderRadius: '20px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '11px', fontWeight: 700 }}>
-                          {ev.category}
+                <div>
+                  {(() => {
+                    const todayDate = new Date(2026, 3, 16);
+                    const tomorrowDate = new Date(2026, 3, 17);
+                    const MONTH_MAP: Record<string, number> = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
+
+                    const getDateLabel = (dateStr: string) => {
+                      const commaIdx = dateStr.indexOf(', ');
+                      if (commaIdx === -1) return dateStr;
+                      const dayPart = dateStr.slice(commaIdx + 2); // e.g. "16 Apr 2026"
+                      const [d, m, y] = dayPart.split(' ');
+                      const parsed = new Date(parseInt(y), MONTH_MAP[m] ?? 0, parseInt(d));
+                      if (parsed.toDateString() === todayDate.toDateString()) return 'Today';
+                      if (parsed.toDateString() === tomorrowDate.toDateString()) return 'Tomorrow';
+                      const weekday = dateStr.slice(0, commaIdx); // e.g. "Sat"
+                      return `${weekday}, ${d} ${m}`;
+                    };
+
+                    const getDateMs = (dateStr: string) => {
+                      const commaIdx = dateStr.indexOf(', ');
+                      if (commaIdx === -1) return 0;
+                      const [d, m, y] = dateStr.slice(commaIdx + 2).split(' ');
+                      return new Date(parseInt(y), MONTH_MAP[m] ?? 0, parseInt(d)).getTime();
+                    };
+
+                    const sorted = [...filteredEvents].sort((a, b) => getDateMs(a.date) - getDateMs(b.date));
+
+                    const groups: Record<string, EventData[]> = {};
+                    const groupOrder: string[] = [];
+                    sorted.forEach(ev => {
+                      const label = getDateLabel(ev.date);
+                      if (!groups[label]) { groups[label] = []; groupOrder.push(label); }
+                      groups[label].push(ev);
+                    });
+
+                    return groupOrder.map(label => (
+                      <div key={label} style={{ marginBottom: '8px' }}>
+                        {/* Date section header */}
+                        <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, padding: '8px 0 10px', letterSpacing: '-0.2px' }}>
+                          {label}
                         </div>
-                        <button
-                          onClick={e => { e.stopPropagation(); toggleSave(ev.id); }}
-                          style={{ position: 'absolute', top: '10px', right: '10px', width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >
-                          <Bookmark size={15} color={savedEvents.includes(ev.id) ? PRIMARY : MUTED} fill={savedEvents.includes(ev.id) ? PRIMARY : 'none'} />
-                        </button>
+                        {/* Event rows */}
+                        {groups[label].map((ev, idx) => (
+                          <motion.div
+                            key={ev.id}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => goTo('detail', { event: ev })}
+                            style={{
+                              background: CARD,
+                              borderRadius: '16px',
+                              overflow: 'hidden',
+                              boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px',
+                              padding: '12px',
+                              marginBottom: idx < groups[label].length - 1 ? '10px' : '0',
+                            }}
+                          >
+                            {/* Left: square thumbnail */}
+                            <div style={{ width: '88px', height: '88px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                              <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              <div style={{
+                                position: 'absolute', bottom: '5px', left: '5px',
+                                padding: '2px 6px', borderRadius: '6px',
+                                background: ev.categoryBg, color: ev.categoryColor,
+                                fontSize: '9px', fontWeight: 800, lineHeight: '1.4',
+                              }}>
+                                {ev.category}
+                              </div>
+                            </div>
+
+                            {/* Right: info */}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: '11px', color: MUTED, fontWeight: 600, marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {ev.organizer}
+                              </div>
+                              <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '7px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                                {ev.title}
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
+                                <Clock size={11} color={MUTED} />
+                                <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <MapPin size={11} color={MUTED} />
+                                <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.location}</span>
+                              </div>
+                            </div>
+
+                            {/* Bookmark */}
+                            <button
+                              onClick={e => { e.stopPropagation(); toggleSave(ev.id); }}
+                              style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(120,120,128,0.08)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                            >
+                              <Bookmark size={14} color={savedEvents.includes(ev.id) ? PRIMARY : MUTED} fill={savedEvents.includes(ev.id) ? PRIMARY : 'none'} />
+                            </button>
+                          </motion.div>
+                        ))}
                       </div>
-                      <div style={{ padding: '16px' }}>
-                        <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, marginBottom: '8px', lineHeight: '1.3' }}>{ev.title}</div>
-                        <div style={{ display: 'flex', gap: '14px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <Calendar size={13} color={MUTED} />
-                            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <Clock size={13} color={MUTED} />
-                            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '6px' }}>
-                          <MapPin size={13} color={MUTED} />
-                          <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.location}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <Users size={13} color={MUTED} />
-                            <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{ev.signups} signed up</span>
-                          </div>
-                          <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY }}>View →</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
+                    ));
+                  })()}
                 </div>
               )}
             </div>
