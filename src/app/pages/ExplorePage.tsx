@@ -1145,13 +1145,13 @@ function NeighboursTab({
                         onClick={() => handleMessage(n)}
                         style={{
                           flex: 1, padding: '10px', borderRadius: '14px',
-                          background: PRIMARY, border: 'none',
-                          color: 'white',
+                          background: 'white', border: `1.5px solid ${PRIMARY}`,
+                          color: TEXT,
                           fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                           fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
                         }}
                       >
-                        <MessageCircle size={14} /> Message
+                        👋 Say Hello
                       </motion.button>
                     </div>
                   </div>
