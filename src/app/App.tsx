@@ -33,6 +33,7 @@ export default function App() {
   const [initialMarketplaceItemId, setInitialMarketplaceItemId] = useState<number | undefined>(undefined);
   const [showBottomNav, setShowBottomNav] = useState(true);
   const [neighbourProfile, setNeighbourProfile] = useState<NeighbourProfile | null>(null);
+  const [joinedGroups, setJoinedGroups] = useState<any[]>([]);
 
   const openNeighbourProfile = (profile: NeighbourProfile) => setNeighbourProfile(profile);
 
@@ -127,6 +128,7 @@ export default function App() {
             onOpenEvent={(id) => { setActiveTab('explore'); }}
             onOpenGroups={openExploreGroups}
             onOpenGroupChat={openGroupChat}
+            joinedGroups={joinedGroups}
             onOpenMarketplace={() => setActiveTab('marketplace')}
             savedEvents={savedEvents}
             onOpenNeighbours={openExploreNeighbours}
@@ -164,8 +166,9 @@ export default function App() {
               setActiveTab('messages');
             }}
             onJoinGroup={(group) => {
+              const convId = Date.now();
               const conv = {
-                id: Date.now(),
+                id: convId,
                 type: 'group',
                 name: group.name,
                 avatar: group.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase(),
@@ -179,7 +182,11 @@ export default function App() {
                 location: group.location,
               };
               onAddConversation(conv);
-              setInitialGroupChatId(conv.id);
+              setJoinedGroups(prev => {
+                if (prev.some(g => g.id === group.id)) return prev;
+                return [...prev, { ...group, convId }];
+              });
+              setInitialGroupChatId(convId);
               setActiveTab('messages');
             }}
             onNavVisibilityChange={setShowBottomNav}
@@ -224,6 +231,8 @@ export default function App() {
             extraConversations={conversations}
             onNavVisibilityChange={setShowBottomNav}
             onOpenNeighbourProfile={openNeighbourProfile}
+            onNewGroup={openExploreGroups}
+            onNewNeighbour={openExploreNeighbours}
           />
         )}
 

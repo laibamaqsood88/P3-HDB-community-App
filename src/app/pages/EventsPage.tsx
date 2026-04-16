@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList } from 'lucide-react';
+import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList, Plus, Utensils, Camera, BookOpen, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { REQUESTS_DATA, REQUESTS_CAT_EMOJIS } from './RequestsPage';
 import { NeighbourProfile } from './NeighbourProfilePage';
@@ -17,6 +17,25 @@ const BORDER = 'rgba(60,60,67,0.12)';
 // ---- Group Icon Map ----
 const GROUP_ICON_MAP: Record<string, React.FC<any>> = { Activity, Leaf, Dice5 };
 
+// ---- Emoji → lucide icon (for joined groups from Explore) ----
+const EMOJI_ICON_MAP: Record<string, React.FC<any>> = {
+  '🏃': Activity, '🍳': Utensils, '🌱': Leaf, '🎲': Dice5,
+  '🧘': Activity, '👨‍👩‍👧': Heart, '📸': Camera, '📚': BookOpen,
+};
+
+// ---- categoryColor → gradient ----
+const COLOR_GRADIENT: Record<string, string> = {
+  '#16A34A': 'linear-gradient(135deg, #16A34A 0%, #34D399 100%)',
+  '#059669': 'linear-gradient(135deg, #059669 0%, #34D399 100%)',
+  '#FF6B47': 'linear-gradient(135deg, #FF6B47 0%, #FF9068 100%)',
+  '#7C3AED': 'linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)',
+  '#D97706': 'linear-gradient(135deg, #D97706 0%, #FCD34D 100%)',
+  '#EC4899': 'linear-gradient(135deg, #EC4899 0%, #F9A8D4 100%)',
+  '#0891B2': 'linear-gradient(135deg, #0891B2 0%, #67E8F9 100%)',
+  '#EA580C': 'linear-gradient(135deg, #EA580C 0%, #FB923C 100%)',
+  '#2563EB': 'linear-gradient(135deg, #2563EB 0%, #93C5FD 100%)',
+};
+
 // ---- Types ----
 type EventsScreen = 'feed' | 'detail' | 'going' | 'group-detail';
 interface NavFrame { screen: EventsScreen; params?: any; }
@@ -32,6 +51,7 @@ interface EventsPageProps {
   onOpenRequest?: (id: number) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
   onSayHello?: (neighbour: any) => void;
+  joinedGroups?: any[];
 }
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
@@ -249,7 +269,7 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 };
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [] }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
   const [showNotifications, setShowNotifications] = useState(false);
@@ -613,25 +633,19 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
         {/* My Groups */}
         <div style={{ marginBottom: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+          <div style={{ marginBottom: '12px' }}>
             <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Groups</span>
-            <button
-              onClick={onOpenGroups}
-              style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
-            >
-              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>More</span>
-              <ChevronRight size={14} color={PRIMARY} />
-            </button>
           </div>
           <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
-            {INTEREST_GROUPS.map(group => {
-              const IconComp = GROUP_ICON_MAP[group.icon] || Activity;
+            {joinedGroups.map(group => {
+              const gradient = COLOR_GRADIENT[group.categoryColor] || `linear-gradient(135deg, ${group.categoryColor} 0%, ${group.categoryColor}AA 100%)`;
+              const IconComp = EMOJI_ICON_MAP[group.emoji] || Users;
               return (
                 <motion.div
                   key={group.id}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => onOpenGroupChat(group.id)}
-                  style={{ flexShrink: 0, width: '148px', borderRadius: '16px', background: group.gradient, padding: '16px 14px', cursor: 'pointer' }}
+                  onClick={() => onOpenGroupChat(group.convId)}
+                  style={{ flexShrink: 0, width: '148px', borderRadius: '16px', background: gradient, padding: '16px 14px', cursor: 'pointer' }}
                 >
                   <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
                     <IconComp size={20} color="white" strokeWidth={1.8} />
@@ -639,11 +653,27 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginBottom: '4px', lineHeight: '1.2' }}>{group.name}</div>
                   <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', fontWeight: 500, marginBottom: '6px' }}>{group.members} members</div>
                   <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)', fontWeight: 600, background: 'rgba(255,255,255,0.15)', borderRadius: '10px', padding: '3px 8px' }}>
-                    {group.nextActivity}
+                    {group.meetFrequency}
                   </div>
                 </motion.div>
               );
             })}
+            {/* Grey + box — always shown to the right */}
+            <motion.div
+              whileTap={{ scale: 0.97 }}
+              onClick={onOpenGroups}
+              style={{
+                flexShrink: 0, width: '148px', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
+                background: 'rgba(120,120,128,0.10)', border: '1.5px dashed rgba(60,60,67,0.18)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: '8px', cursor: 'pointer',
+              }}
+            >
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Plus size={20} color={MUTED} />
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: MUTED, textAlign: 'center', lineHeight: '1.3' }}>Find a group</span>
+            </motion.div>
           </div>
         </div>
 

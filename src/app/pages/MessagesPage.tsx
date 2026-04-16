@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Send, Shield, Users, Search, X, MessageCircle, MapPin, ClipboardList, Target } from 'lucide-react';
+import { ChevronLeft, Send, Shield, Users, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus } from 'lucide-react';
 import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
@@ -208,12 +208,16 @@ interface MessagesPageProps {
   extraConversations?: any[];
   onNavVisibilityChange?: (visible: boolean) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
+  onNewGroup?: () => void;
+  onNewNeighbour?: () => void;
 }
 
-export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile }: MessagesPageProps = {}) {
+export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile, onNewGroup, onNewNeighbour }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [showNewChat, setShowNewChat] = useState(false);
+  const newChatRef = useRef<HTMLDivElement>(null);
   const extraMapped: Conversation[] = extraConversations.map((c: any) => ({
     id: c.id,
     type: (c.type || 'direct') as ConvType,
@@ -242,6 +246,17 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
   useEffect(() => {
     onNavVisibilityChange?.(openConv === null);
   }, [openConv]);
+
+  useEffect(() => {
+    if (!showNewChat) return;
+    const handler = (e: MouseEvent) => {
+      if (newChatRef.current && !newChatRef.current.contains(e.target as Node)) {
+        setShowNewChat(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showNewChat]);
 
   // Merge extra conversations (from neighbours message etc.) with existing mock data
   const allConversations: Conversation[] = [...extraMapped, ...CONVERSATIONS].map(c => ({
@@ -326,10 +341,62 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
               {/* Normal mode: Title + search icon */}
               <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
                 <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Messages</span>
-                <button onClick={() => setSearchOpen(true)}
-                  style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Search size={18} color={TEXT2} />
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }} ref={newChatRef}>
+                  {/* + button */}
+                  <button onClick={() => setShowNewChat(v => !v)}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Plus size={20} color={TEXT2} />
+                  </button>
+                  {/* Search button */}
+                  <button onClick={() => setSearchOpen(true)}
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Search size={18} color={TEXT2} />
+                  </button>
+                  {/* New chat popup */}
+                  <AnimatePresence>
+                    {showNewChat && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.92, y: -6 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.92, y: -6 }}
+                        transition={{ duration: 0.15 }}
+                        style={{
+                          position: 'absolute',
+                          top: '48px',
+                          right: 0,
+                          background: CARD,
+                          borderRadius: '14px',
+                          boxShadow: '0 4px 24px rgba(0,0,0,0.14)',
+                          zIndex: 100,
+                          minWidth: '180px',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div style={{ padding: '12px 16px 6px', fontSize: '12px', fontWeight: 700, color: MUTED, letterSpacing: '0.4px', textTransform: 'uppercase' }}>
+                          New chat
+                        </div>
+                        <button
+                          onClick={() => { setShowNewChat(false); onNewGroup?.(); }}
+                          style={{ width: '100%', padding: '12px 16px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
+                        >
+                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <Users size={16} color={PRIMARY} />
+                          </div>
+                          <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>New group</span>
+                        </button>
+                        <button
+                          onClick={() => { setShowNewChat(false); onNewNeighbour?.(); }}
+                          style={{ width: '100%', padding: '12px 16px 14px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
+                        >
+                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <MapPin size={16} color="#7C3AED" />
+                          </div>
+                          <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT, whiteSpace: 'nowrap' }}>New neighbour</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
               {/* Normal mode: Filter tabs */}
               <div className="no-scrollbar" style={{ display: 'flex', overflowX: 'auto' }}>

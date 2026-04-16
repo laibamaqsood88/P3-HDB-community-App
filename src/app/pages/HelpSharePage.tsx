@@ -458,6 +458,10 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
             <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
               <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Market</span>
               <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={onPost}
+                  style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Plus size={20} color="white" />
+                </button>
                 <button onClick={() => setSearchOpen(true)}
                   style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Search size={18} color={TEXT2} />
@@ -582,10 +586,6 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         )}
       </AnimatePresence>
 
-      {/* FAB — z-index 60 sits above nav (50) + gradient (40); bottom offset clears the floating pill */}
-      <button onClick={onPost} style={{ position: 'absolute', bottom: '96px', right: '20px', width: '54px', height: '54px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(255,107,71,0.38)', zIndex: 60 }}>
-        <Plus size={24} color="white" />
-      </button>
     </div>
   );
 }
