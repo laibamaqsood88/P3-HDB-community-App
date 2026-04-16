@@ -394,7 +394,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
           {/* Events */}
           {activeSubTab === 'events' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }} onScroll={handleScroll}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: BG }} onScroll={handleScroll}>
               {filteredEvents.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
                   <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
@@ -1042,7 +1042,7 @@ function NeighboursTab({
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: BG }}>
         <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500, marginBottom: '12px' }}>
           {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} nearby
         </div>
