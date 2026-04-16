@@ -1152,11 +1152,11 @@ function NeighboursTab({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleMessage(n)}
                       style={{
-                        alignSelf: 'flex-end', padding: '6px 16px', borderRadius: '20px',
-                        background: TEXT, border: 'none',
-                        color: 'white', fontSize: '12px', fontWeight: 700,
+                        marginLeft: 'auto', display: 'flex', padding: '6px 16px', borderRadius: '20px',
+                        background: 'transparent', border: `1.5px solid ${TEXT}`,
+                        color: TEXT, fontSize: '12px', fontWeight: 700,
                         cursor: 'pointer', fontFamily: 'inherit',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                        alignItems: 'center', justifyContent: 'center', gap: '5px',
                       }}
                     >
                       👋 Say Hello
