@@ -1151,11 +1151,12 @@ function NeighboursTab({
                     {/* Say Hello — text link bottom right */}
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <motion.button
-                        whileTap={{ scale: 0.95 }}
+                        whileTap={{ scale: 0.96 }}
                         onClick={() => handleMessage(n)}
                         style={{
-                          background: 'none', border: 'none', padding: '0',
-                          color: PRIMARY, fontSize: '13px', fontWeight: 700,
+                          padding: '6px 14px', borderRadius: '20px',
+                          background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
+                          color: PRIMARY, fontSize: '12px', fontWeight: 700,
                           cursor: 'pointer', fontFamily: 'inherit',
                         }}
                       >
