@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-16 (session 4 - Languages Spoken feature)
+2026-04-16 (session 5 - Neighbour Profile page, Request card tweaks, Explore search/detail fixes)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -35,7 +35,8 @@ src/
         ├── HelpSharePage.tsx      — Marketplace (Tab 3)
         ├── MessagesPage.tsx       — Group + direct chats (Tab 4)
         ├── ProfilePage.tsx        — Profile overlay (opened from Home)
-        └── RequestsPage.tsx       — Requests page
+        ├── RequestsPage.tsx       — Requests page
+        └── NeighbourProfilePage.tsx — Shared full-screen neighbour profile overlay
 ```
 
 ---
@@ -87,6 +88,48 @@ onUpdateLanguages(languages)          // callback from ProfilePage to update lan
 - `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat
 - `onOpenMarketplace()` — switches to Marketplace tab
 - `onOpenDirectChat(conv)` — adds `conv` to `conversations` state, sets `initialGroupChatId` to `conv.id`, switches to Messages tab (passed to `ExplorePage` → `NeighboursTab`)
+- `openNeighbourProfile(profile)` / `onOpenNeighbourProfile` — opens `NeighbourProfilePage` as an app-level slide-in overlay (zIndex 110, above Profile at zIndex 100). Passed down to EventsPage, ExplorePage (→ ConnectPage, NeighboursTab), MessagesPage.
+
+### Neighbour Profile Overlay (`NeighbourProfilePage.tsx`)
+Shared full-screen component for viewing any neighbour's profile. Triggered from 8 entry points:
+1. **Home → Connect with Neighbours** — tap a neighbour card
+2. **Explore → Events → Going list** — tap an attendee
+3. **Explore → Groups → Group Detail** — tap a member row
+4. **Explore → Neighbours** — "View Profile" button
+5. **Messages → Direct chat header** — tap the name/avatar
+6. **Messages → Group chat → Members sheet** — tap any member (except "You")
+7. **Marketplace → Item/Service Detail → About the Neighbour** — tap the card
+8. **Requests → Request Detail → About the Neighbour** — tap the card
+
+Entry points 1–6 use the App-level `AnimatePresence` overlay. Entry points 7–8 use internal nav stacks within HelpSharePage and RequestsPage respectively.
+
+#### `NeighbourProfile` interface (exported)
+```ts
+export interface NeighbourProfile {
+  name: string;
+  avatar?: string;     // initials (e.g. "AL") — used for coloured circle
+  avatarUrl?: string;  // real image URL — takes priority over initials
+  color?: string;      // avatar background colour
+  block?: string;      // e.g. "Blk 445"
+  distance?: string;   // e.g. "0.3 km away"
+  rating?: number;
+  reviews?: number;
+  interests?: string[];
+  languages?: string[];
+}
+```
+
+#### Layout
+- Header: back button (ChevronLeft) + "Neighbour Profile" title
+- Avatar (96px circle — image if `avatarUrl`, else initials)
+- Name (bold)
+- Details row: MapPin block · distance · ★ rating · N reviews (hidden if missing)
+- Pill tab switcher: **About** | **Reviews**
+- **About tab**: Interests card (coloured pills) + Languages Spoken card; empty state if neither
+- **Reviews tab**: mock review cards — reviewer avatar, name, star rating, review text, source label (`"from Marketplace"` or `"from Requests"`)
+
+#### Colors
+Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePage.
 
 ---
 
@@ -130,27 +173,33 @@ onUpdateLanguages(languages)          // callback from ProfilePage to update lan
 - **Sub-tabs**: underline style — `2.5px solid PRIMARY` on active, transparent otherwise; `PRIMARY` colour when active, `MUTED` when not
 - No location subtitle ("Singapore" removed) — label shows filter context only
 
+### Shared Header behaviour
+- Hidden entirely when the Groups sub-tab is showing a group detail page (ConnectPage notifies ExplorePage via `onDetailModeChange` callback; bottom nav also hidden)
+- **Search mode**: switching subtabs in search mode immediately updates the content area (Events/Groups/Neighbours listings switch as you tap tabs; previously only updated `searchScopeTab` but not the rendered content)
+
 ### Sub-tabs: Events | Groups | Neighbours
 
 #### Events Sub-tab
 - Search bar + Filter button
 - Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness, Age filter
-- Featured event card (large image) + upcoming list
+- Events listed in date-grouped horizontal Luma-style cards
 - **Event Detail**: Date row, Location row, Organizer card, About card, Hosting/Going panels, Price + Attend toggle
-- **Going Breakdown screen**: Stacked bar chart by family status + neighbours attending list
+- **Going Breakdown screen**: Stacked bar chart by family status + neighbours attending list (tapping an attendee row opens NeighbourProfilePage overlay)
 
 #### Groups Sub-tab (`ConnectPage.tsx`)
 - 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
 - Search bar + category filter pills
 - "My Groups" horizontal scroll
 - Group detail: hero image, name, members, MEETS + LOCATION info, About, hashtags, Join/Leave button
+- **Header + bottom nav hidden on group detail** — ConnectPage exposes `onDetailModeChange?: (isDetail: boolean) => void` prop; ExplorePage hides its header and calls `onNavVisibilityChange(false)` while in detail mode
+- **Member rows** are tappable → opens NeighbourProfilePage overlay (ChevronRight icon on each row)
 
 #### Neighbours Sub-tab
-- Lists `MOCK_NEIGHBOURS` (8 neighbours) with name, unit, distance, interests, last active time
+- Lists `MOCK_NEIGHBOURS` (10 neighbours) with name, unit, distance, interests, languages, last active time
 - Search + filter (distance / shared interests / recently active)
-- Each card shows interest pills (shared ones highlighted), **Message** button + View Profile button
+- Each card shows interest pills (shared ones highlighted), **Message** button + **View Profile** button
+- **View Profile button**: calls `onOpenNeighbourProfile` directly (removed old bottom sheet popup)
 - **Message button**: creates a direct conversation object, calls `onOpenDirectChat(conv)` → adds conv to `extraConversations` in `MessagesPage` and switches app to Messages tab, opening that chat
-- No "Connect" button — removed in favour of Message
 
 ---
 
@@ -343,15 +392,18 @@ SERVICE_CATEGORIES = [
 - **Header**: no location pin, no large "Requests" heading, no description subtitle
 - **Search bar**: explore-style rounded pill (same structure as Marketplace/Messages)
 - Filter button: circular (46px), opens filter bottom sheet (categories, type, distance, sort)
-- Request cards: category emoji + title, type badge, poster avatar + name, expiry, location
-- Request detail: full description, collection point map, Chat button
+- **Request cards**: type badge top-left + save button top-right; distance ("x km away") on its own line below the type badge (left-aligned); title; description snippet; poster avatar + name; time ago
+- **Request detail**: full description, collection point map, **About the Neighbour** tappable card → opens NeighbourProfilePage; Chat button; **type badge removed from below title** (type still appears in the Details section rows)
 - Post flow: title, category, type (Borrow / Free / Paid), description, expiry, location
+- Uses shared `NeighbourProfilePage` for the `'neighbour-profile'` nav screen (normalises `poster` data)
 
 ## Tab 4 — Messages (`MessagesPage.tsx`)
 - **Header**: no large "Messages" heading
 - **Search pill**: explore-style rounded pill — filters conversation list by name in real time
 - **Filter tabs**: All | Groups | Marketplace | Direct — underline style (matching Explore page)
 - No bell icon
+- **Direct chat header**: tapping the name/avatar opens NeighbourProfilePage overlay
+- **Group chat members sheet**: tapping any member (except "You") opens NeighbourProfilePage overlay, then closes the sheet
 - Conversations:
   - ID 1: Morning Runners Club (group, `#16A34A`)
   - ID 2: Backyard Gardeners (group, `#059669`)
