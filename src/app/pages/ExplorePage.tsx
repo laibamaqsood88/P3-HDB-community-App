@@ -1035,6 +1035,10 @@ function NeighboursTab({
     onOpenDirectChat?.(conv);
   };
 
+  const matchedNeighbours = filtered.filter(n => n.interests.some(i => userInterests.includes(i)));
+  const otherNeighbours = filtered.filter(n => !n.interests.some(i => userInterests.includes(i)));
+  const sortedFiltered = [...matchedNeighbours, ...otherNeighbours];
+
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
@@ -1043,16 +1047,51 @@ function NeighboursTab({
           {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} nearby
         </div>
 
+        {/* Matched by interest section header */}
+        {matchedNeighbours.length > 0 && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            marginBottom: '12px',
+            padding: '10px 14px',
+            background: '#FFF0EC',
+            borderRadius: '14px',
+            border: `1px solid rgba(255,107,71,0.2)`,
+          }}>
+            <span style={{ fontSize: '16px' }}>✨</span>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: PRIMARY }}>Matched to your interests</div>
+              <div style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, marginTop: '1px' }}>
+                {matchedNeighbours.length} neighbour{matchedNeighbours.length !== 1 ? 's' : ''} share your interests
+              </div>
+            </div>
+          </div>
+        )}
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {filtered.slice(0, visibleCount).map(n => {
+          {sortedFiltered.slice(0, visibleCount).map((n, idx) => {
             const sharedInterests = n.interests.filter(i => userInterests.includes(i));
+            const isMatched = sharedInterests.length > 0;
+
+            // Show "Other Neighbours" divider when transitioning from matched to unmatched
+            const prevN = idx > 0 ? sortedFiltered[idx - 1] : null;
+            const prevIsMatched = prevN ? prevN.interests.some(i => userInterests.includes(i)) : false;
+            const showDivider = matchedNeighbours.length > 0 && otherNeighbours.length > 0 && !isMatched && prevIsMatched;
 
             return (
+              <div key={n.id}>
+                {showDivider && (
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px', marginTop: '4px', paddingLeft: '2px' }}>
+                    Other Neighbours
+                  </div>
+                )}
               <motion.div
-                key={n.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                style={{ background: CARD, borderRadius: '22px', padding: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
+                style={{
+                  background: CARD, borderRadius: '22px', padding: '16px',
+                  boxShadow: isMatched ? '0 2px 16px rgba(255,107,71,0.12)' : '0 2px 12px rgba(0,0,0,0.06)',
+                  border: isMatched ? `1.5px solid rgba(255,107,71,0.18)` : '1.5px solid transparent',
+                }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
                   {/* Avatar */}
@@ -1133,6 +1172,7 @@ function NeighboursTab({
                   </div>
                 </div>
               </motion.div>
+              </div>
             );
           })}
         </div>
