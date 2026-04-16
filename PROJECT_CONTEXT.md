@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-16 (Session 5)
+2026-04-16 (Session 6)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -124,6 +124,7 @@ userInterests: string[]
 userLanguages: string[]
 myPosts: any[]
 conversations: any[]
+joinedGroups: any[]              // groups joined via Explore → ConnectPage; each entry is { ...Group, convId: number }
 initialGroupChatId: number | undefined
 initialRequestId: number | undefined
 initialEventId: number | undefined
@@ -136,7 +137,7 @@ neighbourProfile: NeighbourProfile | null
 ```ts
 openExploreGroups()              // → Explore tab, Groups sub-tab
 openExploreNeighbours()          // → Explore tab, Neighbours sub-tab
-openGroupChat(groupId)           // → Messages tab, specific group chat
+openGroupChat(groupId)           // → Messages tab, specific group chat (accepts both static & convId)
 openRequest(id)                  // → Requests tab (id=0 → feed, id>0 → detail)
 onOpenEvent(id)                  // → Explore tab, event detail
 onOpenMarketplaceItem(id)        // → Marketplace tab, item/service detail
@@ -151,6 +152,7 @@ All three create a conversation object, call `onAddConversation`, `setInitialGro
   - Services: `avatarBg: '#7C3AED'`; Items: `avatarBg: '#3B82F6'`
 - **ExplorePage → ConnectPage `onJoinGroup(group)`** — "Join Group" button
   - Creates `type: 'group'` conv with group name, `memberCount`, `meetFrequency`, `location`
+  - Also appends `{ ...group, convId }` to `joinedGroups` state (so it appears in Home My Groups)
 - **EventsPage `onSayHello(neighbour)`** — "Say Hello" button on neighbour cards
   - Creates `type: 'direct'` conv with neighbour name + avatar color
 
@@ -171,7 +173,7 @@ All three create a conversation object, call `onAddConversation`, `setInitialGro
 ### Content Sections (scrollable, in this order)
 1. **Greeting** — "Good morning ☀️", estate, Verified badge
 2. **My Events** — horizontal scroll of upcoming events the user joined
-3. **My Groups** — horizontal scroll; tapping opens group chat in Messages tab *(was "Your Interest Groups")*
+3. **My Groups** — horizontal scroll of dynamically joined groups; always includes a grey "Find a group" `+` box at the right end (navigates to Explore > Groups); no "More >" button
 4. **Latest Requests** — horizontal scroll, compact cards (200px wide); tapping → `onOpenRequest(id)`; "See all" → `onOpenRequest(0)` → Requests feed
 5. **Connect with Neighbours** — horizontal scroll cards (220px wide):
    - Category sticker tag (top-left, rotated -1.5deg, inside card)
@@ -186,10 +188,18 @@ All three create a conversation object, call `onAddConversation`, `setInitialGro
 ```
 Real Unsplash photos used. Interest tag shows `interests[0]`.
 
+### My Groups — Dynamic Rendering
+- Reads `joinedGroups` prop (from `App.tsx` state) — empty by default on new account
+- **Empty state**: only the grey dashed "Find a group" box is shown (same card size as group cards, `minHeight: 167px`)
+- **With groups**: joined group cards rendered left-to-right + grey box always last
+- Group card uses `COLOR_GRADIENT` map (keyed by `categoryColor`) + `EMOJI_ICON_MAP` (keyed by `group.emoji`) to render like the original INTEREST_GROUPS cards (lucide icon, gradient bg, white text)
+- Clicking a joined group card calls `onOpenGroupChat(group.convId)` → Messages tab
+
 ### Props
 ```ts
 onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace,
-savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello
+savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello,
+joinedGroups  // any[] — each item: { ...Group from ConnectPage, convId: number }
 ```
 
 ---
@@ -238,7 +248,7 @@ onOpenNeighbourProfile?: (profile) => void
 - Sub-tabs: **Items** | **Services**
 - Items: 2-column grid (IDs 101–110)
 - Services: vertical list (IDs 201–210)
-- FAB button: `position: absolute, bottom: 96px, zIndex: 60` (above nav)
+- **+ button**: orange circle in header (left of search button) — replaces old floating FAB
 - Filter panel: `zIndex: 61`
 - NavStack screens: `'feed' | 'item-detail' | 'service-detail' | 'neighbour-profile' | 'poster-notif' | 'mutual-confirm' | 'chat' | 'category-select' | 'item-post-photo' | 'item-post-form' | 'service-post' | 'post-success'`
 - **Chat button** on item/service detail → calls `onOpenChat(item)` → creates marketplace conversation in Messages tab
@@ -249,7 +259,7 @@ onOpenNeighbourProfile?: (profile) => void
 ## Tab 4 — Requests (`RequestsPage.tsx`)
 - Exports: `REQUESTS_DATA`, `REQUESTS_CAT_EMOJIS`
 - Props: `{ onAddPost, initialRequestId?, onNavVisibilityChange }`
-- FAB: `position: absolute, zIndex: 60` (above nav)
+- **+ button**: orange circle in header (left of search button) — replaces old floating FAB
 - Category icon map: `CAT_ICON_MAP` using Lucide icons (HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake, ShoppingBag, SearchIcon)
 - Privacy notices use Lock icon instead of 🔒 emoji
 - **Request listing cards**: Horizontal rectangular layout (height: 130px), image 110px wide on left, time-ago expiry, bookmark save button (top-right), distance label. No orange icon, no verified checkmark.
@@ -260,12 +270,16 @@ onOpenNeighbourProfile?: (profile) => void
 ---
 
 ## Tab 5 — Messages (`MessagesPage.tsx`)
-- Header: "Messages" + bell icon
-- Filter tabs: All | Groups | Marketplace | Direct
-- Conversations: 6 items (IDs 1-6); avatars use 2-letter initials, no emojis
+- Header: "Messages" + **`+` button** (left of search) + search button
+  - `+` button opens a "New chat" popup with two options:
+    - **New group** → calls `onNewGroup` → Explore > Groups sub-tab
+    - **New neighbour** → calls `onNewNeighbour` → Explore > Neighbours sub-tab
+  - Popup dismisses on outside click
+- Filter tabs: All | Groups | Marketplace | Requests | Direct
+- Conversations: 5 items (IDs 1-5); avatars use 2-letter initials, no emojis
 - Group chat: Chat | Activity Board tabs
 - Activity Board icons: MapPin, ClipboardList, Target (Lucide, no emojis)
-- Props: `{ initialConvId?, extraConversations?, onNavVisibilityChange, onOpenNeighbourProfile? }`
+- Props: `{ initialConvId?, extraConversations?, onNavVisibilityChange, onOpenNeighbourProfile?, onNewGroup?, onNewNeighbour? }`
 
 ### Extended Conversation Interface
 ```ts
@@ -402,11 +416,12 @@ const current = navStack[navStack.length - 1]
 Page content:         0
 Gradient fade:       40
 Bottom nav pill:     50
-FAB buttons:         60
 Filter panels:       61
+Messages + popup:   100
 Profile overlay:    100
 NeighbourProfile:   110
 ```
+Note: FAB buttons removed from Marketplace and Requests — replaced by header `+` buttons.
 
 ---
 
