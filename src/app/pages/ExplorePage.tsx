@@ -1093,9 +1093,10 @@ function NeighboursTab({
                   border: isMatched ? `1.5px solid rgba(255,107,71,0.18)` : '1.5px solid transparent',
                 }}
               >
-                {/* Top row: avatar + name/address */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '8px' }}>
-                  {/* Avatar — top-left, tappable */}
+                {/* Two-column layout: avatar left, everything else right */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+
+                  {/* LEFT column — avatar only */}
                   <div
                     onClick={e => { e.stopPropagation(); onOpenNeighbourProfile?.({ name: n.name, avatar: n.avatar, color: n.color, block: n.unit.split(' #')[0], distance: n.distance, interests: n.interests, languages: (n as any).languages }); }}
                     style={{ width: '46px', height: '46px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
@@ -1106,60 +1107,63 @@ function NeighboursTab({
                     }
                   </div>
 
-                  {/* Name + address on same line, address right-aligned */}
+                  {/* RIGHT column — all content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
+
+                    {/* Row 1: name left, address right */}
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '6px', marginBottom: '3px' }}>
                       <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT, flexShrink: 0 }}>{n.name}</span>
                       <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, textAlign: 'right', flexShrink: 0 }}>{n.unit.split(' #')[0]} · {n.distance}</span>
                     </div>
 
-                    {/* Shared interests label */}
+                    {/* Row 2: shared interests label */}
                     {sharedInterests.length > 0 && (
-                      <div style={{ fontSize: '11px', color: PRIMARY, fontWeight: 700 }}>
+                      <div style={{ fontSize: '11px', color: PRIMARY, fontWeight: 700, marginBottom: '7px' }}>
                         {sharedInterests.length} interest{sharedInterests.length !== 1 ? 's' : ''} in common
                       </div>
                     )}
-                  </div>
-                </div>
 
-                {/* Interest pills */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '12px' }}>
-                  {n.interests.map(interest => {
-                    const isShared = userInterests.includes(interest);
-                    const colors = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
-                    return (
-                      <span
-                        key={interest}
-                        style={{
-                          padding: '3px 9px',
-                          borderRadius: '20px',
-                          fontSize: '11px',
-                          fontWeight: isShared ? 700 : 500,
-                          background: isShared ? colors.bg : 'transparent',
-                          color: isShared ? colors.text : '#8E8E93',
-                          border: isShared ? `1.5px solid ${colors.text}40` : '1.5px solid #D1D1D6',
-                        }}
-                      >
-                        {isShared ? '★ ' : ''}{interest}
-                      </span>
-                    );
-                  })}
-                </div>
+                    {/* Row 3: interest tags */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '10px' }}>
+                      {n.interests.map(interest => {
+                        const isShared = userInterests.includes(interest);
+                        const colors = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
+                        return (
+                          <span
+                            key={interest}
+                            style={{
+                              padding: '3px 9px',
+                              borderRadius: '20px',
+                              fontSize: '11px',
+                              fontWeight: isShared ? 700 : 500,
+                              background: isShared ? colors.bg : 'transparent',
+                              color: isShared ? colors.text : '#8E8E93',
+                              border: isShared ? `1.5px solid ${colors.text}40` : '1.5px solid #D1D1D6',
+                            }}
+                          >
+                            {isShared ? '★ ' : ''}{interest}
+                          </span>
+                        );
+                      })}
+                    </div>
 
-                {/* Say Hello — full-width button at bottom */}
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleMessage(n)}
-                  style={{
-                    width: '100%', padding: '11px 0', borderRadius: '14px',
-                    background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
-                    color: PRIMARY, fontSize: '13px', fontWeight: 700,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                  }}
-                >
-                  👋 Say Hello
-                </motion.button>
+                    {/* Row 4: Say Hello — full width of right column */}
+                    <motion.button
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleMessage(n)}
+                      style={{
+                        width: '100%', padding: '11px 0', borderRadius: '14px',
+                        background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
+                        color: PRIMARY, fontSize: '13px', fontWeight: 700,
+                        cursor: 'pointer', fontFamily: 'inherit',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                      }}
+                    >
+                      👋 Say Hello
+                    </motion.button>
+
+                  </div>{/* end right column */}
+                </div>{/* end two-column row */}
 
               </motion.div>
               </div>
