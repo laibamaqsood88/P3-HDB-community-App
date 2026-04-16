@@ -704,8 +704,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 {/* Orb container */}
                 <div style={{
                   width: '56px', height: '56px', borderRadius: '50%',
-                  background: 'linear-gradient(145deg, #FF8A6A 0%, #FF6B47 50%, #e8522a 100%)',
-                  boxShadow: '0 8px 20px rgba(255,107,71,0.45), 0 2px 6px rgba(255,107,71,0.3), inset 0 2px 4px rgba(255,255,255,0.35)',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #fff8f5 40%, #ffddd4 100%)',
+                  boxShadow: '0 10px 24px rgba(255,107,71,0.32), 0 4px 8px rgba(255,107,71,0.18), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(255,107,71,0.18)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   position: 'relative',
                 }}>
@@ -713,12 +713,12 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   <div style={{
                     position: 'absolute', top: '8px', left: '10px',
                     width: '18px', height: '10px', borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.45)',
+                    background: 'rgba(255,255,255,0.85)',
                     transform: 'rotate(-30deg)',
-                    filter: 'blur(2px)',
+                    filter: 'blur(3px)',
                     pointerEvents: 'none',
                   }} />
-                  <Users size={28} color="white" strokeWidth={2} />
+                  <Users size={28} color={PRIMARY} strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(255,107,71,0.35))' }} />
                 </div>
               </div>
 
