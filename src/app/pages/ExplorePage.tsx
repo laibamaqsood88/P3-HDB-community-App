@@ -1123,28 +1123,9 @@ function NeighboursTab({
                       </div>
                     )}
 
-                    {/* Row 3: interest tags */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '10px' }}>
-                      {n.interests.map(interest => {
-                        const isShared = userInterests.includes(interest);
-                        const colors = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
-                        return (
-                          <span
-                            key={interest}
-                            style={{
-                              padding: '3px 9px',
-                              borderRadius: '20px',
-                              fontSize: '11px',
-                              fontWeight: isShared ? 700 : 500,
-                              background: isShared ? colors.bg : 'transparent',
-                              color: isShared ? colors.text : '#8E8E93',
-                              border: isShared ? `1.5px solid ${colors.text}40` : '1.5px solid #D1D1D6',
-                            }}
-                          >
-                            {isShared ? '★ ' : ''}{interest}
-                          </span>
-                        );
-                      })}
+                    {/* Row 3: interests as plain pipe-separated text */}
+                    <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {n.interests.join(' | ')}
                     </div>
 
                     {/* Row 4: Say Hello — full width of right column */}
