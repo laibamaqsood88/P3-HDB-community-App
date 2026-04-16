@@ -26,13 +26,7 @@
       "Bash(wc -l \"/Users/laibamaqsood/Desktop/P3 HDB community App/src/app/pages\"/*.tsx)",
       "Bash(find src/app/components src/app/pages -name \"*.tsx\" -type f -exec sed -i \"s/#F2F2F7/#F7F7F7/g\" {} \\\\;)",
       "Bash(grep -l \"🏠\\\\|🗺️\\\\|🛍️\\\\|💬\\\\|📋\\\\|🏘️\\\\|😊\\\\|🎉\\\\|📍\\\\|❤️\\\\|💰\" src/app/pages/*.tsx)",
-      "Bash(sed -n '20,30p' /Users/nurleeyana/Desktop/P3/src/app/pages/HelpSharePage.tsx)",
-      "Bash(sed -n '20,30p' /Users/nurleeyana/Desktop/P3/src/app/pages/ExplorePage.tsx)",
-      "Bash(npx tsc:*)",
-      "Bash(node_modules/.bin/tsc --noEmit)",
-      "Bash(/Users/nurleeyana/Desktop/P3/node_modules/.bin/tsc --noEmit)",
-      "Bash(npx --yes tsc --noEmit)",
-      "Bash(./node_modules/.bin/tsc --noEmit)"
+      "Bash(npx tsc:*)"
     ]
   }
 }

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList } from 'lucide-react';
 import { toast } from 'sonner';
 import { REQUESTS_DATA, REQUESTS_CAT_EMOJIS } from './RequestsPage';
+import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
 const BG = '#F7F7F7';
@@ -29,6 +30,7 @@ interface EventsPageProps {
   savedEvents: number[];
   onOpenNeighbours?: () => void;
   onOpenRequest?: (id: number) => void;
+  onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
@@ -246,7 +248,7 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 };
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
   const [showNotifications, setShowNotifications] = useState(false);
@@ -643,6 +645,16 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <motion.div
                 key={neighbour.id}
                 whileTap={{ scale: 0.97 }}
+                onClick={() => onOpenNeighbourProfile?.({
+                  name: neighbour.name,
+                  avatar: neighbour.avatar,
+                  avatarUrl: neighbour.avatarUrl,
+                  color: neighbour.color,
+                  block: neighbour.unit,
+                  distance: neighbour.distance,
+                  interests: neighbour.interests,
+                  languages: ['English', 'Chinese'],
+                })}
                 style={{
                   flexShrink: 0, width: '220px', background: CARD,
                   borderRadius: '20px', padding: '12px 14px 12px',
@@ -683,7 +695,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
                 {/* Say Hello — full-width outline button */}
                 <button
-                  onClick={() => toast.success(`Message sent to ${neighbour.name}!`)}
+                  onClick={e => { e.stopPropagation(); toast.success(`Message sent to ${neighbour.name}!`); }}
                   style={{
                     width: '100%', padding: '8px 0', borderRadius: '12px',
                     background: 'white', border: `1.5px solid ${PRIMARY}`,

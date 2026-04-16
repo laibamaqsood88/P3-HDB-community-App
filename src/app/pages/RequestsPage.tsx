@@ -8,6 +8,7 @@ import {
   ShoppingBag, Search as SearchIcon, ClipboardList, CheckCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { NeighbourProfilePage } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
 const BG = '#F7F7F7';
@@ -505,105 +506,6 @@ function RequestDetail({ request, savedItems, onSaveToggle, onBack, onChat, onVi
   );
 }
 
-// ---- Request Neighbour Profile ----
-function RequestNeighbourProfile({ poster, request, onBack }: { poster: any; request: any; onBack: () => void }) {
-  const name: string = poster?.name || 'Neighbour';
-  const avatarColor: string = poster?.color || PRIMARY;
-  const rating: number = poster?.rating ?? 4.8;
-  const reviews: number = poster?.reviews ?? 0;
-
-  return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <ChevronLeft size={20} color={TEXT} />
-        </button>
-        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Neighbour Profile</span>
-      </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
-        {/* Avatar + name card */}
-        <div style={{ background: CARD, borderRadius: '16px', border: `0.5px solid ${BORDER}`, padding: '24px 20px', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: '28px', fontWeight: 800, color: 'white' }}>{name[0]}</span>
-          </div>
-          <div style={{ fontSize: '19px', fontWeight: 800, color: TEXT }}>{name}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F0FDF4', borderRadius: '20px', padding: '3px 10px' }}>
-              <ShieldCheck size={13} color="#16A34A" />
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#16A34A' }}>Verified Resident</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F5F5F5', borderRadius: '20px', padding: '3px 10px' }}>
-              <MapPin size={13} color={MUTED} />
-              <span style={{ fontSize: '12px', fontWeight: 500, color: TEXT2 }}>Bishan-AMK</span>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <StarRating rating={Math.round(rating)} />
-            <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{rating.toFixed(1)}</span>
-            <span style={{ fontSize: '13px', color: MUTED }}>({reviews} reviews)</span>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px 20px', marginBottom: '16px', display: 'flex', justifyContent: 'space-around' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: PRIMARY }}>{reviews}</div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Requests</div>
-          </div>
-          <div style={{ width: '1px', background: BORDER }} />
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{rating.toFixed(1)}</div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Avg Rating</div>
-          </div>
-          <div style={{ width: '1px', background: BORDER }} />
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{reviews}</div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Reviews</div>
-          </div>
-        </div>
-
-        {/* Current request */}
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Active Request</div>
-          <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {request?.image && (
-              <img src={request.image} alt={request.title} style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
-            )}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{request?.title}</div>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: TYPE_COLORS[request?.type]?.text || MUTED }}>{request?.type}</div>
-              <div style={{ fontSize: '12px', color: MUTED }}>{request?.distance}</div>
-            </div>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: PRIMARY, background: '#FFF0EC', borderRadius: '8px', padding: '3px 8px', flexShrink: 0 }}>Viewing</span>
-          </div>
-        </div>
-
-        {/* Reviews */}
-        <div>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Reviews</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {MOCK_REVIEWS.map(r => (
-              <div key={r.id} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: r.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>{r.reviewer[0]}</span>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{r.reviewer}</div>
-                    <div style={{ fontSize: '12px', color: MUTED }}>{r.date}</div>
-                  </div>
-                  <StarRating rating={r.rating} />
-                </div>
-                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5' }}>{r.comment}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const REQUEST_MOCK_PHOTOS = [
   'https://images.unsplash.com/photo-1599598425947-5202edd56fde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
@@ -941,7 +843,19 @@ export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChang
       case 'detail':
         return <RequestDetail request={current.params?.request} savedItems={savedRequests} onSaveToggle={toggleSave} onBack={goBack} onChat={() => goTo('chat', current.params)} onViewProfile={({ poster, request }: any) => goTo('neighbour-profile', { poster, request })} />;
       case 'neighbour-profile':
-        return <RequestNeighbourProfile poster={current.params?.poster} request={current.params?.request} onBack={goBack} />;
+        return (
+          <NeighbourProfilePage
+            profile={{
+              name: current.params?.poster?.name || 'Neighbour',
+              avatar: current.params?.poster?.initials || 'N',
+              color: current.params?.poster?.color || '#FF6B47',
+              block: 'Bishan-AMK',
+              rating: current.params?.poster?.rating,
+              reviews: current.params?.poster?.reviews,
+            }}
+            onBack={goBack}
+          />
+        );
       case 'post':
         return (
           <PostRequestScreen

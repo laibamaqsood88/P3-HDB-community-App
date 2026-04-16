@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, Send, Shield, Users, Search, X, MessageCircle, MapPin, ClipboardList, Target } from 'lucide-react';
+import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
 const BG = '#F7F7F7';
@@ -202,9 +203,10 @@ interface MessagesPageProps {
   initialConvId?: number;
   extraConversations?: any[];
   onNavVisibilityChange?: (visible: boolean) => void;
+  onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }
 
-export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange }: MessagesPageProps = {}) {
+export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -640,6 +642,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
               }
               onSend={() => sendMessage(openConv)}
               onBack={() => setOpenConv(null)}
+              onOpenNeighbourProfile={onOpenNeighbourProfile}
             />
           </motion.div>
         )}
@@ -656,6 +659,7 @@ function ChatScreen({
   onInputChange,
   onSend,
   onBack,
+  onOpenNeighbourProfile,
 }: {
   conv: Conversation;
   messages: ChatMessage[];
@@ -663,6 +667,7 @@ function ChatScreen({
   onInputChange: (v: string) => void;
   onSend: () => void;
   onBack: () => void;
+  onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }) {
   const isGroup = conv.type === 'group';
   const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
@@ -682,10 +687,13 @@ function ChatScreen({
             <ChevronLeft size={20} color={TEXT} />
           </button>
 
-          {/* Avatar + Name — tappable for groups */}
+          {/* Avatar + Name — tappable for groups (shows members), direct (opens profile) */}
           <div
-            onClick={() => isGroup && setShowMembers(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, cursor: isGroup ? 'pointer' : 'default', minWidth: 0 }}
+            onClick={() => {
+              if (isGroup) setShowMembers(true);
+              else onOpenNeighbourProfile?.({ name: conv.name, avatar: conv.avatar, color: conv.avatarBg });
+            }}
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, cursor: 'pointer', minWidth: 0 }}
           >
             <div
               style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0 }}
@@ -970,10 +978,16 @@ function ChatScreen({
                 {members.map((m, i) => (
                   <div
                     key={i}
+                    onClick={() => {
+                      if (m.name === 'You') return;
+                      setShowMembers(false);
+                      onOpenNeighbourProfile?.({ name: m.name, avatar: m.avatar, color: m.avatarBg });
+                    }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '12px',
                       padding: '10px 0',
                       borderBottom: i < members.length - 1 ? `0.5px solid rgba(60,60,67,0.10)` : 'none',
+                      cursor: m.name === 'You' ? 'default' : 'pointer',
                     }}
                   >
                     <div style={{

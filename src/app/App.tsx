@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Toaster } from 'sonner';
 import { BottomNav } from './components/BottomNav';
 import { EventsPage } from './pages/EventsPage';
@@ -9,6 +10,7 @@ import { MessagesPage } from './pages/MessagesPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
+import { NeighbourProfilePage, NeighbourProfile } from './pages/NeighbourProfilePage';
 
 type AuthScreen = 'login' | 'signup' | 'main';
 type ActiveTab = 'events' | 'explore' | 'marketplace' | 'requests' | 'messages';
@@ -30,6 +32,9 @@ export default function App() {
   const [initialEventId, setInitialEventId] = useState<number | undefined>(undefined);
   const [initialMarketplaceItemId, setInitialMarketplaceItemId] = useState<number | undefined>(undefined);
   const [showBottomNav, setShowBottomNav] = useState(true);
+  const [neighbourProfile, setNeighbourProfile] = useState<NeighbourProfile | null>(null);
+
+  const openNeighbourProfile = (profile: NeighbourProfile) => setNeighbourProfile(profile);
 
   const onAddPost = (post: any) => setMyPosts(prev => [post, ...prev]);
   const onAddConversation = (conv: any) => setConversations(prev => [conv, ...prev]);
@@ -126,6 +131,7 @@ export default function App() {
             savedEvents={savedEvents}
             onOpenNeighbours={openExploreNeighbours}
             onOpenRequest={openRequest}
+            onOpenNeighbourProfile={openNeighbourProfile}
           />
         )}
         {activeTab === 'explore' && (
@@ -142,6 +148,7 @@ export default function App() {
               setActiveTab('messages');
             }}
             onNavVisibilityChange={setShowBottomNav}
+            onOpenNeighbourProfile={openNeighbourProfile}
           />
         )}
         {activeTab === 'marketplace' && (
@@ -162,6 +169,7 @@ export default function App() {
             key={initialGroupChatId}
             extraConversations={conversations}
             onNavVisibilityChange={setShowBottomNav}
+            onOpenNeighbourProfile={openNeighbourProfile}
           />
         )}
 
@@ -197,6 +205,25 @@ export default function App() {
           </div>
         )}
       </div>
+
+      {/* Neighbour Profile Overlay */}
+      <AnimatePresence>
+        {neighbourProfile && (
+          <motion.div
+            key="neighbour-profile"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            style={{ position: 'absolute', inset: 0, zIndex: 110 }}
+          >
+            <NeighbourProfilePage
+              profile={neighbourProfile}
+              onBack={() => setNeighbourProfile(null)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Profile Modal Overlay */}
       {showProfile && (

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
+import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -120,14 +121,14 @@ const LANGUAGE_BREAKDOWN = [
 ];
 
 const NEIGHBOURS_GOING = [
-  { id: 1, initials: 'AL', color: '#FF6B47', unit: 'Blk 445 #12-34', status: 'Single' },
-  { id: 2, initials: 'BT', color: '#7C3AED', unit: 'Blk 447 #08-12', status: 'Couple' },
-  { id: 3, initials: 'CS', color: '#D97706', unit: 'Blk 448 #03-22', status: 'Living with kids' },
-  { id: 4, initials: 'DM', color: '#059669', unit: 'Blk 445 #15-01', status: 'Senior (60+)' },
-  { id: 5, initials: 'EN', color: '#0891B2', unit: 'Blk 449 #07-05', status: 'Single' },
-  { id: 6, initials: 'FR', color: '#DB2777', unit: 'Blk 446 #11-18', status: 'Living with parents' },
-  { id: 7, initials: 'GK', color: '#EA580C', unit: 'Blk 450 #04-09', status: 'Couple' },
-  { id: 8, initials: 'HL', color: '#475569', unit: 'Blk 445 #09-33', status: 'Senior (60+)' },
+  { id: 1, initials: 'AL', name: 'Alex Lim',   color: '#FF6B47', unit: 'Blk 445 #12-34', status: 'Single',           distance: '0.1 km', interests: ['Fitness & Sports', 'Cooking & Baking'],              languages: ['English', 'Chinese'] },
+  { id: 2, initials: 'BT', name: 'Ben Tan',    color: '#7C3AED', unit: 'Blk 447 #08-12', status: 'Couple',           distance: '0.2 km', interests: ['Gaming', 'Technology & Digital Skills'],              languages: ['English', 'Chinese'] },
+  { id: 3, initials: 'CS', name: 'Clara Soh',  color: '#D97706', unit: 'Blk 448 #03-22', status: 'Living with kids', distance: '0.3 km', interests: ['Cooking & Baking', 'Gardening & Plants'],             languages: ['English', 'Malay'] },
+  { id: 4, initials: 'DM', name: 'Diana Mak',  color: '#059669', unit: 'Blk 445 #15-01', status: 'Senior (60+)',     distance: '0.4 km', interests: ['Gardening & Plants', 'Yoga & Mindfulness'],           languages: ['English', 'Chinese'] },
+  { id: 5, initials: 'EN', name: 'Eli Ng',     color: '#0891B2', unit: 'Blk 449 #07-05', status: 'Single',           distance: '0.5 km', interests: ['Community Volunteering', 'Arts & Crafts'],            languages: ['English'] },
+  { id: 6, initials: 'FR', name: 'Fiona Raj',  color: '#DB2777', unit: 'Blk 446 #11-18', status: 'Living with parents', distance: '0.6 km', interests: ['Music & Performing Arts', 'Dance'],               languages: ['English', 'Tamil'] },
+  { id: 7, initials: 'GK', name: 'Gary Koh',   color: '#EA580C', unit: 'Blk 450 #04-09', status: 'Couple',           distance: '0.8 km', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], languages: ['English', 'Chinese'] },
+  { id: 8, initials: 'HL', name: 'Hannah Lee', color: '#475569', unit: 'Blk 445 #09-33', status: 'Senior (60+)',     distance: '1.0 km', interests: ['Photography', 'Outdoor Activities'],                  languages: ['English', 'Chinese'] },
 ];
 
 // Mock neighbour attendance data
@@ -151,16 +152,16 @@ const EVENT_ATTENDEES: Record<number, number[]> = {
 
 // ---- Neighbours Mock Data ----
 const MOCK_NEIGHBOURS = [
-  { id: 1, name: 'Alex Lim', distance: '0.1 km', unit: 'Blk 445 #12-34', interests: ['Fitness & Sports', 'Cooking & Baking'], avatar: 'AL', color: '#FF6B47', lastActive: '2 hours ago' },
-  { id: 2, name: 'Ben Tan', distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'], avatar: 'BT', color: '#7C3AED', lastActive: '5 hours ago' },
-  { id: 3, name: 'Clara Soh', distance: '0.3 km', unit: 'Blk 448 #03-22', interests: ['Cooking & Baking', 'Gardening & Plants'], avatar: 'CS', color: '#D97706', lastActive: '1 day ago' },
-  { id: 4, name: 'Diana Mak', distance: '0.4 km', unit: 'Blk 445 #15-01', interests: ['Gardening & Plants', 'Yoga & Mindfulness'], avatar: 'DM', color: '#059669', lastActive: '3 hours ago' },
-  { id: 5, name: 'Eli Ng', distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'], avatar: 'EN', color: '#0891B2', lastActive: 'Just now' },
-  { id: 6, name: 'Fiona Raj', distance: '0.6 km', unit: 'Blk 446 #11-18', interests: ['Music & Performing Arts', 'Dance'], avatar: 'FR', color: '#DB2777', lastActive: '30 min ago' },
-  { id: 7, name: 'Gary Koh', distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', color: '#EA580C', lastActive: '2 days ago' },
-  { id: 8, name: 'Hannah Lee', distance: '1.0 km', unit: 'Blk 445 #09-33', interests: ['Photography', 'Outdoor Activities'], avatar: 'HL', color: '#475569', lastActive: '4 hours ago' },
-  { id: 9, name: 'Ivan Wong', distance: '1.2 km', unit: 'Blk 451 #02-15', interests: ['Language Learning', 'Cultural Heritage & Festivals'], avatar: 'IW', color: '#0D9488', lastActive: '1 hour ago' },
-  { id: 10, name: 'Jasmine Yap', distance: '1.5 km', unit: 'Blk 452 #06-28', interests: ['Fashion & Beauty', 'Arts & Crafts'], avatar: 'JY', color: '#BE185D', lastActive: '6 hours ago' },
+  { id: 1, name: 'Alex Lim',    distance: '0.1 km', unit: 'Blk 445 #12-34', interests: ['Fitness & Sports', 'Cooking & Baking'],              avatar: 'AL', color: '#FF6B47', lastActive: '2 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 2, name: 'Ben Tan',     distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'],              avatar: 'BT', color: '#7C3AED', lastActive: '5 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 3, name: 'Clara Soh',   distance: '0.3 km', unit: 'Blk 448 #03-22', interests: ['Cooking & Baking', 'Gardening & Plants'],             avatar: 'CS', color: '#D97706', lastActive: '1 day ago',    languages: ['English', 'Malay'] },
+  { id: 4, name: 'Diana Mak',   distance: '0.4 km', unit: 'Blk 445 #15-01', interests: ['Gardening & Plants', 'Yoga & Mindfulness'],           avatar: 'DM', color: '#059669', lastActive: '3 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 5, name: 'Eli Ng',      distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'],            avatar: 'EN', color: '#0891B2', lastActive: 'Just now',     languages: ['English'] },
+  { id: 6, name: 'Fiona Raj',   distance: '0.6 km', unit: 'Blk 446 #11-18', interests: ['Music & Performing Arts', 'Dance'],                   avatar: 'FR', color: '#DB2777', lastActive: '30 min ago',   languages: ['English', 'Tamil'] },
+  { id: 7, name: 'Gary Koh',    distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', color: '#EA580C', lastActive: '2 days ago', languages: ['English', 'Chinese'] },
+  { id: 8, name: 'Hannah Lee',  distance: '1.0 km', unit: 'Blk 445 #09-33', interests: ['Photography', 'Outdoor Activities'],                  avatar: 'HL', color: '#475569', lastActive: '4 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 9, name: 'Ivan Wong',   distance: '1.2 km', unit: 'Blk 451 #02-15', interests: ['Language Learning', 'Cultural Heritage & Festivals'], avatar: 'IW', color: '#0D9488', lastActive: '1 hour ago',   languages: ['English', 'Malay', 'Japanese'] },
+  { id: 10, name: 'Jasmine Yap', distance: '1.5 km', unit: 'Blk 452 #06-28', interests: ['Fashion & Beauty', 'Arts & Crafts'],                 avatar: 'JY', color: '#BE185D', lastActive: '6 hours ago',  languages: ['English', 'Chinese'] },
 ];
 
 const NEIGHBOUR_INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
@@ -191,9 +192,10 @@ interface ExplorePageProps {
   onAddConversation?: (conv: any) => void;
   onOpenDirectChat?: (conv: any) => void;
   onNavVisibilityChange?: (visible: boolean) => void;
+  onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }
 
-export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat, onNavVisibilityChange }: ExplorePageProps) {
+export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat, onNavVisibilityChange, onOpenNeighbourProfile }: ExplorePageProps) {
   const initialScreen: NavFrame = initialEventId
     ? { screen: 'detail', params: { event: EVENTS.find(e => e.id === initialEventId) || EVENTS[0] } }
     : { screen: 'feed' };
@@ -511,6 +513,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 showExternalFilter={showGroupFilter}
                 onFilterClose={() => setShowGroupFilter(false)}
                 onCategoryChange={setActiveGroupCategory}
+                onOpenNeighbourProfile={onOpenNeighbourProfile}
               />
             </div>
           )}
@@ -530,6 +533,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               onDistanceChange={setDistanceFilter}
               onSharedOnlyChange={setFilterSharedOnly}
               onRecentOnlyChange={setFilterRecentOnly}
+              onOpenNeighbourProfile={onOpenNeighbourProfile}
             />
           )}
         </div>
@@ -835,15 +839,25 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 <motion.div
                   key={n.id}
                   whileTap={{ scale: 0.98 }}
-                  style={{ background: CARD, borderRadius: '18px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
+                  onClick={() => onOpenNeighbourProfile?.({
+                    name: n.name,
+                    avatar: n.initials,
+                    color: n.color,
+                    block: n.unit.split(' #')[0],
+                    distance: n.distance,
+                    interests: n.interests,
+                    languages: n.languages,
+                  })}
+                  style={{ background: CARD, borderRadius: '18px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 1px 8px rgba(0,0,0,0.05)', cursor: 'pointer' }}
                 >
                   <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <span style={{ fontSize: '14px', fontWeight: 800, color: 'white' }}>{n.initials}</span>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>Neighbour {n.initials}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>{n.name}</div>
                     <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{n.unit.split(' #')[0]} · {n.distance}</div>
                   </div>
+                  <ChevronLeft size={16} color={MUTED} style={{ transform: 'rotate(180deg)' }} />
                 </motion.div>
               ))}
             </div>
@@ -959,6 +973,7 @@ function NeighboursTab({
   distanceFilter, filterSharedOnly, filterRecentOnly,
   showExternalFilter, onFilterClose,
   onDistanceChange, onSharedOnlyChange, onRecentOnlyChange,
+  onOpenNeighbourProfile,
 }: {
   userInterests: string[];
   onAddConversation?: (conv: any) => void;
@@ -972,9 +987,9 @@ function NeighboursTab({
   onDistanceChange: (v: string) => void;
   onSharedOnlyChange: (v: boolean) => void;
   onRecentOnlyChange: (v: boolean) => void;
+  onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }) {
   const [visibleCount, setVisibleCount] = useState(5);
-  const [selectedNeighbour, setSelectedNeighbour] = useState<typeof MOCK_NEIGHBOURS[0] | null>(null);
 
   const recentActiveValues = ['Just now', '30 min ago', '1 hour ago', '2 hours ago', '3 hours ago', '4 hours ago', '5 hours ago'];
 
@@ -1087,7 +1102,15 @@ function NeighboursTab({
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.97 }}
-                        onClick={() => setSelectedNeighbour(n)}
+                        onClick={() => onOpenNeighbourProfile?.({
+                          name: n.name,
+                          avatar: n.avatar,
+                          color: n.color,
+                          block: n.unit.split(' #')[0],
+                          distance: n.distance,
+                          interests: n.interests,
+                          languages: (n as any).languages,
+                        })}
                         style={{
                           flex: 1, padding: '10px', borderRadius: '14px',
                           background: PRIMARY, border: 'none',
@@ -1214,58 +1237,6 @@ function NeighboursTab({
         )}
       </AnimatePresence>
 
-      {/* Neighbour Profile Bottom Sheet */}
-      <AnimatePresence>
-        {selectedNeighbour && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedNeighbour(null)}
-            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 60, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
-          >
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              onClick={e => e.stopPropagation()}
-              style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px' }}
-            >
-              <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 24px' }} />
-              {/* Avatar + name */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-                <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: selectedNeighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '24px', fontWeight: 800, color: 'white' }}>{selectedNeighbour.avatar}</span>
-                </div>
-                <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>{selectedNeighbour.name}</div>
-                <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>{selectedNeighbour.unit.split(' #')[0]} · {selectedNeighbour.distance} away</div>
-              </div>
-              {/* Interests */}
-              <div style={{ marginBottom: '24px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Interests</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {selectedNeighbour.interests.map(interest => {
-                    const c = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
-                    return (
-                      <span key={interest} style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: c.bg, color: c.text }}>
-                        {interest}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-              {/* Action */}
-              <button
-                onClick={() => { toast.success(`Message sent to ${selectedNeighbour.name}! 👋`); setSelectedNeighbour(null); }}
-                style={{ width: '100%', padding: '15px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
-              >
-                Say Hello 👋
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

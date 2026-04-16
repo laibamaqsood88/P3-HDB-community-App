@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Smile, Heart, Camera, BookOpen, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
 const BG = '#F7F7F7';
@@ -233,9 +234,10 @@ interface ConnectPageProps {
   showExternalFilter?: boolean;
   onFilterClose?: () => void;
   onCategoryChange?: (cat: string) => void;
+  onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }
 
-export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange }: ConnectPageProps) {
+export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile }: ConnectPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -361,10 +363,17 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                 {group.membersList.map((member, i) => (
                   <div
                     key={i}
+                    onClick={() => onOpenNeighbourProfile?.({
+                      name: member.name,
+                      avatar: member.avatar,
+                      color: member.color,
+                      block: member.block,
+                    })}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '12px',
                       padding: '12px 16px',
                       borderBottom: i < group.membersList!.length - 1 ? '0.5px solid rgba(60,60,67,0.10)' : 'none',
+                      cursor: 'pointer',
                     }}
                   >
                     <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: member.color + '22', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -377,6 +386,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                         <span style={{ fontSize: '12px', color: TEXT2 }}>{member.block}</span>
                       </div>
                     </div>
+                    <ChevronRight size={14} color={MUTED} />
                   </div>
                 ))}
               </div>

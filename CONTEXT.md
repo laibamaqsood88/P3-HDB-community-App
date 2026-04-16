@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-15 (session 3 - onboarding updates)
+2026-04-16 (session 4 - Languages Spoken feature)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -67,7 +67,20 @@ Apply `className="no-scrollbar"` to any scrollable element to hide scrollbars wh
 savedMarketplaceItems: any[]          // full item/service objects that have been bookmarked
 savedMarketplaceIds: number[]         // derived from savedMarketplaceItems for SaveButton checks
 onMarketplaceSaveToggle(id, item)     // adds/removes full item object from savedMarketplaceItems
+userInterests: string[]               // interests selected during onboarding, passed to ProfilePage
+userLanguages: string[]               // languages selected during onboarding (presets + custom), passed to ProfilePage + SignUpPage
+onUpdateInterests(interests)          // callback from ProfilePage to update interests
+onUpdateLanguages(languages)          // callback from ProfilePage to update languages
 ```
+
+### Languages Data Flow
+- **Onboarding**: SignUpPage captures selected languages (preset + custom from Others) → `onComplete()` callback with `spokenLanguages` param
+- **App.tsx**: `setUserLanguages(spokenLanguages)` stores in state
+- **ProfilePage**: Receives `userLanguages` prop (from App.tsx) and `onUpdateLanguages` callback
+  - Displays selected languages in Languages Spoken section
+  - Edit modal allows add/remove languages, calls `onUpdateLanguages()` on save
+  - Changes propagate back to App.tsx state and persist through profile overlay
+- **Dynamic Rendering**: ProfilePage only shows Languages Spoken section if `userLanguages.length > 0`
 
 ### Cross-tab Navigation Callbacks
 - `openExploreGroups()` — switches to Explore tab, opens Groups sub-tab
@@ -363,11 +376,26 @@ SERVICE_CATEGORIES = [
 - Opened via avatar button on Home tab (not in bottom nav)
 - Orange gradient hero, avatar "Y", Singpass Verified badge, estate pill
 - Stats: Items Saved, Neighbours Jio'd, Exchanges Done
-- My Interests section (editable)
+- **Languages Spoken section** (shows only if languages selected during onboarding)
+  - Displays selected languages as coloured pills with language-specific background and text colors
+  - Uses LANGUAGE_COLORS mapping for visual distinction (English, Chinese, Malay, Tamil, Japanese, Korean, French, Spanish, German)
+  - Edit button opens bottom sheet modal for language management
+  - Positioned directly above Interests section
+- **My Interests section** (editable)
 - Rewards & Badges (2×2 grid): Event Joiner ✓, Group Member ✓, Trader ✓, Community Builder 🔒
 - Saved Items screen (clickable cards → navigates to correct tab/item)
 - My Posts (Requests/Listings with status)
 - Settings screen (Notification Preferences, Privacy, Verification, Help)
+
+### Edit Languages Bottom Sheet Modal
+- Opened via Edit button on Languages Spoken section
+- Three sections:
+  1. **Selected Languages** (top): #FFF8F6 background with orange border, displays selected languages as large coloured pills with × remove button
+  2. **Common Languages**: preset language buttons (English, Chinese, Malay, Tamil) that toggle between colored and white states
+  3. **Browse Languages**: search input with dropdown showing 100+ predefined world languages with checkmarks (✓) for selected ones, highlight background for selection indication
+- 8px padding below suggestions dropdown
+- Changes reflected immediately in popup state
+- Saves persist to ProfilePage and App.tsx state on modal close
 
 ### Props
 ```ts
@@ -379,8 +407,23 @@ SERVICE_CATEGORIES = [
   myPosts?: any[];
   userInterests?: string[];
   onUpdateInterests?: (interests: string[]) => void;
-  savedMarketplaceItems?: any[];   // from App.tsx — dynamically bookmarked items/services
+  userLanguages?: string[];            // from App.tsx — languages selected during onboarding
+  onUpdateLanguages?: (languages: string[]) => void;  // callback to update App.tsx state
+  savedMarketplaceItems?: any[];       // from App.tsx — dynamically bookmarked items/services
 }
+```
+
+### Language Colors (LANGUAGE_COLORS)
+```ts
+English:   { bg: '#E0F2FE', text: '#0369A1' }
+Chinese:   { bg: '#FEF08A', text: '#A16207' }
+Malay:     { bg: '#D1FAE5', text: '#065F46' }
+Tamil:     { bg: '#FCE7F3', text: '#BE185D' }
+Japanese:  { bg: '#FED7AA', text: '#9A3412' }
+Korean:    { bg: '#DDD6FE', text: '#4C1D95' }
+French:    { bg: '#F0FDF4', text: '#166534' }
+Spanish:   { bg: '#FEE2E2', text: '#7F1D1D' }
+German:    { bg: '#E0E7FF', text: '#3730A3' }
 ```
 
 ### Saved Items Screen (`SavedItemsScreen`)
@@ -417,11 +460,16 @@ SERVICE_CATEGORIES = [
 - "Find my community →" button disabled until ≥1 interest selected
 
 ### Spoken Language Step
-- 4 preset options: English, Chinese, Malay, Tamil (pill/button style matching Family Status step)
-- "Other language" text input for custom language entry
-- Single-select with orange highlight + checkmark
-- "Next" button disabled until selection made
-- Either preset or custom language must be selected to proceed
+- **Preset Languages**: 4 options: English, Chinese, Malay, Tamil (pill/button style, single-select with orange highlight + checkmark)
+- **Others Section**: 
+  - Text input search bar that filters from 100+ predefined world languages (AUTOCOMPLETE_LANGUAGES)
+  - Selected languages from "Others" section display as removable coloured chips above search input
+  - Each chip has orange border (#FF6B47) and background (#FFF0EC) with × close button
+  - Only predefined languages can be selected (no custom language entry)
+  - Dropdown shows checkmarks (✓) for selected languages and highlights background for selection indication
+  - 8px padding below suggestions dropdown for visual spacing
+- Must select at least 1 language (preset or from Others) to proceed
+- "Next" button disabled until a selection is made
 
 ### Interest Categories & Colors
 ```

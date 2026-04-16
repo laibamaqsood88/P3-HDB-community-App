@@ -7,6 +7,7 @@ import {
   Baby, GraduationCap, UserCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { NeighbourProfilePage } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
 const BG = '#F7F7F7';
@@ -213,132 +214,6 @@ function CollectionPointMap({ address, distanceText }: { address?: string; dista
   );
 }
 
-// ---- Neighbour Profile Page ----
-function NeighbourProfilePage({ person, item, onBack }: { person: any; item: any; onBack: () => void }) {
-  const isService = item?.itemType === 'service';
-  const name: string = person?.name || 'Neighbour';
-  const avatarColor: string = person?.avatarColor || PRIMARY;
-  const rating: number = person?.rating ?? 4.8;
-  const reviews: number = person?.reviews ?? 0;
-
-  // Derive block/area from address
-  const address: string = isService ? (item?.serviceAddress || '') : (item?.collectionAddress || '');
-  const blockMatch = address.match(/^(Blk \S+)/i);
-  const block = blockMatch ? blockMatch[1] : 'AMK Estate';
-
-  // Stats
-  const completedCount: number = isService ? (item?.completedServices ?? 0) : reviews;
-  const completedLabel = isService ? 'Services Done' : 'Transactions';
-
-  const otherListings = ITEMS_AND_SERVICES.filter(l =>
-    isService
-      ? (l as any).provider?.name === name
-      : (l as any).seller?.name === name
-  );
-
-  return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      {/* Header */}
-      <div style={{ background: CARD, padding: '44px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <ChevronLeft size={20} color={TEXT} />
-        </button>
-        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Neighbour Profile</span>
-      </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
-        {/* Avatar + name card */}
-        <div style={{ background: CARD, borderRadius: '16px', border: `0.5px solid ${BORDER}`, padding: '24px 20px', marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: '28px', fontWeight: 800, color: 'white' }}>{name[0]}</span>
-          </div>
-          <div style={{ fontSize: '19px', fontWeight: 800, color: TEXT }}>{name}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F0FDF4', borderRadius: '20px', padding: '3px 10px' }}>
-              <ShieldCheck size={13} color="#16A34A" />
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#16A34A' }}>Verified Resident</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#F5F5F5', borderRadius: '20px', padding: '3px 10px' }}>
-              <MapPin size={13} color={MUTED} />
-              <span style={{ fontSize: '12px', fontWeight: 500, color: TEXT2 }}>{block}</span>
-            </div>
-          </div>
-          {/* Rating */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <StarRating rating={Math.round(rating)} />
-            <span style={{ fontSize: '14px', fontWeight: 700, color: TEXT }}>{rating.toFixed(1)}</span>
-            <span style={{ fontSize: '13px', color: MUTED }}>({reviews} reviews)</span>
-          </div>
-        </div>
-
-        {/* Stats row */}
-        <div style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px 20px', marginBottom: '16px', display: 'flex', justifyContent: 'space-around' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: PRIMARY }}>{completedCount}</div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{completedLabel}</div>
-          </div>
-          <div style={{ width: '1px', background: BORDER }} />
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{rating.toFixed(1)}</div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Avg Rating</div>
-          </div>
-          <div style={{ width: '1px', background: BORDER }} />
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, color: TEXT }}>{reviews}</div>
-            <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Reviews</div>
-          </div>
-        </div>
-
-        {/* Active listings */}
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>
-            {isService ? 'Services Offered' : 'Active Listings'} ({otherListings.length})
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {otherListings.map((listing: any) => (
-              <div key={listing.id} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {listing.image && (
-                  <img src={listing.image} alt={listing.name} style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
-                )}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{listing.name}</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: PRIMARY }}>{listing.price || listing.rate}</div>
-                  <div style={{ fontSize: '12px', color: MUTED }}>{listing.distance}</div>
-                </div>
-                {listing.id === item?.id && (
-                  <span style={{ fontSize: '11px', fontWeight: 600, color: PRIMARY, background: '#FFF0EC', borderRadius: '8px', padding: '3px 8px', flexShrink: 0 }}>Viewing</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Reviews */}
-        <div>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Reviews</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {MOCK_REVIEWS.map(r => (
-              <div key={r.id} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '14px 16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: r.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>{r.reviewer[0]}</span>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{r.reviewer}</div>
-                    <div style={{ fontSize: '12px', color: MUTED }}>{r.date}</div>
-                  </div>
-                  <StarRating rating={r.rating} />
-                </div>
-                <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.5' }}>{r.comment}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ---- Main Component ----
 export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle, onNavVisibilityChange }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void; onNavVisibilityChange?: (visible: boolean) => void }) {
   const onSaveToggle = (id: number) => {
@@ -409,8 +284,25 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
         return <ItemDetail item={current.params?.item} type="item" onBack={goBack} onExpressInterest={handleExpressInterest} onViewProfile={({ person, item }: any) => goTo('neighbour-profile', { person, item })} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
       case 'service-detail':
         return <ItemDetail item={current.params?.item} type="service" onBack={goBack} onExpressInterest={handleExpressInterest} onViewProfile={({ person, item }: any) => goTo('neighbour-profile', { person, item })} savedItems={savedItems} onSaveToggle={onSaveToggle} />;
-      case 'neighbour-profile':
-        return <NeighbourProfilePage person={current.params?.person} item={current.params?.item} onBack={goBack} />;
+      case 'neighbour-profile': {
+        const person = current.params?.person;
+        const item = current.params?.item;
+        const addr: string = item?.itemType === 'service' ? (item?.serviceAddress || '') : (item?.collectionAddress || '');
+        const blockMatch = addr.match(/^(Blk \S+)/i);
+        return (
+          <NeighbourProfilePage
+            profile={{
+              name: person?.name || 'Neighbour',
+              avatar: (person?.name || 'N')[0],
+              color: person?.avatarColor || '#FF6B47',
+              block: blockMatch ? blockMatch[1] : 'Bishan-AMK',
+              rating: person?.rating,
+              reviews: person?.reviews,
+            }}
+            onBack={goBack}
+          />
+        );
+      }
       case 'poster-notif':
         return <PosterNotification onBack={goBack} onConfirm={() => goTo('mutual-confirm')} onDecline={() => { toast.info('Poster declined — no further action needed'); setNavStack([{ screen: 'feed' }]); }} />;
       case 'mutual-confirm':
