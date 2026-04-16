@@ -194,71 +194,66 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
   return (
     <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* ---- Header ---- */}
-      <div style={{ background: BG, paddingTop: '52px', paddingBottom: '20px', position: 'relative' }}>
-        {/* Back button */}
-        {onClose && (
-          <button
-            onClick={onClose}
-            style={{
-              position: 'absolute', top: '54px', left: '20px',
-              width: '36px', height: '36px', borderRadius: '50%',
-              background: 'rgba(0,0,0,0.07)', border: 'none',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              zIndex: 2,
-            }}
-          >
-            <ChevronLeft size={22} color={TEXT} />
-          </button>
-        )}
+      <div style={{ background: BG, paddingTop: '52px', paddingBottom: '20px' }}>
+        {/* Back button + Title + Edit & Settings buttons */}
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 20px', marginBottom: '20px' }}>
+          {onClose && (
+            <button
+              onClick={onClose}
+              style={{
+                position: 'absolute', left: '20px',
+                width: '36px', height: '36px', borderRadius: '50%',
+                background: 'rgba(0,0,0,0.07)', border: 'none',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <ChevronLeft size={22} color={TEXT} />
+            </button>
+          )}
 
-        {/* Settings button */}
-        <button
-          onClick={() => setActiveSection('settings')}
-          style={{
-            position: 'absolute', top: '54px', right: '20px',
-            width: '36px', height: '36px', borderRadius: '50%',
-            background: 'rgba(0,0,0,0.07)', border: 'none',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          <Settings size={18} color={TEXT} />
-        </button>
+          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>
+            Profile
+          </div>
 
-        {/* Title */}
-        <div style={{ textAlign: 'center', fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '20px' }}>
-          Profile
+          <div style={{ position: 'absolute', right: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => setShowPhotoEdit(true)}
+              style={{
+                width: '36px', height: '36px', borderRadius: '50%',
+                background: 'rgba(0,0,0,0.07)', border: 'none',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <Edit3 size={18} color={TEXT} />
+            </button>
+            <button
+              onClick={() => setActiveSection('settings')}
+              style={{
+                width: '36px', height: '36px', borderRadius: '50%',
+                background: 'rgba(0,0,0,0.07)', border: 'none',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <Settings size={18} color={TEXT} />
+            </button>
+          </div>
         </div>
 
         {/* Avatar — centred */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80"
-              alt="Richard"
-              style={{ width: '88px', height: '88px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${BORDER}`, display: 'block' }}
-            />
-            {/* Edit pencil badge */}
-            <button
-              onClick={() => setShowPhotoEdit(true)}
-              style={{
-                position: 'absolute', bottom: 0, right: 0,
-                width: '26px', height: '26px', borderRadius: '50%',
-                background: PRIMARY, border: '2px solid white',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', padding: 0,
-              }}
-            >
-              <Edit3 size={12} color="white" />
-            </button>
-          </div>
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80"
+            alt="Richard"
+            style={{ width: '88px', height: '88px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${BORDER}`, display: 'block' }}
+          />
 
           {/* Name */}
           <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT }}>Richard</div>
 
-          {/* Estate pill */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 13px', borderRadius: '20px', background: '#FFF0EC', border: `1px solid ${PRIMARY}` }}>
-            <MapPin size={11} color={PRIMARY} />
-            <span style={{ fontSize: '11px', color: PRIMARY, fontWeight: 600 }}>Bishan-AMK Estate</span>
+          {/* Estate location */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <MapPin size={14} color={TEXT} />
+            <span style={{ fontSize: '13px', color: TEXT, fontWeight: 500 }}>Bishan-AMK Estate</span>
           </div>
         </div>
       </div>
@@ -275,9 +270,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 24px', padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {userLanguages.map(lang => {
-                  const c = LANGUAGE_COLORS[lang] || { bg: '#FFF0EC', text: PRIMARY };
                   return (
-                    <span key={lang} style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, background: c.bg, color: c.text }}>
+                    <span key={lang} style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, background: '#F2F2F7', color: TEXT }}>
                       {lang}
                     </span>
                   );
@@ -300,9 +294,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 24px', padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {userInterests.map(i => {
-              const c = INTEREST_COLORS[i] || { bg: '#FFF0EC', text: PRIMARY };
               return (
-                <span key={i} style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, background: c.bg, color: c.text }}>
+                <span key={i} style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 700, background: '#F2F2F7', color: TEXT }}>
                   {i}
                 </span>
               );
@@ -325,8 +318,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             {BADGES.map(badge => {
               let BadgeIcon;
               if (badge.id === 1) BadgeIcon = <CalendarDays size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
-              else if (badge.id === 2) BadgeIcon = <Users size={20} color={badge.unlocked ? '#7C3AED' : MUTED} />;
-              else if (badge.id === 3) BadgeIcon = <ShoppingBag size={20} color={badge.unlocked ? '#059669' : MUTED} />;
+              else if (badge.id === 2) BadgeIcon = <Users size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
+              else if (badge.id === 3) BadgeIcon = <ShoppingBag size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
               else BadgeIcon = <Lock size={20} color={MUTED} />;
 
               return (
@@ -334,7 +327,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
                   key={badge.id}
                   style={{
                     padding: '14px',
-                    background: badge.unlocked ? badge.bg : '#F5F5F5',
+                    background: badge.unlocked ? '#F2F2F7' : '#F5F5F5',
                     borderRadius: '12px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -359,7 +352,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
                   </div>
 
                   {BadgeIcon}
-                  <div style={{ fontSize: '11px', fontWeight: 800, color: badge.unlocked ? badge.color : MUTED, textAlign: 'center', lineHeight: '1.2' }}>{badge.name}</div>
+                  <div style={{ fontSize: '11px', fontWeight: 800, color: badge.unlocked ? PRIMARY : MUTED, textAlign: 'center', lineHeight: '1.2' }}>{badge.name}</div>
                   <div style={{ fontSize: '10px', color: badge.unlocked ? TEXT2 : MUTED, fontWeight: 500, lineHeight: '1.3', textAlign: 'center' }}>{badge.desc}</div>
                 </div>
               );
@@ -377,8 +370,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             onClick={() => setActiveSection('saved-items')}
             style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer' }}
           >
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Bookmark size={16} color={PRIMARY} />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Bookmark size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left', fontFamily: 'inherit' }}>Saved Items</span>
             <ChevronRight size={16} color={MUTED} />
@@ -388,8 +381,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             onClick={() => setActiveSection('my-posts')}
             style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <FileText size={16} color="#7C3AED" />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <FileText size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left', fontFamily: 'inherit' }}>My Posts</span>
             <ChevronRight size={16} color={MUTED} />
@@ -1165,11 +1158,14 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `0.5px solid ${BORDER}`, position: 'relative', flexShrink: 0 }}>
-        <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
-          <ChevronLeft size={22} color={TEXT} />
-        </button>
-        <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, textAlign: 'center' }}>Settings</div>
+      <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <ChevronLeft size={22} color={TEXT} />
+          </button>
+          <div style={{ flex: 1, fontSize: '18px', fontWeight: 800, color: TEXT, textAlign: 'center' }}>Settings</div>
+          <div style={{ width: '36px', flexShrink: 0 }} />
+        </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '40px' }}>
@@ -1253,8 +1249,8 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         {/* ---- Log Out ---- */}
         <div style={{ margin: '24px 16px 0' }}>
           <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: CARD, border: 'none', borderRadius: '14px', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <LogOut size={16} color={MUTED} />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255,59,48,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <LogOut size={16} color="#FF3B30" />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: '#FF3B30', textAlign: 'left' }}>Log Out</span>
           </button>
