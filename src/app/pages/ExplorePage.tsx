@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Bookmark, Share2, X, Shield,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -1154,12 +1154,23 @@ function NeighboursTab({
 
         {/* Load more */}
         {visibleCount < filtered.length && (
-          <button
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             onClick={() => setVisibleCount(p => p + 5)}
-            style={{ width: '100%', marginTop: '16px', padding: '14px', borderRadius: '18px', background: CARD, border: `1.5px solid ${BORDER}`, color: TEXT2, fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+            style={{
+              width: '100%', marginTop: '16px', padding: '18px 14px',
+              borderRadius: '18px', background: CARD,
+              border: `1.5px solid ${BORDER}`,
+              cursor: 'pointer', fontFamily: 'inherit',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+            }}
           >
-            Load more ({filtered.length - visibleCount} remaining)
-          </button>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <RefreshCw size={16} color={TEXT2} strokeWidth={2} />
+            </div>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: TEXT2 }}>Load more</span>
+            <span style={{ fontSize: '11px', fontWeight: 500, color: MUTED }}>{filtered.length - visibleCount} more neighbours</span>
+          </motion.button>
         )}
 
         {filtered.length === 0 && (
