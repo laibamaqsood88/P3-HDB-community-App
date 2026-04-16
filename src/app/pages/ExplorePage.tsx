@@ -1044,7 +1044,7 @@ function NeighboursTab({
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: BG }}>
         <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500, marginBottom: '12px' }}>
-          {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} nearby
+          {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} in your estate with shared interests
         </div>
 
         {/* Matched by interest section header */}
@@ -1088,34 +1088,56 @@ function NeighboursTab({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{
-                  background: CARD, borderRadius: '22px', padding: '16px',
-                  boxShadow: isMatched ? '0 2px 16px rgba(255,107,71,0.12)' : '0 2px 12px rgba(0,0,0,0.06)',
+                  background: CARD, borderRadius: '18px', padding: '12px 14px',
+                  boxShadow: isMatched ? '0 2px 16px rgba(255,107,71,0.10)' : '0 1px 6px rgba(0,0,0,0.06)',
                   border: isMatched ? `1.5px solid rgba(255,107,71,0.18)` : '1.5px solid transparent',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {/* Avatar — tappable to open profile */}
                   <div
                     onClick={e => { e.stopPropagation(); onOpenNeighbourProfile?.({ name: n.name, avatar: n.avatar, color: n.color, block: n.unit.split(' #')[0], distance: n.distance, interests: n.interests, languages: (n as any).languages }); }}
-                    style={{ width: '52px', height: '52px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
+                    style={{ width: '46px', height: '46px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
                   >
                     {n.avatarUrl
                       ? <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <span style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>{n.avatar}</span>
+                      : <span style={{ fontSize: '15px', fontWeight: 800, color: 'white' }}>{n.avatar}</span>
                     }
                   </div>
 
+                  {/* Main content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
+                    {/* Name row + Say Hello pill */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
                       <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>{n.name}</span>
-                      <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{n.lastActive}</span>
+                      <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => handleMessage(n)}
+                        style={{
+                          padding: '5px 12px', borderRadius: '20px',
+                          background: 'white', border: `1.5px solid ${PRIMARY}`,
+                          color: TEXT, fontSize: '12px', fontWeight: 700,
+                          cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
+                        }}
+                      >
+                        👋 Say Hello
+                      </motion.button>
                     </div>
-                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '10px' }}>
+
+                    {/* Location */}
+                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '5px' }}>
                       {n.unit.split(' #')[0]} · {n.distance}
                     </div>
 
+                    {/* Shared interests label */}
+                    {sharedInterests.length > 0 && (
+                      <div style={{ fontSize: '11px', color: PRIMARY, fontWeight: 700, marginBottom: '6px' }}>
+                        {sharedInterests.length} interest{sharedInterests.length !== 1 ? 's' : ''} in common
+                      </div>
+                    )}
+
                     {/* Interest pills */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
                       {n.interests.map(interest => {
                         const isShared = userInterests.includes(interest);
                         const colors = NEIGHBOUR_INTEREST_COLORS[interest] || { bg: '#FFF0EC', text: PRIMARY };
@@ -1127,32 +1149,15 @@ function NeighboursTab({
                               borderRadius: '20px',
                               fontSize: '11px',
                               fontWeight: isShared ? 700 : 500,
-                              background: isShared ? colors.bg : BG,
-                              color: isShared ? colors.text : MUTED,
-                              border: isShared ? `1px solid ${colors.text}30` : 'none',
+                              background: isShared ? colors.bg : 'transparent',
+                              color: isShared ? colors.text : '#8E8E93',
+                              border: isShared ? `1.5px solid ${colors.text}40` : '1.5px solid #D1D1D6',
                             }}
                           >
                             {isShared ? '★ ' : ''}{interest}
                           </span>
                         );
                       })}
-                    </div>
-
-                    {/* CTA buttons */}
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <motion.button
-                        whileTap={{ scale: 0.97 }}
-                        onClick={() => handleMessage(n)}
-                        style={{
-                          flex: 1, padding: '10px', borderRadius: '14px',
-                          background: 'white', border: `1.5px solid ${PRIMARY}`,
-                          color: TEXT,
-                          fontSize: '13px', fontWeight: 700, cursor: 'pointer',
-                          fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                        }}
-                      >
-                        👋 Say Hello
-                      </motion.button>
                     </div>
                   </div>
                 </div>
