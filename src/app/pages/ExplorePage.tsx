@@ -1094,8 +1094,11 @@ function NeighboursTab({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-                  {/* Avatar */}
-                  <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                  {/* Avatar — tappable to open profile */}
+                  <div
+                    onClick={e => { e.stopPropagation(); onOpenNeighbourProfile?.({ name: n.name, avatar: n.avatar, color: n.color, block: n.unit.split(' #')[0], distance: n.distance, interests: n.interests, languages: (n as any).languages }); }}
+                    style={{ width: '52px', height: '52px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
+                  >
                     {n.avatarUrl
                       ? <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       : <span style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>{n.avatar}</span>
@@ -1149,27 +1152,6 @@ function NeighboursTab({
                         }}
                       >
                         <MessageCircle size={14} /> Message
-                      </motion.button>
-                      <motion.button
-                        whileTap={{ scale: 0.97 }}
-                        onClick={() => onOpenNeighbourProfile?.({
-                          name: n.name,
-                          avatar: n.avatar,
-                          color: n.color,
-                          block: n.unit.split(' #')[0],
-                          distance: n.distance,
-                          interests: n.interests,
-                          languages: (n as any).languages,
-                        })}
-                        style={{
-                          flex: 1, padding: '10px', borderRadius: '14px',
-                          background: PRIMARY, border: 'none',
-                          color: 'white',
-                          fontSize: '13px', fontWeight: 700, cursor: 'pointer',
-                          fontFamily: 'inherit',
-                        }}
-                      >
-                        View Profile
                       </motion.button>
                     </div>
                   </div>
