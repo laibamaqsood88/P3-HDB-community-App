@@ -215,7 +215,7 @@ function CollectionPointMap({ address, distanceText }: { address?: string; dista
 }
 
 // ---- Main Component ----
-export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle, onNavVisibilityChange }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void; onNavVisibilityChange?: (visible: boolean) => void }) {
+export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle, onNavVisibilityChange, onOpenChat }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void; onNavVisibilityChange?: (visible: boolean) => void; onOpenChat?: (item: any) => void }) {
   const onSaveToggle = (id: number) => {
     const item = ITEMS_AND_SERVICES.find(i => i.id === id);
     externalSaveToggle?.(id, item);
@@ -252,8 +252,13 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
   };
 
   const handleExpressInterest = () => {
-    toast.success('Interest sent — the poster has been notified!');
-    setTimeout(() => goTo('poster-notif', current.params), 1200);
+    const item = current.params?.item;
+    if (onOpenChat) {
+      onOpenChat(item);
+    } else {
+      toast.success('Interest sent — the poster has been notified!');
+      setTimeout(() => goTo('poster-notif', current.params), 1200);
+    }
   };
 
   const renderScreen = () => {

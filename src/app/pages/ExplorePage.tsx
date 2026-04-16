@@ -191,11 +191,12 @@ interface ExplorePageProps {
   userInterests?: string[];
   onAddConversation?: (conv: any) => void;
   onOpenDirectChat?: (conv: any) => void;
+  onJoinGroup?: (conv: any) => void;
   onNavVisibilityChange?: (visible: boolean) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }
 
-export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat, onNavVisibilityChange, onOpenNeighbourProfile }: ExplorePageProps) {
+export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat, onJoinGroup, onNavVisibilityChange, onOpenNeighbourProfile }: ExplorePageProps) {
   const initialScreen: NavFrame = initialEventId
     ? { screen: 'detail', params: { event: EVENTS.find(e => e.id === initialEventId) || EVENTS[0] } }
     : { screen: 'feed' };
@@ -516,6 +517,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 onCategoryChange={setActiveGroupCategory}
                 onOpenNeighbourProfile={onOpenNeighbourProfile}
                 onDetailModeChange={setGroupInDetail}
+                onJoinGroup={onJoinGroup}
               />
             </div>
           )}

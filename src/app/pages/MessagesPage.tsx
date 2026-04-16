@@ -25,6 +25,10 @@ interface Conversation {
   time: string;
   unread: number;
   tag: string | null;
+  subtitle?: string;       // seller/provider name for marketplace chats
+  memberCount?: number;    // for dynamically joined groups
+  meetFrequency?: string;  // for dynamically joined groups
+  location?: string;       // for dynamically joined groups
 }
 
 const CONVERSATIONS: Conversation[] = [
@@ -220,6 +224,10 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
     time: c.time || 'Just now',
     unread: c.unread ?? 0,
     tag: c.tag || null,
+    subtitle: c.subtitle,
+    memberCount: c.memberCount,
+    meetFrequency: c.meetFrequency,
+    location: c.location,
   }));
 
   const [openConv, setOpenConv] = useState<Conversation | null>(
@@ -524,6 +532,12 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                     gap: '8px',
                   }}
                 >
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+                    {conv.type === 'marketplace' && conv.subtitle && (
+                      <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {conv.subtitle}
+                      </span>
+                    )}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '7px', minWidth: 0 }}>
                     <span
                       style={{
@@ -555,6 +569,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                         </span>
                       );
                     })()}
+                  </div>
                   </div>
                   <span
                     style={{
@@ -672,8 +687,15 @@ function ChatScreen({
   const isGroup = conv.type === 'group';
   const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
   const [showMembers, setShowMembers] = useState(false);
-  const activity = GROUP_ACTIVITY[conv.id];
-  const members = GROUP_MEMBERS[conv.id] ?? [];
+  const activity = GROUP_ACTIVITY[conv.id] ?? (
+    conv.meetFrequency ? {
+      meetup: `${conv.meetFrequency}${conv.location ? ` · ${conv.location}` : ''}`,
+      plan: 'More details will be shared by the group admin.',
+      goal: 'Connect and engage with fellow neighbours!',
+      members: conv.memberCount ?? 0,
+    } : undefined
+  );
+  const members = GROUP_MEMBERS[conv.id] ?? (isGroup ? [{ name: 'You', avatar: 'YO', avatarBg: '#FF6B47', role: 'Member' }] : []);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
@@ -703,13 +725,18 @@ function ChatScreen({
 
             {/* Name + subtitle */}
             <div style={{ flex: 1, minWidth: 0 }}>
+              {conv.type === 'marketplace' && conv.subtitle && (
+                <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '1px' }}>
+                  {conv.subtitle}
+                </div>
+              )}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{conv.name}</span>
                 {!isGroup && <Shield size={12} color="#22C55E" />}
               </div>
               <span style={{ fontSize: '11px', color: isGroup ? PRIMARY : MUTED, fontWeight: 500 }}>
                 {isGroup
-                  ? `${activity?.members ?? members.length} members`
+                  ? `${activity?.members ?? conv.memberCount ?? members.length} members`
                   : conv.type === 'marketplace' ? 'Marketplace chat' : conv.type === 'request' ? 'Request chat' : 'Direct message'}
               </span>
             </div>

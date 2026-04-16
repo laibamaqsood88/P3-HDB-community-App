@@ -236,9 +236,10 @@ interface ConnectPageProps {
   onCategoryChange?: (cat: string) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
   onDetailModeChange?: (isDetail: boolean) => void;
+  onJoinGroup?: (group: Group) => void;
 }
 
-export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile, onDetailModeChange }: ConnectPageProps) {
+export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile, onDetailModeChange, onJoinGroup }: ConnectPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -263,7 +264,11 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
   const toggleJoin = (id: number) => {
     setJoinedGroups(p => {
       const joined = p.includes(id);
-      toast.success(joined ? 'Left group' : 'Joined! Welcome to the group');
+      toast.success(joined ? 'Left group' : 'Joined! Welcome to the group 🎉');
+      if (!joined) {
+        const group = GROUPS.find(g => g.id === id);
+        if (group) onJoinGroup?.(group);
+      }
       return joined ? p.filter(x => x !== id) : [...p, id];
     });
   };

@@ -147,6 +147,25 @@ export default function App() {
               setInitialGroupChatId(conv.id);
               setActiveTab('messages');
             }}
+            onJoinGroup={(group) => {
+              const conv = {
+                id: Date.now(),
+                type: 'group',
+                name: group.name,
+                avatar: group.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase(),
+                avatarBg: group.categoryColor || '#FF6B47',
+                lastMessage: `Welcome to ${group.name}! Say hi 👋`,
+                time: 'Just now',
+                unread: 1,
+                tag: group.category,
+                memberCount: group.members,
+                meetFrequency: group.meetFrequency,
+                location: group.location,
+              };
+              onAddConversation(conv);
+              setInitialGroupChatId(conv.id);
+              setActiveTab('messages');
+            }}
             onNavVisibilityChange={setShowBottomNav}
             onOpenNeighbourProfile={openNeighbourProfile}
           />
@@ -158,6 +177,25 @@ export default function App() {
             savedItems={savedMarketplaceIds}
             onSaveToggle={onMarketplaceSaveToggle}
             onNavVisibilityChange={setShowBottomNav}
+            onOpenChat={(item) => {
+              const isService = item?.itemType === 'service';
+              const personName = item?.provider?.name || item?.seller?.name || 'Neighbour';
+              const conv = {
+                id: Date.now(),
+                type: 'marketplace',
+                name: item?.name || item?.title || (isService ? 'Service' : 'Marketplace Item'),
+                subtitle: personName,
+                avatar: (item?.name || item?.title || 'M').slice(0, 2).toUpperCase(),
+                avatarBg: isService ? '#7C3AED' : '#3B82F6',
+                lastMessage: isService ? 'Hi! Is this service still available?' : 'Hi! Is this still available?',
+                time: 'Just now',
+                unread: 0,
+                tag: isService ? 'Service' : 'Item',
+              };
+              onAddConversation(conv);
+              setInitialGroupChatId(conv.id);
+              setActiveTab('messages');
+            }}
           />
         )}
         {activeTab === 'requests' && (
