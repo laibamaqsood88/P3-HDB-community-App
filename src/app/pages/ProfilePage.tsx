@@ -115,6 +115,7 @@ const BADGES = [
 // ---- Main Component ----
 export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest, onClose, myPosts = [], userInterests = MY_INTERESTS, onUpdateInterests, userLanguages = [], onUpdateLanguages, savedMarketplaceItems = [] }: ProfilePageProps) {
   const [activeSection, setActiveSection] = useState<'main' | 'settings' | 'saved-items' | 'my-posts'>('main');
+  const [showPhotoEdit, setShowPhotoEdit] = useState(false);
   const [showInterestEdit, setShowInterestEdit] = useState(false);
   const [draftInterests, setDraftInterests] = useState<string[]>(userInterests);
   const [showLanguageEdit, setShowLanguageEdit] = useState(false);
@@ -231,29 +232,28 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
         {/* Avatar — centred */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <div style={{ position: 'relative', display: 'inline-block' }}>
-            <div style={{ width: '88px', height: '88px', borderRadius: '50%', background: PRIMARY, border: `3px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '36px', fontWeight: 800, color: 'white', lineHeight: 1 }}>R</span>
-            </div>
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80"
+              alt="Richard"
+              style={{ width: '88px', height: '88px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${BORDER}`, display: 'block' }}
+            />
             {/* Edit pencil badge */}
-            <div style={{
-              position: 'absolute', bottom: 0, right: 0,
-              width: '26px', height: '26px', borderRadius: '50%',
-              background: PRIMARY, border: '2px solid white',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-            }}>
+            <button
+              onClick={() => setShowPhotoEdit(true)}
+              style={{
+                position: 'absolute', bottom: 0, right: 0,
+                width: '26px', height: '26px', borderRadius: '50%',
+                background: PRIMARY, border: '2px solid white',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', padding: 0,
+              }}
+            >
               <Edit3 size={12} color="white" />
-            </div>
+            </button>
           </div>
 
           {/* Name */}
           <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT }}>Richard</div>
-
-          {/* Singpass Verified badge */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(52,199,89,0.1)' }}>
-            <CheckCircle size={13} color="#34C759" />
-            <span style={{ fontSize: '12px', color: '#34C759', fontWeight: 600 }}>Singpass Verified</span>
-          </div>
 
           {/* Estate pill */}
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 13px', borderRadius: '20px', background: '#FFF0EC', border: `1px solid ${PRIMARY}` }}>
@@ -398,6 +398,61 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
 
 
       </div>
+
+      {/* ---- Photo Edit Bottom Sheet ---- */}
+      {showPhotoEdit && (
+        <div
+          onClick={() => setShowPhotoEdit(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background: CARD, borderRadius: '28px 28px 0 0', padding: '24px 20px 44px' }}
+          >
+            <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Change Profile Photo</div>
+              <button onClick={() => setShowPhotoEdit(false)} style={{ width: '34px', height: '34px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <X size={16} color={TEXT2} />
+              </button>
+            </div>
+
+            {/* Current photo preview */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '28px', gap: '10px' }}>
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80"
+                alt="Richard"
+                style={{ width: '96px', height: '96px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${BORDER}` }}
+              />
+              <div style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>Current photo</div>
+            </div>
+
+            {/* Options */}
+            {[
+              { icon: <ShoppingBag size={20} color={PRIMARY} />, label: 'Choose from Library', bg: '#FFF0EC' },
+              { icon: <RefreshCw size={20} color="#7C3AED" />, label: 'Take a New Photo', bg: '#EDE9FE' },
+              { icon: <Trash2 size={20} color="#DC2626" />, label: 'Remove Current Photo', bg: '#FEE2E2' },
+            ].map(({ icon, label, bg }) => (
+              <button
+                key={label}
+                onClick={() => setShowPhotoEdit(false)}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
+                  padding: '14px 16px', marginBottom: '10px',
+                  background: BG, border: 'none', borderRadius: '14px',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {icon}
+                </div>
+                <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>{label}</span>
+                <ChevronRight size={16} color={MUTED} style={{ marginLeft: 'auto' }} />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ---- Interest Edit Bottom Sheet ---- */}
       {showInterestEdit && (
@@ -1112,9 +1167,9 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
       {/* Header */}
       <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `0.5px solid ${BORDER}`, position: 'relative', flexShrink: 0 }}>
         <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: '52px', left: '20px' }}>
-          <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
+          <ChevronLeft size={22} color={TEXT} />
         </button>
-        <div style={{ fontSize: '28px', fontWeight: 700, color: TEXT, paddingLeft: '48px' }}>Settings</div>
+        <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, textAlign: 'center' }}>Settings</div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '40px' }}>
@@ -1123,26 +1178,19 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
           {/* Edit Profile */}
           <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Edit3 size={16} color="#0284C7" />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Edit3 size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Edit Profile</span>
             <ChevronRight size={16} color={MUTED} />
           </button>
           {/* Change Password */}
-          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Lock size={16} color={TEXT2} />
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Lock size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Change Password</span>
             <ChevronRight size={16} color={MUTED} />
-          </button>
-          {/* Log Out */}
-          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <LogOut size={16} color="#FF3B30" />
-            </div>
-            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: '#FF3B30', textAlign: 'left' }}>Log Out</span>
           </button>
         </div>
 
@@ -1151,8 +1199,8 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
           {/* Notifications row (nav) */}
           <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#FFE4E6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Bell size={16} color="#E11D48" />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Bell size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Notifications</span>
             <ChevronRight size={16} color={MUTED} />
@@ -1181,37 +1229,34 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         {/* ---- Privacy section ---- */}
         <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Privacy</div>
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          {/* Privacy row */}
-          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F7F7F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <ShieldIcon size={16} color={TEXT2} />
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <ShieldIcon size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Privacy &amp; Data</span>
             <ChevronRight size={16} color={MUTED} />
           </button>
-          {/* Singpass verified banner */}
-          <div style={{ padding: '14px 16px' }}>
-            <div style={{ display: 'flex', gap: '12px', padding: '14px', background: '#F0FDF4', borderRadius: '12px' }}>
-              <ShieldIcon size={18} color="#22C55E" style={{ flexShrink: 0, marginTop: '1px' }} />
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#15803D', marginBottom: '4px' }}>Singpass Verified</div>
-                <div style={{ fontSize: '12px', color: '#166534', lineHeight: '1.55' }}>
-                  Your identity is verified via Singpass. Only your interests and proximity are visible to other residents until you confirm a connection.
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* ---- Support section ---- */}
         <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Support</div>
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
           <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <HelpCircle size={16} color="#16A34A" />
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <HelpCircle size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Help &amp; Support</span>
             <ChevronRight size={16} color={MUTED} />
+          </button>
+        </div>
+
+        {/* ---- Log Out ---- */}
+        <div style={{ margin: '24px 16px 0' }}>
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: CARD, border: 'none', borderRadius: '14px', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <LogOut size={16} color={MUTED} />
+            </div>
+            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: '#FF3B30', textAlign: 'left' }}>Log Out</span>
           </button>
         </div>
 
