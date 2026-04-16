@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-15 (Session 3)
+2026-04-16 (Session 4)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -191,6 +191,7 @@ Real Unsplash photos used. Interest tag shows `interests[0]`.
 - 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
 - Group detail: hero image, category badge (Lucide icon + text), name, info cards (Clock icon + MapPin icon), About, tags, Members list, Join/Leave button
 - Category icons mapped via `getGroupIconElement(emoji, color, size)` helper
+- Interest category tags on group cards show **text only** — no emoji icons
 
 ### Neighbours Sub-tab (→ `NeighboursPage.tsx`)
 - Neighbour cards redesigned to match reference:
@@ -219,7 +220,10 @@ Real Unsplash photos used. Interest tag shows `interests[0]`.
 - FAB: `position: absolute, zIndex: 60` (above nav)
 - Category icon map: `CAT_ICON_MAP` using Lucide icons (HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake, ShoppingBag, SearchIcon)
 - Privacy notices use Lock icon instead of 🔒 emoji
-- Post form fields: Title → Category → Type → Description → Location → Expires on
+- **Request listing cards**: Horizontal rectangular layout (height: 130px), image 110px wide on left, time-ago expiry, bookmark save button (top-right), distance label. No orange icon, no verified checkmark.
+- **Request detail page**: Marketplace-style layout — full-width 260px image header with back (38×38px) + save (38×38px) buttons, type badge, details table, description, location+map, About the Neighbour clickable card, Chat button. Neighbour profile sub-screen with avatar, stats, active request, reviews.
+- **Post request form**: Image upload section above Title (tile grid with + button, photo picker bottom sheet), MapPin icon on left of location field, no Suggested category chips.
+- Saved state: `savedRequests: number[]` lifted to `RequestsPage`, passed as props to `RequestsFeed`
 
 ---
 
@@ -239,7 +243,8 @@ Real Unsplash photos used. Interest tag shows `interests[0]`.
 - Sections: `'main' | 'settings' | 'saved-items' | 'my-posts'`
 - Main: gradient hero, avatar, Singpass badge, My Interests (live from App.tsx), Rewards/Badges grid, Saved Items row, My Posts row
 - Badges use CalendarDays, Users, ShoppingBag, Lock icons (no emojis)
-- Settings: Account, Notifications, Privacy, Help sections
+- Settings accessed via gear icon (top-right of header) — no duplicate Settings list item in body
+- Settings screen: Account, Notifications, Privacy, Help sections
 
 ---
 
@@ -258,6 +263,12 @@ export const INTEREST_CATEGORIES: { name: string; interests: string[] }[]
 ### Interest step
 - Search bar, collapsible category dropdowns, selected pills, orange count badges
 - "Find my community →" disabled until ≥1 interest
+
+### Spoken Languages step
+- 4 preset options: English, Chinese, Malay, Tamil
+- **Others** option: expands a search-with-autocomplete input for custom languages
+- Selected "other" language chips display **below the Others button** even when section is collapsed (with × to remove)
+- Count badge on Others button shows how many other languages are selected
 
 ---
 
