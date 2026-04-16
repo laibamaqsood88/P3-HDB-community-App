@@ -725,26 +725,33 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   key={ev.id}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => goTo('detail', { event: ev })}
-                  style={{ flexShrink: 0, width: '210px', background: CARD, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', cursor: 'pointer' }}
+                  style={{
+                    flexShrink: 0, width: '270px', background: CARD, borderRadius: '16px',
+                    boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '12px', padding: '12px',
+                  }}
                 >
-                  <div style={{ height: '114px', position: 'relative' }}>
+                  {/* Left: square thumbnail */}
+                  <div style={{ width: '84px', height: '84px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
                     <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, transparent 50%)' }} />
-                    <div style={{ position: 'absolute', top: '8px', left: '8px', padding: '3px 9px', borderRadius: '16px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 700 }}>
+                    <div style={{ position: 'absolute', bottom: '5px', left: '5px', padding: '2px 6px', borderRadius: '6px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '9px', fontWeight: 800 }}>
                       {ev.category}
                     </div>
-                    <div style={{ position: 'absolute', top: '8px', right: '8px', display: 'flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '16px', padding: '3px 8px' }}>
-                      <Check size={9} color="#16A34A" strokeWidth={2.5} />
-                      <span style={{ fontSize: '9px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
-                    </div>
                   </div>
-                  <div style={{ padding: '12px 14px' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '7px', lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                  {/* Right: info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '8px', padding: '2px 6px' }}>
+                        <Check size={9} color="#16A34A" strokeWidth={2.5} />
+                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
                       <Calendar size={11} color={MUTED} />
                       <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <MapPin size={11} color={MUTED} />
                       <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
                     </div>
