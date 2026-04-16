@@ -495,6 +495,11 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
           </div>
         )}
 
+        {/* Description liner */}
+        <div style={{ fontSize: '14px', color: TEXT2, fontWeight: 400, marginBottom: '16px', lineHeight: '1.5' }}>
+          Find and join groups in your neighbourhood that match your interests.
+        </div>
+
         {/* All Groups header */}
         <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0 16px', marginBottom: '10px' }}>
           {effectiveCategory === 'All' ? 'All Groups' : 'Groups'} · {filteredGroups.length}
