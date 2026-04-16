@@ -394,7 +394,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
           {/* Events */}
           {activeSubTab === 'events' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: BG }} onScroll={handleScroll}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: '#F7F7F7' }} onScroll={handleScroll}>
               {filteredEvents.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
                   <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔍</div>
