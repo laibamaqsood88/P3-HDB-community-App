@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, Bookmark, Share2, X, Shield,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, UserRound
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -355,17 +355,28 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                   style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <ChevronLeft size={20} color={TEXT} />
                 </button>
-                <div style={{ flex: 1, display: 'flex' }}>
-                  {(['events', 'groups', 'neighbours'] as const).map(tab => {
-                    const isActive = searchScopeTab === tab;
+                <div style={{ flex: 1, display: 'flex', gap: '6px' }}>
+                  {([
+                    { id: 'events',     label: 'Events',     Icon: Calendar,  activeColor: '#D97706', activeBg: '#FEF3C7', activeBorder: '#F59E0B' },
+                    { id: 'groups',     label: 'Groups',     Icon: Users,     activeColor: '#059669', activeBg: '#D1FAE5', activeBorder: '#34D399' },
+                    { id: 'neighbours', label: 'Neighbours', Icon: UserRound,  activeColor: '#FF6B47', activeBg: '#FFF0EC', activeBorder: '#FF6B47' },
+                  ] as const).map(({ id, label, Icon, activeColor, activeBg, activeBorder }) => {
+                    const isActive = searchScopeTab === id;
                     return (
-                      <button key={tab}
-                        onClick={() => { setSearchScopeTab(tab); handleSubTabChange(tab); }}
-                        style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
-                          {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      <button key={id}
+                        onClick={() => { setSearchScopeTab(id); handleSubTabChange(id); }}
+                        style={{
+                          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                          padding: '8px 6px',
+                          borderRadius: '14px',
+                          background: isActive ? activeBg : '#FFFFFF',
+                          border: `1.5px solid ${isActive ? activeBorder : '#E0DAD2'}`,
+                          cursor: 'pointer', fontFamily: 'inherit',
+                        }}>
+                        <Icon size={13} color={isActive ? activeColor : MUTED} strokeWidth={isActive ? 2.2 : 1.8} />
+                        <span style={{ fontSize: '12px', fontWeight: isActive ? 700 : 500, color: isActive ? activeColor : MUTED, whiteSpace: 'nowrap' }}>
+                          {label}
                         </span>
-                        {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
                       </button>
                     );
                   })}
