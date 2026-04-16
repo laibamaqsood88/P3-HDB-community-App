@@ -122,6 +122,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
   const [draftLanguages, setDraftLanguages] = useState<string[]>(userLanguages);
   const [query, setQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showAllBadges, setShowAllBadges] = useState(false);
 
   const toggleDraft = (item: string) =>
     setDraftInterests(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
@@ -310,12 +311,22 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
         </div>
 
         {/* ---- Rewards & Badges ---- */}
-        <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Rewards &amp; Badges
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 12px', marginBottom: '8px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            Rewards &amp; Badges ({BADGES.filter(b => b.unlocked).length}/{BADGES.length})
+          </div>
+          {!showAllBadges && (
+            <button
+              onClick={() => setShowAllBadges(true)}
+              style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              View more
+            </button>
+          )}
         </div>
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 24px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {BADGES.map(badge => {
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            {BADGES.slice(0, showAllBadges ? BADGES.length : 3).map(badge => {
               let BadgeIcon;
               if (badge.id === 1) BadgeIcon = <CalendarDays size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
               else if (badge.id === 2) BadgeIcon = <Users size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
@@ -326,34 +337,20 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
                 <div
                   key={badge.id}
                   style={{
-                    padding: '14px',
-                    background: badge.unlocked ? '#F2F2F7' : '#F5F5F5',
-                    borderRadius: '12px',
+                    width: '100px',
+                    height: '100px',
+                    background: badge.unlocked ? '#FFF0EC' : '#F5F5F5',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: '8px',
-                    opacity: badge.unlocked ? 1 : 0.7,
-                    position: 'relative',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    opacity: badge.unlocked ? 1 : 0.6,
+                    clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)',
                   }}
                 >
-                  {/* Unlock indicator dot */}
-                  <div style={{
-                    position: 'absolute', top: '10px', right: '10px',
-                    width: '16px', height: '16px', borderRadius: '50%',
-                    background: badge.unlocked ? '#22C55E' : BORDER,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    {badge.unlocked ? (
-                      <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
-                        <path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    ) : null}
-                  </div>
-
                   {BadgeIcon}
-                  <div style={{ fontSize: '11px', fontWeight: 800, color: badge.unlocked ? PRIMARY : MUTED, textAlign: 'center', lineHeight: '1.2' }}>{badge.name}</div>
-                  <div style={{ fontSize: '10px', color: badge.unlocked ? TEXT2 : MUTED, fontWeight: 500, lineHeight: '1.3', textAlign: 'center' }}>{badge.desc}</div>
+                  <div style={{ fontSize: '10px', fontWeight: 800, color: badge.unlocked ? PRIMARY : MUTED, textAlign: 'center', lineHeight: '1.2' }}>{badge.name}</div>
                 </div>
               );
             })}
