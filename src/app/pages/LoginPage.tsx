@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Shield, MapPin, CheckCircle } from 'lucide-react';
+import mccyLogo from '../../imports/mccy-logo-v2.webp';
 
 // ---- Design tokens (Apple HIG) ----
 const BG = '#F7F7F7';
@@ -173,6 +174,18 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               singpass
             </span>
           </motion.button>
+
+          {/* Supported by MCCY */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            marginTop: '14px',
+          }}>
+            <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>supported by</span>
+            <img src={mccyLogo} alt="MCCY" style={{ height: '22px', objectFit: 'contain' }} />
+          </div>
         </motion.div>
       </div>
 

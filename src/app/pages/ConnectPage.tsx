@@ -475,9 +475,18 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
           </div>
         )}
 
-        {/* Description liner */}
-        <div style={{ fontSize: '14px', color: TEXT2, fontWeight: 400, marginBottom: '16px', lineHeight: '1.5' }}>
-          Find and join groups in your neighbourhood that match your interests.
+        {/* Welcome banner */}
+        <div style={{
+          border: '1.5px solid #E5E5EA',
+          borderRadius: '14px',
+          padding: '14px 16px',
+          marginBottom: '16px',
+          background: 'white',
+        }}>
+          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Groups</div>
+          <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
+            Find and join groups in your neighbourhood that match your interests.
+          </div>
         </div>
 
         {/* All Groups header */}
