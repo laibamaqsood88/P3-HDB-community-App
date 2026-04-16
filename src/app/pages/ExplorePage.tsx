@@ -1112,7 +1112,7 @@ function NeighboursTab({
 
                     {/* Row 1: name left, address right */}
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '6px', marginBottom: '3px' }}>
-                      <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT, flexShrink: 0 }}>{n.name}</span>
+                      <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT, flexShrink: 0 }}>{n.name}</span>
                       <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, textAlign: 'right', flexShrink: 0 }}>{n.unit.split(' #')[0]} · {n.distance}</span>
                     </div>
 
