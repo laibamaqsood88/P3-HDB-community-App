@@ -162,14 +162,14 @@ function RequestCard({ r, savedItems, onSaveToggle, onClick }: { r: any; savedIt
 
       {/* Right content */}
       <div style={{ flex: 1, minWidth: 0, padding: '10px 12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        {/* Top row: type badge + distance + save */}
+        {/* Top row: type badge + save */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
             <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, background: typeStyle.bg, color: typeStyle.text, flexShrink: 0 }}>{r.type}</span>
             <div style={{ flex: 1 }} />
-            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500, whiteSpace: 'nowrap' }}>{r.distance}</span>
             <SaveButton itemId={r.id} savedItems={savedItems} onSaveToggle={onSaveToggle} />
           </div>
+          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '4px' }}>{r.distance}</div>
           <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, lineHeight: '1.35', marginBottom: '4px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{r.title}</div>
           <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.45', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>{r.description}</div>
         </div>
@@ -429,9 +429,7 @@ function RequestDetail({ request, savedItems, onSaveToggle, onBack, onChat, onVi
 
         <div style={{ padding: '20px 20px 0' }}>
           {/* Title */}
-          <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{request.title}</div>
-          {/* Type badge */}
-          <div style={{ display: 'inline-block', padding: '5px 14px', borderRadius: '10px', fontSize: '15px', fontWeight: 700, background: typeStyle.bg, color: typeStyle.text, marginBottom: '20px' }}>{request.type}</div>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '20px', letterSpacing: '-0.2px' }}>{request.title}</div>
 
           {/* Details */}
           <div style={{ marginBottom: '20px' }}>
