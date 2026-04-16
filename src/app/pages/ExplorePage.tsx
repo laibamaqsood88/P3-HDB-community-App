@@ -1152,7 +1152,7 @@ function NeighboursTab({
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleMessage(n)}
                       style={{
-                        width: '100%', padding: '11px 0', borderRadius: '14px',
+                        width: '100%', padding: '7px 0', borderRadius: '10px',
                         background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
                         color: PRIMARY, fontSize: '13px', fontWeight: 700,
                         cursor: 'pointer', fontFamily: 'inherit',
