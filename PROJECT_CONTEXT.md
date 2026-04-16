@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-16 (Session 4)
+2026-04-16 (Session 5)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -29,7 +29,7 @@ src/
     │   └── BottomNav.tsx          — 5-tab floating pill nav
     └── pages/
         ├── LoginPage.tsx          — Singpass login screen
-        ├── SignUpPage.tsx         — 6-step onboarding (exports INTEREST_CATEGORIES)
+        ├── SignUpPage.tsx         — 5-step onboarding (exports INTEREST_CATEGORIES)
         ├── EventsPage.tsx         — Home dashboard (Tab 1)
         ├── ExplorePage.tsx        — Events + Groups + Neighbours sub-tabs (Tab 2)
         ├── ConnectPage.tsx        — Groups list + detail (used inside ExplorePage)
@@ -109,7 +109,7 @@ messages     → Messages   (MessageCircle icon)
 ## Auth Flow (`App.tsx`)
 - `authScreen`: `'login'` → `'signup'` → `'main'`
 - **LoginPage** → `onLogin()` → signup
-- **SignUpPage** → `onComplete({ dob, familyStatus, interests })` → main app; sets `userInterests`
+- **SignUpPage** → `onComplete({ familyStatus, interests, spokenLanguages })` → main app; sets `userInterests` + `userLanguages`
 - Main app: `activeTab` + `showProfile` overlay
 
 ### App.tsx State
@@ -121,6 +121,7 @@ savedEvents: number[]
 savedMarketplaceItems: any[]
 wishlist: number[]
 userInterests: string[]
+userLanguages: string[]
 myPosts: any[]
 conversations: any[]
 initialGroupChatId: number | undefined
@@ -128,6 +129,7 @@ initialRequestId: number | undefined
 initialEventId: number | undefined
 initialMarketplaceItemId: number | undefined
 exploreInitialSubTab: 'events' | 'groups' | 'neighbours'
+neighbourProfile: NeighbourProfile | null
 ```
 
 ### Cross-tab Navigation Callbacks
@@ -138,14 +140,26 @@ openGroupChat(groupId)           // → Messages tab, specific group chat
 openRequest(id)                  // → Requests tab (id=0 → feed, id>0 → detail)
 onOpenEvent(id)                  // → Explore tab, event detail
 onOpenMarketplaceItem(id)        // → Marketplace tab, item/service detail
+openNeighbourProfile(profile)    // → NeighbourProfilePage overlay (zIndex: 110)
 ```
+
+### Wired Action Buttons → Messages Tab
+All three create a conversation object, call `onAddConversation`, `setInitialGroupChatId`, and `setActiveTab('messages')`:
+
+- **HelpSharePage `onOpenChat(item)`** — Marketplace/service "Chat" button
+  - Creates `type: 'marketplace'` conv with item title + `subtitle` = seller/provider name
+  - Services: `avatarBg: '#7C3AED'`; Items: `avatarBg: '#3B82F6'`
+- **ExplorePage → ConnectPage `onJoinGroup(group)`** — "Join Group" button
+  - Creates `type: 'group'` conv with group name, `memberCount`, `meetFrequency`, `location`
+- **EventsPage `onSayHello(neighbour)`** — "Say Hello" button on neighbour cards
+  - Creates `type: 'direct'` conv with neighbour name + avatar color
 
 ---
 
 ## Tab 1 — Home Dashboard (`EventsPage.tsx`)
 
 ### Header
-- Profile avatar button (orange "Y") top-left → opens Profile overlay
+- Profile avatar button (orange "R" or photo) top-left → opens Profile overlay
 - "NeighbourHood" centered
 - Bell icon top-right → notification bottom sheet (unread count badge)
 
@@ -154,17 +168,17 @@ onOpenMarketplaceItem(id)        // → Marketplace tab, item/service detail
 - Routes: `{ to: 'event', eventId }` | `{ to: 'group', groupId }` | `{ to: 'marketplace' }` | `{ to: 'messages', convId }`
 - "Mark all read" button in sheet
 
-### Content Sections (scrollable)
+### Content Sections (scrollable, in this order)
 1. **Greeting** — "Good morning ☀️", estate, Verified badge
-2. **Your Interest Groups** — horizontal scroll; tapping opens group chat in Messages tab
-3. **Latest Requests** — horizontal scroll, compact cards (200px wide); tapping → `onOpenRequest(id)`; "See all" → `onOpenRequest(0)` → Requests feed
-4. **Marketplace Picks** — horizontal scroll of 4 items/services
-5. **Recommended Events** — vertical list; tapping → Explore tab
-6. **Connect with Neighbours** — horizontal scroll cards (220px wide):
+2. **My Events** — horizontal scroll of upcoming events the user joined
+3. **My Groups** — horizontal scroll; tapping opens group chat in Messages tab *(was "Your Interest Groups")*
+4. **Latest Requests** — horizontal scroll, compact cards (200px wide); tapping → `onOpenRequest(id)`; "See all" → `onOpenRequest(0)` → Requests feed
+5. **Connect with Neighbours** — horizontal scroll cards (220px wide):
    - Category sticker tag (top-left, rotated -1.5deg, inside card)
    - 72×72px square photo (left) + name + location (right)
-   - 👋 Say Hello outline button (orange border, white bg)
+   - 👋 **Say Hello** outline button → wired to create a direct conversation in Messages tab
    - No "View Profile" button
+   - Label: "**10 neighbours in your estate**"
 
 ### MOCK_NEIGHBOURS data (EventsPage)
 ```ts
@@ -172,7 +186,11 @@ onOpenMarketplaceItem(id)        // → Marketplace tab, item/service detail
 ```
 Real Unsplash photos used. Interest tag shows `interests[0]`.
 
-### Sub-tabs: Upcoming | Signed Up
+### Props
+```ts
+onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace,
+savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello
+```
 
 ---
 
@@ -181,25 +199,38 @@ Real Unsplash photos used. Interest tag shows `interests[0]`.
 ### Sub-tabs: Events | Groups | Neighbours
 
 ### Events Sub-tab
+- Description liner: *"Explore events happening in your neighbourhood."*
 - Search bar + filter button
 - Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness
 - Featured event card (large image) + upcoming list
+- **3 featured events**: Durian Party, 1 Day Trip to Johor Bahru, Hari Raya Dinner with Community and MP
 - Event Detail: date, location, organizer, about, going breakdown charts
 - Going Breakdown: By Household Type + By Language charts; Neighbours Attending list (avatar, name, block+distance only)
+- **By Household Type labels**: `['Living alone', 'Couple', 'Family with children', 'With parents', 'Shared housing', 'Multigenerational']`
 
 ### Groups Sub-tab (→ `ConnectPage.tsx`)
+- Description liner above "All Groups" header
 - 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
-- Group detail: hero image, category badge (Lucide icon + text), name, info cards (Clock icon + MapPin icon), About, tags, Members list, Join/Leave button
-- Category icons mapped via `getGroupIconElement(emoji, color, size)` helper
-- Interest category tags on group cards show **text only** — no emoji icons
+- **Group feed card UI**:
+  - Left: **circular image** (72×72px, `borderRadius: '50%'`) — WhatsApp-style
+  - Right column: interest/category tag pill (inline, above member count) → group name → description
+  - Right edge: Joined badge + ChevronRight
+- **Group detail**: hero image, category badge (Lucide icon + text), name, **Meets card only** (no Location card), About section, Members list, Join/Leave button
+  - Meets section styled same as About section (no icon, same card/label/text style)
+  - No hashtags/tags section below About
+  - No MapPin/location text on feed cards
+- **Join Group** button → wired via `onJoinGroup` prop → creates group conversation in Messages tab
 
 ### Neighbours Sub-tab (→ `NeighboursPage.tsx`)
-- Neighbour cards redesigned to match reference:
-  - Category sticker tag top-left (inside card, rotated -1.5deg)
-  - Square photo + name/location side by side
-  - 👋 Say Hello button (outline, orange border)
-- NEIGHBOURS data has: `{ id, name, avatarUrl, sharedInterests, allInterests, sharedCount, proximity, distance, verified, avatarColor }`
-- Real Unsplash photos
+- Label: "**10 neighbours in your estate**" (removed "with shared interests" suffix)
+- Neighbour cards: category sticker tag top-left (rotated -1.5deg), square photo + name/location, 👋 Say Hello button
+- NEIGHBOURS data: `{ id, name, avatarUrl, sharedInterests, allInterests, sharedCount, proximity, distance, verified, avatarColor }`
+
+### Props added to ExplorePage
+```ts
+onJoinGroup?: (group: Group) => void   // passed down to ConnectPage
+onOpenNeighbourProfile?: (profile) => void
+```
 
 ---
 
@@ -210,7 +241,8 @@ Real Unsplash photos used. Interest tag shows `interests[0]`.
 - FAB button: `position: absolute, bottom: 96px, zIndex: 60` (above nav)
 - Filter panel: `zIndex: 61`
 - NavStack screens: `'feed' | 'item-detail' | 'service-detail' | 'neighbour-profile' | 'poster-notif' | 'mutual-confirm' | 'chat' | 'category-select' | 'item-post-photo' | 'item-post-form' | 'service-post' | 'post-success'`
-- Props: `{ onAddPost, initialItemId?, savedItems, onSaveToggle, onNavVisibilityChange }`
+- **Chat button** on item/service detail → calls `onOpenChat(item)` → creates marketplace conversation in Messages tab
+- Props: `{ onAddPost, initialItemId?, savedItems, onSaveToggle, onNavVisibilityChange, onOpenChat? }`
 
 ---
 
@@ -233,23 +265,65 @@ Real Unsplash photos used. Interest tag shows `interests[0]`.
 - Conversations: 6 items (IDs 1-6); avatars use 2-letter initials, no emojis
 - Group chat: Chat | Activity Board tabs
 - Activity Board icons: MapPin, ClipboardList, Target (Lucide, no emojis)
-- Props: `{ initialConvId?, extraConversations?, onNavVisibilityChange }`
+- Props: `{ initialConvId?, extraConversations?, onNavVisibilityChange, onOpenNeighbourProfile? }`
+
+### Extended Conversation Interface
+```ts
+interface Conversation {
+  id: number;
+  type: 'group' | 'direct' | 'marketplace';
+  name: string;
+  subtitle?: string;       // shown above title (smaller, muted) — for marketplace chats
+  avatar: string;
+  avatarBg: string;
+  lastMessage: string;
+  time: string;
+  unread: number;
+  tag?: string | null;
+  memberCount?: number;    // used in group chat header fallback
+  meetFrequency?: string;  // used in group activity board fallback
+  location?: string;       // used in group activity board fallback
+}
+```
+
+### Dynamic Conversation Rendering
+- **Marketplace chats**: conversation list row + chat header show `conv.subtitle` (seller/provider name) in smaller muted text above the item/service title
+- **New group chats** (dynamically joined, `id = Date.now()`): group chat activity board falls back to `conv.meetFrequency`, `conv.location`, `conv.memberCount` since `GROUP_ACTIVITY[conv.id]` won't exist
+- **New group members**: falls back to `[{ name: 'You', avatar: 'YO', avatarBg: '#FF6B47', role: 'Member' }]` when `GROUP_MEMBERS[conv.id]` is undefined
+- `extraMapped` preserves all new fields: `subtitle`, `memberCount`, `meetFrequency`, `location`
 
 ---
 
 ## Profile Overlay (`ProfilePage.tsx`)
-- Opened via avatar on Home tab
-- Props: `{ onClose, onOpenEvent, onOpenMarketplaceItem, onOpenRequest, myPosts, userInterests, onUpdateInterests }`
+- Opened via avatar button on Home tab
+- Props: `{ onClose, onOpenEvent, onOpenMarketplaceItem, onOpenRequest, myPosts, userInterests, onUpdateInterests, userLanguages, onUpdateLanguages, savedMarketplaceItems }`
 - Sections: `'main' | 'settings' | 'saved-items' | 'my-posts'`
-- Main: gradient hero, avatar, Singpass badge, My Interests (live from App.tsx), Rewards/Badges grid, Saved Items row, My Posts row
+
+### Main Profile Screen
+- **Header**: plain background (no orange gradient), centered "Profile" title
+- **Avatar**: Richard's Unsplash photo (`photo-1507003211169-0a1dd7228f2d`), circular, 80×80px
+- **Edit badge**: pencil icon button (bottom-right of avatar) → opens photo edit bottom sheet
+  - Bottom sheet: current photo preview + 3 options (Take Photo, Choose from Library, Remove Photo)
+- **Name**: "Richard" (centered, below avatar)
+- **Estate tag pill**: below name (no Singpass Verified badge on main screen)
+- No Singpass Verified banner anywhere on profile
+- My Interests (live from App.tsx), Rewards/Badges grid, Saved Items row, My Posts row
 - Badges use CalendarDays, Users, ShoppingBag, Lock icons (no emojis)
-- Settings accessed via gear icon (top-right of header) — no duplicate Settings list item in body
-- Settings screen: Account, Notifications, Privacy, Help sections
+
+### Settings Screen
+- Back button: **ChevronLeft** icon (not X)
+- Title: centered, 18px font size
+- All setting row icons: grey background (`#F2F2F7` bg, MUTED color)
+- Sections: Account, Notifications, Privacy, **Log Out** (above About), About
+- No duplicate Settings list item; no Singpass Verified banner
 
 ---
 
 ## Onboarding (`SignUpPage.tsx`)
-6 steps: Welcome → Date of Birth → Family Status → Interests → Loading → Recommendations
+5 steps: Welcome → Date of Birth → Family Status → Interests → Loading
+*(Step 5 "Here's your neighbourhood" / RecommendationsStep has been removed)*
+
+After the loading screen completes, `onComplete()` is called directly (no navigation to recommendations).
 
 ### Exports
 ```ts
@@ -259,6 +333,18 @@ export const INTEREST_CATEGORIES: { name: string; interests: string[] }[]
 ### Welcome screen
 - Home icon (Lucide) in orange gradient container (no 🏘️ emoji)
 - "Welcome to NeighbourHood" (no emoji)
+
+### Family Status Step
+- Question: **"What is your current living situation?"**
+- Options:
+  ```
+  Living alone
+  Couple (no children)
+  Family with children
+  Living with parents
+  Shared housing (roommates/housemates)
+  Multigenerational household
+  ```
 
 ### Interest step
 - Search bar, collapsible category dropdowns, selected pills, orange count badges
@@ -313,12 +399,13 @@ const current = navStack[navStack.length - 1]
 
 ### Z-index Layers
 ```
-Page content:     0
-Gradient fade:   40
-Bottom nav pill: 50
-FAB buttons:     60
-Filter panels:   61
-Profile overlay: 100+
+Page content:         0
+Gradient fade:       40
+Bottom nav pill:     50
+FAB buttons:         60
+Filter panels:       61
+Profile overlay:    100
+NeighbourProfile:   110
 ```
 
 ---
