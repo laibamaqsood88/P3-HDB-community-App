@@ -315,13 +315,13 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
-      <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
+      <div style={{ background: searchOpen ? 'transparent' : CARD, borderBottom: searchOpen ? 'none' : `0.5px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
         <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${12 - (scrollProgress * 4)}px`, display: 'flex', alignItems: 'center', gap: '8px', transition: 'padding 0.1s linear' }}>
           <div style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
             {searchOpen ? (
               <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ChevronLeft size={22} color={TEXT} />
+                style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ChevronLeft size={22} color="white" />
               </button>
             ) : (
               <>
@@ -385,7 +385,7 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                position: 'absolute', top: '90px', left: '12px', right: '12px',
+                position: 'absolute', top: '106px', left: '12px', right: '12px',
                 background: 'white',
                 borderRadius: '16px',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.18)',

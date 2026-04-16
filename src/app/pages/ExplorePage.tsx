@@ -310,14 +310,14 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
         {/* ── Shared Header ── */}
-        {!(activeSubTab === 'groups' && groupInDetail) && <div style={{ background: CARD, borderBottom: `1px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchMode ? 202 : undefined }}>
+        {!(activeSubTab === 'groups' && groupInDetail) && <div style={{ background: searchMode ? 'transparent' : CARD, borderBottom: searchMode ? 'none' : `1px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchMode ? 202 : undefined }}>
           <>
               {/* Top row: Back button (search mode) OR Title + icons (normal) */}
               <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
                 {searchMode ? (
                   <button onClick={() => { setSearchMode(false); setSearchQuery(''); }}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ChevronLeft size={22} color={TEXT} />
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ChevronLeft size={22} color="white" />
                   </button>
                 ) : (
                   <>
@@ -359,10 +359,10 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                         else handleSubTabChange(tab);
                       }}
                       style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? (searchMode ? 'white' : TEXT) : (searchMode ? 'rgba(255,255,255,0.55)' : MUTED), paddingBottom: '10px' }}>
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
                       </span>
-                      {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
+                      {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: searchMode ? 'white' : TEXT, borderRadius: '2px' }} />}
                     </button>
                   );
                 })}
@@ -557,7 +557,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  position: 'absolute', top: '126px', left: '12px', right: '12px',
+                  position: 'absolute', top: '144px', left: '12px', right: '12px',
                   background: 'white',
                   borderRadius: '16px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.18)',

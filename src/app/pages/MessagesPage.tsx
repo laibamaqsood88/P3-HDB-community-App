@@ -343,14 +343,14 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
       {/* Main messages list */}
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
-        <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
+        <div style={{ background: searchOpen ? 'transparent' : CARD, borderBottom: searchOpen ? 'none' : `0.5px solid rgba(60,60,67,0.12)`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
           <>
               {/* Title row: Back (search mode) OR Title + icons (normal) */}
               <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
                 {searchOpen ? (
                   <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ChevronLeft size={22} color={TEXT} />
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ChevronLeft size={22} color="white" />
                   </button>
                 ) : (
                 <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -427,12 +427,12 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                         padding: '8px 14px',
                         background: 'none',
                         border: 'none',
-                        borderBottom: `2px solid ${activeFilter === tab ? PRIMARY : 'transparent'}`,
+                        borderBottom: `2px solid ${activeFilter === tab ? (searchOpen ? 'white' : PRIMARY) : 'transparent'}`,
                         cursor: 'pointer',
                         fontFamily: "'Nunito', sans-serif",
                         fontSize: '13px',
                         fontWeight: activeFilter === tab ? 600 : 500,
-                        color: activeFilter === tab ? PRIMARY : MUTED,
+                        color: activeFilter === tab ? (searchOpen ? 'white' : PRIMARY) : (searchOpen ? 'rgba(255,255,255,0.55)' : MUTED),
                         whiteSpace: 'nowrap',
                         display: 'flex',
                         alignItems: 'center',
@@ -443,8 +443,8 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                       {count > 0 && (
                         <span style={{
                           minWidth: '17px', height: '17px', borderRadius: '9px',
-                          background: activeFilter === tab ? PRIMARY : MUTED,
-                          color: 'white', fontSize: '10px', fontWeight: 700,
+                          background: activeFilter === tab ? (searchOpen ? 'rgba(255,255,255,0.9)' : PRIMARY) : (searchOpen ? 'rgba(255,255,255,0.35)' : MUTED),
+                          color: searchOpen ? (activeFilter === tab ? TEXT : 'white') : 'white', fontSize: '10px', fontWeight: 700,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           padding: '0 4px',
                         }}>
@@ -670,7 +670,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                position: 'absolute', top: '126px', left: '12px', right: '12px',
+                position: 'absolute', top: '144px', left: '12px', right: '12px',
                 background: 'white',
                 borderRadius: '16px',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.18)',

@@ -459,14 +459,14 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
-      <div style={{ background: CARD, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
+      <div style={{ background: searchOpen ? 'transparent' : CARD, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
         <>
           {/* Title row: Back button (search mode) OR Title + icons (normal) */}
           <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
             {searchOpen ? (
               <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ChevronLeft size={22} color={TEXT} />
+                style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ChevronLeft size={22} color="white" />
               </button>
             ) : (
               <>
@@ -500,10 +500,10 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
               return (
                 <button key={tab} onClick={() => setMainFilter(tab)}
                   style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? TEXT : MUTED, paddingBottom: '10px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? (searchOpen ? 'white' : TEXT) : (searchOpen ? 'rgba(255,255,255,0.55)' : MUTED), paddingBottom: '10px' }}>
                     {tab}
                   </span>
-                  {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: TEXT, borderRadius: '2px' }} />}
+                  {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: searchOpen ? 'white' : TEXT, borderRadius: '2px' }} />}
                 </button>
               );
             })}
@@ -568,7 +568,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                position: 'absolute', top: '126px', left: '12px', right: '12px',
+                position: 'absolute', top: '144px', left: '12px', right: '12px',
                 background: 'white',
                 borderRadius: '16px',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
