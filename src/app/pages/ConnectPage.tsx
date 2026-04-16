@@ -617,27 +617,6 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
                   <X size={16} color={TEXT} />
                 </button>
               </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
-                {CATEGORIES.map(cat => {
-                  const sel = activeCategory === cat;
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => setActiveCategory(cat)}
-                      style={{
-                        padding: '7px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: 600,
-                        background: sel ? '#FFF0EC' : BG,
-                        color: sel ? PRIMARY : TEXT2,
-                        border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid transparent`,
-                        cursor: 'pointer', fontFamily: 'inherit',
-                      }}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
-              </div>
               {/* Interest section */}
               <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Interests</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '24px' }}>

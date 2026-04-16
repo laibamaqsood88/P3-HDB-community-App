@@ -33,8 +33,9 @@ interface EventData {
 }
 
 interface Filters {
-  ageGroups: string[]; languages: string[];
-  interests: string[]; familyStatus: string[];
+  ageGroups: string[];
+  interests: string[];
+  distance: string;
 }
 
 interface NavFrame { screen: EventScreen; params?: any; }
@@ -99,7 +100,7 @@ const EVENTS: EventData[] = [
 ];
 
 const AGE_GROUPS = ['All Ages', '20–35', '35–50', '55+'];
-const LANGUAGES = ['English', 'Mandarin', 'Malay', 'Tamil', 'Multilingual'];
+const EVENT_DISTANCES = ['Any Distance', '< 0.5 km', '< 1 km'];
 // Interest → event category mapping
 const INTEREST_TO_EVENT_CATS: Record<string, string[]> = {
   'Fitness & Sports': ['Wellness'],
@@ -109,7 +110,6 @@ const INTEREST_TO_EVENT_CATS: Record<string, string[]> = {
   'Community Volunteering': ['Community'],
   'Cultural Heritage & Festivals': ['Community', 'Food & Drinks'],
 };
-const FAMILY_STATUS = ['Living alone', 'Couple (no children)', 'Family with children', 'Living with parents', 'Shared housing (roommates/housemates)', 'Multigenerational household'];
 const CATEGORIES = ['All', '🏃 Fitness', '🍳 Cooking', '🌱 Gardening', '🎲 Board Games', '💆 Wellness'];
 
 const FAMILY_STATUS_BREAKDOWN = [
@@ -211,8 +211,8 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     : { screen: 'feed' };
 
   const [navStack, setNavStack] = useState<NavFrame[]>([initialScreen]);
-  const [filters, setFilters] = useState<Filters>({ ageGroups: [], languages: [], interests: [], familyStatus: [] });
-  const [tempFilters, setTempFilters] = useState<Filters>({ ageGroups: [], languages: [], interests: [], familyStatus: [] });
+  const [filters, setFilters] = useState<Filters>({ ageGroups: [], interests: [], distance: 'Any' });
+  const [tempFilters, setTempFilters] = useState<Filters>({ ageGroups: [], interests: [], distance: 'Any' });
   const [savedEvents, setSavedEvents] = useState<number[]>([]);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
   const [showFilter, setShowFilter] = useState(false);
@@ -259,7 +259,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     }
   }, [groupInDetail, activeSubTab]);
 
-  const activeFilterCount = Object.values(filters).flat().length;
+  const activeFilterCount = filters.ageGroups.length + filters.interests.length + (filters.distance !== 'Any' ? 1 : 0);
 
   // Helper: Check if event matches selected age groups
   const matchesAgeGroup = (ev: EventData): boolean => {
@@ -275,27 +275,12 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     });
   };
 
-  // Helper: Check if event matches selected family status
-  const matchesFamilyStatus = (ev: EventData): boolean => {
-    if (filters.familyStatus.length === 0) return true;
-    const audience = ev.audience.toLowerCase();
-    return filters.familyStatus.some(status => {
-      if (status === 'Families') return audience.includes('families');
-      if (status === 'Individual') return audience.includes('individual') || audience.includes('adults');
-      if (status === 'Parents') return audience.includes('parents') || audience.includes('families');
-      if (status === 'Seniors') return audience.includes('seniors') || audience.includes('55+');
-      return false;
-    });
-  };
-
   const filteredEvents = EVENTS.filter(ev => {
     if (filters.interests.length > 0) {
       const matchedCats = new Set(filters.interests.flatMap(i => INTEREST_TO_EVENT_CATS[i] || []));
       if (matchedCats.size === 0 || !matchedCats.has(ev.category)) return false;
     }
-    if (filters.languages.length > 0 && !filters.languages.some(l => ev.language.includes(l))) return false;
     if (filters.ageGroups.length > 0 && !matchesAgeGroup(ev)) return false;
-    if (filters.familyStatus.length > 0 && !matchesFamilyStatus(ev)) return false;
     if (activeCategory !== 'All' && !activeCategory.includes(ev.category)) return false;
     if (searchQuery && !ev.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
@@ -588,29 +573,43 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                     <X size={16} color={TEXT} />
                   </button>
                 </div>
-                {[
-                  { label: 'Age Group', key: 'ageGroups' as keyof Filters, options: AGE_GROUPS },
-                  { label: 'Language', key: 'languages' as keyof Filters, options: LANGUAGES },
-                  { label: 'Family Status', key: 'familyStatus' as keyof Filters, options: FAMILY_STATUS },
-                ].map(({ label, key, options }) => (
-                  <div key={key} style={{ marginBottom: '20px' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                      {options.map(opt => {
-                        const sel = tempFilters[key].includes(opt);
-                        return (
-                          <button
-                            key={opt}
-                            onClick={() => setTempFilters(p => ({ ...p, [key]: sel ? p[key].filter((x: string) => x !== opt) : [...p[key], opt] }))}
-                            style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: sel ? '#FFF0EC' : BG, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid transparent`, cursor: 'pointer', fontFamily: 'inherit' }}
-                          >
-                            {opt}
-                          </button>
-                        );
-                      })}
-                    </div>
+                {/* Age Group */}
+                <div style={{ marginBottom: '20px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Age Group</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {AGE_GROUPS.map(opt => {
+                      const sel = tempFilters.ageGroups.includes(opt);
+                      return (
+                        <button
+                          key={opt}
+                          onClick={() => setTempFilters(p => ({ ...p, ageGroups: sel ? p.ageGroups.filter(x => x !== opt) : [...p.ageGroups, opt] }))}
+                          style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: sel ? '#FFF0EC' : BG, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid transparent`, cursor: 'pointer', fontFamily: 'inherit' }}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
                   </div>
-                ))}
+                </div>
+
+                {/* Distance */}
+                <div style={{ marginBottom: '20px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Distance</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {EVENT_DISTANCES.map(opt => {
+                      const sel = tempFilters.distance === opt;
+                      return (
+                        <button
+                          key={opt}
+                          onClick={() => setTempFilters(p => ({ ...p, distance: opt }))}
+                          style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, background: sel ? '#FFF0EC' : BG, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid transparent`, cursor: 'pointer', fontFamily: 'inherit' }}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
                 {/* Interest — collapsible categories */}
                 <div style={{ marginBottom: '20px' }}>
@@ -676,7 +675,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
                 <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                   <button
-                    onClick={() => { setTempFilters({ ageGroups: [], languages: [], interests: [], familyStatus: [] }); setExpandedEventInterestCats(new Set()); }}
+                    onClick={() => { setTempFilters({ ageGroups: [], interests: [], distance: 'Any' }); setExpandedEventInterestCats(new Set()); }}
                     style={{ flex: 1, padding: '14px', borderRadius: '16px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}
                   >
                     Clear All
@@ -1321,8 +1320,8 @@ function NeighboursTab({
               {/* Toggles */}
               <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT2, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Preferences</div>
               {[
-                { label: '🎯 Shared Interests', sub: 'Only show neighbours with matching interests', value: filterSharedOnly, onChange: onSharedOnlyChange },
-                { label: '🟢 Recently Active', sub: 'Only show neighbours active within 5 hours', value: filterRecentOnly, onChange: onRecentOnlyChange },
+                { label: 'Shared Interests', sub: 'Only show neighbours with matching interests', value: filterSharedOnly, onChange: onSharedOnlyChange },
+                { label: 'Recently Active', sub: 'Only show neighbours active within 5 hours', value: filterRecentOnly, onChange: onRecentOnlyChange },
               ].map(({ label, sub, value, onChange }) => (
                 <div
                   key={label}
