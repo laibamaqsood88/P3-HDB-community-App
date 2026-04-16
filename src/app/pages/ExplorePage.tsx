@@ -427,7 +427,14 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                       return new Date(parseInt(y), MONTH_MAP[m] ?? 0, parseInt(d)).getTime();
                     };
 
-                    const sorted = [...filteredEvents].sort((a, b) => getDateMs(a.date) - getDateMs(b.date));
+                    const todayMs = todayDate.getTime();
+                    const sortKey = (dateStr: string) => {
+                      const ms = getDateMs(dateStr);
+                      if (ms === todayMs) return 0;          // Today first
+                      if (ms > todayMs) return 1 + ms;       // Future in order
+                      return 2_000_000_000_000 + ms;         // Past dates last
+                    };
+                    const sorted = [...filteredEvents].sort((a, b) => sortKey(a.date) - sortKey(b.date));
 
                     const groups: Record<string, EventData[]> = {};
                     const groupOrder: string[] = [];
