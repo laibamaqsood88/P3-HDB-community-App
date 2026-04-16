@@ -4,7 +4,7 @@ import {
   Award, Lock, ShoppingBag, CalendarDays, FileText, Settings, ChevronRight,
   Bell, Shield as ShieldIcon, HelpCircle, LogOut, Bookmark, Tag, MessageCircle,
   Trash2, RefreshCw, CheckCircle, Edit3, Search, MapPin, Star, Home as HomeIcon,
-  Users, X, Leaf, Package, Wrench,
+  Users, X, ChevronLeft, Leaf, Package, Wrench,
 } from 'lucide-react';
 import { INTEREST_CATEGORIES } from './SignUpPage';
 
@@ -192,25 +192,21 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
 
   return (
     <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-      {/* ---- Hero Header ---- */}
-      <div style={{ background: `linear-gradient(150deg, #FF6B47 0%, #FF9068 60%, #FFB08A 100%)`, padding: '44px 20px 28px', position: 'relative', overflow: 'hidden' }}>
-        {/* Decorative circles */}
-        <div style={{ position: 'absolute', top: '-40px', right: '-30px', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
-        <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-
-        {/* Close button */}
+      {/* ---- Header ---- */}
+      <div style={{ background: BG, paddingTop: '52px', paddingBottom: '20px', position: 'relative' }}>
+        {/* Back button */}
         {onClose && (
           <button
             onClick={onClose}
             style={{
               position: 'absolute', top: '54px', left: '20px',
               width: '36px', height: '36px', borderRadius: '50%',
-              background: 'rgba(0,0,0,0.25)', border: 'none',
+              background: 'rgba(0,0,0,0.07)', border: 'none',
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               zIndex: 2,
             }}
           >
-            <X size={18} color="white" />
+            <ChevronLeft size={22} color={TEXT} />
           </button>
         )}
 
@@ -220,33 +216,50 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
           style={{
             position: 'absolute', top: '54px', right: '20px',
             width: '36px', height: '36px', borderRadius: '50%',
-            background: 'rgba(0,0,0,0.25)', border: 'none',
+            background: 'rgba(0,0,0,0.07)', border: 'none',
             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-          <Settings size={18} color="white" />
+          <Settings size={18} color={TEXT} />
         </button>
 
-        {/* Avatar + name */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginBottom: '16px', marginTop: onClose ? '52px' : '0' }}>
-          <div style={{ position: 'relative' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: PRIMARY, border: '4px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '34px', fontWeight: 800, color: 'white', lineHeight: 1 }}>Y</span>
-            </div>
-          </div>
-          <div style={{ paddingBottom: '6px' }}>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: 'white', marginBottom: '4px' }}>You</div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(255,255,255,0.2)' }}>
-              <CheckCircle size={13} color="#34C759" />
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.95)', fontWeight: 600 }}>Singpass Verified</span>
-            </div>
-          </div>
+        {/* Title */}
+        <div style={{ textAlign: 'center', fontSize: '18px', fontWeight: 800, color: TEXT, marginBottom: '20px' }}>
+          Profile
         </div>
 
-        {/* Estate pill */}
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 13px', borderRadius: '20px', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)' }}>
-          <MapPin size={11} color="rgba(255,255,255,0.9)" />
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>Bishan-AMK Estate</span>
+        {/* Avatar — centred */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <div style={{ width: '88px', height: '88px', borderRadius: '50%', background: PRIMARY, border: `3px solid ${BORDER}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '36px', fontWeight: 800, color: 'white', lineHeight: 1 }}>R</span>
+            </div>
+            {/* Edit pencil badge */}
+            <div style={{
+              position: 'absolute', bottom: 0, right: 0,
+              width: '26px', height: '26px', borderRadius: '50%',
+              background: PRIMARY, border: '2px solid white',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+            }}>
+              <Edit3 size={12} color="white" />
+            </div>
+          </div>
+
+          {/* Name */}
+          <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT }}>Richard</div>
+
+          {/* Singpass Verified badge */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(52,199,89,0.1)' }}>
+            <CheckCircle size={13} color="#34C759" />
+            <span style={{ fontSize: '12px', color: '#34C759', fontWeight: 600 }}>Singpass Verified</span>
+          </div>
+
+          {/* Estate pill */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 13px', borderRadius: '20px', background: '#FFF0EC', border: `1px solid ${PRIMARY}` }}>
+            <MapPin size={11} color={PRIMARY} />
+            <span style={{ fontSize: '11px', color: PRIMARY, fontWeight: 600 }}>Bishan-AMK Estate</span>
+          </div>
         </div>
       </div>
 
