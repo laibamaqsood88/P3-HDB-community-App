@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ChevronLeft, Star, MapPin } from 'lucide-react';
+import { ChevronLeft, Star, MapPin, MessageCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -189,9 +190,26 @@ export function NeighbourProfilePage({
         >
           <ChevronLeft size={20} color={TEXT} />
         </button>
-        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>
+        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT, flex: 1 }}>
           Neighbour Profile
         </span>
+        <button
+          onClick={() => toast.success(`Message sent to ${name}!`)}
+          style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: PRIMARY,
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <MessageCircle size={18} color="white" strokeWidth={2} />
+        </button>
       </div>
 
       {/* ── Scrollable body ── */}

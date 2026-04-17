@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList, Plus, Utensils, Camera, BookOpen, Heart } from 'lucide-react';
+import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList, Plus, Utensils, Camera, BookOpen, Heart, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { REQUESTS_DATA, REQUESTS_CAT_EMOJIS } from './RequestsPage';
 import { NeighbourProfile } from './NeighbourProfilePage';
@@ -232,15 +232,23 @@ const FAMILY_STATUS_BREAKDOWN = [
   { label: 'Multigenerational household',        count: 7,  color: '#DB2777' },
 ];
 
+const LANGUAGE_BREAKDOWN = [
+  { label: 'English',     count: 14, color: '#2563EB' },
+  { label: 'Mandarin',   count: 8,  color: '#D97706' },
+  { label: 'Malay',      count: 4,  color: '#059669' },
+  { label: 'Tamil',      count: 2,  color: '#DB2777' },
+  { label: 'Multilingual', count: 3, color: '#7C3AED' },
+];
+
 const NEIGHBOURS_GOING = [
-  { id: 1, initials: 'AL', color: '#FF6B47', unit: 'Blk 445 #12-34', status: 'Single' },
-  { id: 2, initials: 'BT', color: '#7C3AED', unit: 'Blk 447 #08-12', status: 'Couple' },
-  { id: 3, initials: 'CS', color: '#D97706', unit: 'Blk 448 #03-22', status: 'Living with kids' },
-  { id: 4, initials: 'DM', color: '#059669', unit: 'Blk 445 #15-01', status: 'Senior (60+)' },
-  { id: 5, initials: 'EN', color: '#0891B2', unit: 'Blk 449 #07-05', status: 'Single' },
-  { id: 6, initials: 'FR', color: '#DB2777', unit: 'Blk 446 #11-18', status: 'Living with parents' },
-  { id: 7, initials: 'GK', color: '#EA580C', unit: 'Blk 450 #04-09', status: 'Couple' },
-  { id: 8, initials: 'HL', color: '#475569', unit: 'Blk 445 #09-33', status: 'Senior (60+)' },
+  { id: 1, initials: 'AL', name: 'Alex Lim',   color: '#FF6B47', unit: 'Blk 445 #12-34', status: 'Single',              distance: '0.1 km', interests: ['Fitness & Sports', 'Cooking & Baking'],               languages: ['English', 'Chinese'] },
+  { id: 2, initials: 'BT', name: 'Ben Tan',    color: '#7C3AED', unit: 'Blk 447 #08-12', status: 'Couple',              distance: '0.2 km', interests: ['Gaming', 'Technology & Digital Skills'],               languages: ['English', 'Chinese'] },
+  { id: 3, initials: 'CS', name: 'Clara Soh',  color: '#D97706', unit: 'Blk 448 #03-22', status: 'Living with kids',    distance: '0.3 km', interests: ['Cooking & Baking', 'Gardening & Plants'],              languages: ['English', 'Malay'] },
+  { id: 4, initials: 'DM', name: 'Diana Mak',  color: '#059669', unit: 'Blk 445 #15-01', status: 'Senior (60+)',        distance: '0.4 km', interests: ['Gardening & Plants', 'Yoga & Mindfulness'],            languages: ['English', 'Chinese'] },
+  { id: 5, initials: 'EN', name: 'Eli Ng',     color: '#0891B2', unit: 'Blk 449 #07-05', status: 'Single',              distance: '0.5 km', interests: ['Community Volunteering', 'Arts & Crafts'],             languages: ['English'] },
+  { id: 6, initials: 'FR', name: 'Fiona Raj',  color: '#DB2777', unit: 'Blk 446 #11-18', status: 'Living with parents', distance: '0.6 km', interests: ['Music & Performing Arts', 'Dance'],                    languages: ['English', 'Tamil'] },
+  { id: 7, initials: 'GK', name: 'Gary Koh',   color: '#EA580C', unit: 'Blk 450 #04-09', status: 'Couple',              distance: '0.8 km', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], languages: ['English', 'Chinese'] },
+  { id: 8, initials: 'HL', name: 'Hannah Lee', color: '#475569', unit: 'Blk 445 #09-33', status: 'Senior (60+)',        distance: '1.0 km', interests: ['Photography', 'Outdoor Activities'],                   languages: ['English', 'Chinese'] },
 ];
 
 // ---- Notifications mock data ----
@@ -451,67 +459,94 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 100px' }}>
-          {/* Stacked bar chart section */}
-          <div style={{ background: CARD, borderRadius: '14px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          {/* Household Type horizontal bar chart */}
+          <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
               <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>By Household Type</span>
               <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{total} going</span>
             </div>
-
-            {/* Single stacked bar */}
-            <div style={{ height: '20px', borderRadius: '10px', overflow: 'hidden', display: 'flex', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {FAMILY_STATUS_BREAKDOWN.map((item, i) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(item.count / total) * 100}%` }}
-                  transition={{ duration: 0.6, ease: 'easeOut', delay: i * 0.08 }}
-                  style={{ height: '100%', background: item.color }}
-                />
-              ))}
-            </div>
-
-            {/* Legend */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {FAMILY_STATUS_BREAKDOWN.map(item => (
-                <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: item.color, flexShrink: 0 }} />
+                <div key={item.label}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                     <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
+                      <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / total) * 100)}%)</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
-                    <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / total) * 100)}%)</span>
+                  <div style={{ height: '10px', borderRadius: '6px', background: BG, overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(item.count / total) * 100}%` }}
+                      transition={{ duration: 0.6, ease: 'easeOut', delay: i * 0.08 }}
+                      style={{ height: '100%', borderRadius: '6px', background: item.color }}
+                    />
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Neighbours attending */}
-          <div style={{ marginBottom: '8px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
-              Neighbours Attending
+          {/* Language horizontal bar chart */}
+          <div style={{ background: CARD, borderRadius: '22px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <span style={{ fontSize: '15px', fontWeight: 800, color: TEXT }}>By Language Spoken</span>
+              <span style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{LANGUAGE_BREAKDOWN.reduce((s, i) => s + i.count, 0)} going</span>
             </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {LANGUAGE_BREAKDOWN.map((item, i) => {
+                const langTotal = LANGUAGE_BREAKDOWN.reduce((s, x) => s + x.count, 0);
+                return (
+                  <div key={item.label}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
+                        <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / langTotal) * 100)}%)</span>
+                      </div>
+                    </div>
+                    <div style={{ height: '10px', borderRadius: '6px', background: BG, overflow: 'hidden' }}>
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(item.count / langTotal) * 100}%` }}
+                        transition={{ duration: 0.6, ease: 'easeOut', delay: i * 0.08 }}
+                        style={{ height: '100%', borderRadius: '6px', background: item.color }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Neighbours attending */}
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, marginBottom: '12px' }}>Neighbours Attending</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {NEIGHBOURS_GOING.map(n => (
                 <motion.div
                   key={n.id}
                   whileTap={{ scale: 0.98 }}
-                  style={{ background: CARD, borderRadius: '14px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}
+                  onClick={() => onOpenNeighbourProfile?.({
+                    name: n.name,
+                    avatar: n.initials,
+                    color: n.color,
+                    block: n.unit.split(' #')[0],
+                    distance: n.distance,
+                    interests: n.interests,
+                    languages: n.languages,
+                  })}
+                  style={{ background: CARD, borderRadius: '18px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '14px', boxShadow: '0 1px 8px rgba(0,0,0,0.05)', cursor: 'pointer' }}
                 >
-                  {/* Avatar */}
                   <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <span style={{ fontSize: '14px', fontWeight: 800, color: 'white' }}>{n.initials}</span>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>Neighbour {n.initials}</div>
-                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{n.unit}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>{n.name}</div>
+                    <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500 }}>{n.unit.split(' #')[0]} · {n.distance}</div>
                   </div>
-                  {/* Status pill */}
-                  <div style={{ padding: '4px 10px', borderRadius: '20px', background: BG, flexShrink: 0 }}>
-                    <span style={{ fontSize: '11px', fontWeight: 600, color: TEXT2 }}>{n.status}</span>
-                  </div>
+                  <ChevronLeft size={16} color={MUTED} style={{ transform: 'rotate(180deg)' }} />
                 </motion.div>
               ))}
             </div>
@@ -922,19 +957,35 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     <div style={{ fontSize: '13px', color: MUTED, fontWeight: 500, marginBottom: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {neighbour.interests.join(' | ')}
                     </div>
-                    {/* Say Hello button */}
-                    <button
+                    {/* Chat button */}
+                    <motion.button
+                      whileTap={{ scale: 0.98 }}
                       onClick={e => { e.stopPropagation(); onSayHello ? onSayHello(neighbour) : toast.success(`Message sent to ${neighbour.name}!`); }}
                       style={{
-                        padding: '6px 16px', borderRadius: '20px',
+                        display: 'flex', padding: '6px 16px', borderRadius: '20px',
                         background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,
                         color: PRIMARY, fontSize: '12px', fontWeight: 700,
                         cursor: 'pointer', fontFamily: 'inherit',
-                        display: 'flex', alignItems: 'center', gap: '5px',
+                        alignItems: 'center', justifyContent: 'center', gap: '5px',
                       }}
                     >
-                      👋 Say Hello
-                    </button>
+                      <style>{`
+                        @keyframes chatIconBounce {
+                          0%, 100% { transform: translateY(0) scale(1) rotate(-4deg); }
+                          30%       { transform: translateY(-3px) scale(1.18) rotate(4deg); }
+                          60%       { transform: translateY(1px) scale(0.92) rotate(-2deg); }
+                        }
+                      `}</style>
+                      <span style={{
+                        display: 'inline-flex',
+                        animation: 'chatIconBounce 2s ease-in-out infinite',
+                        filter: 'drop-shadow(0px 3px 5px rgba(255,107,71,0.55)) drop-shadow(0px 1px 2px rgba(255,160,120,0.4))',
+                        transformOrigin: 'center bottom',
+                      }}>
+                        <MessageCircle size={14} color="#FF4B1F" strokeWidth={2.2} fill="rgba(255,107,71,0.22)" />
+                      </span>
+                      Chat
+                    </motion.button>
                   </div>
                 </div>
               </motion.div>
