@@ -784,7 +784,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               whileHover={{ scale: 1.03 }}
               onClick={onOpenGroups}
               style={{
-                flexShrink: 0, width: 'calc((100vw - 40px) / 2)', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
+                flexShrink: 0, width: '148px', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
                 background: '#F4FFF7',
                 border: '1.5px dashed #4CA154',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
