@@ -349,28 +349,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               </div>
             </div>
 
-            {/* Organizer card */}
-            <div style={{ background: CARD, borderRadius: '14px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
-              <img src={ev.organizerImage} alt="" style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', flexShrink: 0 }} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, marginBottom: '2px' }}>{ev.organizer}</div>
-                <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '4px' }}>{ev.title}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Star size={12} color="#FF6B47" fill="#FF6B47" />
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: TEXT }}>{ev.organizerRating}</span>
-                  <span style={{ fontSize: '12px', color: MUTED }}>· {ev.organizerReviews} reviews</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div style={{ background: CARD, borderRadius: '14px', padding: '16px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this event</div>
-              <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.65' }}>{ev.description}</div>
-            </div>
-
             {/* Hosting & Going */}
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '18px' }}>
               {/* Hosting */}
               <div style={{ flex: 1, background: CARD, borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: TEXT2, marginBottom: '10px' }}>Hosting ({ev.hosting})</div>
@@ -405,6 +385,26 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   )}
                 </div>
               </motion.div>
+            </div>
+
+            {/* Organizer card */}
+            <div style={{ background: CARD, borderRadius: '14px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
+              <img src={ev.organizerImage} alt="" style={{ width: '52px', height: '52px', borderRadius: '14px', objectFit: 'cover', flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, marginBottom: '2px' }}>{ev.organizer}</div>
+                <div style={{ fontSize: '12px', color: TEXT2, fontWeight: 500, marginBottom: '4px' }}>{ev.title}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <Star size={12} color="#FF6B47" fill="#FF6B47" />
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: TEXT }}>{ev.organizerRating}</span>
+                  <span style={{ fontSize: '12px', color: MUTED }}>· {ev.organizerReviews} reviews</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div style={{ background: CARD, borderRadius: '14px', padding: '16px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this event</div>
+              <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.65' }}>{ev.description}</div>
             </div>
           </div>
         </div>
@@ -540,16 +540,13 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           >
             <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </button>
-          <div style={{ flex: 1, textAlign: 'center', padding: '0 12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', marginBottom: '3px' }}>
+          <div style={{ flex: 1, padding: '0 12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '3px' }}>
               <MapPinIcon size={11} color={TEXT2} />
               <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>Bishan-AMK Estate</span>
-              <span style={{ padding: '2px 7px', borderRadius: '20px', fontSize: '10px', fontWeight: 700, background: '#D1FAE5', color: '#059669', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                <Check size={9} />Verified
-              </span>
             </div>
-            <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              Good morning <Sun size={16} color="#FF9500" />
+            <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>
+              Hi, Richard
             </div>
           </div>
           <button
@@ -838,23 +835,39 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   key={r.id}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onOpenRequest ? onOpenRequest(r.id) : undefined}
-                  style={{ flexShrink: 0, width: '196px', background: CARD, borderRadius: '14px', padding: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', cursor: 'pointer' }}
+                  style={{
+                    flexShrink: 0, width: '280px', background: CARD, borderRadius: '14px',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)',
+                    cursor: 'pointer', display: 'flex', flexDirection: 'row', height: '130px', overflow: 'hidden',
+                  }}
                 >
-                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px', overflow: 'hidden', flexShrink: 0 }}>
+                  {/* Left image */}
+                  <div style={{ width: '100px', flexShrink: 0, background: BG, overflow: 'hidden' }}>
                     {r.image
                       ? <img src={r.image} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <ClipboardList size={20} color={PRIMARY} />
+                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ClipboardList size={28} color={MUTED} /></div>
                     }
                   </div>
-                  <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '5px', lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
-                    {r.title}
-                  </div>
-                  <div style={{ fontSize: '11px', color: TEXT2, lineHeight: '1.4', marginBottom: '10px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
-                    {r.description}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                    <span style={{ padding: '3px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: 700, background: tc.bg, color: tc.text }}>{r.type}</span>
-                    <span style={{ fontSize: '10px', color: MUTED, fontWeight: 500 }}>Exp {r.expiresOn}</span>
+                  {/* Right content */}
+                  <div style={{ flex: 1, minWidth: 0, padding: '10px 12px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                        <span style={{ padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: tc.bg, color: tc.text, flexShrink: 0 }}>{r.type}</span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '3px' }}>{r.distance}</div>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, marginBottom: '6px' }}>{r.title}</div>
+                    </div>
+                    {/* Poster row */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: r.poster.color, flexShrink: 0, overflow: 'hidden' }}>
+                        {r.poster.avatarUrl
+                          ? <img src={r.poster.avatarUrl} alt={r.poster.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          : <span style={{ fontSize: '7px', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>{r.poster.initials}</span>
+                        }
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: 600, color: TEXT2 }}>{r.poster.name}</span>
+                      <span style={{ marginLeft: 'auto', fontSize: '10px', color: MUTED }}>{r.postedAgo}</span>
+                    </div>
                   </div>
                 </motion.div>
               );
