@@ -36,6 +36,7 @@ interface Conversation {
   distance?: string;       // e.g. "0.3 km away"
   listingImage?: string;   // thumbnail of the listing/request
   price?: string;          // e.g. "Free", "$25", "Free Request"
+  listingId?: number;      // id of the linked marketplace item or request
 }
 
 const CONVERSATIONS: Conversation[] = [
@@ -79,6 +80,7 @@ const CONVERSATIONS: Conversation[] = [
     languages: ['English', 'Malay'],
     listingImage: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
     price: 'Free',
+    listingId: 101,
   },
   {
     id: 4,
@@ -112,6 +114,7 @@ const CONVERSATIONS: Conversation[] = [
     distance: '0.3 km away',
     listingImage: 'https://images.unsplash.com/photo-1771810506686-f70bafda1a16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
     price: 'Free Request',
+    listingId: 1,
   },
 ];
 
@@ -236,9 +239,11 @@ interface MessagesPageProps {
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
   onNewGroup?: () => void;
   onNewNeighbour?: () => void;
+  onOpenMarketplaceListing?: (id: number) => void;
+  onOpenRequestListing?: (id: number) => void;
 }
 
-export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile, onNewGroup, onNewNeighbour }: MessagesPageProps = {}) {
+export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile, onNewGroup, onNewNeighbour, onOpenMarketplaceListing, onOpenRequestListing }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -756,6 +761,8 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
               onSend={() => sendMessage(openConv)}
               onBack={() => setOpenConv(null)}
               onOpenNeighbourProfile={onOpenNeighbourProfile}
+              onOpenMarketplaceListing={onOpenMarketplaceListing}
+              onOpenRequestListing={onOpenRequestListing}
             />
           </motion.div>
         )}
@@ -773,6 +780,8 @@ function ChatScreen({
   onSend,
   onBack,
   onOpenNeighbourProfile,
+  onOpenMarketplaceListing,
+  onOpenRequestListing,
 }: {
   conv: Conversation;
   messages: ChatMessage[];
@@ -781,6 +790,8 @@ function ChatScreen({
   onSend: () => void;
   onBack: () => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
+  onOpenMarketplaceListing?: (id: number) => void;
+  onOpenRequestListing?: (id: number) => void;
 }) {
   const isGroup = conv.type === 'group';
   const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
@@ -883,7 +894,14 @@ function ChatScreen({
 
       {/* Listing banner — marketplace & request only */}
       {(conv.type === 'marketplace' || conv.type === 'request') && conv.listingImage && (
-        <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)`, padding: '10px 16px' }}>
+        <button
+          onClick={() => {
+            if (!conv.listingId) return;
+            if (conv.type === 'marketplace') onOpenMarketplaceListing?.(conv.listingId);
+            else onOpenRequestListing?.(conv.listingId);
+          }}
+          style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)`, padding: '10px 16px', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img
               src={conv.listingImage}
@@ -895,13 +913,14 @@ function ChatScreen({
                 {conv.name}
               </div>
               {conv.price && (
-                <div style={{ fontSize: '13px', fontWeight: 500, color: TEXT, marginTop: '2px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 500, color: TEXT2, marginTop: '2px' }}>
                   {conv.price}
                 </div>
               )}
             </div>
+            <SquareArrowOutUpRight size={16} color={MUTED} style={{ flexShrink: 0 }} />
           </div>
-        </div>
+        </button>
       )}
 
       {/* Activity Board — groups only */}

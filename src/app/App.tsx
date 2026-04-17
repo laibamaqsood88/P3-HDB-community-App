@@ -248,6 +248,14 @@ export default function App() {
             onOpenNeighbourProfile={openNeighbourProfile}
             onNewGroup={openExploreGroups}
             onNewNeighbour={openExploreNeighbours}
+            onOpenMarketplaceListing={(id) => {
+              setInitialMarketplaceItemId(id);
+              setActiveTab('marketplace');
+            }}
+            onOpenRequestListing={(id) => {
+              setInitialRequestId(id);
+              setActiveTab('requests');
+            }}
           />
         )}
 
