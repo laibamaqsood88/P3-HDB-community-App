@@ -53,6 +53,8 @@ interface EventsPageProps {
   onSayHello?: (neighbour: any) => void;
   joinedGroups?: any[];
   onOpenExploreEvents?: () => void;
+  registeredEventIds?: number[];
+  onToggleRegister?: (id: number) => void;
 }
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
@@ -270,9 +272,9 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 };
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents, registeredEventIds = [], onToggleRegister }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
-  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]); // no pre-registered events
+  const registeredEvents = registeredEventIds;
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNeighbour, setSelectedNeighbour] = useState<typeof MOCK_NEIGHBOURS[0] | null>(null);
   const [readNotifs, setReadNotifs] = useState<number[]>(NOTIFICATIONS.filter(n => n.read).map(n => n.id));
@@ -285,11 +287,9 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
   const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
 
   const toggleRegister = (id: number) => {
-    setRegisteredEvents(p => {
-      const isRegistered = p.includes(id);
-      toast.success(isRegistered ? 'Registration cancelled' : 'Registered! See you there 🎉');
-      return isRegistered ? p.filter(x => x !== id) : [...p, id];
-    });
+    const isRegistered = registeredEvents.includes(id);
+    toast.success(isRegistered ? 'Registration cancelled' : 'Registered! See you there 🎉');
+    onToggleRegister?.(id);
   };
 
   // ---- Detail screen ----
@@ -697,8 +697,15 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
 
         {/* My Groups */}
         <div style={{ marginBottom: '24px' }}>
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Groups</span>
+            <button
+              onClick={onOpenGroups}
+              style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
+            >
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>Find more groups</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>›</span>
+            </button>
           </div>
           <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
             {joinedGroups.map(group => {
@@ -722,8 +729,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 </motion.div>
               );
             })}
-            {/* Animated Find-a-group card */}
-            <style>{`
+            {/* Animated Find-a-group card — only shown when user has no groups */}
+            {joinedGroups.length === 0 && <><style>{`
               @keyframes floatGroups {
                 0%, 100% { transform: translateY(0px) rotateX(0deg); }
                 50% { transform: translateY(-6px) rotateX(8deg); }
@@ -802,7 +809,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <span style={{ fontSize: '12px', fontWeight: 700, color: '#4CA154', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
                 Find a group
               </span>
-            </motion.div>
+            </motion.div></>}
           </div>
         </div>
 
@@ -833,8 +840,11 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   onClick={() => onOpenRequest ? onOpenRequest(r.id) : undefined}
                   style={{ flexShrink: 0, width: '196px', background: CARD, borderRadius: '14px', padding: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', cursor: 'pointer' }}
                 >
-                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-                    <ClipboardList size={20} color={PRIMARY} />
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px', overflow: 'hidden', flexShrink: 0 }}>
+                    {r.image
+                      ? <img src={r.image} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <ClipboardList size={20} color={PRIMARY} />
+                    }
                   </div>
                   <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, marginBottom: '5px', lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
                     {r.title}

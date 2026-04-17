@@ -34,6 +34,10 @@ export default function App() {
   const [showBottomNav, setShowBottomNav] = useState(true);
   const [neighbourProfile, setNeighbourProfile] = useState<NeighbourProfile | null>(null);
   const [joinedGroups, setJoinedGroups] = useState<any[]>([]);
+  const [registeredEventIds, setRegisteredEventIds] = useState<number[]>([]);
+  const toggleRegisteredEvent = (id: number) => {
+    setRegisteredEventIds(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  };
 
   const openNeighbourProfile = (profile: NeighbourProfile) => setNeighbourProfile(profile);
 
@@ -135,6 +139,8 @@ export default function App() {
             onOpenGroups={openExploreGroups}
             onOpenGroupChat={openGroupChat}
             joinedGroups={joinedGroups}
+            registeredEventIds={registeredEventIds}
+            onToggleRegister={toggleRegisteredEvent}
             onOpenMarketplace={() => setActiveTab('marketplace')}
             savedEvents={savedEvents}
             onOpenNeighbours={openExploreNeighbours}
@@ -196,6 +202,8 @@ export default function App() {
               setInitialGroupChatId(convId);
               setActiveTab('messages');
             }}
+            registeredEventIds={registeredEventIds}
+            onToggleRegister={toggleRegisteredEvent}
             onNavVisibilityChange={setShowBottomNav}
             onOpenNeighbourProfile={openNeighbourProfile}
           />

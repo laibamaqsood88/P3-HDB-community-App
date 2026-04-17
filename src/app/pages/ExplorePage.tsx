@@ -196,6 +196,8 @@ const NEIGHBOUR_INTEREST_COLORS: Record<string, { bg: string; text: string }> = 
 interface ExplorePageProps {
   initialEventId?: number;
   initialSubTab?: 'events' | 'groups' | 'neighbours';
+  registeredEventIds?: number[];
+  onToggleRegister?: (id: number) => void;
   onSubTabChange?: (tab: 'events' | 'groups' | 'neighbours') => void;
   userInterests?: string[];
   onAddConversation?: (conv: any) => void;
@@ -205,7 +207,7 @@ interface ExplorePageProps {
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
 }
 
-export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat, onJoinGroup, onNavVisibilityChange, onOpenNeighbourProfile }: ExplorePageProps) {
+export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTabChange, userInterests = [], onAddConversation, onOpenDirectChat, onJoinGroup, onNavVisibilityChange, onOpenNeighbourProfile, registeredEventIds = [], onToggleRegister }: ExplorePageProps) {
   const initialScreen: NavFrame = initialEventId
     ? { screen: 'detail', params: { event: EVENTS.find(e => e.id === initialEventId) || EVENTS[0] } }
     : { screen: 'feed' };
@@ -214,7 +216,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const [filters, setFilters] = useState<Filters>({ ageGroups: [], interests: [], distance: 'Any' });
   const [tempFilters, setTempFilters] = useState<Filters>({ ageGroups: [], interests: [], distance: 'Any' });
   const [savedEvents, setSavedEvents] = useState<number[]>([]);
-  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
+  const registeredEvents = registeredEventIds;
   const [showFilter, setShowFilter] = useState(false);
   const [reminderOption, setReminderOption] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -297,7 +299,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   });
 
   const toggleSave = (id: number) => setSavedEvents(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
-  const toggleRegister = (id: number) => setRegisteredEvents(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  const toggleRegister = (id: number) => onToggleRegister?.(id);
 
   // ---- Feed screen (unified for all 3 sub-tabs) ----
   if (current.screen === 'feed' || current.screen === 'filtered') {
@@ -1282,7 +1284,27 @@ function NeighboursTab({
                         alignItems: 'center', justifyContent: 'center', gap: '5px',
                       }}
                     >
-                      👋 Say Hello
+                      <style>{`
+                        @keyframes chatIconBounce {
+                          0%, 100% { transform: translateY(0) scale(1) rotate(-4deg); }
+                          30%       { transform: translateY(-3px) scale(1.18) rotate(4deg); }
+                          60%       { transform: translateY(1px) scale(0.92) rotate(-2deg); }
+                        }
+                      `}</style>
+                      <span style={{
+                        display: 'inline-flex',
+                        animation: 'chatIconBounce 2s ease-in-out infinite',
+                        filter: 'drop-shadow(0px 3px 5px rgba(255,107,71,0.55)) drop-shadow(0px 1px 2px rgba(255,160,120,0.4))',
+                        transformOrigin: 'center bottom',
+                      }}>
+                        <MessageCircle
+                          size={14}
+                          color="#FF4B1F"
+                          strokeWidth={2.2}
+                          fill="rgba(255,107,71,0.22)"
+                        />
+                      </span>
+                       Chat
                     </motion.button>
 
                   </div>{/* end right column */}
@@ -1301,8 +1323,8 @@ function NeighboursTab({
             onClick={() => setVisibleCount(p => p + 5)}
             style={{
               width: '100%', marginTop: '16px', padding: '18px 14px',
-              borderRadius: '18px', background: CARD,
-              border: `1.5px solid ${BORDER}`,
+              borderRadius: '18px', background: 'transparent',
+              border: 'none',
               cursor: 'pointer', fontFamily: 'inherit',
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
             }}
