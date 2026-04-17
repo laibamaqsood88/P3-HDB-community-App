@@ -357,6 +357,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                   const isActive = searchMode ? searchScopeTab === tab : activeSubTab === tab;
                   return (
                     <button key={tab}
+                      data-tour={`${tab}-subtab`}
                       onClick={() => {
                         if (searchMode) { setSearchScopeTab(tab); handleSubTabChange(tab); }
                         else handleSubTabChange(tab);

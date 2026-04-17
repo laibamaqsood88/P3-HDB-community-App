@@ -346,7 +346,7 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
                       </div>
                     )}
                   </button>
-                  <button onClick={onPost}
+                  <button data-tour="requests-add" onClick={onPost}
                     style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Plus size={20} color="white" />
                   </button>

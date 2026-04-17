@@ -573,7 +573,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             onClick={onOpenProfile}
             style={{ width: '42px', height: '42px', borderRadius: '50%', border: 'none', cursor: 'pointer', padding: 0, overflow: 'hidden', flexShrink: 0 }}
           >
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=faces&fit=crop&w=200&h=200&q=80" alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </button>
           <div style={{ flex: 1, padding: '0 12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '3px' }}>
@@ -581,7 +581,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>Bishan-AMK Estate</span>
             </div>
             <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>
-              Hi, Richard
+              Hi, Rachel
             </div>
           </div>
           <button

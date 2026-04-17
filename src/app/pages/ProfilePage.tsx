@@ -243,13 +243,13 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
         {/* Avatar — centred */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <img
-            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80"
-            alt="Richard"
+            src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=faces&fit=crop&w=200&h=200&q=80"
+            alt="Rachel"
             style={{ width: '88px', height: '88px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${BORDER}`, display: 'block' }}
           />
 
           {/* Name */}
-          <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT }}>Richard</div>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: TEXT }}>Rachel</div>
 
           {/* Estate location */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -410,8 +410,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             {/* Current photo preview */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '28px', gap: '10px' }}>
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=faces&fit=crop&w=200&h=200&q=80"
-                alt="Richard"
+                src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=faces&fit=crop&w=200&h=200&q=80"
+                alt="Rachel"
                 style={{ width: '96px', height: '96px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${BORDER}` }}
               />
               <div style={{ fontSize: '13px', color: MUTED, fontWeight: 500 }}>Current photo</div>

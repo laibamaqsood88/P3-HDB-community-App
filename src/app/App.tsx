@@ -11,6 +11,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { NeighbourProfilePage, NeighbourProfile } from './pages/NeighbourProfilePage';
+import { GuidedTour } from './components/GuidedTour';
 
 type AuthScreen = 'login' | 'signup' | 'main';
 type ActiveTab = 'events' | 'explore' | 'marketplace' | 'requests' | 'messages';
@@ -291,6 +292,17 @@ export default function App() {
           </div>
         )}
       </div>
+
+      {/* Guided Tour Onboarding */}
+      <GuidedTour
+        onNavigate={(tab) => {
+          setShowBottomNav(true);
+          setActiveTab(tab as any);
+        }}
+        onNavigateSubTab={(subTab) => {
+          setExploreInitialSubTab(subTab);
+        }}
+      />
 
       {/* Neighbour Profile Overlay */}
       <AnimatePresence>

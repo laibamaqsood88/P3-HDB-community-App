@@ -8,11 +8,11 @@ interface Props {
   onTabChange: (tab: ActiveTab) => void;
 }
 
-const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any> }[] = [
+const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any>; tourId?: string }[] = [
   { id: 'events',      label: 'Home',      Icon: Home },
-  { id: 'explore',     label: 'Explore',   Icon: Compass },
-  { id: 'marketplace', label: 'Market',    Icon: ShoppingBag },
-  { id: 'requests',    label: 'Requests',  Icon: ClipboardList },
+  { id: 'explore',     label: 'Explore',   Icon: Compass,       tourId: 'explore-tab' },
+  { id: 'marketplace', label: 'Market',    Icon: ShoppingBag,   tourId: 'market-tab' },
+  { id: 'requests',    label: 'Requests',  Icon: ClipboardList, tourId: 'requests-tab' },
   { id: 'messages',    label: 'Messages',  Icon: MessageCircle },
 ];
 
@@ -41,7 +41,7 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
           gap: '2px',
         }}
       >
-        {NAV_TABS.map(({ id, label, Icon }) => {
+        {NAV_TABS.map(({ id, label, Icon, tourId }) => {
           const active = activeTab === id;
           return (
             <motion.button
@@ -49,6 +49,7 @@ export function BottomNav({ activeTab, onTabChange }: Props) {
               onClick={() => onTabChange(id)}
               whileTap={{ scale: 0.93 }}
               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              {...(tourId ? { 'data-tour': tourId } : {})}
               style={{
                 flex: 1,
                 display: 'flex',
