@@ -619,121 +619,112 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             </button>
           </div>
 
-          {signedUpEvents.length === 0 ? (
-            <div style={{ display: 'flex' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
+            {signedUpEvents.map(ev => (
               <motion.div
-                whileTap={{ scale: 0.95 }}
-                whileHover={{ scale: 1.03 }}
-                onClick={() => onOpenExploreEvents?.()}
+                key={ev.id}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => goTo('detail', { event: ev })}
                 style={{
-                  flexShrink: 0, width: 'calc((100vw - 40px) / 2)', minHeight: '167px', borderRadius: '16px',
-                  background: '#F7F5FF',
-                  border: '1.5px dashed #A989EE',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  gap: '10px', cursor: 'pointer', position: 'relative', overflow: 'hidden',
+                  flexShrink: 0, width: '240px', background: CARD, borderRadius: '16px',
+                  boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer', overflow: 'hidden',
                 }}
               >
-                {/* Soft background glow */}
-                <div style={{
-                  position: 'absolute', width: '90px', height: '90px', borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(0,0,0,0.06) 0%, transparent 70%)',
-                  animation: 'pulseRing 2.4s ease-in-out infinite',
-                  pointerEvents: 'none',
-                }} />
-
-                {/* 3D floating icon */}
-                <div style={{
-                  perspective: '300px',
-                  animation: 'floatGroups 3s ease-in-out infinite',
-                }}>
-                  <div style={{
-                    width: '56px', height: '56px', borderRadius: '50%',
-                    background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 40%, #e0e0e0 100%)',
-                    boxShadow: '0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(0,0,0,0.06)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    position: 'relative',
-                  }}>
-                    {/* Highlight shine */}
-                    <div style={{
-                      position: 'absolute', top: '8px', left: '10px',
-                      width: '18px', height: '10px', borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.85)',
-                      transform: 'rotate(-30deg)',
-                      filter: 'blur(3px)',
-                      pointerEvents: 'none',
-                    }} />
-                    <Calendar size={22} color="#A989EE" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(169,137,238,0.35))' }} />
-                    {/* Plus badge */}
-                    <div style={{
-                      position: 'absolute', bottom: '-4px', right: '-4px',
-                      width: '20px', height: '20px', borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #C4A8F5 0%, #A989EE 100%)',
-                      boxShadow: '0 2px 6px rgba(169,137,238,0.5), 0 0 0 2px #F7F5FF',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <Plus size={11} color="white" strokeWidth={3} />
-                    </div>
+                {/* Top: full-width image with category tag */}
+                <div style={{ width: '100%', height: '130px', position: 'relative' }}>
+                  <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', top: '8px', left: '8px', padding: '3px 8px', borderRadius: '8px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 800 }}>
+                    {ev.category}
                   </div>
                 </div>
-
-
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#A989EE', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
-                  Find an event
-                </span>
+                {/* Bottom: content */}
+                <div style={{ padding: '12px' }}>
+                  {/* Registered tag */}
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '8px', padding: '3px 8px', marginBottom: '8px' }}>
+                    <Check size={9} color="#16A34A" strokeWidth={2.5} />
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
+                  </div>
+                  {/* Organiser */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+                    <img src={ev.organizerImage} alt={ev.organizer} style={{ width: '16px', height: '16px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                    <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{ev.organizer}</span>
+                  </div>
+                  {/* Title */}
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '8px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
+                  {/* Date & time */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                    <Calendar size={11} color={MUTED} />
+                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Clock size={11} color={MUTED} />
+                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
+                  </div>
+                  {/* Location */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                    <MapPin size={11} color={MUTED} />
+                    <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
+                  </div>
+                </div>
               </motion.div>
-            </div>
-          ) : (
-            <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
-              {signedUpEvents.map(ev => (
-                <motion.div
-                  key={ev.id}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => goTo('detail', { event: ev })}
-                  style={{
-                    flexShrink: 0, width: '240px', background: CARD, borderRadius: '16px',
-                    boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer', overflow: 'hidden',
-                  }}
-                >
-                  {/* Top: full-width image with category tag */}
-                  <div style={{ width: '100%', height: '130px', position: 'relative' }}>
-                    <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', top: '8px', left: '8px', padding: '3px 8px', borderRadius: '8px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 800 }}>
-                      {ev.category}
-                    </div>
+            ))}
+            {/* Find-an-event CTA — always shown after registered events */}
+            <motion.div
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              onClick={() => onOpenExploreEvents?.()}
+              style={{
+                flexShrink: 0, width: 'calc((100vw - 40px) / 2)', minHeight: '167px', borderRadius: '16px',
+                background: '#F7F5FF',
+                border: '1.5px dashed #A989EE',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: '10px', cursor: 'pointer', position: 'relative', overflow: 'hidden',
+              }}
+            >
+              {/* Soft background glow */}
+              <div style={{
+                position: 'absolute', width: '90px', height: '90px', borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(0,0,0,0.06) 0%, transparent 70%)',
+                animation: 'pulseRing 2.4s ease-in-out infinite',
+                pointerEvents: 'none',
+              }} />
+              {/* 3D floating icon */}
+              <div style={{
+                perspective: '300px',
+                animation: 'floatGroups 3s ease-in-out infinite',
+              }}>
+                <div style={{
+                  width: '56px', height: '56px', borderRadius: '50%',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 40%, #e0e0e0 100%)',
+                  boxShadow: '0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(0,0,0,0.06)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative',
+                }}>
+                  <div style={{
+                    position: 'absolute', top: '8px', left: '10px',
+                    width: '18px', height: '10px', borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.85)',
+                    transform: 'rotate(-30deg)',
+                    filter: 'blur(3px)',
+                    pointerEvents: 'none',
+                  }} />
+                  <Calendar size={22} color="#A989EE" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(169,137,238,0.35))' }} />
+                  <div style={{
+                    position: 'absolute', bottom: '-4px', right: '-4px',
+                    width: '20px', height: '20px', borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #C4A8F5 0%, #A989EE 100%)',
+                    boxShadow: '0 2px 6px rgba(169,137,238,0.5), 0 0 0 2px #F7F5FF',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Plus size={11} color="white" strokeWidth={3} />
                   </div>
-                  {/* Bottom: content */}
-                  <div style={{ padding: '12px' }}>
-                    {/* Registered tag */}
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '8px', padding: '3px 8px', marginBottom: '8px' }}>
-                      <Check size={9} color="#16A34A" strokeWidth={2.5} />
-                      <span style={{ fontSize: '10px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
-                    </div>
-                    {/* Organiser */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
-                      <img src={ev.organizerImage} alt={ev.organizer} style={{ width: '16px', height: '16px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                      <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{ev.organizer}</span>
-                    </div>
-                    {/* Title */}
-                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '8px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
-                    {/* Date & time */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                      <Calendar size={11} color={MUTED} />
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={11} color={MUTED} />
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
-                    </div>
-                    {/* Location */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
-                      <MapPin size={11} color={MUTED} />
-                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+                </div>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#A989EE', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
+                Find an event
+              </span>
+            </motion.div>
+          </div>
         </div>
 
         {/* My Groups */}
@@ -770,8 +761,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 </motion.div>
               );
             })}
-            {/* Animated Find-a-group card — only shown when user has no groups */}
-            {joinedGroups.length === 0 && <><style>{`
+            {/* Find-a-group CTA — always shown after joined groups */}
+            <><style>{`
               @keyframes floatGroups {
                 0%, 100% { transform: translateY(0px) rotateX(0deg); }
                 50% { transform: translateY(-6px) rotateX(8deg); }
@@ -847,7 +838,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <span style={{ fontSize: '12px', fontWeight: 700, color: '#4CA154', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
                 Find a group
               </span>
-            </motion.div></>}
+            </motion.div></>
           </div>
         </div>
 
