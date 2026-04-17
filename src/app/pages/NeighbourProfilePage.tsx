@@ -138,7 +138,7 @@ export function NeighbourProfilePage({
       .toUpperCase()
       .slice(0, 2);
   const color = profile.color || PRIMARY;
-  const block = profile.block || 'Bishan-AMK';
+  const block = profile.block;
   const rating = profile.rating ?? 4.8;
   const reviewCount = profile.reviews ?? 12;
   const distanceStr = profile.distance
@@ -266,23 +266,27 @@ export function NeighbourProfilePage({
               rowGap: '4px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-              <MapPin size={12} color={MUTED} strokeWidth={1.8} />
-              <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>
-                {block}
-              </span>
-            </div>
-
-            {distanceStr && (
+            {block && (
               <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <MapPin size={12} color={MUTED} strokeWidth={1.8} />
+                  <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>
+                    {block}
+                  </span>
+                </div>
                 <span style={{ color: MUTED, fontSize: '13px' }}>·</span>
-                <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>
-                  {distanceStr}
-                </span>
               </>
             )}
 
-            <span style={{ color: MUTED, fontSize: '13px' }}>·</span>
+            {distanceStr && (
+              <>
+                <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>
+                  {distanceStr}
+                </span>
+                <span style={{ color: MUTED, fontSize: '13px' }}>·</span>
+              </>
+            )}
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
               <Star size={12} color="#FF9500" fill="#FF9500" strokeWidth={1.8} />
               <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>

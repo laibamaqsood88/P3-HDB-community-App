@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Smile, Heart, Camera, BookOpen, Clock, ChevronDown } from 'lucide-react';
+import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, Utensils, Leaf, Dices, Smile, Heart, Camera, BookOpen, Clock, ChevronDown, Share2 } from 'lucide-react';
 import { INTEREST_CATEGORIES } from './SignUpPage';
 import { toast } from 'sonner';
 import { NeighbourProfile } from './NeighbourProfilePage';
@@ -338,6 +338,18 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
               }}
             >
               <ChevronLeft size={20} color={TEXT} />
+            </button>
+            <button
+              onClick={() => toast.success('Shared!')}
+              style={{
+                position: 'absolute', top: '52px', right: '16px',
+                width: '38px', height: '38px', borderRadius: '50%',
+                background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <Share2 size={17} color={TEXT} />
             </button>
           </div>
 
