@@ -27,17 +27,8 @@
       "Bash(find src/app/components src/app/pages -name \"*.tsx\" -type f -exec sed -i \"s/#F2F2F7/#F7F7F7/g\" {} \\\\;)",
       "Bash(grep -l \"🏠\\\\|🗺️\\\\|🛍️\\\\|💬\\\\|📋\\\\|🏘️\\\\|😊\\\\|🎉\\\\|📍\\\\|❤️\\\\|💰\" src/app/pages/*.tsx)",
       "Bash(npx tsc:*)",
-      "WebFetch(domain:unsplash.com)",
-      "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://unsplash.com/photos/NBr8KPgNeUo\")",
-      "Bash(curl -s -L -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Accept: text/html,application/xhtml+xml\" \"https://unsplash.com/photos/NBr8KPgNeUo\")",
-      "Bash(curl -sv -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://unsplash.com/photos/NBr8KPgNeUo\")",
-      "Bash(curl -s -w \"\\\\n%{http_code}\" -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8\" -H \"Accept-Language: en-US,en;q=0.5\" -H \"Accept-Encoding: identity\" \"https://unsplash.com/photos/NBr8KPgNeUo\")",
-      "Bash(curl -sL -w \"\\\\n%{http_code}\" -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8\" -H \"Accept-Language: en-US,en;q=0.5\" -H \"Accept-Encoding: identity\" \"https://unsplash.com/photos/NBr8KPgNeUo\")",
-      "Bash(curl -sL -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\" -H \"Accept-Language: en-US,en;q=0.5\" -H \"Accept-Encoding: identity\" \"https://unsplash.com/photos/NBr8KPgNeUo\")",
-      "Bash(curl -sL \"https://api.unsplash.com/photos/NBr8KPgNeUo\" -H \"Authorization: Client-ID demo\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('urls',{}\\).get\\('raw',''\\) or d.get\\('urls',{}\\).get\\('full',''\\)\\)\")",
-      "WebSearch",
-      "Bash(curl -sI \"https://unsplash.com/photos/NBr8KPgNeUo/download?force=true&w=400\")"
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(node_modules/.bin/tsc --noEmit)"
     ]
   }
 }
