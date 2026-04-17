@@ -315,18 +315,10 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
           <div style={{ fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             Rewards &amp; Badges ({BADGES.filter(b => b.unlocked).length}/{BADGES.length})
           </div>
-          {!showAllBadges && (
-            <button
-              onClick={() => setShowAllBadges(true)}
-              style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
-            >
-              View more
-            </button>
-          )}
         </div>
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 24px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-            {BADGES.slice(0, showAllBadges ? BADGES.length : 3).map(badge => {
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            {BADGES.map(badge => {
               let BadgeIcon;
               if (badge.id === 1) BadgeIcon = <CalendarDays size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
               else if (badge.id === 2) BadgeIcon = <Users size={20} color={badge.unlocked ? PRIMARY : MUTED} />;
@@ -337,8 +329,8 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
                 <div
                   key={badge.id}
                   style={{
-                    width: '100px',
-                    height: '100px',
+                    width: '100%',
+                    height: '90px',
                     background: badge.unlocked ? '#FFF0EC' : '#F5F5F5',
                     display: 'flex',
                     flexDirection: 'column',
@@ -346,7 +338,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
                     justifyContent: 'center',
                     gap: '6px',
                     opacity: badge.unlocked ? 1 : 0.6,
-                    clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)',
+                    borderRadius: '12px',
                   }}
                 >
                   {BadgeIcon}
