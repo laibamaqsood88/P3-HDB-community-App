@@ -322,19 +322,17 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
       {/* Header */}
       <div style={{ background: searchOpen ? 'transparent' : CARD, borderBottom: searchOpen ? 'none' : `0.5px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
-        {/* Header: expanded = two rows (buttons top-right, title+desc below-left); collapsed = single row */}
-        <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px 0`, transition: 'padding 0.1s linear' }}>
+        {/* Header: buttons fixed top-right; title starts below and moves up on scroll */}
+        <div style={{ position: 'relative', height: `${152 - scrollProgress * 60}px`, transition: 'height 0.1s linear' }}>
           {searchOpen ? (
-            <div style={{ display: 'flex', alignItems: 'center', paddingBottom: `${12 - (scrollProgress * 4)}px`, transition: 'padding 0.1s linear' }}>
-              <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ChevronLeft size={22} color="white" />
-              </button>
-            </div>
+            <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+              style={{ position: 'absolute', top: '44px', left: '16px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ChevronLeft size={22} color="white" />
+            </button>
           ) : (
             <>
-              {/* Row 1: action buttons right-aligned — shrinks to 0 as page scrolls */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', height: `${40 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', marginBottom: `${6 * (1 - scrollProgress)}px`, transition: 'height 0.1s linear, opacity 0.1s linear, margin-bottom 0.1s linear' }}>
+              {/* Buttons: absolutely pinned, no animation ever */}
+              <div style={{ position: 'absolute', top: '44px', right: '16px', display: 'flex', gap: '8px' }}>
                 <button onClick={() => setSearchOpen(true)}
                   style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Search size={18} color={TEXT2} />
@@ -353,33 +351,25 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
                   <Plus size={20} color="white" />
                 </button>
               </div>
-              {/* Row 2: title + description left; buttons fade in on right when collapsed */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: `${12 - (scrollProgress * 4)}px`, transition: 'padding 0.1s linear' }}>
-                <div>
-                  <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear', display: 'block' }}>Requests</span>
-                  <div style={{ height: `${20 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', transition: 'height 0.1s linear, opacity 0.1s linear' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 400, color: MUTED, display: 'block', marginTop: '2px' }}>Ask neighbours for help</span>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '8px', opacity: scrollProgress, pointerEvents: scrollProgress > 0.5 ? 'auto' : 'none', transition: 'opacity 0.1s linear' }}>
-                  <button onClick={() => setSearchOpen(true)}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Search size={18} color={TEXT2} />
-                  </button>
-                  <button onClick={() => setFilterVisible(true)}
-                    style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
-                    {filterCount > 0 && (
-                      <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
-                        <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
-                      </div>
-                    )}
-                  </button>
-                  <button data-tour="requests-add" onClick={onPost}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Plus size={20} color="white" />
-                  </button>
-                </div>
+              {/* Title + description: title slides up + shrinks, description fades out */}
+              <div style={{ position: 'absolute', left: '16px', top: `${90 - scrollProgress * 46}px`, transition: 'top 0.1s linear' }}>
+                <span style={{
+                  fontSize: `${28 - scrollProgress * 8}px`,
+                  fontWeight: 800,
+                  color: TEXT,
+                  letterSpacing: '-0.5px',
+                  lineHeight: '40px',
+                  display: 'block',
+                  transition: 'font-size 0.1s linear',
+                }}>Requests</span>
+                <span style={{
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  color: MUTED,
+                  display: 'block',
+                  opacity: 1 - scrollProgress,
+                  transition: 'opacity 0.1s linear',
+                }}>Ask neighbours for help</span>
               </div>
             </>
           )}
