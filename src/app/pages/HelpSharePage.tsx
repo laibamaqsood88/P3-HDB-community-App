@@ -465,23 +465,25 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
       {/* Header */}
       <div style={{ background: searchOpen ? 'transparent' : CARD, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
         <>
-          {/* Title row: Back button (search mode) OR Title + icons (normal) */}
-          <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+          {/* Header: expanded = two rows (buttons top-right, title+desc below-left); collapsed = single row */}
+          <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px 0`, transition: 'padding 0.1s linear' }}>
             {searchOpen ? (
-              <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ChevronLeft size={22} color="white" />
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
+                <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+                  style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ChevronLeft size={22} color="white" />
+                </button>
+              </div>
             ) : (
               <>
-                <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Market</span>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                {/* Row 1: action buttons right-aligned — shrinks to 0 as page scrolls */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', height: `${40 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', marginBottom: `${6 * (1 - scrollProgress)}px`, transition: 'height 0.1s linear, opacity 0.1s linear, margin-bottom 0.1s linear' }}>
                   <button onClick={() => setSearchOpen(true)}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Search size={18} color={TEXT2} />
                   </button>
                   <button onClick={() => setShowFilterPanel(true)}
-                    style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
                     {filterCount > 0 && (
                       <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
@@ -490,9 +492,37 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
                     )}
                   </button>
                   <button onClick={onPost}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Plus size={20} color="white" />
                   </button>
+                </div>
+                {/* Row 2: title + description left; buttons fade in on right when collapsed */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
+                  <div>
+                    <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear', display: 'block' }}>Market</span>
+                    <div style={{ height: `${16 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', transition: 'height 0.1s linear, opacity 0.1s linear' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 400, color: MUTED, letterSpacing: '0px', display: 'block', marginTop: '2px' }}>Buy, sell or offer services</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', opacity: scrollProgress, pointerEvents: scrollProgress > 0.5 ? 'auto' : 'none', transition: 'opacity 0.1s linear' }}>
+                    <button onClick={() => setSearchOpen(true)}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Search size={18} color={TEXT2} />
+                    </button>
+                    <button onClick={() => setShowFilterPanel(true)}
+                      style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: filterCount > 0 ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: filterCount > 0 ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <SlidersHorizontal size={17} color={filterCount > 0 ? PRIMARY : TEXT2} />
+                      {filterCount > 0 && (
+                        <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
+                          <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{filterCount}</span>
+                        </div>
+                      )}
+                    </button>
+                    <button onClick={onPost}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Plus size={20} color="white" />
+                    </button>
+                  </div>
                 </div>
               </>
             )}
