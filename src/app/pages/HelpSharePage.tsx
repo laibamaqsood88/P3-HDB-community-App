@@ -502,8 +502,12 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
               const isActive = mainFilter === tab;
               return (
                 <button key={tab} onClick={() => setMainFilter(tab)}
-                  style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? (searchOpen ? 'white' : TEXT) : (searchOpen ? 'rgba(255,255,255,0.55)' : MUTED), paddingBottom: '10px' }}>
+                  style={{ flex: 1, padding: '8px 0 10px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {tab === 'Items' && <Package size={16} strokeWidth={isActive ? 2.2 : 1.8} color={isActive ? (searchOpen ? 'white' : TEXT) : (searchOpen ? 'rgba(255,255,255,0.45)' : MUTED)} />}
+                    {tab === 'Services' && <Wrench size={16} strokeWidth={isActive ? 2.2 : 1.8} color={isActive ? (searchOpen ? 'white' : TEXT) : (searchOpen ? 'rgba(255,255,255,0.45)' : MUTED)} />}
+                  </div>
+                  <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? (searchOpen ? 'white' : TEXT) : (searchOpen ? 'rgba(255,255,255,0.45)' : MUTED), lineHeight: 1 }}>
                     {tab}
                   </span>
                   {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: searchOpen ? 'white' : TEXT, borderRadius: '2px' }} />}

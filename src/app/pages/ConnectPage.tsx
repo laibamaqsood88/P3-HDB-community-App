@@ -519,11 +519,8 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
 
         {/* Welcome banner */}
         <div style={{
-          border: '1.5px solid #E5E5EA',
-          borderRadius: '14px',
-          padding: '14px 16px',
+          padding: '4px 0',
           marginBottom: '16px',
-          background: 'white',
         }}>
           <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Groups</div>
           <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
+import eventsImg from '../../imports/event1.png';
 import { NeighbourProfile } from './NeighbourProfilePage';
 import { INTEREST_CATEGORIES } from './SignUpPage';
 
@@ -360,8 +361,13 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                         if (searchMode) { setSearchScopeTab(tab); handleSubTabChange(tab); }
                         else handleSubTabChange(tab);
                       }}
-                      style={{ flex: 1, padding: '8px 0 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? (searchMode ? 'white' : TEXT) : (searchMode ? 'rgba(255,255,255,0.55)' : MUTED), paddingBottom: '10px' }}>
+                      style={{ flex: 1, padding: '8px 0 10px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        {tab === 'events' && <Calendar size={16} strokeWidth={isActive ? 2.2 : 1.8} color={isActive ? (searchMode ? 'white' : TEXT) : (searchMode ? 'rgba(255,255,255,0.45)' : MUTED)} />}
+                        {tab === 'groups' && <Users size={16} strokeWidth={isActive ? 2.2 : 1.8} color={isActive ? (searchMode ? 'white' : TEXT) : (searchMode ? 'rgba(255,255,255,0.45)' : MUTED)} />}
+                        {tab === 'neighbours' && <MapPin size={16} strokeWidth={isActive ? 2.2 : 1.8} color={isActive ? (searchMode ? 'white' : TEXT) : (searchMode ? 'rgba(255,255,255,0.45)' : MUTED)} />}
+                      </div>
+                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, color: isActive ? (searchMode ? 'white' : TEXT) : (searchMode ? 'rgba(255,255,255,0.45)' : MUTED), lineHeight: 1 }}>
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
                       </span>
                       {isActive && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: '2px', background: searchMode ? 'white' : TEXT, borderRadius: '2px' }} />}
@@ -379,10 +385,13 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           {activeSubTab === 'events' && (
             <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: '#F7F7F7' }} onScroll={handleScroll}>
               {/* Welcome banner */}
-              <div style={{ border: '1.5px solid #E5E5EA', borderRadius: '14px', padding: '14px 16px', marginBottom: '16px', background: CARD }}>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Events</div>
-                <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
-                  Explore events happening in your neighbourhood.
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0px', marginBottom: '-4px', marginLeft: '-10px' }}>
+                <img src={eventsImg} alt="Events" style={{ width: '90px', height: '90px', objectFit: 'cover', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Events</div>
+                  <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
+                    Events happening in your neighbourhood.
+                  </div>
                 </div>
               </div>
               {filteredEvents.length === 0 ? (
