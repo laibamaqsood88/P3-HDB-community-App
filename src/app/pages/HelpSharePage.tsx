@@ -4,7 +4,7 @@ import {
   ChevronLeft, Plus, Shield, ShieldCheck, X, Send, Check, Star, ChevronRight, Search,
   Wrench, BookOpen, Users, Home, Package, Monitor, Droplets, MapPin,
   ChevronDown, Camera, SlidersHorizontal, Bookmark, Heart, Leaf, Dog,
-  Baby, GraduationCap, UserCheck, SquareArrowOutUpRight
+  Baby, GraduationCap, UserCheck, SquareArrowOutUpRight, Share2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import yogaMatImg from '../../imports/yoga-mat.jpg';
@@ -147,14 +147,14 @@ function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
 }
 
 // ---- SaveButton (Bookmark) ----
-function SaveButton({ itemId, savedItems, onSaveToggle, size = 18, style: extraStyle = {} }: { itemId: number; savedItems: number[]; onSaveToggle: (id: number) => void; size?: number; style?: React.CSSProperties }) {
+function SaveButton({ itemId, savedItems, onSaveToggle, size = 18, style: extraStyle = {}, unsavedColor = MUTED }: { itemId: number; savedItems: number[]; onSaveToggle: (id: number) => void; size?: number; style?: React.CSSProperties; unsavedColor?: string }) {
   const saved = savedItems.includes(itemId);
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onSaveToggle(itemId); toast.success(saved ? 'Removed from saved' : 'Item saved'); }}
       style={{ width: '30px', height: '30px', borderRadius: '50%', background: saved ? '#FFF0EC' : 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...extraStyle }}
     >
-      <Bookmark size={size} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
+      <Bookmark size={size} color={saved ? PRIMARY : unsavedColor} fill={saved ? PRIMARY : 'none'} />
     </button>
   );
 }
@@ -764,8 +764,11 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
             <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
               <ChevronLeft size={20} color={TEXT} />
             </button>
-            <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
-              <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
+            <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
+              <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+                <Share2 size={17} color={TEXT} />
+              </button>
+              <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} unsavedColor={TEXT} />
             </div>
           </div>
           <div style={{ padding: '20px 20px 0' }}>
@@ -870,8 +873,11 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
           >
             <ChevronLeft size={20} color={TEXT} />
           </button>
-          <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
-            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} />
+          <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
+            <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+              <Share2 size={17} color={TEXT} />
+            </button>
+            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} unsavedColor={TEXT} />
           </div>
         </div>
         <div style={{ padding: '20px 20px 0' }}>

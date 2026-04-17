@@ -32,6 +32,10 @@ interface Conversation {
   imageUrl?: string;       // group cover photo / poster profile photo
   interests?: string[];    // for neighbour profile About section
   languages?: string[];    // for neighbour profile About section
+  block?: string;          // e.g. "Blk 445"
+  distance?: string;       // e.g. "0.3 km away"
+  listingImage?: string;   // thumbnail of the listing/request
+  price?: string;          // e.g. "Free", "$25", "Free Request"
 }
 
 const CONVERSATIONS: Conversation[] = [
@@ -73,6 +77,8 @@ const CONVERSATIONS: Conversation[] = [
     imageUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop&crop=face',
     interests: ['Gardening & Plants', 'DIY & Home Improvement', 'Cooking & Baking'],
     languages: ['English', 'Malay'],
+    listingImage: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    price: 'Free',
   },
   {
     id: 4,
@@ -102,6 +108,10 @@ const CONVERSATIONS: Conversation[] = [
     imageUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',
     interests: ['Community Volunteering', 'Gardening & Plants', 'Outdoor Activities'],
     languages: ['English', 'Chinese'],
+    block: 'Blk 445',
+    distance: '0.3 km away',
+    listingImage: 'https://images.unsplash.com/photo-1771810506686-f70bafda1a16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+    price: 'Free Request',
   },
 ];
 
@@ -807,7 +817,7 @@ function ChatScreen({
                 if (isGroup) return; // handled by parent
                 e.stopPropagation();
                 const profileName = (conv.type === 'marketplace' || conv.type === 'request') && conv.subtitle ? conv.subtitle : conv.name;
-                onOpenNeighbourProfile?.({ name: profileName, avatar: conv.avatar, color: conv.avatarBg, avatarUrl: conv.imageUrl, interests: conv.interests, languages: conv.languages });
+                onOpenNeighbourProfile?.({ name: profileName, avatar: conv.avatar, color: conv.avatarBg, avatarUrl: conv.imageUrl, interests: conv.interests, languages: conv.languages, block: conv.block, distance: conv.distance });
               }}
               style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
             >
@@ -870,6 +880,29 @@ function ChatScreen({
           </div>
         )}
       </div>
+
+      {/* Listing banner — marketplace & request only */}
+      {(conv.type === 'marketplace' || conv.type === 'request') && conv.listingImage && (
+        <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)`, padding: '10px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <img
+              src={conv.listingImage}
+              alt={conv.name}
+              style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }}
+            />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {conv.name}
+              </div>
+              {conv.price && (
+                <div style={{ fontSize: '13px', fontWeight: 500, color: TEXT, marginTop: '2px' }}>
+                  {conv.price}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Activity Board — groups only */}
       {isGroup && groupTab === 'activity' && activity && (

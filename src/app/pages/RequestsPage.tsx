@@ -5,7 +5,7 @@ import {
   ChevronDown, Check, Send, Search, Lock, Bookmark, Star, ChevronRight, ShieldCheck,
   Camera, Monitor,
   Home as HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake,
-  ShoppingBag, Search as SearchIcon, ClipboardList, CheckCircle, SquareArrowOutUpRight,
+  ShoppingBag, Search as SearchIcon, ClipboardList, CheckCircle, SquareArrowOutUpRight, Share2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { NeighbourProfilePage } from './NeighbourProfilePage';
@@ -127,14 +127,14 @@ function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
 }
 
 // ---- Save Button ----
-function SaveButton({ itemId, savedItems, onSaveToggle, size = 14, style: extraStyle = {} }: { itemId: number; savedItems: number[]; onSaveToggle: (id: number) => void; size?: number; style?: React.CSSProperties }) {
+function SaveButton({ itemId, savedItems, onSaveToggle, size = 14, style: extraStyle = {}, unsavedColor = MUTED }: { itemId: number; savedItems: number[]; onSaveToggle: (id: number) => void; size?: number; style?: React.CSSProperties; unsavedColor?: string }) {
   const saved = savedItems.includes(itemId);
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onSaveToggle(itemId); toast.success(saved ? 'Removed from saved' : 'Request saved'); }}
       style={{ width: '30px', height: '30px', borderRadius: '50%', background: saved ? '#FFF0EC' : 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 1px 4px rgba(0,0,0,0.12)', ...extraStyle }}
     >
-      <Bookmark size={size} color={saved ? PRIMARY : MUTED} fill={saved ? PRIMARY : 'none'} />
+      <Bookmark size={size} color={saved ? PRIMARY : unsavedColor} fill={saved ? PRIMARY : 'none'} />
     </button>
   );
 }
@@ -481,8 +481,11 @@ function RequestDetail({ request, savedItems, onSaveToggle, onBack, onChat, onVi
           <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
-          <div style={{ position: 'absolute', top: '52px', right: '16px' }}>
-            <SaveButton itemId={request.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', backdropFilter: 'blur(8px)' }} />
+          <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
+            <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+              <Share2 size={17} color={TEXT} />
+            </button>
+            <SaveButton itemId={request.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', backdropFilter: 'blur(8px)' }} unsavedColor={TEXT} />
           </div>
         </div>
 
@@ -908,8 +911,12 @@ export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChang
             profile={{
               name: current.params?.poster?.name || 'Neighbour',
               avatar: current.params?.poster?.initials || 'N',
+              avatarUrl: current.params?.poster?.avatarUrl,
               color: current.params?.poster?.color || '#FF6B47',
-              block: 'Bishan-AMK',
+              block: current.params?.request?.collectionPoint
+                ? current.params.request.collectionPoint.split(',')[0].trim()
+                : undefined,
+              distance: current.params?.request?.distance,
               rating: current.params?.poster?.rating,
               reviews: current.params?.poster?.reviews,
             }}
