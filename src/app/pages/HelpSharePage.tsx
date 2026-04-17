@@ -706,8 +706,14 @@ function ItemCard({ item, savedItems, onSaveToggle, onClick }: { item: any; save
         <div style={{ fontSize: '12px', color: MUTED }}>{item.distance}</div>
         <div style={{ fontSize: '11px', color: MUTED }}>{item.postedTime}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
-          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
+          <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+            {item.seller?.profileImage ? (
+              <img src={item.seller.profileImage} alt={item.seller.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
+              </div>
+            )}
           </div>
           <span style={{ fontSize: '12px', color: TEXT2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.seller?.name || 'Neighbour'}</span>
         </div>
@@ -737,8 +743,14 @@ function ServiceCard({ s, savedItems, onSaveToggle, onClick }: { s: any; savedIt
         <div style={{ fontSize: '12px', color: MUTED }}>{s.distance}</div>
         <div style={{ fontSize: '11px', color: MUTED }}>{s.postedTime}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
-          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: s.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(s.provider?.name || 'N')[0]}</span>
+          <div style={{ width: '24px', height: '24px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+            {s.provider?.profileImage ? (
+              <img src={s.provider.profileImage} alt={s.provider.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', background: s.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: '9px', fontWeight: 800, color: 'white' }}>{(s.provider?.name || 'N')[0]}</span>
+              </div>
+            )}
           </div>
           <span style={{ fontSize: '12px', color: TEXT2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.provider?.name || 'Neighbour'}</span>
         </div>
@@ -855,8 +867,14 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '12px' }}>About the Neighbour</div>
               <div onClick={() => onViewProfile?.({ person: item.provider, item })} style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.provider?.name || 'N')[0]}</span>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                  {item.provider?.profileImage ? (
+                    <img src={item.provider.profileImage} alt={item.provider.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: item.provider?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.provider?.name || 'N')[0]}</span>
+                    </div>
+                  )}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>{item.provider?.name || 'Neighbour'}</div>
@@ -972,8 +990,14 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
               onClick={() => onViewProfile?.({ person: item.seller, item })}
               style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
             >
-              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                {item.seller?.profileImage ? (
+                  <img src={item.seller.profileImage} alt={item.seller.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: item.seller?.avatarColor || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{(item.seller?.name || 'N')[0]}</span>
+                  </div>
+                )}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>{item.seller?.name || 'Neighbour'}</div>
