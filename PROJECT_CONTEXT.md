@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-16 (Session 7)
+2026-04-17 (Session 8)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -261,6 +261,15 @@ onOpenNeighbourProfile?: (profile) => void
 - **Chat button** on item/service detail → calls `onOpenChat(item)` → creates marketplace conversation in Messages tab
 - Props: `{ onAddPost, initialItemId?, savedItems, onSaveToggle, onNavVisibilityChange, onOpenChat? }`
 
+### Local Image Imports (src/imports/)
+Some item/service cards use local images instead of Unsplash URLs:
+```ts
+import yogaMatImg from '../../imports/yoga-mat.jpg';           // id:107 Yoga Mat
+import snakePlantImg from '../../imports/potted-snake-plant.jpg'; // id:110 Potted Snake Plant
+import primaryMathImg from '../../imports/primary-math-tutoring.avif'; // id:203 Primary Math Tutoring
+```
+Pattern: `image: yogaMatImg` (imported variable, not a URL string).
+
 ---
 
 ## Tab 4 — Requests (`RequestsPage.tsx`)
@@ -273,6 +282,25 @@ onOpenNeighbourProfile?: (profile) => void
 - **Request detail page**: Marketplace-style layout — full-width 260px image header with back (38×38px) + save (38×38px) buttons, type badge, details table, description, location+map, About the Neighbour clickable card, Chat button. Neighbour profile sub-screen with avatar, stats, active request, reviews.
 - **Post request form**: Image upload section above Title (tile grid with + button, photo picker bottom sheet), MapPin icon on left of location field, no Suggested category chips.
 - Saved state: `savedRequests: number[]` lifted to `RequestsPage`, passed as props to `RequestsFeed`
+
+### POSTER_AVATARS — Real Face Photos
+All 5 poster avatars have `avatarUrl` set to Unsplash face photos:
+```ts
+{ name: 'Sarah T.',   color: '#8B5CF6', initials: 'ST', avatarUrl: 'photo-1438761681033-6461ffad8d80' }
+{ name: 'Ahmad K.',   color: '#3B82F6', initials: 'AK', avatarUrl: 'photo-1506794778202-cad84cf45f1d' }
+{ name: 'Mei Lin',    color: '#F97316', initials: 'ML', avatarUrl: 'photo-1544005313-94ddf0286df2' }
+{ name: 'Ravi S.',    color: '#22C55E', initials: 'RS', avatarUrl: 'photo-1500648767791-00dcc994a43e' }
+{ name: 'Jennifer L.',color: '#EC4899', initials: 'JL', avatarUrl: 'photo-1494790108377-be9c29b29330' }
+```
+(Full URL pattern: `https://images.unsplash.com/photo-{hash}?w=200&h=200&fit=crop&crop=face`)
+
+`PosterAvatar` component renders `<img>` when `avatarUrl` is set, fallback to initials. Used in:
+- Feed card: 20px inline circle next to poster name
+- Detail page "About the Neighbour": 48px circle
+- Both have `overflow: 'hidden'` on the container div
+
+### Request Card Images
+- id:1 "Need someone to water my plants" → `photo-1771810506686-f70bafda1a16` (plants + dog outdoor scene)
 
 ---
 
