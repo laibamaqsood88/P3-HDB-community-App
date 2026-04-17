@@ -147,13 +147,14 @@ function RequestCard({ r, savedItems, onSaveToggle, onClick }: { r: any; savedIt
       whileTap={{ scale: 0.97 }}
       onClick={onClick}
       style={{
-        background: CARD, borderRadius: '14px', overflow: 'hidden',
+        background: CARD, borderRadius: '14px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)',
-        cursor: 'pointer', marginBottom: '10px', display: 'flex', flexDirection: 'row', height: '130px',
+        cursor: 'pointer', marginBottom: '10px', display: 'flex', flexDirection: 'row',
+        alignItems: 'center', padding: '10px', gap: '10px',
       }}
     >
-      {/* Left image */}
-      <div style={{ width: '110px', flexShrink: 0, position: 'relative', background: BG, overflow: 'hidden' }}>
+      {/* Left image — square 1:1 with badge overlay */}
+      <div style={{ width: '90px', height: '90px', flexShrink: 0, borderRadius: '10px', background: BG, overflow: 'hidden', position: 'relative' }}>
         {r.image ? (
           <img src={r.image} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -161,19 +162,18 @@ function RequestCard({ r, savedItems, onSaveToggle, onClick }: { r: any; savedIt
             <ClipboardList size={32} color={MUTED} />
           </div>
         )}
+        <span style={{ position: 'absolute', top: '6px', left: '6px', padding: '2px 6px', borderRadius: '5px', fontSize: '9px', fontWeight: 700, background: typeStyle.bg, color: typeStyle.text, backdropFilter: 'blur(4px)' }}>{r.type}</span>
       </div>
 
       {/* Right content */}
-      <div style={{ flex: 1, minWidth: 0, padding: '10px 12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        {/* Top row: type badge + save */}
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Top section */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-            <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, background: typeStyle.bg, color: typeStyle.text, flexShrink: 0 }}>{r.type}</span>
-            <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0px' }}>
+            <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{r.distance}</div>
             <SaveButton itemId={r.id} savedItems={savedItems} onSaveToggle={onSaveToggle} />
           </div>
-          <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '4px' }}>{r.distance}</div>
-          <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, lineHeight: '1.35', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{r.title}</div>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, lineHeight: '1.35', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', marginBottom: '16px', paddingRight: '36px', marginTop: '-4px' }}>{r.title}</div>
         </div>
 
         {/* Bottom row: poster + time ago */}

@@ -626,7 +626,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 whileHover={{ scale: 1.03 }}
                 onClick={() => onOpenExploreEvents?.()}
                 style={{
-                  flexShrink: 0, width: 'calc(100vw - 40px)', minHeight: '167px', borderRadius: '16px',
+                  flexShrink: 0, width: 'calc((100vw - 40px) / 2)', minHeight: '167px', borderRadius: '16px',
                   background: '#F7F5FF',
                   border: '1.5px dashed #A989EE',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -663,20 +663,19 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                       pointerEvents: 'none',
                     }} />
                     <Calendar size={22} color="#A989EE" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(169,137,238,0.35))' }} />
+                    {/* Plus badge */}
+                    <div style={{
+                      position: 'absolute', bottom: '-4px', right: '-4px',
+                      width: '20px', height: '20px', borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #C4A8F5 0%, #A989EE 100%)',
+                      boxShadow: '0 2px 6px rgba(169,137,238,0.5), 0 0 0 2px #F7F5FF',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <Plus size={11} color="white" strokeWidth={3} />
+                    </div>
                   </div>
                 </div>
 
-                {/* Animated dots */}
-                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                  {[0, 0.2, 0.4].map((delay, i) => (
-                    <div key={i} style={{
-                      width: '5px', height: '5px', borderRadius: '50%',
-                      background: '#A989EE', opacity: 0.7,
-                      animation: `dotBounce${i + 1} 1.4s ease-in-out infinite`,
-                      animationDelay: `${delay}s`,
-                    }} />
-                  ))}
-                </div>
 
                 <span style={{ fontSize: '12px', fontWeight: 700, color: '#A989EE', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
                   Find an event
@@ -794,7 +793,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               whileHover={{ scale: 1.03 }}
               onClick={onOpenGroups}
               style={{
-                flexShrink: 0, width: 'calc(100vw - 40px)', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
+                flexShrink: 0, width: 'calc((100vw - 40px) / 2)', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
                 background: '#F4FFF7',
                 border: '1.5px dashed #4CA154',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -832,20 +831,17 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     pointerEvents: 'none',
                   }} />
                   <Users size={22} color="#4CA154" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(76,161,84,0.35))' }} />
+                  {/* Plus badge */}
+                  <div style={{
+                    position: 'absolute', bottom: '-4px', right: '-4px',
+                    width: '20px', height: '20px', borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #6FCF78 0%, #4CA154 100%)',
+                    boxShadow: '0 2px 6px rgba(76,161,84,0.5), 0 0 0 2px #F4FFF7',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Plus size={11} color="white" strokeWidth={3} />
+                  </div>
                 </div>
-              </div>
-
-              {/* Animated dots */}
-              <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                {[0, 0.2, 0.4].map((delay, i) => (
-                  <div key={i} style={{
-                    width: '5px', height: '5px', borderRadius: '50%',
-                    background: '#4CA154',
-                    opacity: 0.7,
-                    animation: `dotBounce${i + 1} 1.4s ease-in-out infinite`,
-                    animationDelay: `${delay}s`,
-                  }} />
-                ))}
               </div>
 
               <span style={{ fontSize: '12px', fontWeight: 700, color: '#4CA154', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
@@ -883,22 +879,21 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   style={{
                     flexShrink: 0, width: '280px', background: CARD, borderRadius: '14px',
                     boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)',
-                    cursor: 'pointer', display: 'flex', flexDirection: 'row', height: '130px', overflow: 'hidden',
+                    cursor: 'pointer', display: 'flex', flexDirection: 'row', alignItems: 'center',
+                    padding: '10px', gap: '10px',
                   }}
                 >
-                  {/* Left image */}
-                  <div style={{ width: '100px', flexShrink: 0, background: BG, overflow: 'hidden' }}>
+                  {/* Left image — square 1:1 with badge overlay */}
+                  <div style={{ width: '90px', height: '90px', flexShrink: 0, borderRadius: '10px', background: BG, overflow: 'hidden', position: 'relative' }}>
                     {r.image
                       ? <img src={r.image} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ClipboardList size={28} color={MUTED} /></div>
                     }
+                    <span style={{ position: 'absolute', top: '6px', left: '6px', padding: '2px 6px', borderRadius: '5px', fontSize: '9px', fontWeight: 700, background: tc.bg, color: tc.text, backdropFilter: 'blur(4px)' }}>{r.type}</span>
                   </div>
                   {/* Right content */}
-                  <div style={{ flex: 1, minWidth: 0, padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                        <span style={{ padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: tc.bg, color: tc.text, flexShrink: 0 }}>{r.type}</span>
-                      </div>
                       <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '3px' }}>{r.distance}</div>
                       <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, marginBottom: '6px' }}>{r.title}</div>
                     </div>
@@ -932,7 +927,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '14px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '12px', paddingTop: '16px' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '14px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '12px' }}>
             {MOCK_NEIGHBOURS.slice(0, 6).map(neighbour => (
               <motion.div
                 key={neighbour.id}
