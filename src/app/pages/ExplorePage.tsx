@@ -471,7 +471,10 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
                             {/* Content */}
                             <div style={{ padding: '14px 16px' }}>
-                              <div style={{ fontSize: '11px', color: MUTED, fontWeight: 600, marginBottom: '4px' }}>{ev.organizer}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                                <img src={ev.organizerImage} alt={ev.organizer} style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                                <span style={{ fontSize: '11px', color: MUTED, fontWeight: 600 }}>{ev.organizer}</span>
+                              </div>
                               <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT, marginBottom: '8px', lineHeight: '1.3' }}>{ev.title}</div>
                               <div style={{ display: 'flex', gap: '14px', marginBottom: '4px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>

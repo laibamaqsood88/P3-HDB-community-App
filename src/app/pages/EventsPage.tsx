@@ -691,32 +691,42 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                   whileTap={{ scale: 0.97 }}
                   onClick={() => goTo('detail', { event: ev })}
                   style={{
-                    flexShrink: 0, width: '270px', background: CARD, borderRadius: '16px',
-                    boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '12px', padding: '12px',
+                    flexShrink: 0, width: '240px', background: CARD, borderRadius: '16px',
+                    boxShadow: '0 1px 6px rgba(0,0,0,0.06)', cursor: 'pointer', overflow: 'hidden',
                   }}
                 >
-                  {/* Left: square thumbnail */}
-                  <div style={{ width: '84px', height: '84px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                  {/* Top: full-width image with category tag */}
+                  <div style={{ width: '100%', height: '130px', position: 'relative' }}>
                     <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', bottom: '5px', left: '5px', padding: '2px 6px', borderRadius: '6px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '9px', fontWeight: 800 }}>
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', padding: '3px 8px', borderRadius: '8px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '10px', fontWeight: 800 }}>
                       {ev.category}
                     </div>
                   </div>
-                  {/* Right: info */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '8px', padding: '2px 6px' }}>
-                        <Check size={9} color="#16A34A" strokeWidth={2.5} />
-                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
-                      </div>
+                  {/* Bottom: content */}
+                  <div style={{ padding: '12px' }}>
+                    {/* Registered tag */}
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: '#DCFCE7', borderRadius: '8px', padding: '3px 8px', marginBottom: '8px' }}>
+                      <Check size={9} color="#16A34A" strokeWidth={2.5} />
+                      <span style={{ fontSize: '10px', fontWeight: 700, color: '#16A34A' }}>Registered</span>
                     </div>
-                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
+                    {/* Organiser */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+                      <img src={ev.organizerImage} alt={ev.organizer} style={{ width: '16px', height: '16px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                      <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{ev.organizer}</span>
+                    </div>
+                    {/* Title */}
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '8px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
+                    {/* Date & time */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
                       <Calendar size={11} color={MUTED} />
                       <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.date}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Clock size={11} color={MUTED} />
+                      <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500 }}>{ev.time}</span>
+                    </div>
+                    {/* Location */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
                       <MapPin size={11} color={MUTED} />
                       <span style={{ fontSize: '11px', color: TEXT2, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
                     </div>
