@@ -512,6 +512,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 onJoinGroup={onJoinGroup}
                 filterGroupInterests={filterGroupInterests}
                 onGroupInterestChange={setFilterGroupInterests}
+                onScroll={handleScroll}
               />
             </div>
           )}
@@ -534,6 +535,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               onOpenNeighbourProfile={onOpenNeighbourProfile}
               filterInterests={filterNeighbourInterests}
               onInterestChange={setFilterNeighbourInterests}
+              onScroll={handleScroll}
             />
           )}
         </div>
@@ -1183,6 +1185,7 @@ function NeighboursTab({
   onDistanceChange, onSharedOnlyChange, onRecentOnlyChange,
   onOpenNeighbourProfile,
   filterInterests, onInterestChange,
+  onScroll,
 }: {
   userInterests: string[];
   onAddConversation?: (conv: any) => void;
@@ -1199,6 +1202,7 @@ function NeighboursTab({
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
   filterInterests: string[];
   onInterestChange: (v: string[]) => void;
+  onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
 }) {
   const [visibleCount, setVisibleCount] = useState(5);
   const [expandedInterestCats, setExpandedInterestCats] = useState<Set<string>>(new Set());
@@ -1249,7 +1253,7 @@ function NeighboursTab({
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: BG }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: BG }} onScroll={onScroll}>
         <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 500, marginBottom: '12px' }}>
           {filtered.length} neighbour{filtered.length !== 1 ? 's' : ''} in your estate
         </div>

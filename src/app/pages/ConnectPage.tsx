@@ -261,9 +261,10 @@ interface ConnectPageProps {
   onJoinGroup?: (group: Group) => void;
   filterGroupInterests?: string[];
   onGroupInterestChange?: (interests: string[]) => void;
+  onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
-export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile, onDetailModeChange, onJoinGroup, filterGroupInterests = [], onGroupInterestChange }: ConnectPageProps) {
+export function ConnectPage({ hideHeader = false, externalSearchQuery, externalCategory, showExternalFilter = false, onFilterClose, onCategoryChange, onOpenNeighbourProfile, onDetailModeChange, onJoinGroup, filterGroupInterests = [], onGroupInterestChange, onScroll }: ConnectPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -487,7 +488,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
         </div>
       )}
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 100px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 100px' }} onScroll={onScroll}>
         {/* My Groups */}
         {myGroups.length > 0 && (
           <div style={{ marginBottom: '24px' }}>
