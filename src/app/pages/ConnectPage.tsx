@@ -4,6 +4,7 @@ import { Search, Users, X, Check, MapPin, ChevronRight, ChevronLeft, Activity, U
 import { INTEREST_CATEGORIES } from './SignUpPage';
 import { toast } from 'sonner';
 import { NeighbourProfile } from './NeighbourProfilePage';
+import groupSmileImg from '../../imports/group-smile.png';
 
 // ---- Design tokens ----
 const BG = '#F7F7F7';
@@ -488,7 +489,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
         </div>
       )}
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 100px' }} onScroll={onScroll}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }} onScroll={onScroll}>
         {/* My Groups */}
         {myGroups.length > 0 && (
           <div style={{ marginBottom: '24px' }}>
@@ -518,18 +519,18 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
         )}
 
         {/* Welcome banner */}
-        <div style={{
-          padding: '4px 0',
-          marginBottom: '16px',
-        }}>
-          <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Groups</div>
-          <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
-            Find and join groups in your neighbourhood that match your interests.
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0px', marginBottom: '8px', marginLeft: '-10px' }}>
+          <img src={groupSmileImg} alt="Groups" style={{ width: '56px', height: '56px', objectFit: 'cover', flexShrink: 0 }} />
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Groups</div>
+            <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
+              Find and join groups in your neighbourhood.
+            </div>
           </div>
         </div>
 
         {/* All Groups header */}
-        <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0 16px', marginBottom: '10px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0', marginBottom: '10px' }}>
           {effectiveCategory === 'All' ? 'All Groups' : 'Groups'} · {filteredGroups.length}
         </div>
 

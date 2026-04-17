@@ -386,7 +386,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
             <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px', background: '#F7F7F7' }} onScroll={handleScroll}>
               {/* Welcome banner */}
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0px', marginBottom: '-4px', marginLeft: '-10px' }}>
-                <img src={eventsImg} alt="Events" style={{ width: '90px', height: '90px', objectFit: 'cover', flexShrink: 0 }} />
+                <img src={eventsImg} alt="Events" style={{ width: '56px', height: '56px', objectFit: 'cover', flexShrink: 0 }} />
                 <div>
                   <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '4px' }}>Welcome to Events</div>
                   <div style={{ fontSize: '13px', color: TEXT2, fontWeight: 400, lineHeight: '1.5' }}>
