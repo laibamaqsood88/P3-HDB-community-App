@@ -500,7 +500,7 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
                   <div>
                     <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear', display: 'block' }}>Market</span>
-                    <div style={{ height: `${16 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', transition: 'height 0.1s linear, opacity 0.1s linear' }}>
+                    <div style={{ height: `${20 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', transition: 'height 0.1s linear, opacity 0.1s linear' }}>
                       <span style={{ fontSize: '13px', fontWeight: 400, color: MUTED, letterSpacing: '0px', display: 'block', marginTop: '2px' }}>Buy, sell or offer services</span>
                     </div>
                   </div>
