@@ -396,73 +396,88 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
         {/* Header */}
         <div style={{ background: searchOpen ? 'transparent' : CARD, borderBottom: searchOpen ? 'none' : `0.5px solid rgba(60,60,67,0.12)`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
           <>
-              {/* Title row: Back (search mode) OR Title + icons (normal) */}
-              <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px ${14 - (scrollProgress * 6)}px`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'padding 0.1s linear' }}>
+              {/* Header: expanded = two rows (buttons top-right, title below-left); collapsed = single row */}
+              <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px 0`, transition: 'padding 0.1s linear' }}>
                 {searchOpen ? (
-                  <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <ChevronLeft size={22} color="white" />
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
+                    <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ChevronLeft size={22} color="white" />
+                    </button>
+                  </div>
                 ) : (
-                <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Messages</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }} ref={newChatRef}>
-                  {/* Search button */}
-                  <button onClick={() => setSearchOpen(true)}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Search size={18} color={TEXT2} />
-                  </button>
-                  {/* + button */}
-                  <button onClick={() => setShowNewChat(v => !v)}
-                    style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Plus size={20} color="white" />
-                  </button>
-                  {/* New chat popup */}
-                  <AnimatePresence>
-                    {showNewChat && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.92, y: -6 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.92, y: -6 }}
-                        transition={{ duration: 0.15 }}
-                        style={{
-                          position: 'absolute',
-                          top: '48px',
-                          right: 0,
-                          background: CARD,
-                          borderRadius: '14px',
-                          boxShadow: '0 4px 24px rgba(0,0,0,0.14)',
-                          zIndex: 100,
-                          minWidth: '180px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <div style={{ padding: '12px 16px 6px', fontSize: '12px', fontWeight: 700, color: MUTED, letterSpacing: '0.4px', textTransform: 'uppercase' }}>
-                          New chat
-                        </div>
-                        <button
-                          onClick={() => { setShowNewChat(false); onNewGroup?.(); }}
-                          style={{ width: '100%', padding: '12px 16px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
-                        >
-                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <Users size={16} color={PRIMARY} />
-                          </div>
-                          <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>New group</span>
+                  /* Wrapper holds both rows + popup so newChatRef click-outside covers all three */
+                  <div ref={newChatRef} style={{ position: 'relative' }}>
+                    {/* Row 1: action buttons right-aligned — shrinks to 0 as page scrolls */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', height: `${40 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', marginBottom: `${6 * (1 - scrollProgress)}px`, transition: 'height 0.1s linear, opacity 0.1s linear, margin-bottom 0.1s linear' }}>
+                      <button onClick={() => setSearchOpen(true)}
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Search size={18} color={TEXT2} />
+                      </button>
+                      <button onClick={() => setShowNewChat(v => !v)}
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Plus size={20} color="white" />
+                      </button>
+                    </div>
+                    {/* Row 2: title left + buttons fade in on right when collapsed */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
+                      <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Messages</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: scrollProgress, pointerEvents: scrollProgress > 0.5 ? 'auto' : 'none', transition: 'opacity 0.1s linear' }}>
+                        <button onClick={() => setSearchOpen(true)}
+                          style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Search size={18} color={TEXT2} />
                         </button>
-                        <button
-                          onClick={() => { setShowNewChat(false); onNewNeighbour?.(); }}
-                          style={{ width: '100%', padding: '12px 16px 14px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
-                        >
-                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <MapPin size={16} color="#7C3AED" />
-                          </div>
-                          <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT, whiteSpace: 'nowrap' }}>New neighbour</span>
+                        <button onClick={() => setShowNewChat(v => !v)}
+                          style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Plus size={20} color="white" />
                         </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-                </div>
+                      </div>
+                    </div>
+                    {/* New chat popup — outside overflow:hidden rows, positioned relative to wrapper */}
+                    <AnimatePresence>
+                      {showNewChat && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.92, y: -6 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.92, y: -6 }}
+                          transition={{ duration: 0.15 }}
+                          style={{
+                            position: 'absolute',
+                            top: '48px',
+                            right: 0,
+                            background: CARD,
+                            borderRadius: '14px',
+                            boxShadow: '0 4px 24px rgba(0,0,0,0.14)',
+                            zIndex: 100,
+                            minWidth: '180px',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div style={{ padding: '12px 16px 6px', fontSize: '12px', fontWeight: 700, color: MUTED, letterSpacing: '0.4px', textTransform: 'uppercase' }}>
+                            New chat
+                          </div>
+                          <button
+                            onClick={() => { setShowNewChat(false); onNewGroup?.(); }}
+                            style={{ width: '100%', padding: '12px 16px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
+                          >
+                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <Users size={16} color={PRIMARY} />
+                            </div>
+                            <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>New group</span>
+                          </button>
+                          <button
+                            onClick={() => { setShowNewChat(false); onNewNeighbour?.(); }}
+                            style={{ width: '100%', padding: '12px 16px 14px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
+                          >
+                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <MapPin size={16} color="#7C3AED" />
+                            </div>
+                            <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT, whiteSpace: 'nowrap' }}>New neighbour</span>
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 )}
               </div>
               {/* Filter tabs — always visible */}
