@@ -162,14 +162,14 @@ const EVENT_ATTENDEES: Record<number, number[]> = {
 // ---- Neighbours Mock Data ----
 const MOCK_NEIGHBOURS = [
   { id: 1, name: 'Alex Lim',    distance: '0.1 km', unit: 'Blk 445 #12-34', interests: ['Fitness & Sports', 'Cooking & Baking'],              avatar: 'AL', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#FF6B47', lastActive: '2 hours ago',  languages: ['English', 'Chinese'] },
-  { id: 2, name: 'Ben Tan',     distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'],              avatar: 'BT', avatarUrl: undefined, color: '#7C3AED', lastActive: '5 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 2, name: 'Ben Tan',     distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'],              avatar: 'BT', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#7C3AED', lastActive: '5 hours ago',  languages: ['English', 'Chinese'] },
   { id: 3, name: 'Clara Soh',   distance: '0.3 km', unit: 'Blk 448 #03-22', interests: ['Cooking & Baking', 'Gardening & Plants'],             avatar: 'CS', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#D97706', lastActive: '1 day ago',    languages: ['English', 'Malay'] },
   { id: 4, name: 'Diana Mak',   distance: '0.4 km', unit: 'Blk 445 #15-01', interests: ['Gardening & Plants', 'Yoga & Mindfulness'],           avatar: 'DM', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#059669', lastActive: '3 hours ago',  languages: ['English', 'Chinese'] },
-  { id: 5, name: 'Eli Ng',      distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'],            avatar: 'EN', avatarUrl: undefined, color: '#0891B2', lastActive: 'Just now',     languages: ['English'] },
+  { id: 5, name: 'Eli Ng',      distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'],            avatar: 'EN', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#0891B2', lastActive: 'Just now',     languages: ['English'] },
   { id: 6, name: 'Fiona Raj',   distance: '0.6 km', unit: 'Blk 446 #11-18', interests: ['Music & Performing Arts', 'Dance'],                   avatar: 'FR', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#DB2777', lastActive: '30 min ago',   languages: ['English', 'Tamil'] },
-  { id: 7, name: 'Gary Koh',    distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', avatarUrl: undefined, color: '#EA580C', lastActive: '2 days ago', languages: ['English', 'Chinese'] },
+  { id: 7, name: 'Gary Koh',    distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#EA580C', lastActive: '2 days ago', languages: ['English', 'Chinese'] },
   { id: 8, name: 'Hannah Lee',  distance: '1.0 km', unit: 'Blk 445 #09-33', interests: ['Photography', 'Outdoor Activities'],                  avatar: 'HL', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#475569', lastActive: '4 hours ago',  languages: ['English', 'Chinese'] },
-  { id: 9, name: 'Ivan Wong',   distance: '1.2 km', unit: 'Blk 451 #02-15', interests: ['Language Learning', 'Cultural Heritage & Festivals'], avatar: 'IW', avatarUrl: undefined, color: '#0D9488', lastActive: '1 hour ago',   languages: ['English', 'Malay', 'Japanese'] },
+  { id: 9, name: 'Ivan Wong',   distance: '1.2 km', unit: 'Blk 451 #02-15', interests: ['Language Learning', 'Cultural Heritage & Festivals'], avatar: 'IW', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#0D9488', lastActive: '1 hour ago',   languages: ['English', 'Malay', 'Japanese'] },
   { id: 10, name: 'Jasmine Yap', distance: '1.5 km', unit: 'Blk 452 #06-28', interests: ['Fashion & Beauty', 'Arts & Crafts'],                 avatar: 'JY', avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', color: '#BE185D', lastActive: '6 hours ago',  languages: ['English', 'Chinese'] },
 ];
 
@@ -1228,10 +1228,12 @@ function NeighboursTab({
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                onClick={() => onOpenNeighbourProfile?.({ name: n.name, avatar: n.avatar, avatarUrl: n.avatarUrl, color: n.color, block: n.unit.split(' #')[0], distance: n.distance, interests: n.interests, languages: n.languages })}
                 style={{
                   background: CARD, borderRadius: '18px', padding: '14px 14px 12px',
                   boxShadow: isMatched ? '0 2px 16px rgba(255,107,71,0.10)' : '0 1px 6px rgba(0,0,0,0.06)',
                   border: isMatched ? `1.5px solid rgba(255,107,71,0.18)` : '1.5px solid transparent',
+                  cursor: 'pointer',
                 }}
               >
                 {/* Two-column layout: avatar left, everything else right */}
@@ -1239,8 +1241,7 @@ function NeighboursTab({
 
                   {/* LEFT column — avatar only */}
                   <div
-                    onClick={e => { e.stopPropagation(); onOpenNeighbourProfile?.({ name: n.name, avatar: n.avatar, color: n.color, block: n.unit.split(' #')[0], distance: n.distance, interests: n.interests, languages: (n as any).languages }); }}
-                    style={{ width: '46px', height: '46px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
+                    style={{ width: '46px', height: '46px', borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}
                   >
                     {n.avatarUrl
                       ? <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -1272,7 +1273,7 @@ function NeighboursTab({
                     {/* Row 4: Say Hello — full width of right column */}
                     <motion.button
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleMessage(n)}
+                      onClick={e => { e.stopPropagation(); handleMessage(n); }}
                       style={{
                         display: 'flex', padding: '6px 16px', borderRadius: '20px',
                         background: '#FFF0EC', border: `1.5px solid ${PRIMARY}`,

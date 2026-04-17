@@ -57,14 +57,14 @@ interface EventsPageProps {
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
 const MOCK_NEIGHBOURS = [
-  { id: 1, name: 'Alex Lim',   distance: '0.1 km', unit: 'Blk 445', interests: ['Fitness'],          avatar: 'AL', color: '#FF6B47', avatarUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop', lastActive: '2 hours ago' },
-  { id: 2, name: 'Ben Tan',    distance: '0.2 km', unit: 'Blk 447', interests: ['Gardening'],         avatar: 'BT', color: '#7C3AED', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop', lastActive: '5 hours ago' },
-  { id: 3, name: 'Clara Soh',  distance: '0.3 km', unit: 'Blk 448', interests: ['Cooking'],           avatar: 'CS', color: '#D97706', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop', lastActive: '1 day ago' },
-  { id: 4, name: 'Diana Mak',  distance: '0.4 km', unit: 'Blk 445', interests: ['Yoga'],              avatar: 'DM', color: '#059669', avatarUrl: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=200&h=200&fit=crop', lastActive: '3 hours ago' },
-  { id: 5, name: 'Eli Ng',     distance: '0.5 km', unit: 'Blk 449', interests: ['Art and Craft'],     avatar: 'EN', color: '#0891B2', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop', lastActive: 'Just now' },
-  { id: 6, name: 'Fiona Raj',  distance: '0.6 km', unit: 'Blk 446', interests: ['Music'],             avatar: 'FR', color: '#DB2777', avatarUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop', lastActive: '30 min ago' },
-  { id: 7, name: 'Gary Koh',   distance: '0.8 km', unit: 'Blk 450', interests: ['Photography'],       avatar: 'GK', color: '#EA580C', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop', lastActive: '2 days ago' },
-  { id: 8, name: 'Hannah Lee', distance: '1.0 km', unit: 'Blk 445', interests: ['Board Games'],       avatar: 'HL', color: '#475569', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop', lastActive: '4 hours ago' },
+  { id: 1, name: 'Alex Lim',   distance: '0.1 km', unit: 'Blk 445 #12-34', interests: ['Fitness & Sports', 'Cooking & Baking'],              avatar: 'AL', color: '#FF6B47', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: '2 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 2, name: 'Ben Tan',    distance: '0.2 km', unit: 'Blk 447 #08-12', interests: ['Gaming', 'Technology & Digital Skills'],              avatar: 'BT', color: '#7C3AED', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: '5 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 3, name: 'Clara Soh',  distance: '0.3 km', unit: 'Blk 448 #03-22', interests: ['Cooking & Baking', 'Gardening & Plants'],             avatar: 'CS', color: '#D97706', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: '1 day ago',    languages: ['English', 'Malay'] },
+  { id: 4, name: 'Diana Mak',  distance: '0.4 km', unit: 'Blk 445 #15-01', interests: ['Gardening & Plants', 'Yoga & Mindfulness'],           avatar: 'DM', color: '#059669', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: '3 hours ago',  languages: ['English', 'Chinese'] },
+  { id: 5, name: 'Eli Ng',     distance: '0.5 km', unit: 'Blk 449 #07-05', interests: ['Community Volunteering', 'Arts & Crafts'],            avatar: 'EN', color: '#0891B2', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: 'Just now',     languages: ['English'] },
+  { id: 6, name: 'Fiona Raj',  distance: '0.6 km', unit: 'Blk 446 #11-18', interests: ['Music & Performing Arts', 'Dance'],                   avatar: 'FR', color: '#DB2777', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: '30 min ago',   languages: ['English', 'Tamil'] },
+  { id: 7, name: 'Gary Koh',   distance: '0.8 km', unit: 'Blk 450 #04-09', interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', color: '#EA580C', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: '2 days ago', languages: ['English', 'Chinese'] },
+  { id: 8, name: 'Hannah Lee', distance: '1.0 km', unit: 'Blk 445 #09-33', interests: ['Photography', 'Outdoor Activities'],                  avatar: 'HL', color: '#475569', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', lastActive: '4 hours ago',  languages: ['English', 'Chinese'] },
 ];
 
 // ---- Mock Data ----
@@ -813,6 +813,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <motion.div
                 key={neighbour.id}
                 whileTap={{ scale: 0.97 }}
+                onClick={() => onOpenNeighbourProfile?.({ name: neighbour.name, avatar: neighbour.avatar, avatarUrl: neighbour.avatarUrl, color: neighbour.color, block: neighbour.unit, distance: neighbour.distance, interests: neighbour.interests, languages: neighbour.languages })}
                 style={{
                   flexShrink: 0, width: '220px', background: CARD,
                   borderRadius: '18px', padding: '14px 14px 12px',
@@ -824,7 +825,6 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                   {/* Avatar */}
                   <div
-                    onClick={() => onOpenNeighbourProfile?.({ name: neighbour.name, avatar: neighbour.avatar, avatarUrl: neighbour.avatarUrl, color: neighbour.color, block: neighbour.unit, distance: neighbour.distance, interests: neighbour.interests, languages: ['English', 'Chinese'] })}
                     style={{ width: '46px', height: '46px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: neighbour.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     {neighbour.avatarUrl

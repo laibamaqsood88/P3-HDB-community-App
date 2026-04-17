@@ -29,7 +29,9 @@ interface Conversation {
   memberCount?: number;    // for dynamically joined groups
   meetFrequency?: string;  // for dynamically joined groups
   location?: string;       // for dynamically joined groups
-  imageUrl?: string;       // group cover photo
+  imageUrl?: string;       // group cover photo / poster profile photo
+  interests?: string[];    // for neighbour profile About section
+  languages?: string[];    // for neighbour profile About section
 }
 
 const CONVERSATIONS: Conversation[] = [
@@ -61,34 +63,45 @@ const CONVERSATIONS: Conversation[] = [
     id: 3,
     type: 'marketplace',
     name: 'IKEA Bookshelf',
-    avatar: 'IB',
-    avatarBg: '#3B82F6',
+    avatar: 'YU',
+    avatarBg: '#FF6B47',
+    subtitle: 'Yusra',
     lastMessage: 'Hi! Is the bookshelf still available?',
     time: '2:15 PM',
     unread: 1,
     tag: 'Item',
+    imageUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop&crop=face',
+    interests: ['Gardening & Plants', 'DIY & Home Improvement', 'Cooking & Baking'],
+    languages: ['English', 'Malay'],
   },
   {
     id: 4,
     type: 'direct',
-    name: 'Neighbour #2',
-    avatar: 'N2',
+    name: 'Selene Teo',
+    avatar: 'ST',
     avatarBg: '#8B5CF6',
     lastMessage: "Yes! Let's plan a run this Saturday 🏃",
     time: '10:33 AM',
     unread: 0,
     tag: null,
+    imageUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&crop=face',
+    interests: ['Fitness & Sports', 'Running', 'Yoga & Mindfulness'],
+    languages: ['English', 'Chinese'],
   },
   {
     id: 5,
     type: 'request',
     name: 'Plant Watering Request',
-    avatar: 'PW',
-    avatarBg: '#22C55E',
-    lastMessage: 'Thanks for your offer! Saturday works.',
+    avatar: 'ST',
+    avatarBg: '#8B5CF6',
+    subtitle: 'Sarah T.',
+    lastMessage: 'No problem! Saturday works for me.',
     time: 'Mon',
     unread: 1,
     tag: 'Request',
+    imageUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',
+    interests: ['Community Volunteering', 'Gardening & Plants', 'Outdoor Activities'],
+    languages: ['English', 'Chinese'],
   },
 ];
 
@@ -120,7 +133,7 @@ const MARKETPLACE_MESSAGES: Record<number, ChatMessage[]> = {
   5: [
     { id: 1, from: 'them', sender: 'them', text: "Hi! I saw you need plant watering — happy to help!", time: 'Mon' },
     { id: 2, from: 'me', sender: 'me', text: 'That would be amazing, thank you!', time: 'Mon' },
-    { id: 3, from: 'them', sender: 'them', text: 'Thanks for your offer! Saturday works.', time: 'Mon' },
+    { id: 3, from: 'them', sender: 'them', text: 'No problem! Saturday works for me.', time: 'Mon' },
   ],
 };
 
@@ -280,7 +293,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
     const local = localMessages[conv.id];
     if (local) return local;
     if (conv.type === 'group') return GROUP_MESSAGES[conv.id] || [];
-    if (conv.type === 'marketplace') return MARKETPLACE_MESSAGES[conv.id] || [];
+    if (conv.type === 'marketplace' || conv.type === 'request') return MARKETPLACE_MESSAGES[conv.id] || [];
     return DIRECT_MESSAGES[conv.id] || [];
   };
 
@@ -443,7 +456,7 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                         gap: '5px',
                       }}
                     >
-                      {tab}
+                      {tab === 'Neighbour' ? 'Neighbours' : tab}
                       {count > 0 && (
                         <span style={{
                           minWidth: '17px', height: '17px', borderRadius: '9px',
@@ -517,32 +530,12 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                   fontWeight: 700,
                   color: 'white',
                   position: 'relative',
-                  overflow: 'hidden',
                 }}
               >
                 {conv.imageUrl ? (
                   <img src={conv.imageUrl} alt={conv.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                 ) : (
                   conv.avatar
-                )}
-                {conv.type === 'group' && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '-3px',
-                      right: '-3px',
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '50%',
-                      background: CARD,
-                      border: `2px solid ${CARD}`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Users size={10} color={conv.avatarBg} />
-                  </div>
                 )}
               </div>
 
@@ -804,23 +797,30 @@ function ChatScreen({
             <ChevronLeft size={20} color={TEXT} />
           </button>
 
-          {/* Avatar + Name — tappable for groups (shows members), direct (opens profile) */}
+          {/* Avatar + Name — tappable for groups (shows members), direct/marketplace/request (opens poster profile) */}
           <div
-            onClick={() => {
-              if (isGroup) setShowMembers(true);
-              else onOpenNeighbourProfile?.({ name: conv.name, avatar: conv.avatar, color: conv.avatarBg });
-            }}
-            style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, cursor: 'pointer', minWidth: 0 }}
+            onClick={() => { if (isGroup) setShowMembers(true); }}
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, cursor: isGroup ? 'pointer' : 'default', minWidth: 0 }}
           >
             <div
-              style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0 }}
+              onClick={e => {
+                if (isGroup) return; // handled by parent
+                e.stopPropagation();
+                const profileName = (conv.type === 'marketplace' || conv.type === 'request') && conv.subtitle ? conv.subtitle : conv.name;
+                onOpenNeighbourProfile?.({ name: profileName, avatar: conv.avatar, color: conv.avatarBg, avatarUrl: conv.imageUrl, interests: conv.interests, languages: conv.languages });
+              }}
+              style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
             >
-              {conv.avatar}
+              {conv.imageUrl ? (
+                <img src={conv.imageUrl} alt={conv.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                conv.avatar
+              )}
             </div>
 
             {/* Name + subtitle */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              {conv.type === 'marketplace' && conv.subtitle && (
+              {(conv.type === 'marketplace' || conv.type === 'request') && conv.subtitle && (
                 <div style={{ fontSize: '11px', color: MUTED, fontWeight: 500, marginBottom: '1px' }}>
                   {conv.subtitle}
                 </div>
