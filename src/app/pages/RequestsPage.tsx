@@ -323,7 +323,7 @@ function RequestsFeed({ requests, savedRequests, onSaveToggle, onSelectRequest, 
       {/* Header */}
       <div style={{ background: searchOpen ? 'transparent' : CARD, borderBottom: searchOpen ? 'none' : `0.5px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
         {/* Header: buttons fixed top-right; title starts below and moves up on scroll */}
-        <div style={{ position: 'relative', height: `${152 - scrollProgress * 60}px`, transition: 'height 0.1s linear' }}>
+        <div style={{ position: 'relative', height: `${168 - scrollProgress * 76}px`, transition: 'height 0.1s linear' }}>
           {searchOpen ? (
             <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
               style={{ position: 'absolute', top: '44px', left: '16px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
