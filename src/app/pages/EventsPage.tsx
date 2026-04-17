@@ -849,7 +849,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     }
                   </div>
                   {/* Right content */}
-                  <div style={{ flex: 1, minWidth: 0, padding: '10px 12px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ flex: 1, minWidth: 0, padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                         <span style={{ padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: tc.bg, color: tc.text, flexShrink: 0 }}>{r.type}</span>
