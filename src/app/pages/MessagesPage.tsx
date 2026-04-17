@@ -396,44 +396,40 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
         {/* Header */}
         <div style={{ background: searchOpen ? 'transparent' : CARD, borderBottom: searchOpen ? 'none' : `0.5px solid rgba(60,60,67,0.12)`, flexShrink: 0, position: 'relative', zIndex: searchOpen ? 202 : undefined }}>
           <>
-              {/* Header: expanded = two rows (buttons top-right, title below-left); collapsed = single row */}
-              <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px 0`, transition: 'padding 0.1s linear' }}>
+              {/* Header: buttons fixed top-right; title starts below and moves up on scroll */}
+              <div style={{ position: 'relative', height: `${132 - scrollProgress * 40}px`, transition: 'height 0.1s linear' }}>
                 {searchOpen ? (
-                  <div style={{ display: 'flex', alignItems: 'center', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
-                    <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                      style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ChevronLeft size={22} color="white" />
-                    </button>
-                  </div>
+                  <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
+                    style={{ position: 'absolute', top: '44px', left: '16px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ChevronLeft size={22} color="white" />
+                  </button>
                 ) : (
-                  /* Wrapper holds both rows + popup so newChatRef click-outside covers all three */
-                  <div ref={newChatRef} style={{ position: 'relative' }}>
-                    {/* Row 1: action buttons right-aligned — shrinks to 0 as page scrolls */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', height: `${40 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', marginBottom: `${6 * (1 - scrollProgress)}px`, transition: 'height 0.1s linear, opacity 0.1s linear, margin-bottom 0.1s linear' }}>
+                  /* newChatRef covers full container so click-outside detection still works */
+                  <div ref={newChatRef} style={{ position: 'absolute', inset: 0 }}>
+                    {/* Buttons: absolutely pinned, no animation ever */}
+                    <div style={{ position: 'absolute', top: '44px', right: '16px', display: 'flex', gap: '8px' }}>
                       <button onClick={() => setSearchOpen(true)}
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Search size={18} color={TEXT2} />
                       </button>
                       <button onClick={() => setShowNewChat(v => !v)}
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Plus size={20} color="white" />
                       </button>
                     </div>
-                    {/* Row 2: title left + buttons fade in on right when collapsed */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
-                      <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Messages</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: scrollProgress, pointerEvents: scrollProgress > 0.5 ? 'auto' : 'none', transition: 'opacity 0.1s linear' }}>
-                        <button onClick={() => setSearchOpen(true)}
-                          style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Search size={18} color={TEXT2} />
-                        </button>
-                        <button onClick={() => setShowNewChat(v => !v)}
-                          style={{ width: '40px', height: '40px', borderRadius: '50%', background: PRIMARY, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Plus size={20} color="white" />
-                        </button>
-                      </div>
-                    </div>
-                    {/* New chat popup — outside overflow:hidden rows, positioned relative to wrapper */}
+                    {/* Title: starts below buttons, slides up + shrinks to align with buttons on scroll */}
+                    <span style={{
+                      position: 'absolute',
+                      left: '16px',
+                      top: `${90 - scrollProgress * 46}px`,
+                      fontSize: `${28 - scrollProgress * 8}px`,
+                      fontWeight: 800,
+                      color: TEXT,
+                      letterSpacing: '-0.5px',
+                      lineHeight: '40px',
+                      transition: 'top 0.1s linear, font-size 0.1s linear',
+                    }}>Messages</span>
+                    {/* New chat popup — positioned relative to container, below the + button */}
                     <AnimatePresence>
                       {showNewChat && (
                         <motion.div
@@ -443,8 +439,8 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
                           transition={{ duration: 0.15 }}
                           style={{
                             position: 'absolute',
-                            top: '48px',
-                            right: 0,
+                            top: '88px',
+                            right: '16px',
                             background: CARD,
                             borderRadius: '14px',
                             boxShadow: '0 4px 24px rgba(0,0,0,0.14)',
