@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-17 (Session 9)
+2026-04-18 (Session 10)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -282,6 +282,27 @@ onOpenNeighbourProfile?: (profile) => void
 - **Chat button** on item/service detail → calls `onOpenChat(item)` → creates marketplace conversation in Messages tab
 - Props: `{ onAddPost, initialItemId?, savedItems, onSaveToggle, onNavVisibilityChange, onOpenChat? }`
 
+### Seller / Provider Profile Data
+Each seller (items 101–110) and provider (services 201–210) in `ITEMS_AND_SERVICES` now has:
+```ts
+{ name, avatarColor, rating, reviews, profileImage, block, interests: string[], languages: string[] }
+```
+These fields are forwarded to the conversation object in `App.tsx onOpenChat` so that the chat header shows the real photo and the neighbour profile is fully populated.
+
+### App.tsx onOpenChat — Fields Passed to Conversation
+```ts
+imageUrl:    isService ? item.provider.profileImage : item.seller.profileImage
+interests:   isService ? item.provider.interests    : item.seller.interests
+languages:   isService ? item.provider.languages    : item.seller.languages
+block:       isService ? item.provider.block        : item.seller.block
+distance:    item.distance
+rating:      isService ? item.provider.rating       : item.seller.rating
+reviews:     isService ? item.provider.reviews      : item.seller.reviews
+listingImage: item.image
+price:        isService ? item.rate : item.price
+listingId:    item.id
+```
+
 ### Local Image Imports (src/imports/)
 Some item/service cards use local images instead of Unsplash URLs:
 ```ts
@@ -304,21 +325,32 @@ Pattern: `image: yogaMatImg` (imported variable, not a URL string).
 - **Post request form**: Image upload section above Title (tile grid with + button, photo picker bottom sheet), MapPin icon on left of location field, no Suggested category chips.
 - Saved state: `savedRequests: number[]` lifted to `RequestsPage`, passed as props to `RequestsFeed`
 
-### POSTER_AVATARS — Real Face Photos
-All 5 poster avatars have `avatarUrl` set to Unsplash face photos:
+### POSTER_AVATARS — Real Face Photos + Full Profile Data
+All 5 poster avatars now have full profile data:
 ```ts
-{ name: 'Sarah T.',   color: '#8B5CF6', initials: 'ST', avatarUrl: 'photo-1438761681033-6461ffad8d80' }
-{ name: 'Ahmad K.',   color: '#3B82F6', initials: 'AK', avatarUrl: 'photo-1506794778202-cad84cf45f1d' }
-{ name: 'Mei Lin',    color: '#F97316', initials: 'ML', avatarUrl: 'photo-1544005313-94ddf0286df2' }
-{ name: 'Ravi S.',    color: '#22C55E', initials: 'RS', avatarUrl: 'photo-1500648767791-00dcc994a43e' }
-{ name: 'Jennifer L.',color: '#EC4899', initials: 'JL', avatarUrl: 'photo-1494790108377-be9c29b29330' }
+{ name, color, initials, rating, reviews, avatarUrl, block, interests: string[], languages: string[] }
 ```
-(Full URL pattern: `https://images.unsplash.com/photo-{hash}?w=200&h=200&fit=crop&crop=face`)
+| Name | Block | Interests |
+|---|---|---|
+| Sarah T. | Blk 445 | Community Volunteering, Gardening & Plants, Outdoor Activities |
+| Ahmad K. | Blk 448 | Football, DIY & Home Improvement, Community Volunteering |
+| Mei Lin | Blk 451 | Reading & Books, Babies & Kids, Cooking & Baking |
+| Ravi S. | Blk 443 | Pet Care, Outdoor Activities, Running |
+| Jennifer L. | Blk 445 | Cooking & Baking, Fitness & Sports, Yoga & Mindfulness |
+
+(Full avatarUrl pattern: `https://images.unsplash.com/photo-{hash}?w=200&h=200&fit=crop&crop=face`)
 
 `PosterAvatar` component renders `<img>` when `avatarUrl` is set, fallback to initials. Used in:
 - Feed card: 20px inline circle next to poster name
 - Detail page "About the Neighbour": 48px circle
 - Both have `overflow: 'hidden'` on the container div
+
+### Request ChatScreen (RequestsPage.tsx)
+- **Initial message** is sent from `'me'` (Rachel offering to help), not `'them'`
+- **Listing banner** shown below header: request image (56×56px), title, type (e.g. "Borrow") + `SquareArrowOutUpRight` icon
+- **Avatar click** → calls `onViewProfile` → pushes `'neighbour-profile'` onto nav stack
+- `onViewProfile` is passed from `renderScreen` case `'chat'` with `{ poster: request.poster, request }`
+- `case 'neighbour-profile'` passes `block`, `distance`, `rating`, `reviews`, `interests`, `languages` from poster to `NeighbourProfilePage`
 
 ### Request Card Images
 - id:1 "Need someone to water my plants" → `photo-1771810506686-f70bafda1a16` (plants + dog outdoor scene)
@@ -356,17 +388,29 @@ interface Conversation {
   imageUrl?: string;       // poster/seller face photo shown in avatar
   interests?: string[];    // shown in neighbour profile opened from chat avatar
   languages?: string[];    // shown in neighbour profile opened from chat avatar
+  block?: string;          // e.g. "Blk 445" — shown in neighbour profile
+  distance?: string;       // e.g. "0.3 km away" — shown in neighbour profile
+  rating?: number;         // shown in neighbour profile
+  reviews?: number;        // shown in neighbour profile
+  listingImage?: string;   // thumbnail shown in listing banner inside chat
+  price?: string;          // e.g. "Free", "$25" — shown in listing banner
   listingId?: number;      // id of the linked marketplace item or request (for banner tap navigation)
 }
 ```
 
 ### Dynamic Conversation Rendering
 - **Marketplace/Request chats**: conversation list row + chat header show `conv.subtitle` (seller/poster name) in smaller muted text above the item/service title
-- **Listing banner tap**: inside a marketplace or request chat, tapping the item banner (with `SquareArrowOutUpRight` link icon) calls `onOpenMarketplaceListing(conv.listingId)` or `onOpenRequestListing(conv.listingId)` to navigate to the full detail page
-- **Chat avatar tap** (non-group): opens `NeighbourProfilePage` with poster/seller's photo, interests, languages
+- **Listing banner**: shown below the chat header for marketplace/request chats — displays `conv.listingImage` (56×56px rounded), `conv.name`, `conv.price`; tapping calls `onOpenMarketplaceListing(conv.listingId)` or `onOpenRequestListing(conv.listingId)`
+- **Chat avatar tap** (non-group): opens `NeighbourProfilePage` with `block`, `distance`, `rating`, `reviews`, `interests`, `languages` from `conv`
+- **Chat header avatar**: shows `conv.imageUrl` (real seller/poster photo) if set; falls back to initials
 - **New group chats** (dynamically joined, `id = Date.now()`): group chat activity board falls back to `conv.meetFrequency`, `conv.location`, `conv.memberCount` since `GROUP_ACTIVITY[conv.id]` won't exist
 - **New group members**: falls back to `[{ name: 'You', avatar: 'YO', avatarBg: '#FF6B47', role: 'Member' }]` when `GROUP_MEMBERS[conv.id]` is undefined
-- `extraMapped` preserves all new fields: `subtitle`, `memberCount`, `meetFrequency`, `location`, `imageUrl`, `interests`, `languages`, `listingId`
+- `extraMapped` preserves all fields including `block`, `distance`, `rating`, `reviews`, `listingImage`, `price`, `listingId`
+
+### Static Conversations — Block & Distance
+- id:3 IKEA Bookshelf (Yusra) → `block: 'Blk 445'`, `distance: '0.3 km away'`, `rating: 4.8`, `reviews: 12`
+- id:4 Selene Teo (direct) → `block: 'Blk 447'`, `distance: '0.5 km away'`, `rating: 4.8`, `reviews: 12`
+- id:5 Plant Watering Request (Sarah T.) → `block: 'Blk 445'`, `distance: '0.3 km away'` (existing)
 
 ### Props (updated)
 ```ts
@@ -404,6 +448,13 @@ interface Conversation {
 - All setting row icons: grey background (`#F2F2F7` bg, MUTED color)
 - Sections: Account, Notifications, Privacy, **Log Out** (above About), About
 - No duplicate Settings list item; no Singpass Verified banner
+
+### Privacy Section (Settings)
+Two rows inside the Privacy card:
+1. **Privacy & Data** — chevron nav row (existing)
+2. **Show Block Number** — toggle row with `MapPin` icon; subtitle "Visible on your public profile"
+   - State: `showBlockNumber` (default `true`)
+   - Toggle uses same pill style as Notifications toggles (46×26px, PRIMARY orange when on)
 
 ---
 
