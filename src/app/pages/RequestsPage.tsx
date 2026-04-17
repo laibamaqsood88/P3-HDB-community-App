@@ -48,11 +48,11 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 const POSTER_AVATARS = [
-  { name: 'Sarah T.', color: '#8B5CF6', initials: 'ST', rating: 4.8, reviews: 12 },
-  { name: 'Ahmad K.', color: '#3B82F6', initials: 'AK', rating: 4.5, reviews: 8 },
-  { name: 'Mei Lin', color: '#F97316', initials: 'ML', rating: 4.9, reviews: 21 },
-  { name: 'Ravi S.', color: '#22C55E', initials: 'RS', rating: 4.7, reviews: 5 },
-  { name: 'Jennifer L.', color: '#EC4899', initials: 'JL', rating: 4.6, reviews: 9 },
+  { name: 'Sarah T.', color: '#8B5CF6', initials: 'ST', rating: 4.8, reviews: 12, avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face' },
+  { name: 'Ahmad K.', color: '#3B82F6', initials: 'AK', rating: 4.5, reviews: 8, avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face' },
+  { name: 'Mei Lin', color: '#F97316', initials: 'ML', rating: 4.9, reviews: 21, avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face' },
+  { name: 'Ravi S.', color: '#22C55E', initials: 'RS', rating: 4.7, reviews: 5, avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face' },
+  { name: 'Jennifer L.', color: '#EC4899', initials: 'JL', rating: 4.6, reviews: 9, avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face' },
 ];
 
 const MOCK_REVIEWS = [
@@ -62,7 +62,7 @@ const MOCK_REVIEWS = [
 ];
 
 const INITIAL_REQUESTS = [
-  { id: 1, title: 'Need someone to water my plants', category: 'Home Help', type: 'Free Request', description: 'Need someone to water my 4 potted plants while I\'m away travelling. Easy — just water once every 2 days. Plants are by the window sill.', expiresOn: '25 Apr 2026', postedAgo: '2 days ago', distance: '0.3 km away', image: 'https://images.unsplash.com/photo-1599598425947-5202edd56fde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[0], collectionPoint: 'Blk 445, Level 5, #05-22' },
+  { id: 1, title: 'Need someone to water my plants', category: 'Home Help', type: 'Free Request', description: 'Need someone to water my 4 potted plants while I\'m away travelling. Easy — just water once every 2 days. Plants are by the window sill.', expiresOn: '25 Apr 2026', postedAgo: '2 days ago', distance: '0.3 km away', image: 'https://images.unsplash.com/photo-1771810506686-f70bafda1a16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[0], collectionPoint: 'Blk 445, Level 5, #05-22' },
   { id: 2, title: 'Help moving sofa to void deck', category: 'Moving', type: 'Paid Request', description: 'Need a hand moving a sofa from Level 8 to ground floor void deck for disposal. Only takes 30 mins with 2 people. Will pay $20 for the help.', expiresOn: '20 Apr 2026', postedAgo: '5 hours ago', distance: '0.8 km away', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[1], collectionPoint: 'Blk 448, Void Deck' },
   { id: 3, title: 'Looking for P5 Math assessment books', category: 'Items Needed', type: 'Borrow', description: 'My daughter is in P5 and we are looking for any spare Math or English assessment books. Happy to borrow for 2 weeks and return in good condition.', expiresOn: '30 Apr 2026', postedAgo: '1 day ago', distance: '1.2 km away', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[2], collectionPoint: 'Blk 451, Level 3 Corridor' },
   { id: 4, title: 'Lost: Orange tabby cat near Blk 443', category: 'Lost Items', type: 'Free Request', description: 'Lost my orange tabby cat Milo near Blk 443 last Sunday evening. Very friendly, wearing a blue collar with a bell. Please contact if spotted!', expiresOn: '28 Apr 2026', postedAgo: '3 days ago', distance: '0.5 km away', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[3], collectionPoint: 'Blk 443 Area' },
@@ -106,8 +106,11 @@ function CollectionPointMap({ address }: { address: string }) {
 // ---- Poster Avatar ----
 function PosterAvatar({ poster, size = 34 }: { poster: any; size?: number }) {
   return (
-    <div style={{ width: `${size}px`, height: `${size}px`, borderRadius: '50%', background: poster.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid white', boxShadow: '0 1px 4px rgba(0,0,0,0.15)' }}>
-      <span style={{ fontSize: `${Math.floor(size * 0.33)}px`, fontWeight: 800, color: 'white' }}>{poster.initials}</span>
+    <div style={{ width: `${size}px`, height: `${size}px`, borderRadius: '50%', background: poster.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid white', boxShadow: '0 1px 4px rgba(0,0,0,0.15)', overflow: 'hidden' }}>
+      {poster.avatarUrl
+        ? <img src={poster.avatarUrl} alt={poster.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        : <span style={{ fontSize: `${Math.floor(size * 0.33)}px`, fontWeight: 800, color: 'white' }}>{poster.initials}</span>
+      }
     </div>
   );
 }
@@ -175,8 +178,11 @@ function RequestCard({ r, savedItems, onSaveToggle, onClick }: { r: any; savedIt
 
         {/* Bottom row: poster + time ago */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: r.poster.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ fontSize: '8px', fontWeight: 800, color: 'white' }}>{r.poster.initials}</span>
+          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: r.poster.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+            {r.poster.avatarUrl
+              ? <img src={r.poster.avatarUrl} alt={r.poster.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : <span style={{ fontSize: '8px', fontWeight: 800, color: 'white' }}>{r.poster.initials}</span>
+            }
           </div>
           <span style={{ fontSize: '12px', fontWeight: 600, color: TEXT2 }}>{r.poster.name}</span>
           <span style={{ marginLeft: 'auto', fontSize: '11px', color: MUTED }}>{r.postedAgo}</span>
@@ -527,8 +533,11 @@ function RequestDetail({ request, savedItems, onSaveToggle, onBack, onChat, onVi
               onClick={() => onViewProfile?.({ poster: request.poster, request })}
               style={{ background: CARD, borderRadius: '14px', border: `0.5px solid ${BORDER}`, padding: '16px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
             >
-              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: request.poster?.color || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{request.poster?.initials || 'N'}</span>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: request.poster?.color || PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                {request.poster?.avatarUrl
+                  ? <img src={request.poster.avatarUrl} alt={request.poster.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <span style={{ fontSize: '18px', fontWeight: 800, color: 'white' }}>{request.poster?.initials || 'N'}</span>
+                }
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '3px' }}>{request.poster?.name || 'Neighbour'}</div>
@@ -559,7 +568,7 @@ function RequestDetail({ request, savedItems, onSaveToggle, onBack, onChat, onVi
 
 
 const REQUEST_MOCK_PHOTOS = [
-  'https://images.unsplash.com/photo-1599598425947-5202edd56fde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+  'https://images.unsplash.com/photo-1771810506686-f70bafda1a16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
   'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
   'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
   'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
