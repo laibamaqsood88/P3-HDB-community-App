@@ -307,6 +307,9 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
               block: blockMatch ? blockMatch[1] : 'Bishan-AMK',
               rating: person?.rating,
               reviews: person?.reviews,
+              avatarUrl: person?.profileImage,
+              interests: person?.interests,
+              languages: person?.languages,
             }}
             onBack={goBack}
           />
