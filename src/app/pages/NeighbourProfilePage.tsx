@@ -138,7 +138,7 @@ export function NeighbourProfilePage({
       .toUpperCase()
       .slice(0, 2);
   const color = profile.color || PRIMARY;
-  const block = profile.block;
+  const block = profile.block ? profile.block.replace(/\s*#\d+-\d+/g, '').trim() : undefined;
   const rating = profile.rating ?? 4.8;
   const reviewCount = profile.reviews ?? 12;
   const distanceStr = profile.distance

@@ -272,7 +272,7 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 // ---- Main Component ----
 export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
-  const [registeredEvents, setRegisteredEvents] = useState<number[]>([1]); // pre-register event 1
+  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]); // no pre-registered events
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNeighbour, setSelectedNeighbour] = useState<typeof MOCK_NEIGHBOURS[0] | null>(null);
   const [readNotifs, setReadNotifs] = useState<number[]>(NOTIFICATIONS.filter(n => n.read).map(n => n.id));
@@ -588,12 +588,68 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </div>
 
           {signedUpEvents.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '32px 20px', background: CARD, borderRadius: '14px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                <Calendar size={32} color={MUTED} />
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '5px' }}>No events signed up yet</div>
-              <div style={{ fontSize: '12px', color: MUTED }}>Browse the Explore tab to find events</div>
+            <div style={{ display: 'flex' }}>
+              <motion.div
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                onClick={() => onOpenExploreEvents?.()}
+                style={{
+                  flexShrink: 0, width: 'calc(100vw - 40px)', minHeight: '167px', borderRadius: '16px',
+                  background: '#F7F5FF',
+                  border: '1.5px dashed #A989EE',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: '10px', cursor: 'pointer', position: 'relative', overflow: 'hidden',
+                }}
+              >
+                {/* Soft background glow */}
+                <div style={{
+                  position: 'absolute', width: '90px', height: '90px', borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(0,0,0,0.06) 0%, transparent 70%)',
+                  animation: 'pulseRing 2.4s ease-in-out infinite',
+                  pointerEvents: 'none',
+                }} />
+
+                {/* 3D floating icon */}
+                <div style={{
+                  perspective: '300px',
+                  animation: 'floatGroups 3s ease-in-out infinite',
+                }}>
+                  <div style={{
+                    width: '56px', height: '56px', borderRadius: '50%',
+                    background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 40%, #e0e0e0 100%)',
+                    boxShadow: '0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(0,0,0,0.06)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    position: 'relative',
+                  }}>
+                    {/* Highlight shine */}
+                    <div style={{
+                      position: 'absolute', top: '8px', left: '10px',
+                      width: '18px', height: '10px', borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.85)',
+                      transform: 'rotate(-30deg)',
+                      filter: 'blur(3px)',
+                      pointerEvents: 'none',
+                    }} />
+                    <Calendar size={22} color="#A989EE" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(169,137,238,0.35))' }} />
+                  </div>
+                </div>
+
+                {/* Animated dots */}
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  {[0, 0.2, 0.4].map((delay, i) => (
+                    <div key={i} style={{
+                      width: '5px', height: '5px', borderRadius: '50%',
+                      background: '#A989EE', opacity: 0.7,
+                      animation: `dotBounce${i + 1} 1.4s ease-in-out infinite`,
+                      animationDelay: `${delay}s`,
+                    }} />
+                  ))}
+                </div>
+
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#A989EE', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
+                  Find an event
+                </span>
+              </motion.div>
             </div>
           ) : (
             <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
@@ -689,9 +745,9 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               whileHover={{ scale: 1.03 }}
               onClick={onOpenGroups}
               style={{
-                flexShrink: 0, width: '148px', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
-                background: 'linear-gradient(145deg, #fff8f6 0%, #fff3ef 100%)',
-                border: '1.5px dashed rgba(255,107,71,0.35)',
+                flexShrink: 0, width: 'calc(100vw - 40px)', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
+                background: '#F4FFF7',
+                border: '1.5px dashed #4CA154',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 gap: '10px', cursor: 'pointer', position: 'relative', overflow: 'hidden',
               }}
@@ -699,7 +755,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               {/* Soft background glow */}
               <div style={{
                 position: 'absolute', width: '90px', height: '90px', borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(255,107,71,0.18) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(0,0,0,0.06) 0%, transparent 70%)',
                 animation: 'pulseRing 2.4s ease-in-out infinite',
                 pointerEvents: 'none',
               }} />
@@ -712,8 +768,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 {/* Orb container */}
                 <div style={{
                   width: '56px', height: '56px', borderRadius: '50%',
-                  background: 'linear-gradient(145deg, #ffffff 0%, #fff8f5 40%, #ffddd4 100%)',
-                  boxShadow: '0 10px 24px rgba(255,107,71,0.32), 0 4px 8px rgba(255,107,71,0.18), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(255,107,71,0.18)',
+                  background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 40%, #e0e0e0 100%)',
+                  boxShadow: '0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(0,0,0,0.06)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   position: 'relative',
                 }}>
@@ -726,7 +782,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                     filter: 'blur(3px)',
                     pointerEvents: 'none',
                   }} />
-                  <Users size={28} color={PRIMARY} strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(255,107,71,0.35))' }} />
+                  <Users size={22} color="#4CA154" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(76,161,84,0.35))' }} />
                 </div>
               </div>
 
@@ -735,7 +791,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 {[0, 0.2, 0.4].map((delay, i) => (
                   <div key={i} style={{
                     width: '5px', height: '5px', borderRadius: '50%',
-                    background: PRIMARY,
+                    background: '#4CA154',
                     opacity: 0.7,
                     animation: `dotBounce${i + 1} 1.4s ease-in-out infinite`,
                     animationDelay: `${delay}s`,
@@ -743,7 +799,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
                 ))}
               </div>
 
-              <span style={{ fontSize: '12px', fontWeight: 700, color: PRIMARY, textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#4CA154', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
                 Find a group
               </span>
             </motion.div>
