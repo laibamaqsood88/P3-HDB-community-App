@@ -183,47 +183,47 @@ const GROUP_ACTIVITY: Record<number, { meetup: string; plan: string; goal: strin
 };
 
 // ---- Group members mock data ----
-interface GroupMember { name: string; avatar: string; avatarBg: string; role?: string }
+interface GroupMember { name: string; avatar: string; avatarBg: string; role?: string; interests?: string[]; languages?: string[]; }
 const GROUP_MEMBERS: Record<number, GroupMember[]> = {
   1: [
     { name: 'You', avatar: 'YO', avatarBg: '#FF6B47', role: 'Admin' },
-    { name: 'Ahmad Farid', avatar: 'AF', avatarBg: '#3B82F6' },
-    { name: 'Priya Nair', avatar: 'PN', avatarBg: '#7C3AED' },
-    { name: 'Wei Ling', avatar: 'WL', avatarBg: '#059669' },
-    { name: 'Rajan Kumar', avatar: 'RK', avatarBg: '#D97706' },
-    { name: 'Mei Xin', avatar: 'MX', avatarBg: '#EC4899' },
-    { name: 'Hafiz', avatar: 'HF', avatarBg: '#0891B2' },
-    { name: 'Suriya', avatar: 'SU', avatarBg: '#16A34A' },
-    { name: 'Jin Hao', avatar: 'JH', avatarBg: '#7C3AED' },
-    { name: 'Nalini', avatar: 'NA', avatarBg: '#DC2626' },
-    { name: 'Beng Kiat', avatar: 'BK', avatarBg: '#9333EA' },
-    { name: 'Siti Rahma', avatar: 'SR', avatarBg: '#059669' },
-    { name: 'Chen Wei', avatar: 'CW', avatarBg: '#2563EB' },
-    { name: 'Deepa', avatar: 'DE', avatarBg: '#D97706' },
+    { name: 'Ahmad Farid', avatar: 'AF', avatarBg: '#3B82F6', interests: ['Fitness & Sports','Running','Outdoor Activities'], languages: ['English','Malay'] },
+    { name: 'Priya Nair', avatar: 'PN', avatarBg: '#7C3AED', interests: ['Fitness & Sports','Yoga & Mindfulness','Community Volunteering'], languages: ['English','Tamil'] },
+    { name: 'Wei Ling', avatar: 'WL', avatarBg: '#059669', interests: ['Fitness & Sports','Outdoor Activities','Cooking & Baking'], languages: ['English','Chinese'] },
+    { name: 'Rajan Kumar', avatar: 'RK', avatarBg: '#D97706', interests: ['Fitness & Sports','Running','Community Volunteering'], languages: ['English','Tamil'] },
+    { name: 'Mei Xin', avatar: 'MX', avatarBg: '#EC4899', interests: ['Fitness & Sports','Dance','Cooking & Baking'], languages: ['English','Chinese'] },
+    { name: 'Hafiz', avatar: 'HF', avatarBg: '#0891B2', interests: ['Fitness & Sports','Running','DIY & Home Improvement'], languages: ['English','Malay'] },
+    { name: 'Suriya', avatar: 'SU', avatarBg: '#16A34A', interests: ['Fitness & Sports','Outdoor Activities','Community Volunteering'], languages: ['English','Tamil'] },
+    { name: 'Jin Hao', avatar: 'JH', avatarBg: '#7C3AED', interests: ['Fitness & Sports','Technology & Digital Skills','Gaming'], languages: ['English','Chinese'] },
+    { name: 'Nalini', avatar: 'NA', avatarBg: '#DC2626', interests: ['Fitness & Sports','Yoga & Mindfulness','Cultural Heritage & Festivals'], languages: ['English','Tamil'] },
+    { name: 'Beng Kiat', avatar: 'BK', avatarBg: '#9333EA', interests: ['Fitness & Sports','Running','DIY & Home Improvement'], languages: ['English','Chinese'] },
+    { name: 'Siti Rahma', avatar: 'SR', avatarBg: '#059669', interests: ['Fitness & Sports','Outdoor Activities','Gardening & Plants'], languages: ['English','Malay'] },
+    { name: 'Chen Wei', avatar: 'CW', avatarBg: '#2563EB', interests: ['Fitness & Sports','Running','Technology & Digital Skills'], languages: ['English','Chinese'] },
+    { name: 'Deepa', avatar: 'DE', avatarBg: '#D97706', interests: ['Fitness & Sports','Yoga & Mindfulness','Cooking & Baking'], languages: ['English','Tamil'] },
   ],
   2: [
     { name: 'You', avatar: 'YO', avatarBg: '#059669', role: 'Admin' },
-    { name: 'Madam Tan', avatar: 'MT', avatarBg: '#16A34A' },
-    { name: 'Rohani', avatar: 'RO', avatarBg: '#7C3AED' },
-    { name: 'Vincent Lim', avatar: 'VL', avatarBg: '#3B82F6' },
-    { name: 'Karthik', avatar: 'KA', avatarBg: '#D97706' },
-    { name: 'Amy Ong', avatar: 'AO', avatarBg: '#EC4899' },
-    { name: 'Encik Razif', avatar: 'ER', avatarBg: '#0891B2' },
-    { name: 'Geeta', avatar: 'GE', avatarBg: '#DC2626' },
-    { name: 'Pak Ismail', avatar: 'PI', avatarBg: '#9333EA' },
+    { name: 'Madam Tan', avatar: 'MT', avatarBg: '#16A34A', interests: ['Gardening & Plants','Cooking & Baking','Community Volunteering'], languages: ['English','Chinese'] },
+    { name: 'Rohani', avatar: 'RO', avatarBg: '#7C3AED', interests: ['Gardening & Plants','Community Volunteering','Cooking & Baking'], languages: ['English','Malay'] },
+    { name: 'Vincent Lim', avatar: 'VL', avatarBg: '#3B82F6', interests: ['Gardening & Plants','DIY & Home Improvement','Outdoor Activities'], languages: ['English','Chinese'] },
+    { name: 'Karthik', avatar: 'KA', avatarBg: '#D97706', interests: ['Gardening & Plants','Outdoor Activities','Fitness & Sports'], languages: ['English','Tamil'] },
+    { name: 'Amy Ong', avatar: 'AO', avatarBg: '#EC4899', interests: ['Gardening & Plants','Cooking & Baking','Arts & Crafts'], languages: ['English','Chinese'] },
+    { name: 'Encik Razif', avatar: 'ER', avatarBg: '#0891B2', interests: ['Gardening & Plants','Community Volunteering','DIY & Home Improvement'], languages: ['English','Malay'] },
+    { name: 'Geeta', avatar: 'GE', avatarBg: '#DC2626', interests: ['Gardening & Plants','Yoga & Mindfulness','Cooking & Baking'], languages: ['English','Tamil'] },
+    { name: 'Pak Ismail', avatar: 'PI', avatarBg: '#9333EA', interests: ['Gardening & Plants','Community Volunteering','Cultural Heritage & Festivals'], languages: ['Malay','English'] },
   ],
   3: [
     { name: 'You', avatar: 'YO', avatarBg: '#7C3AED', role: 'Admin' },
-    { name: 'Eugene Toh', avatar: 'ET', avatarBg: '#3B82F6' },
-    { name: 'Fiona Tan', avatar: 'FT', avatarBg: '#EC4899' },
-    { name: 'Darren Loh', avatar: 'DL', avatarBg: '#059669' },
-    { name: 'Shalini', avatar: 'SH', avatarBg: '#D97706' },
-    { name: 'Marcus Ng', avatar: 'MN', avatarBg: '#0891B2' },
-    { name: 'Preethi', avatar: 'PT', avatarBg: '#DC2626' },
-    { name: 'Alex Koh', avatar: 'AK', avatarBg: '#9333EA' },
-    { name: 'Wendy Yap', avatar: 'WY', avatarBg: '#16A34A' },
-    { name: 'Izwan', avatar: 'IZ', avatarBg: '#D97706' },
-    { name: 'Charlene', avatar: 'CH', avatarBg: '#7C3AED' },
+    { name: 'Eugene Toh', avatar: 'ET', avatarBg: '#3B82F6', interests: ['Gaming','Technology & Digital Skills','Fitness & Sports'], languages: ['English','Chinese'] },
+    { name: 'Fiona Tan', avatar: 'FT', avatarBg: '#EC4899', interests: ['Gaming','Arts & Crafts','Cooking & Baking'], languages: ['English','Chinese'] },
+    { name: 'Darren Loh', avatar: 'DL', avatarBg: '#059669', interests: ['Gaming','Technology & Digital Skills','Outdoor Activities'], languages: ['English','Chinese'] },
+    { name: 'Shalini', avatar: 'SH', avatarBg: '#D97706', interests: ['Gaming','Fitness & Sports','Music & Performing Arts'], languages: ['English','Tamil'] },
+    { name: 'Marcus Ng', avatar: 'MN', avatarBg: '#0891B2', interests: ['Gaming','Technology & Digital Skills','Reading & Books'], languages: ['English','Chinese'] },
+    { name: 'Preethi', avatar: 'PT', avatarBg: '#DC2626', interests: ['Gaming','Cooking & Baking','Community Volunteering'], languages: ['English','Tamil'] },
+    { name: 'Alex Koh', avatar: 'AK', avatarBg: '#9333EA', interests: ['Gaming','DIY & Home Improvement','Outdoor Activities'], languages: ['English','Chinese'] },
+    { name: 'Wendy Yap', avatar: 'WY', avatarBg: '#16A34A', interests: ['Gaming','Arts & Crafts','Reading & Books'], languages: ['English','Chinese'] },
+    { name: 'Izwan', avatar: 'IZ', avatarBg: '#D97706', interests: ['Gaming','Fitness & Sports','Community Volunteering'], languages: ['English','Malay'] },
+    { name: 'Charlene', avatar: 'CH', avatarBg: '#7C3AED', interests: ['Gaming','Dance','Arts & Crafts'], languages: ['English','Chinese'] },
   ],
 };
 
@@ -1185,7 +1185,7 @@ function ChatScreen({
                     onClick={() => {
                       if (m.name === 'You') return;
                       setShowMembers(false);
-                      onOpenNeighbourProfile?.({ name: m.name, avatar: m.avatar, color: m.avatarBg });
+                      onOpenNeighbourProfile?.({ name: m.name, avatar: m.avatar, color: m.avatarBg, interests: m.interests, languages: m.languages });
                     }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '12px',
