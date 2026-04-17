@@ -1151,6 +1151,7 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
   const [notifEvents, setNotifEvents] = useState(true);
   const [notifNeighbours, setNotifNeighbours] = useState(true);
   const [notifHelp, setNotifHelp] = useState(false);
+  const [showBlockNumber, setShowBlockNumber] = useState(true);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
@@ -1222,13 +1223,30 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         {/* ---- Privacy section ---- */}
         <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Privacy</div>
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
             <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <ShieldIcon size={16} color={MUTED} />
             </div>
             <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Privacy &amp; Data</span>
             <ChevronRight size={16} color={MUTED} />
           </button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <MapPin size={16} color={MUTED} />
+              </div>
+              <div>
+                <div style={{ fontSize: '15px', fontWeight: 500, color: TEXT }}>Show Block Number</div>
+                <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>Visible on your public profile</div>
+              </div>
+            </div>
+            <div
+              onClick={() => setShowBlockNumber(!showBlockNumber)}
+              style={{ width: '46px', height: '26px', borderRadius: '13px', background: showBlockNumber ? PRIMARY : BORDER, cursor: 'pointer', position: 'relative', transition: 'background 0.2s ease', flexShrink: 0 }}
+            >
+              <div style={{ position: 'absolute', top: '3px', left: showBlockNumber ? '23px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s ease', boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
+            </div>
+          </div>
         </div>
 
         {/* ---- Support section ---- */}

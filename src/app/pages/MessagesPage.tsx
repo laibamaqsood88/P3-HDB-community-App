@@ -37,6 +37,8 @@ interface Conversation {
   listingImage?: string;   // thumbnail of the listing/request
   price?: string;          // e.g. "Free", "$25", "Free Request"
   listingId?: number;      // id of the linked marketplace item or request
+  rating?: number;
+  reviews?: number;
 }
 
 const CONVERSATIONS: Conversation[] = [
@@ -78,6 +80,10 @@ const CONVERSATIONS: Conversation[] = [
     imageUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop&crop=face',
     interests: ['Gardening & Plants', 'DIY & Home Improvement', 'Cooking & Baking'],
     languages: ['English', 'Malay'],
+    block: 'Blk 445',
+    distance: '0.3 km away',
+    rating: 4.8,
+    reviews: 12,
     listingImage: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
     price: 'Free',
     listingId: 101,
@@ -95,6 +101,10 @@ const CONVERSATIONS: Conversation[] = [
     imageUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&crop=face',
     interests: ['Fitness & Sports', 'Running', 'Yoga & Mindfulness'],
     languages: ['English', 'Chinese'],
+    block: 'Blk 447',
+    distance: '0.5 km away',
+    rating: 4.8,
+    reviews: 12,
   },
   {
     id: 5,
@@ -272,6 +282,15 @@ export function MessagesPage({ initialConvId, extraConversations = [], onNavVisi
     meetFrequency: c.meetFrequency,
     location: c.location,
     imageUrl: c.imageUrl,
+    listingImage: c.listingImage,
+    price: c.price,
+    listingId: c.listingId,
+    interests: c.interests,
+    languages: c.languages,
+    block: c.block,
+    distance: c.distance,
+    rating: c.rating,
+    reviews: c.reviews,
   }));
 
   const [openConv, setOpenConv] = useState<Conversation | null>(
@@ -828,7 +847,7 @@ function ChatScreen({
                 if (isGroup) return; // handled by parent
                 e.stopPropagation();
                 const profileName = (conv.type === 'marketplace' || conv.type === 'request') && conv.subtitle ? conv.subtitle : conv.name;
-                onOpenNeighbourProfile?.({ name: profileName, avatar: conv.avatar, color: conv.avatarBg, avatarUrl: conv.imageUrl, interests: conv.interests, languages: conv.languages, block: conv.block, distance: conv.distance });
+                onOpenNeighbourProfile?.({ name: profileName, avatar: conv.avatar, color: conv.avatarBg, avatarUrl: conv.imageUrl, interests: conv.interests, languages: conv.languages, block: conv.block, distance: conv.distance, rating: conv.rating, reviews: conv.reviews });
               }}
               style={{ width: '44px', height: '44px', borderRadius: '50%', background: conv.avatarBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'white', flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
             >

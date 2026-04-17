@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-17 (Session 8)
+2026-04-17 (Session 9)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -23,10 +23,19 @@ npm run build      # production build to /dist
 src/
 ├── styles/
 │   └── theme.css                  — CSS variables + .no-scrollbar utility + Nunito font
+├── imports/                       — Local image assets
+│   ├── mccy-logo-v2.webp
+│   ├── yoga-mat.jpg               — Marketplace id:107 Yoga Mat
+│   ├── potted-snake-plant.jpg     — Marketplace id:110 Potted Snake Plant
+│   ├── primary-math-tutoring.avif — Marketplace id:203 Primary Math Tutoring
+│   ├── event1.png                 — Welcome banner image (ExplorePage Events sub-tab)
+│   ├── events.png                 — (alias / duplicate of event1.png)
+│   └── group-smile.png            — Welcome banner image (ConnectPage Groups)
 └── app/
     ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks
     ├── components/
-    │   └── BottomNav.tsx          — 5-tab floating pill nav
+    │   ├── BottomNav.tsx          — 5-tab floating pill nav (has data-tour="explore-tab" etc.)
+    │   └── GuidedTour.tsx         — 9-step onboarding guided tour overlay (shown on every app load)
     └── pages/
         ├── LoginPage.tsx          — Singpass login screen
         ├── SignUpPage.tsx         — 5-step onboarding (exports INTEREST_CATEGORIES)
@@ -149,6 +158,8 @@ openRequest(id)                  // → Requests tab (id=0 → feed, id>0 → de
 onOpenEvent(id)                  // → Explore tab, event detail
 onOpenMarketplaceItem(id)        // → Marketplace tab, item/service detail
 openNeighbourProfile(profile)    // → NeighbourProfilePage overlay (zIndex: 110)
+onOpenMarketplaceListing(id)     // → Marketplace tab item/service detail (from Messages listing banner tap)
+onOpenRequestListing(id)         // → Requests tab detail (from Messages listing banner tap)
 ```
 
 ### Wired Action Buttons → Messages Tab
@@ -215,8 +226,13 @@ joinedGroups  // any[] — each item: { ...Group from ConnectPage, convId: numbe
 
 ### Sub-tabs: Events | Groups | Neighbours
 
+### Header Scroll Animation (all sub-tabs)
+- `scrollProgress` state (0–1) updated via `handleScroll` passed to all three sub-tab scroll containers
+- Header title shrinks from 28px → 20px and padding compresses as user scrolls down
+- `data-tour` attributes on sub-tab buttons: `data-tour="events-subtab"`, `"groups-subtab"`, `"neighbours-subtab"`
+
 ### Events Sub-tab
-- **Welcome banner**: full-width white bordered rectangle card (`border: 1.5px solid #E5E5EA, borderRadius: 14px`) with bold title "Welcome to Events" and subtitle "Explore events happening in your neighbourhood." — replaces the old plain description text
+- **Welcome banner**: uses local image `src/imports/event1.png` (3D icon style) with bold title "Welcome to Events"
 - Search bar + filter button
 - Category pills: All, Fitness, Cooking, Gardening, Board Games, Wellness
 - Featured event card (large image) + upcoming list
@@ -224,9 +240,14 @@ joinedGroups  // any[] — each item: { ...Group from ConnectPage, convId: numbe
 - Event Detail: date, location, organizer, about, going breakdown charts
 - Going Breakdown: By Household Type + By Language charts; Neighbours Attending list (avatar, name, block+distance only)
 - **By Household Type labels**: `['Living alone', 'Couple', 'Family with children', 'With parents', 'Shared housing', 'Multigenerational']`
+- **Attend button** → navigates to **Confirm Attendance screen** (not a direct toggle):
+  - Shows event summary (image, category badge, title, date/time, location)
+  - Reminder options: `'1 day before' | '3 hours before' | '30 minutes before' | 'No reminder'`
+  - External sign-up CTA button at bottom → `toast.success("Opening sign-up page…")`
+  - On confirm: sets `isRegistered = true`, shows "Attending" state on button
 
 ### Groups Sub-tab (→ `ConnectPage.tsx`)
-- **Welcome banner**: full-width white bordered rectangle card (`border: 1.5px solid #E5E5EA, borderRadius: 14px`) with bold title "Welcome to Groups" and subtitle "Find and join groups in your neighbourhood that match your interests." — replaces the old plain description text
+- **Welcome banner**: uses local image `src/imports/group-smile.png` (3D icon style) with bold title "Welcome to Groups"
 - 8 groups: Morning Runners Club, Peranakan Cooking Circle, Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
 - **Group feed card UI**:
   - Left: **circular image** (72×72px, `borderRadius: '50%'`) — WhatsApp-style
@@ -278,7 +299,7 @@ Pattern: `image: yogaMatImg` (imported variable, not a URL string).
 - **+ button**: orange circle in header (left of search button) — replaces old floating FAB
 - Category icon map: `CAT_ICON_MAP` using Lucide icons (HomeIcon, ShoppingCart, Wrench, Package, BookOpen, Handshake, ShoppingBag, SearchIcon)
 - Privacy notices use Lock icon instead of 🔒 emoji
-- **Request listing cards**: Horizontal rectangular layout (height: 130px), image 110px wide on left, time-ago expiry, bookmark save button (top-right), distance label. No orange icon, no verified checkmark.
+- **Request listing cards**: Horizontal rectangular layout with **square image** on left (consistent sizing), type badge overlay on image, bookmark save button (top-right), distance label, poster face photo (20px circle). No orange icon, no verified checkmark.
 - **Request detail page**: Marketplace-style layout — full-width 260px image header with back (38×38px) + save (38×38px) buttons, type badge, details table, description, location+map, About the Neighbour clickable card, Chat button. Neighbour profile sub-screen with avatar, stats, active request, reviews.
 - **Post request form**: Image upload section above Title (tile grid with + button, photo picker bottom sheet), MapPin icon on left of location field, no Suggested category chips.
 - Saved state: `savedRequests: number[]` lifted to `RequestsPage`, passed as props to `RequestsFeed`
@@ -320,9 +341,9 @@ All 5 poster avatars have `avatarUrl` set to Unsplash face photos:
 ```ts
 interface Conversation {
   id: number;
-  type: 'group' | 'direct' | 'marketplace';
+  type: 'group' | 'direct' | 'marketplace' | 'request';
   name: string;
-  subtitle?: string;       // shown above title (smaller, muted) — for marketplace chats
+  subtitle?: string;       // shown above title (smaller, muted) — for marketplace/request chats
   avatar: string;
   avatarBg: string;
   lastMessage: string;
@@ -332,14 +353,32 @@ interface Conversation {
   memberCount?: number;    // used in group chat header fallback
   meetFrequency?: string;  // used in group activity board fallback
   location?: string;       // used in group activity board fallback
+  imageUrl?: string;       // poster/seller face photo shown in avatar
+  interests?: string[];    // shown in neighbour profile opened from chat avatar
+  languages?: string[];    // shown in neighbour profile opened from chat avatar
+  listingId?: number;      // id of the linked marketplace item or request (for banner tap navigation)
 }
 ```
 
 ### Dynamic Conversation Rendering
-- **Marketplace chats**: conversation list row + chat header show `conv.subtitle` (seller/provider name) in smaller muted text above the item/service title
+- **Marketplace/Request chats**: conversation list row + chat header show `conv.subtitle` (seller/poster name) in smaller muted text above the item/service title
+- **Listing banner tap**: inside a marketplace or request chat, tapping the item banner (with `SquareArrowOutUpRight` link icon) calls `onOpenMarketplaceListing(conv.listingId)` or `onOpenRequestListing(conv.listingId)` to navigate to the full detail page
+- **Chat avatar tap** (non-group): opens `NeighbourProfilePage` with poster/seller's photo, interests, languages
 - **New group chats** (dynamically joined, `id = Date.now()`): group chat activity board falls back to `conv.meetFrequency`, `conv.location`, `conv.memberCount` since `GROUP_ACTIVITY[conv.id]` won't exist
 - **New group members**: falls back to `[{ name: 'You', avatar: 'YO', avatarBg: '#FF6B47', role: 'Member' }]` when `GROUP_MEMBERS[conv.id]` is undefined
-- `extraMapped` preserves all new fields: `subtitle`, `memberCount`, `meetFrequency`, `location`
+- `extraMapped` preserves all new fields: `subtitle`, `memberCount`, `meetFrequency`, `location`, `imageUrl`, `interests`, `languages`, `listingId`
+
+### Props (updated)
+```ts
+{ initialConvId?, extraConversations?, onNavVisibilityChange,
+  onOpenNeighbourProfile?, onNewGroup?, onNewNeighbour?,
+  onOpenMarketplaceListing?: (id: number) => void,   // navigate to HelpSharePage item/service
+  onOpenRequestListing?: (id: number) => void }       // navigate to RequestsPage detail
+```
+
+### Static Conversations (listingIds)
+- id:3 IKEA Bookshelf (marketplace) → `listingId: 101`
+- id:5 Plant Watering Request (request) → `listingId: 1`
 
 ---
 
@@ -350,10 +389,10 @@ interface Conversation {
 
 ### Main Profile Screen
 - **Header**: plain background (no orange gradient), centered "Profile" title
-- **Avatar**: Richard's Unsplash photo (`photo-1507003211169-0a1dd7228f2d`), circular, 80×80px
+- **Avatar**: Rachel's Unsplash photo (`photo-1494790108377-be9c29b29330`), circular, 80×80px — female photo; user renamed from Richard → **Rachel**
 - **Edit badge**: pencil icon button (bottom-right of avatar) → opens photo edit bottom sheet
   - Bottom sheet: current photo preview + 3 options (Take Photo, Choose from Library, Remove Photo)
-- **Name**: "Richard" (centered, below avatar)
+- **Name**: "Rachel" (centered, below avatar)
 - **Estate tag pill**: below name (no Singpass Verified badge on main screen)
 - No Singpass Verified banner anywhere on profile
 - My Interests (live from App.tsx), Rewards/Badges grid, Saved Items row, My Posts row
@@ -365,6 +404,34 @@ interface Conversation {
 - All setting row icons: grey background (`#F2F2F7` bg, MUTED color)
 - Sections: Account, Notifications, Privacy, **Log Out** (above About), About
 - No duplicate Settings list item; no Singpass Verified banner
+
+---
+
+## Guided Tour (`GuidedTour.tsx`)
+- **9-step onboarding overlay** shown on every app load (not gated behind a "seen" flag)
+- Mounted in `App.tsx` above the NeighbourProfile overlay, outside the main content div
+- Props: `{ onNavigate(tab), onNavigateSubTab(subTab) }`
+- Two step types: `'modal'` (centred card, no spotlight) and `'spotlight'` (dark backdrop + cutout highlight)
+- Spotlight targets DOM elements via `data-tour` attribute, reads `getBoundingClientRect()` for positioning
+- Tooltip side: `'above'` or `'below'` the spotlight cutout
+
+### Tour Steps (in order)
+| # | id | type | title |
+|---|---|---|---|
+| 1 | `welcome` | modal | "Welcome to your Community 👋" |
+| 2 | `explore-tab` | spotlight | "Explore Your Community" → navigates to Explore tab |
+| 3 | `events-subtab` | spotlight | "Discover Events" → navigates to Events sub-tab |
+| 4 | `groups-subtab` | spotlight | "Join Groups" → navigates to Groups sub-tab |
+| 5 | `neighbours-subtab` | spotlight | "Meet Your Neighbours" → navigates to Neighbours sub-tab |
+| 6 | `marketplace-tab` | spotlight | "Help & Share Marketplace" → navigates to Market tab |
+| 7 | `requests-tab` | spotlight | "Community Requests" → navigates to Requests tab |
+| 8 | `messages-tab` | spotlight | "Stay Connected" → navigates to Messages tab |
+| 9 | `done` | modal | "You're all set!" |
+
+### data-tour Attributes
+- `BottomNav.tsx`: each nav button has `data-tour="{tab}-tab"` (e.g. `data-tour="explore-tab"`)
+- `ExplorePage.tsx`: each sub-tab button has `data-tour="{subtab}-subtab"`
+- `RequestsPage.tsx`: Requests tab button (in BottomNav handles this)
 
 ---
 

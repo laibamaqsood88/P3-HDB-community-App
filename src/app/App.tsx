@@ -230,6 +230,16 @@ export default function App() {
                 time: 'Just now',
                 unread: 0,
                 tag: isService ? 'Service' : 'Item',
+                listingImage: item?.image,
+                price: isService ? item?.rate : item?.price,
+                listingId: item?.id,
+                imageUrl: isService ? item?.provider?.profileImage : item?.seller?.profileImage,
+                interests: isService ? item?.provider?.interests : item?.seller?.interests,
+                languages: isService ? item?.provider?.languages : item?.seller?.languages,
+                block: isService ? item?.provider?.block : item?.seller?.block,
+                distance: item?.distance,
+                rating: isService ? item?.provider?.rating : item?.seller?.rating,
+                reviews: isService ? item?.provider?.reviews : item?.seller?.reviews,
               };
               onAddConversation(conv);
               setInitialGroupChatId(conv.id);

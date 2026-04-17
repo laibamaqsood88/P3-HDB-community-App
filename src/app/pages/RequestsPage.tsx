@@ -48,11 +48,11 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 const POSTER_AVATARS = [
-  { name: 'Sarah T.', color: '#8B5CF6', initials: 'ST', rating: 4.8, reviews: 12, avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face' },
-  { name: 'Ahmad K.', color: '#3B82F6', initials: 'AK', rating: 4.5, reviews: 8, avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face' },
-  { name: 'Mei Lin', color: '#F97316', initials: 'ML', rating: 4.9, reviews: 21, avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face' },
-  { name: 'Ravi S.', color: '#22C55E', initials: 'RS', rating: 4.7, reviews: 5, avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face' },
-  { name: 'Jennifer L.', color: '#EC4899', initials: 'JL', rating: 4.6, reviews: 9, avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face' },
+  { name: 'Sarah T.', color: '#8B5CF6', initials: 'ST', rating: 4.8, reviews: 12, avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face', block: 'Blk 445', interests: ['Community Volunteering', 'Gardening & Plants', 'Outdoor Activities'], languages: ['English', 'Chinese'] },
+  { name: 'Ahmad K.', color: '#3B82F6', initials: 'AK', rating: 4.5, reviews: 8, avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face', block: 'Blk 448', interests: ['Football', 'DIY & Home Improvement', 'Community Volunteering'], languages: ['English', 'Malay'] },
+  { name: 'Mei Lin', color: '#F97316', initials: 'ML', rating: 4.9, reviews: 21, avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face', block: 'Blk 451', interests: ['Reading & Books', 'Babies & Kids', 'Cooking & Baking'], languages: ['English', 'Chinese'] },
+  { name: 'Ravi S.', color: '#22C55E', initials: 'RS', rating: 4.7, reviews: 5, avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face', block: 'Blk 443', interests: ['Pet Care', 'Outdoor Activities', 'Running'], languages: ['English', 'Tamil'] },
+  { name: 'Jennifer L.', color: '#EC4899', initials: 'JL', rating: 4.6, reviews: 9, avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face', block: 'Blk 445', interests: ['Cooking & Baking', 'Fitness & Sports', 'Yoga & Mindfulness'], languages: ['English', 'Chinese'] },
 ];
 
 const MOCK_REVIEWS = [
@@ -803,9 +803,9 @@ function PostRequestScreen({ onBack, onPost }: any) {
 }
 
 // ---- Chat Screen ----
-function ChatScreen({ request, onBack }: any) {
+function ChatScreen({ request, onBack, onViewProfile }: any) {
   const [messages, setMessages] = useState([
-    { id: 1, from: 'them', text: `Hi! I saw your request "${request?.title}". I'd love to help!`, time: '2:15 PM' },
+    { id: 1, from: 'me', text: `Hi! I saw your request "${request?.title}". I'd love to help!`, time: '2:15 PM' },
   ]);
   const [input, setInput] = useState('');
 
@@ -817,18 +817,40 @@ function ChatScreen({ request, onBack }: any) {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ background: CARD, padding: '44px 16px 16px', borderBottom: `0.5px solid ${BORDER}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}` }}>
+        <div style={{ padding: '44px 16px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={onBack} style={{ width: '38px', height: '38px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
-          {request && <PosterAvatar poster={request.poster} size={38} />}
-          <div>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{request?.poster?.name}</div>
-            <div style={{ fontSize: '11px', color: MUTED }}>Verified resident</div>
+          <div onClick={onViewProfile} style={{ cursor: 'pointer', flexShrink: 0 }}>
+            {request && <PosterAvatar poster={request.poster} size={38} />}
           </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{request?.poster?.name}</div>
+            <div style={{ fontSize: '11px', color: MUTED }}>Request chat</div>
+          </div>
+          <span style={{ padding: '4px 10px', borderRadius: '10px', background: '#FEF3C7', color: '#D97706', fontSize: '11px', fontWeight: 700, flexShrink: 0 }}>Request</span>
         </div>
       </div>
+
+      {/* Listing banner */}
+      {request?.image && (
+        <button
+          onClick={onBack}
+          style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, padding: '10px 16px', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <img src={request.image} alt={request.title} style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{request.title}</div>
+              {request.type && (
+                <div style={{ fontSize: '13px', fontWeight: 500, color: TEXT2, marginTop: '2px' }}>{request.type}</div>
+              )}
+            </div>
+            <SquareArrowOutUpRight size={16} color={MUTED} style={{ flexShrink: 0 }} />
+          </div>
+        </button>
+      )}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ textAlign: 'center', padding: '4px 0' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 16px', borderRadius: '20px', background: '#F0FDF4', fontSize: '12px', color: '#16A34A', fontWeight: 700 }}>
@@ -913,12 +935,14 @@ export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChang
               avatar: current.params?.poster?.initials || 'N',
               avatarUrl: current.params?.poster?.avatarUrl,
               color: current.params?.poster?.color || '#FF6B47',
-              block: current.params?.request?.collectionPoint
+              block: current.params?.poster?.block || (current.params?.request?.collectionPoint
                 ? current.params.request.collectionPoint.split(',')[0].trim()
-                : undefined,
+                : undefined),
               distance: current.params?.request?.distance,
               rating: current.params?.poster?.rating,
               reviews: current.params?.poster?.reviews,
+              interests: current.params?.poster?.interests,
+              languages: current.params?.poster?.languages,
             }}
             onBack={goBack}
           />
@@ -958,7 +982,7 @@ export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChang
           />
         );
       case 'chat':
-        return <ChatScreen request={current.params?.request} onBack={goBack} />;
+        return <ChatScreen request={current.params?.request} onBack={goBack} onViewProfile={() => goTo('neighbour-profile', { poster: current.params?.request?.poster, request: current.params?.request })} />;
       default:
         return null;
     }
