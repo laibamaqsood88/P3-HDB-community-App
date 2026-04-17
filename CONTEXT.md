@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-17 (session 6 - Search overlay UI, liquid glass search mode, group images in Messages, filter/nav updates)
+2026-04-18 (session 7 - Scroll-animated headers, neighbour profile fixes, badge redesign, home CTA cards, market avatars)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -105,6 +105,13 @@ Shared full-screen component for viewing any neighbour's profile. Triggered from
 
 Entry points 1–6 use the App-level `AnimatePresence` overlay. Entry points 7–8 use internal nav stacks within HelpSharePage and RequestsPage respectively.
 
+#### Profile data completeness — all entry points now pass `interests` and `languages`
+- **HelpSharePage** (Market): `seller.interests`, `seller.languages`, `seller.profileImage` (as `avatarUrl`) passed from item/service data
+- **RequestsPage**: `poster.interests`, `poster.languages` passed from `POSTER_AVATARS` data
+- **ConnectPage** (Groups): `GroupMember` interface has optional `interests?` and `languages?`; all 27 members across 8 groups backfilled
+- **MessagesPage** (group members popup): `GroupMember` interface has optional `interests?` and `languages?`; all 31 members across 3 groups backfilled
+- **ExplorePage / EventsPage**: already passing full data via `NEIGHBOURS` arrays
+
 #### `NeighbourProfile` interface (exported)
 ```ts
 export interface NeighbourProfile {
@@ -135,6 +142,47 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 
 ---
 
+## Scroll-Animated Header Pattern (Explore, Market, Requests, Messages)
+
+All four tab headers share the same absolute-positioning scroll animation. The pattern replaces the previous two-row height/opacity approach.
+
+### Structure
+```tsx
+<div style={{ position: 'relative', height: `${EXPANDED - scrollProgress * DELTA}px`, transition: 'height 0.1s linear' }}>
+  {/* Buttons: absolutely pinned — zero animation ever */}
+  <div style={{ position: 'absolute', top: '44px', right: '16px', display: 'flex', gap: '8px' }}>
+    {buttons}
+  </div>
+  {/* Title: slides up + shrinks on scroll */}
+  <span style={{
+    position: 'absolute', left: '16px',
+    top: `${90 - scrollProgress * 46}px`,       // 90px → 44px
+    fontSize: `${28 - scrollProgress * 8}px`,   // 28px → 20px
+    lineHeight: '40px',                          // vertically centres with 40px buttons when collapsed
+    transition: 'top 0.1s linear, font-size 0.1s linear',
+  }}>PageTitle</span>
+  {/* Description (Market + Requests only): fades out */}
+  <span style={{ opacity: 1 - scrollProgress, transition: 'opacity 0.1s linear' }}>subtitle</span>
+</div>
+```
+
+### Per-page heights
+| Page     | Expanded | Collapsed | Delta | Notes |
+|----------|----------|-----------|-------|-------|
+| Explore  | 132px    | 92px      | 40px  | No description |
+| Messages | 132px    | 92px      | 40px  | No description; `newChatRef` wraps entire container |
+| Market   | 152px    | 92px      | 60px  | Description "Buy, sell or offer services" fades |
+| Requests | 168px    | 92px      | 76px  | Description "Ask neighbours for help" fades |
+
+### scrollProgress
+`Math.min(scrollTop / 60, 1)` — driven by `onScroll` on the page's scrollable content div.
+
+### Height math
+- Expanded = 44 (status bar) + 40 (buttons) + 6 (gap) + 28 (title) + bottom padding + optional description
+- Collapsed = 92px (44 + 40 + 8) — title has slid up to share the buttons row
+
+---
+
 ## Tab 1 — Home Dashboard (`EventsPage.tsx`)
 
 ### Header
@@ -150,12 +198,12 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 ### Content Sections
 1. **Greeting** — "Good morning ☀️", estate + Verified badge
 2. **Your Interest Groups** — horizontal scroll (Morning Runners, Backyard Gardeners, Board Game Sundays) + "More →"
-3. **Community Latest Requests** — single card showing newest marketplace request (renamed from "Latest Request")
+3. **Community Latest Requests** — single card showing newest marketplace request
 4. **Marketplace Picks** — horizontal scroll of 4 recommended items/services
-5. **My Events** — heading row with **"Find more events ›"** button (right-aligned) → navigates to Explore > Events sub-tab via `onOpenExploreEvents`
-6. **Recommended Events** — vertical list of event cards
-7. **Saved Events** — shown if any saved
-8. **My Wishlist** — horizontal scroll of saved marketplace items
+5. **My Events** — heading row with **"Find more events ›"** button + horizontal scroll row that **always** contains registered event cards followed by the **"Find an event" CTA card** (purple dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many events are registered.
+6. **My Groups** — heading row with **"Find more groups ›"** button + horizontal scroll row that **always** contains joined group cards followed by the **"Find a group" CTA card** (green dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many groups are joined.
+7. **Community Latest Requests** horizontal scroll — up to 5 request cards
+8. **Recommended Events** — vertical list of event cards
 
 ### Sub-tabs
 - **Upcoming** — shows all above sections
@@ -208,7 +256,7 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 - "My Groups" horizontal scroll
 - Group detail: hero image, name, members, MEETS + LOCATION info, About, hashtags, Join/Leave button
 - **Header + bottom nav hidden on group detail**
-- **Member rows** tappable → opens NeighbourProfilePage overlay
+- **Member rows** tappable → opens NeighbourProfilePage overlay with full `interests` and `languages` data
 
 #### Neighbours Sub-tab
 - Lists `MOCK_NEIGHBOURS` with name, unit, distance, interests, last active time
@@ -237,7 +285,7 @@ Uses `INTEREST_COLORS` and `LANGUAGE_COLORS` maps matching ProfilePage/ExplorePa
 }
 ```
 
-### Mock Item Data (IDs 101–104)
+### Mock Item Data (IDs 101–110)
 Each item has:
 ```ts
 {
@@ -246,7 +294,7 @@ Each item has:
   collectionAddress,   // exact "Blk X Street Y, #NN-NN, Singapore XXXXXX"
   collectionDistance,  // kept for reference but not displayed
   image,               // Unsplash URL
-  seller: { name, avatarColor, rating, reviews }
+  seller: { name, avatarColor, rating, reviews, profileImage, block, interests, languages }
 }
 ```
 
@@ -261,7 +309,7 @@ Condition colours (`CONDITION_COLORS`):
 'heavily used': { bg: '#FEE2E2', text: '#DC2626' }
 ```
 
-### Mock Service Data (IDs 201–204)
+### Mock Service Data (IDs 201–210)
 Each service has:
 ```ts
 {
@@ -269,11 +317,11 @@ Each service has:
   category, availability, verified, trust, trustNote,
   description, responseTime, completedServices, yearsExperience,
   image,   // Unsplash URL
-  provider: { name, avatarColor, rating, reviews }
+  provider: { name, avatarColor, rating, reviews, profileImage, block, interests, languages }
 }
 ```
 
-Services: Dog Walking (201), Babysitting (202), Primary Math Tutoring (203), Elderly Companion (204)
+Services: Dog Walking (201), Babysitting (202), Primary Math Tutoring (203), Elderly Companion (204), Home Cleaning (205), Basic Plumbing Repair (206), Grocery Errand Run (207), Secondary English Tutor (208), Cat Boarding (209), Furniture Assembly (210)
 
 ### ItemCard (2-col grid)
 Strict layout order:
@@ -282,7 +330,7 @@ Strict layout order:
 3. Price (green if Free)
 4. Distance ("X km away")
 5. Posted time (relative)
-6. Seller info row: circular avatar + name
+6. Seller info row: **real profile photo** (`<img>` from `seller.profileImage`, 24px circle) + name; falls back to coloured initial if no image
 
 ### ServiceCard (2-col grid — mirrors ItemCard exactly)
 Strict layout order:
@@ -291,7 +339,7 @@ Strict layout order:
 3. Rate (green if Free — e.g. "$15 per walk", "Free")
 4. Distance ("X km away")
 5. Posted time (relative)
-6. Provider info row: circular avatar + name
+6. Provider info row: **real profile photo** (`<img>` from `provider.profileImage`, 24px circle) + name; falls back to coloured initial if no image
 
 No star ratings, exchange counts, or trust badges on the card.
 
@@ -307,7 +355,7 @@ Layout order:
    - Category
 5. Description
 6. **Collection Point** — `CollectionPointMap` with exact `collectionAddress` in footer
-7. **About the Neighbour** — tappable card: avatar, name, star rating, review count
+7. **About the Neighbour** — tappable card: **real profile photo** (48px circle from `seller.profileImage`), name, star rating, review count
 8. Sticky footer: "Chat" button only
 
 ### ServiceDetail (service detail page)
@@ -318,7 +366,7 @@ Layout order:
 4. **Details** section — rows card: Category · Availability · Posted
 5. Description
 6. **Location** — `CollectionPointMap` with `distanceText={item.distance}` (shows distance, not address; labelled "Service Area")
-7. **About the Neighbour** — tappable card: avatar, name, star rating, reviews, years experience
+7. **About the Neighbour** — tappable card: **real profile photo** (48px circle from `provider.profileImage`), name, star rating, reviews, years experience
 8. **Trust & Verification** — rows card: Verified Resident · Credentials (if trust) · Response Time · Completed Services
 9. Sticky footer: "Chat" button only
 
@@ -403,7 +451,8 @@ SERVICE_CATEGORIES = [
 
 ## Requests (`RequestsPage.tsx`)
 - Navigated to from Home (Community Latest Requests card) or Profile (My Posts)
-- **Header**: title "Requests", Search icon + Filter + **+ button (rightmost)**
+- **Header**: title "Requests", description "Ask neighbours for help", Search icon + Filter + **+ button (rightmost)**; uses absolute-position scroll pattern (168→92px)
+- **Seed data**: 7 requests (ids 1–7). IDs 1–5 original; id 6 = "Anyone have a foldable ladder to lend?" (Borrow, Items Needed); id 7 = "Help with grocery run for elderly mum" (Free Request, Errands)
 - **Search mode**: liquid glass overlay, header transparent on glass, back button (white ChevronLeft) replaces title, no subtabs (single-level header). White popup at `top: 106px` (shorter than pages with subtabs).
 - Filter button: circular (46px), opens filter bottom sheet (categories, type, distance, sort)
 - **Request cards**: type badge top-left + save button top-right; distance ("x km away") on its own line; title; description snippet; poster avatar + name; time ago
@@ -411,7 +460,7 @@ SERVICE_CATEGORIES = [
 - Post flow: title, category, type (Borrow / Free / Paid), description, expiry, location
 
 ## Tab 4 — Messages (`MessagesPage.tsx`)
-- **Header**: title "Messages", Search icon + **+ button (rightmost, orange/PRIMARY background)**
+- **Header**: title "Messages", Search icon + **+ button (rightmost, orange/PRIMARY background)**; uses absolute-position scroll pattern (132→92px); `newChatRef` wraps full container for click-outside detection
 - **Search mode**: liquid glass overlay, header transparent on glass, back button (white ChevronLeft) replaces title. Filter tabs (All/Groups/Market/Requests/Neighbour) remain visible above popup in white/faded-white. White popup at `top: 144px`.
 - **Filter tabs**: `All | Groups | Market | Requests | Neighbour` — underline style
   - `'Market'` maps to `type === 'marketplace'`
@@ -450,6 +499,15 @@ interface Conversation {
 ### Dynamic groups (from Explore → join)
 When a user joins a group from ExplorePage, `onJoinGroup` in App.tsx creates a conv with `imageUrl: group.image`, so the Messages avatar uses the same photo shown in the Explore groups page. `extraMapped` in MessagesPage passes through `imageUrl: c.imageUrl`.
 
+### GroupMember interface
+```ts
+interface GroupMember {
+  name: string; avatar: string; avatarBg: string; role?: string;
+  interests?: string[]; languages?: string[];
+}
+```
+All 31 members across 3 group chats have `interests` and `languages` populated (thematically: runners → Fitness, gardeners → Gardening, board gamers → Gaming). Tapping a member in the members popup passes `interests` and `languages` to `onOpenNeighbourProfile`.
+
 ### Group chat screen
 Two tabs: **Chat** | **Activity Board**
 - Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal + discoverability notice
@@ -467,7 +525,7 @@ Two tabs: **Chat** | **Activity Board**
 - Opened via avatar button on Home tab (not in bottom nav)
 - Orange gradient hero, avatar "Y", Singpass Verified badge, estate pill
 - Stats: Items Saved, Neighbours Jio'd, Exchanges Done
-- **Rewards & Badges**: shows count `(unlocked/total)`, 3-column grid, collapsed to first 3 by default with **"View more"** button to expand all
+- **Rewards & Badges**: shows count `(unlocked/total)`, **2×2 grid** of **rounded rectangle** badges (borderRadius: 12px, 100% width, 90px height). All 4 badges always visible — no "View more" button.
 - **Languages Spoken section** (shows only if languages selected during onboarding)
   - Displays selected languages as coloured pills with language-specific background and text colors
   - Uses LANGUAGE_COLORS mapping for visual distinction (English, Chinese, Malay, Tamil, Japanese, Korean, French, Spanish, German)
