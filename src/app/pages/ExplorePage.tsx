@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  ChevronLeft, Bookmark, Share2, X, Shield,
+  ChevronLeft, Bookmark, Share2, X, Shield, Bell,
   Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, ChevronDown, SquareArrowOutUpRight
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -879,7 +879,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
           <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>{ev.price}</div>
           <motion.button
             whileTap={{ scale: 0.97 }}
-            onClick={() => toggleRegister(ev.id)}
+            onClick={() => isRegistered ? toggleRegister(ev.id) : goTo('register', { event: ev })}
             style={{
               flex: 1, padding: '15px', borderRadius: '18px',
               background: isRegistered ? '#D1FAE5' : PRIMARY,
@@ -1019,51 +1019,112 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const ev: EventData = current.params?.event;
     return (
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
+        {/* Header */}
         <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={20} color={TEXT} />
           </button>
-          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Register</div>
+          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Confirm Attendance</div>
         </div>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-          <div style={{ background: CARD, borderRadius: '22px', padding: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', marginBottom: '16px' }}>
-            <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, marginBottom: '8px', lineHeight: '1.3' }}>{ev?.title}</div>
-            <div style={{ fontSize: '13px', color: TEXT2 }}>{ev?.date} · {ev?.time}</div>
-            <div style={{ fontSize: '13px', color: TEXT2, marginTop: '4px' }}>{ev?.location}</div>
-          </div>
-          <div style={{ background: '#F0FDF4', borderRadius: '16px', padding: '14px 16px', display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <Shield size={18} color="#22C55E" style={{ flexShrink: 0, marginTop: '1px' }} />
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#15803D', marginBottom: '3px' }}>Singpass-verified registration</div>
-              <div style={{ fontSize: '12px', color: '#166534', lineHeight: '1.5' }}>Your identity is already verified. Registration takes one tap.</div>
+
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
+          {/* Event summary card */}
+          <div style={{ background: CARD, borderRadius: '22px', overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', marginBottom: '20px' }}>
+            {ev?.image && (
+              <div style={{ height: '140px', position: 'relative' }}>
+                <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.45))' }} />
+                <div style={{ position: 'absolute', bottom: '10px', left: '12px', padding: '3px 10px', borderRadius: '8px', background: ev.categoryBg, color: ev.categoryColor, fontSize: '11px', fontWeight: 800 }}>
+                  {ev.category}
+                </div>
+              </div>
+            )}
+            <div style={{ padding: '16px' }}>
+              <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, marginBottom: '10px', lineHeight: '1.3' }}>{ev?.title}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Calendar size={14} color={MUTED} />
+                  <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>{ev?.date}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Clock size={14} color={MUTED} />
+                  <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>{ev?.time}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <MapPin size={14} color={MUTED} />
+                  <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 500 }}>{ev?.location}</span>
+                </div>
+              </div>
             </div>
           </div>
-          {/* Reminder options */}
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Get a reminder</div>
-            {['None', '1 day before', '3 days before', '1 week before'].map(opt => (
-              <button
-                key={opt}
-                onClick={() => setReminderOption(opt)}
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 16px', marginBottom: '8px', borderRadius: '14px', background: reminderOption === opt ? '#FFF0EC' : CARD, border: `2px solid ${reminderOption === opt ? PRIMARY : BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
-              >
-                <span style={{ fontSize: '14px', fontWeight: 600, color: reminderOption === opt ? PRIMARY : TEXT }}>{opt}</span>
-                {reminderOption === opt && <Check size={16} color={PRIMARY} />}
-              </button>
-            ))}
+
+          {/* Reminder section */}
+          <div style={{ background: CARD, borderRadius: '22px', padding: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Bell size={16} color={PRIMARY} />
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT }}>Remind me before the event</div>
+                <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500, marginTop: '2px' }}>Get a notification so you don't miss it</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {['1 day before', '3 hours before', '30 minutes before', 'No reminder'].map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setReminderOption(opt)}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '13px 16px', borderRadius: '14px',
+                    background: reminderOption === opt ? '#FFF0EC' : BG,
+                    border: `2px solid ${reminderOption === opt ? PRIMARY : 'transparent'}`,
+                    cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  <span style={{ fontSize: '14px', fontWeight: 600, color: reminderOption === opt ? PRIMARY : TEXT }}>{opt}</span>
+                  <div style={{
+                    width: '20px', height: '20px', borderRadius: '50%',
+                    background: reminderOption === opt ? PRIMARY : 'transparent',
+                    border: `2px solid ${reminderOption === opt ? PRIMARY : BORDER}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    {reminderOption === opt && <Check size={11} color="white" strokeWidth={3} />}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* External sign-up info */}
+          <div style={{ background: CARD, borderRadius: '16px', padding: '14px 16px', display: 'flex', gap: '10px' }}>
+            <ExternalLink size={16} color={MUTED} style={{ flexShrink: 0, marginTop: '2px' }} />
+            <div style={{ fontSize: '12px', color: TEXT2, lineHeight: '1.6' }}>
+              This event requires registration on the organiser's website. Tap below to complete your sign-up.
+            </div>
           </div>
         </div>
-        <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}` }}>
-          <button
+
+        {/* Bottom CTA */}
+        <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}`, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             onClick={() => {
-              const reminderMsg = reminderOption !== 'None' ? ` Reminder set for ${reminderOption.toLowerCase()}.` : '';
-              toast.success(`Registered! See you there.${reminderMsg}`);
+              const reminderMsg = reminderOption && reminderOption !== 'No reminder' ? ` Reminder set for ${reminderOption.toLowerCase()}.` : '';
+              toast.success(`Opening sign-up page…${reminderMsg}`);
+              toggleRegister(ev.id);
               goBack();
             }}
-            style={{ width: '100%', padding: '16px', borderRadius: '18px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800, color: 'white', fontFamily: 'inherit' }}
+            style={{
+              width: '100%', padding: '16px', borderRadius: '18px', background: PRIMARY,
+              border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800,
+              color: 'white', fontFamily: 'inherit',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            }}
           >
-            Confirm Registration
-          </button>
+            <ExternalLink size={16} color="white" />
+            Sign up on organiser's website
+          </motion.button>
         </div>
       </div>
     );
