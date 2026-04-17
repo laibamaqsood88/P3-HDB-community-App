@@ -315,25 +315,23 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
         {/* ── Shared Header ── */}
         {!(activeSubTab === 'groups' && groupInDetail) && <div style={{ background: searchMode ? 'transparent' : CARD, borderBottom: searchMode ? 'none' : `1px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchMode ? 202 : undefined }}>
           <>
-              {/* Header: expanded = two rows (buttons top-right, title below-left); collapsed = single row */}
-              <div style={{ padding: `${44 - (scrollProgress * 4)}px 16px 0`, transition: 'padding 0.1s linear' }}>
+              {/* Header: buttons fixed top-right; title starts below and moves up on scroll */}
+              <div style={{ position: 'relative', height: `${132 - scrollProgress * 40}px`, transition: 'height 0.1s linear' }}>
                 {searchMode ? (
-                  <div style={{ display: 'flex', alignItems: 'center', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
-                    <button onClick={() => { setSearchMode(false); setSearchQuery(''); }}
-                      style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ChevronLeft size={22} color="white" />
-                    </button>
-                  </div>
+                  <button onClick={() => { setSearchMode(false); setSearchQuery(''); }}
+                    style={{ position: 'absolute', top: '44px', left: '16px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ChevronLeft size={22} color="white" />
+                  </button>
                 ) : (
                   <>
-                    {/* Row 1: action buttons right-aligned — shrinks to 0 as page scrolls */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', height: `${40 * (1 - scrollProgress)}px`, opacity: 1 - scrollProgress, overflow: 'hidden', marginBottom: `${6 * (1 - scrollProgress)}px`, transition: 'height 0.1s linear, opacity 0.1s linear, margin-bottom 0.1s linear' }}>
+                    {/* Buttons: absolutely pinned, no animation */}
+                    <div style={{ position: 'absolute', top: '44px', right: '16px', display: 'flex', gap: '8px' }}>
                       <button onClick={() => { setSearchScopeTab(activeSubTab); setSearchMode(true); }}
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Search size={18} color={TEXT2} />
                       </button>
                       <button onClick={() => { if (activeSubTab === 'events') { setTempFilters(filters); setShowFilter(true); } else if (activeSubTab === 'groups') setShowGroupFilter(true); else setShowNeighbourFilter(true); }}
-                        style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: isFilterActive ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: isFilterActive ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: isFilterActive ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: isFilterActive ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <SlidersHorizontal size={17} color={isFilterActive ? PRIMARY : TEXT2} />
                         {activeSubTab === 'events' && activeFilterCount > 0 && (
                           <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
@@ -345,28 +343,18 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                         )}
                       </button>
                     </div>
-                    {/* Row 2: title left + buttons fade in on right when collapsed */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: `${14 - (scrollProgress * 6)}px`, transition: 'padding 0.1s linear' }}>
-                      <span style={{ fontSize: `${28 - (scrollProgress * 8)}px`, fontWeight: 800, color: TEXT, letterSpacing: '-0.5px', transition: 'font-size 0.1s linear' }}>Explore</span>
-                      <div style={{ display: 'flex', gap: '8px', opacity: scrollProgress, pointerEvents: scrollProgress > 0.5 ? 'auto' : 'none', transition: 'opacity 0.1s linear' }}>
-                        <button onClick={() => { setSearchScopeTab(activeSubTab); setSearchMode(true); }}
-                          style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Search size={18} color={TEXT2} />
-                        </button>
-                        <button onClick={() => { if (activeSubTab === 'events') { setTempFilters(filters); setShowFilter(true); } else if (activeSubTab === 'groups') setShowGroupFilter(true); else setShowNeighbourFilter(true); }}
-                          style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: isFilterActive ? '#FFF0EC' : 'rgba(120,120,128,0.10)', border: isFilterActive ? `1.5px solid #FFD0C3` : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <SlidersHorizontal size={17} color={isFilterActive ? PRIMARY : TEXT2} />
-                          {activeSubTab === 'events' && activeFilterCount > 0 && (
-                            <div style={{ position: 'absolute', top: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid white' }}>
-                              <span style={{ fontSize: '9px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{activeFilterCount}</span>
-                            </div>
-                          )}
-                          {activeSubTab !== 'events' && isFilterActive && (
-                            <div style={{ position: 'absolute', top: '4px', right: '4px', width: '10px', height: '10px', borderRadius: '50%', background: PRIMARY, border: '2px solid white' }} />
-                          )}
-                        </button>
-                      </div>
-                    </div>
+                    {/* Title: starts below buttons, shrinks + moves up to align with buttons on scroll */}
+                    <span style={{
+                      position: 'absolute',
+                      left: '16px',
+                      top: `${90 - scrollProgress * 46}px`,
+                      fontSize: `${28 - scrollProgress * 8}px`,
+                      fontWeight: 800,
+                      color: TEXT,
+                      letterSpacing: '-0.5px',
+                      lineHeight: '40px',
+                      transition: 'top 0.1s linear, font-size 0.1s linear',
+                    }}>Explore</span>
                   </>
                 )}
               </div>
