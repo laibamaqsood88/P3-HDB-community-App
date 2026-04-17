@@ -30,6 +30,8 @@ export default function App() {
   const [conversations, setConversations] = useState<any[]>([]);
   const [savedMarketplaceItems, setSavedMarketplaceItems] = useState<any[]>([]);
   const [initialRequestId, setInitialRequestId] = useState<number | undefined>(undefined);
+  const [requestsOpenPost, setRequestsOpenPost] = useState(false);
+  const [requestsPostKey, setRequestsPostKey] = useState(0);
   const [initialEventId, setInitialEventId] = useState<number | undefined>(undefined);
   const [initialMarketplaceItemId, setInitialMarketplaceItemId] = useState<number | undefined>(undefined);
   const [showBottomNav, setShowBottomNav] = useState(true);
@@ -76,6 +78,7 @@ export default function App() {
 
   const openRequest = (id: number) => {
     setInitialRequestId(id || undefined);
+    setRequestsOpenPost(false);
     setActiveTab('requests');
   };
 
@@ -216,6 +219,11 @@ export default function App() {
             savedItems={savedMarketplaceIds}
             onSaveToggle={onMarketplaceSaveToggle}
             onNavVisibilityChange={setShowBottomNav}
+            onPostRequest={() => {
+              setRequestsOpenPost(true);
+              setRequestsPostKey(k => k + 1);
+              setActiveTab('requests');
+            }}
             onOpenChat={(item) => {
               const isService = item?.itemType === 'service';
               const personName = item?.provider?.name || item?.seller?.name || 'Neighbour';
@@ -248,7 +256,7 @@ export default function App() {
           />
         )}
         {activeTab === 'requests' && (
-          <RequestsPage key={initialRequestId} onAddPost={onAddPost} initialRequestId={initialRequestId} onNavVisibilityChange={setShowBottomNav} />
+          <RequestsPage key={`${initialRequestId ?? ''}-${requestsPostKey}`} onAddPost={onAddPost} initialRequestId={initialRequestId} initialShowPost={requestsOpenPost} onNavVisibilityChange={setShowBottomNav} />
         )}
         {activeTab === 'messages' && (
           <MessagesPage

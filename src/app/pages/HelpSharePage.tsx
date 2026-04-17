@@ -218,7 +218,7 @@ function CollectionPointMap({ address, distanceText }: { address?: string; dista
 }
 
 // ---- Main Component ----
-export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle, onNavVisibilityChange, onOpenChat }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void; onNavVisibilityChange?: (visible: boolean) => void; onOpenChat?: (item: any) => void }) {
+export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSaveToggle: externalSaveToggle, onNavVisibilityChange, onOpenChat, onPostRequest }: { onAddPost?: (post: any) => void; initialItemId?: number; savedItems?: number[]; onSaveToggle?: (id: number, item: any) => void; onNavVisibilityChange?: (visible: boolean) => void; onOpenChat?: (item: any) => void; onPostRequest?: () => void }) {
   const onSaveToggle = (id: number) => {
     const item = ITEMS_AND_SERVICES.find(i => i.id === id);
     externalSaveToggle?.(id, item);
@@ -276,6 +276,7 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
             onSaveToggle={onSaveToggle}
             mainFilter={mainFilter}
             onMainFilterChange={setMainFilter}
+            onPostRequest={onPostRequest}
           />
         );
       case 'category-select':
@@ -419,7 +420,7 @@ function MarketplaceFilterPanel({ mainFilter, itemCategory, serviceCategory, act
 }
 
 // ---- Marketplace Feed ----
-function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, onSaveToggle, mainFilter, onMainFilterChange: setMainFilter }: any) {
+function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, onSaveToggle, mainFilter, onMainFilterChange: setMainFilter, onPostRequest }: any) {
   const [itemCategory, setItemCategory] = useState('All');
   const [serviceCategory, setServiceCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -522,7 +523,15 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         {mainFilter === 'Items' && (
           <>
             {displayItems.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No items found</div>
+              <div style={{ textAlign: 'center', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+                <div style={{ color: MUTED, fontSize: '14px', fontWeight: 500 }}>Can't find what you need?</div>
+                <button
+                  onClick={onPostRequest}
+                  style={{ background: PRIMARY, color: '#fff', border: 'none', borderRadius: '12px', padding: '12px 24px', fontSize: '14px', fontWeight: 700, fontFamily: "'Nunito', sans-serif", cursor: 'pointer' }}
+                >
+                  Post a Request
+                </button>
+              </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 {displayItems.map(item => (
@@ -536,7 +545,15 @@ function MarketplaceFeed({ onSelectItem, onSelectService, onPost, savedItems, on
         {mainFilter === 'Services' && (
           <>
             {displayServices.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '48px 0', color: MUTED, fontSize: '14px', fontWeight: 500 }}>No services found</div>
+              <div style={{ textAlign: 'center', padding: '48px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+                <div style={{ color: MUTED, fontSize: '14px', fontWeight: 500 }}>Can't find what you need?</div>
+                <button
+                  onClick={onPostRequest}
+                  style={{ background: PRIMARY, color: '#fff', border: 'none', borderRadius: '12px', padding: '12px 24px', fontSize: '14px', fontWeight: 700, fontFamily: "'Nunito', sans-serif", cursor: 'pointer' }}
+                >
+                  Post a Request
+                </button>
+              </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 {displayServices.map(s => (

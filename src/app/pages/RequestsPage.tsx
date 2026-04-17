@@ -901,12 +901,15 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
 interface RequestsPageProps {
   onAddPost?: (post: any) => void;
   initialRequestId?: number;
+  initialShowPost?: boolean;
   onNavVisibilityChange?: (visible: boolean) => void;
 }
 
-export function RequestsPage({ onAddPost, initialRequestId, onNavVisibilityChange }: RequestsPageProps = {}) {
+export function RequestsPage({ onAddPost, initialRequestId, initialShowPost, onNavVisibilityChange }: RequestsPageProps = {}) {
   const initialStack: NavFrame[] = initialRequestId
     ? [{ screen: 'feed' }, { screen: 'detail', params: { request: INITIAL_REQUESTS.find(r => r.id === initialRequestId) } }]
+    : initialShowPost
+    ? [{ screen: 'feed' }, { screen: 'post' }]
     : [{ screen: 'feed' }];
   const [navStack, setNavStack] = useState<NavFrame[]>(initialStack);
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
