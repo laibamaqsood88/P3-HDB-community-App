@@ -316,7 +316,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
         {!(activeSubTab === 'groups' && groupInDetail) && <div style={{ background: searchMode ? 'transparent' : CARD, borderBottom: searchMode ? 'none' : `1px solid ${BORDER}`, flexShrink: 0, position: 'relative', zIndex: searchMode ? 202 : undefined }}>
           <>
               {/* Header: buttons fixed top-right; title starts below and moves up on scroll */}
-              <div style={{ position: 'relative', height: `${132 - scrollProgress * 40}px`, transition: 'height 0.1s linear' }}>
+              <div style={{ position: 'relative', height: searchMode ? '88px' : `${132 - scrollProgress * 40}px`, transition: 'height 0.1s linear' }}>
                 {searchMode ? (
                   <button onClick={() => { setSearchMode(false); setSearchQuery(''); }}
                     style={{ position: 'absolute', top: '44px', left: '16px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -581,7 +581,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  position: 'absolute', top: '144px', left: '12px', right: '12px',
+                  position: 'absolute', top: '128px', left: '12px', right: '12px',
                   background: 'white',
                   borderRadius: '16px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.18)',

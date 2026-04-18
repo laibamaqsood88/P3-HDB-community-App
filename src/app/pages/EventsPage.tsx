@@ -567,7 +567,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
   return (
     <div className="no-scrollbar" style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '44px 20px 14px', boxShadow: '0 1px 0 rgba(60,60,67,0.1)' }}>
+      <div style={{ background: CARD, padding: '44px 20px 14px', boxShadow: '0 1px 0 rgba(60,60,67,0.1)', position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button
             onClick={onOpenProfile}
