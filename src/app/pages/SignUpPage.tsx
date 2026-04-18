@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronRight, ChevronLeft, ChevronDown, Users, Bookmark } from 'lucide-react';
-import larryWithLimbs from '../../assets/larrywithlimbs.svg';
+import { LarryAnimated } from '../../assets/LarryAnimated';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -247,11 +247,9 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
     >
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         {/* Decorative gradient circle */}
-        <img
-          src={larryWithLimbs}
-          alt="Larry"
-          style={{ width: '140px', height: '140px', objectFit: 'contain', marginBottom: '28px' }}
-        />
+        <div style={{ marginBottom: '28px' }}>
+          <LarryAnimated size={140} />
+        </div>
 
         <div
           style={{
