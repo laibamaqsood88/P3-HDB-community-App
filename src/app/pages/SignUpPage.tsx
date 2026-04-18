@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, ChevronLeft, ChevronDown, Users, Bookmark, Home } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronDown, Users, Bookmark } from 'lucide-react';
+import larryWithLimbs from '../../assets/larrywithlimbs.svg';
 
 // ---- Design tokens ----
 const BG = '#F5F4F0';
@@ -239,50 +240,45 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
         padding: '44px 24px 40px',
         background: CARD,
       }}
     >
-      {/* Decorative gradient circle */}
-      <div
-        style={{
-          width: '100px',
-          height: '100px',
-          borderRadius: '32px',
-          background: `linear-gradient(135deg, #FFF0EC, #FFD8CC)`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: '28px',
-        }}
-      >
-        <Home size={52} color={PRIMARY} strokeWidth={1.5} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        {/* Decorative gradient circle */}
+        <img
+          src={larryWithLimbs}
+          alt="Larry"
+          style={{ width: '140px', height: '140px', objectFit: 'contain', marginBottom: '28px' }}
+        />
+
+        <div
+          style={{
+            fontSize: '28px',
+            fontWeight: 800,
+            color: TEXT,
+            lineHeight: '1.2',
+            marginBottom: '14px',
+            textAlign: 'center',
+          }}
+        >
+          Welcome to NeighbourLah
+        </div>
+        <div
+          style={{
+            fontSize: '16px',
+            color: TEXT2,
+            lineHeight: '1.6',
+            fontWeight: 400,
+            textAlign: 'center',
+          }}
+        >
+          Let's personalise your experience with a few quick questions
+        </div>
       </div>
 
-      <div
-        style={{
-          fontSize: '28px',
-          fontWeight: 800,
-          color: TEXT,
-          lineHeight: '1.2',
-          marginBottom: '14px',
-        }}
-      >
-        Welcome to NeighbourHood
-      </div>
-      <div
-        style={{
-          fontSize: '16px',
-          color: TEXT2,
-          lineHeight: '1.6',
-          fontWeight: 400,
-          marginBottom: '40px',
-        }}
-      >
-        Let's personalise your experience with a few quick questions
-      </div>
-
-      <div style={{ marginTop: 'auto' }}>
+      <div style={{ alignSelf: 'stretch' }}>
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onContinue}
