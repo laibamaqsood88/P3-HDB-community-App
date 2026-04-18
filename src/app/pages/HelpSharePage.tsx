@@ -794,8 +794,11 @@ function CategorySelect({ onBack, onSelectCategory }: any) {
 
 // ---- Item Detail ----
 function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, savedItems, onSaveToggle }: any) {
+  const [detailScrollY, setDetailScrollY] = useState(0);
   if (!item) return null;
   const name = item.title || item.name || '';
+  const heroOpacity = Math.max(0, 1 - detailScrollY / 180);
+  const headerOpacity = Math.min(1, detailScrollY / 120);
 
   if (type === 'service') {
     const trustRows = [
@@ -807,9 +810,24 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
     ].filter(Boolean) as { icon: React.ReactNode; label: string; value: string; valueColor: string }[];
 
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-        <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
-          <div style={{ position: 'relative', width: '100%', height: '260px', background: BG }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
+        {/* Fixed overlay: header bg + buttons */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: CARD, opacity: headerOpacity, boxShadow: headerOpacity > 0 ? '0 1px 0 rgba(60,60,67,0.1)' : 'none' }} />
+          <div style={{ position: 'relative', padding: '52px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+            <button onClick={onBack} style={{ pointerEvents: 'auto', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+              <ChevronLeft size={20} color={TEXT} />
+            </button>
+            <div style={{ display: 'flex', gap: '8px', pointerEvents: 'auto' }}>
+              <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+                <Share2 size={17} color={TEXT} />
+              </button>
+              <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)', pointerEvents: 'auto' }} unsavedColor={TEXT} />
+            </div>
+          </div>
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto', background: CARD }} onScroll={e => setDetailScrollY((e.target as HTMLElement).scrollTop)}>
+          <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, opacity: heroOpacity }}>
             {item.image ? (
               <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
@@ -817,15 +835,6 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
                 <Users size={64} color="white" />
               </div>
             )}
-            <button onClick={onBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-              <ChevronLeft size={20} color={TEXT} />
-            </button>
-            <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
-              <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-                <Share2 size={17} color={TEXT} />
-              </button>
-              <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} unsavedColor={TEXT} />
-            </div>
           </div>
           <div style={{ padding: '20px 20px 0' }}>
             <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
@@ -919,9 +928,24 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
   const condStyle = CONDITION_COLORS[item.condition] || { bg: BG, text: MUTED };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG }}>
-      <div style={{ flex: 1, overflowY: 'auto', background: CARD }}>
-        <div style={{ position: 'relative', width: '100%', height: '260px', background: BG }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
+      {/* Fixed overlay: header bg + buttons */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: CARD, opacity: headerOpacity, boxShadow: headerOpacity > 0 ? '0 1px 0 rgba(60,60,67,0.1)' : 'none' }} />
+        <div style={{ position: 'relative', padding: '52px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+          <button onClick={onBack} style={{ pointerEvents: 'auto', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+            <ChevronLeft size={20} color={TEXT} />
+          </button>
+          <div style={{ display: 'flex', gap: '8px', pointerEvents: 'auto' }}>
+            <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+              <Share2 size={17} color={TEXT} />
+            </button>
+            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)', pointerEvents: 'auto' }} unsavedColor={TEXT} />
+          </div>
+        </div>
+      </div>
+      <div style={{ flex: 1, overflowY: 'auto', background: CARD }} onScroll={e => setDetailScrollY((e.target as HTMLElement).scrollTop)}>
+        <div style={{ position: 'relative', width: '100%', height: '260px', background: BG, opacity: heroOpacity }}>
           {item.image ? (
             <img src={item.image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
@@ -929,18 +953,6 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
               <Package size={64} color={MUTED} />
             </div>
           )}
-          <button
-            onClick={onBack}
-            style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}
-          >
-            <ChevronLeft size={20} color={TEXT} />
-          </button>
-          <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
-            <button onClick={() => toast.success('Shared!')} style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-              <Share2 size={17} color={TEXT} />
-            </button>
-            <SaveButton itemId={item.id} savedItems={savedItems} onSaveToggle={onSaveToggle} size={18} style={{ width: '38px', height: '38px', borderRadius: '50%', backdropFilter: 'blur(8px)' }} unsavedColor={TEXT} />
-          </div>
         </div>
         <div style={{ padding: '20px 20px 0' }}>
           <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
