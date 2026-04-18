@@ -238,6 +238,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
   const [scrollProgress, setScrollProgress] = useState(0);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [detailScrollY, setDetailScrollY] = useState(0);
 
   const handleSubTabChange = (tab: 'events' | 'groups' | 'neighbours') => {
     setActiveSubTab(tab);
@@ -782,17 +783,21 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
     const isSaved = savedEvents.includes(ev.id);
     const isRegistered = registeredEvents.includes(ev.id);
 
+    const heroOpacity = Math.max(0, 1 - detailScrollY / 180);
+    const headerOpacity = Math.min(1, detailScrollY / 120);
+
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          {/* Hero image */}
-          <div style={{ height: '260px', position: 'relative' }}>
-            <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 45%)' }} />
-            <button onClick={goBack} style={{ position: 'absolute', top: '52px', left: '16px', width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
+        {/* Fixed overlay: header bg + buttons — never scroll */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, pointerEvents: 'none' }}>
+          {/* Header background fades in on scroll */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: CARD, opacity: headerOpacity, boxShadow: headerOpacity > 0 ? '0 1px 0 rgba(60,60,67,0.1)' : 'none' }} />
+          {/* Buttons row — always in place */}
+          <div style={{ position: 'relative', padding: '52px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+            <button onClick={goBack} style={{ pointerEvents: 'auto', width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
               <ChevronLeft size={20} color={TEXT} />
             </button>
-            <div style={{ position: 'absolute', top: '52px', right: '16px', display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', pointerEvents: 'auto' }}>
               <button onClick={() => goTo('share', { event: ev })} style={{ width: '38px', height: '38px', borderRadius: '14px', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
                 <Share2 size={17} color={TEXT} />
               </button>
@@ -800,6 +805,14 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 <Bookmark size={17} color={isSaved ? PRIMARY : TEXT} fill={isSaved ? PRIMARY : 'none'} />
               </button>
             </div>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto' }} onScroll={e => setDetailScrollY((e.target as HTMLElement).scrollTop)}>
+          {/* Hero image — fades on scroll */}
+          <div style={{ height: '260px', position: 'relative', opacity: heroOpacity }}>
+            <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 45%)' }} />
           </div>
 
           <div style={{ padding: '20px 20px 32px' }}>

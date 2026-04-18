@@ -272,6 +272,7 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
   const [joinedGroups, setJoinedGroups] = useState<number[]>([]);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [expandedInterestCats, setExpandedInterestCats] = useState<Set<string>>(new Set());
+  const [detailScrollY, setDetailScrollY] = useState(0);
 
   const current = navStack[navStack.length - 1];
   const goTo = (screen: GroupScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
@@ -322,37 +323,29 @@ export function ConnectPage({ hideHeader = false, externalSearchQuery, externalC
     if (!group) return null;
     const isJoined = joinedGroups.includes(group.id);
 
+    const heroOpacity = Math.max(0, 1 - detailScrollY / 180);
+    const headerOpacity = Math.min(1, detailScrollY / 120);
+
     return (
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          {/* Hero */}
-          <div style={{ height: '240px', position: 'relative' }}>
-            <img src={group.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 55%)' }} />
-            <button
-              onClick={goBack}
-              style={{
-                position: 'absolute', top: '52px', left: '16px',
-                width: '38px', height: '38px', borderRadius: '50%',
-                background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backdropFilter: 'blur(8px)',
-              }}
-            >
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif", position: 'relative' }}>
+        {/* Fixed overlay: header bg + buttons — never scroll */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: CARD, opacity: headerOpacity, boxShadow: headerOpacity > 0 ? '0 1px 0 rgba(60,60,67,0.1)' : 'none' }} />
+          <div style={{ position: 'relative', padding: '52px 16px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+            <button onClick={goBack} style={{ pointerEvents: 'auto', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
               <ChevronLeft size={20} color={TEXT} />
             </button>
-            <button
-              onClick={() => toast.success('Shared!')}
-              style={{
-                position: 'absolute', top: '52px', right: '16px',
-                width: '38px', height: '38px', borderRadius: '50%',
-                background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backdropFilter: 'blur(8px)',
-              }}
-            >
+            <button onClick={() => toast.success('Shared!')} style={{ pointerEvents: 'auto', width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
               <Share2 size={17} color={TEXT} />
             </button>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto' }} onScroll={e => setDetailScrollY((e.target as HTMLElement).scrollTop)}>
+          {/* Hero — fades on scroll */}
+          <div style={{ height: '240px', position: 'relative', opacity: heroOpacity }}>
+            <img src={group.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 55%)' }} />
           </div>
 
           <div style={{ padding: '0 16px 100px' }}>
