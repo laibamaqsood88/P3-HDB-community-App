@@ -1,13 +1,13 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-18 (session 7 - Scroll-animated headers, neighbour profile fixes, badge redesign, home CTA cards, market avatars)
+2026-04-19 (session 8 - NeighbourLah rebrand, Larry mascot + animations, card row padding, group chat cleanup)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
 
 ## What This App Is
-A Singapore HDB community mobile web app called **NeighbourHood**. It connects verified HDB residents within an estate (Bishan-AMK Estate in the demo) via Singpass identity verification. Stack: React 18 + TypeScript + Vite, inline styles, Framer Motion (`motion/react`), Lucide React icons, Sonner toasts. No backend — all mock data.
+A Singapore HDB community mobile web app called **NeighbourHood** (login screen) / **NeighbourLah** (onboarding welcome screen). It connects verified HDB residents within an estate (Bishan-AMK Estate in the demo) via Singpass identity verification. Stack: React 18 + TypeScript + Vite, inline styles, Framer Motion (`motion/react`), Lucide React icons, Sonner toasts. No backend — all mock data.
 
 ## How to Run
 ```bash
@@ -22,13 +22,17 @@ npm run dev        # starts on http://localhost:5173
 src/
 ├── styles/
 │   └── theme.css                  — CSS variables + .no-scrollbar utility
+├── assets/
+│   ├── larrywithlimbs.svg         — static Larry mascot SVG (original)
+│   ├── larry2.svg                 — updated Larry SVG with redesigned hands
+│   └── LarryAnimated.tsx          — animated inline-SVG React component (see Larry Mascot section)
 └── app/
     ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks
     ├── components/
     │   └── BottomNav.tsx          — 4-tab nav (Events / Explore / Marketplace / Messages)
     └── pages/
         ├── LoginPage.tsx          — Singpass login screen
-        ├── SignUpPage.tsx         — 6-step onboarding
+        ├── SignUpPage.tsx         — 6-step onboarding (uses LarryAnimated on welcome step)
         ├── EventsPage.tsx         — Home dashboard (Tab 1)
         ├── ExplorePage.tsx        — Events + Groups sub-tabs (Tab 2)
         ├── ConnectPage.tsx        — Groups list + detail (used inside ExplorePage)
@@ -200,8 +204,8 @@ All four tab headers share the same absolute-positioning scroll animation. The p
 2. **Your Interest Groups** — horizontal scroll (Morning Runners, Backyard Gardeners, Board Game Sundays) + "More →"
 3. **Community Latest Requests** — single card showing newest marketplace request
 4. **Marketplace Picks** — horizontal scroll of 4 recommended items/services
-5. **My Events** — heading row with **"Find more events ›"** button + horizontal scroll row that **always** contains registered event cards followed by the **"Find an event" CTA card** (purple dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many events are registered.
-6. **My Groups** — heading row with **"Find more groups ›"** button + horizontal scroll row that **always** contains joined group cards followed by the **"Find a group" CTA card** (green dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many groups are joined.
+5. **My Events** — heading row with **"Find more events ›"** button + horizontal scroll row that **always** contains registered event cards followed by the **"Find an event" CTA card** (purple dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many events are registered. Row has equal `paddingTop` and `paddingBottom` (4px each).
+6. **My Groups** — heading row with **"Find more groups ›"** button + horizontal scroll row that **always** contains joined group cards followed by the **"Find a group" CTA card** (green dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many groups are joined. Row has equal `paddingTop` and `paddingBottom` (6px each).
 7. **Community Latest Requests** horizontal scroll — up to 5 request cards
 8. **Recommended Events** — vertical list of event cards
 
@@ -510,7 +514,8 @@ All 31 members across 3 group chats have `interests` and `languages` populated (
 
 ### Group chat screen
 Two tabs: **Chat** | **Activity Board**
-- Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal + discoverability notice
+- Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal
+- ~~Discoverability notice~~ removed (the orange banner "This group is discoverable by verified estate residents with the X interest tag" has been deleted)
 
 ### GROUP_ACTIVITY mock data
 ```ts
@@ -594,8 +599,42 @@ German:    { bg: '#E0E7FF', text: '#3730A3' }
 
 ---
 
+## Larry Mascot (`src/assets/LarryAnimated.tsx`)
+Animated inline-SVG React component used on the onboarding welcome step.
+
+### Usage
+```tsx
+import { LarryAnimated } from '../../assets/LarryAnimated';
+<LarryAnimated size={140} />
+```
+
+### SVG source
+Based on `larry2.svg` (viewBox `0 0 492 566`) — updated hand design with spread fingers. Static fallback: `larrywithlimbs.svg` (viewBox `0 0 483 566`).
+
+### Animations (all on a 1.6s loop)
+| Class | Element | Animation |
+|---|---|---|
+| `.larry-jump` | Body + arms `<g>` | `larryJump`: fast launch to -38px, brief hang at peak, snap land, pause |
+| `.larry-hat` | Hat `<g>` (rendered last, always on top) | `larryHatFloat`: smooth `ease-in-out` arc to -56px, 0.13s delay so hat lags and overshoots body |
+| `.larry-arm-left` | Left arm `<g>` | `larryWaveLeft`: rotates 0°→10°→0°, `transform-origin: 100% 30%` (shoulder pivot) |
+| `.larry-arm-right` | Right arm `<g>` | `larryWaveRight`: rotates 0°→-10°→0°, `transform-origin: 0% 30%` |
+
+### Key implementation details
+- Hat `<g>` is rendered **after** the jump group so it always paints on top of the body
+- Arms are **inside** the jump group so they jump with the body; rotation is relative to the translated parent
+- `overflow: visible` on the SVG allows arms/hat to animate outside the element bounds
+- `transform-box: fill-box` on arm groups makes `transform-origin` relative to each arm's own bounding box
+
+---
+
 ## Onboarding (`SignUpPage.tsx`)
 6 steps: Welcome → Family Status → Interests → Spoken Language → Loading → Recommendations
+
+### Welcome Step layout
+- **Title**: "Welcome to NeighbourLah" (rebranded from NeighbourHood)
+- **Icon**: `<LarryAnimated size={140} />` replaces the old home icon
+- All content (mascot, title, subtitle) is vertically centred between the top of the screen and the Continue button using a `flex: 1, justifyContent: 'center'` wrapper
+- **Continue button**: `alignSelf: 'stretch'` on the button's wrapper div ensures it spans full screen width even when the parent uses `alignItems: 'center'`
 
 ### Family Status Step
 - 6 options: Single, Couple, Living with kids, Living with parents, Multigenerational, Senior (60 and above)
