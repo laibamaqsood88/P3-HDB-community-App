@@ -17,14 +17,10 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           70%       { transform: translateY(0px);   animation-timing-function: ease; }
           100%      { transform: translateY(0px); }
         }
-        /* Hat lags on the way up, overshoots, then falls back down after body */
+        /* Hat: same arc as body but delayed so it lags on launch and settles after */
         @keyframes larryHatFloat {
-          0%        { transform: translateY(0px); }
-          20%       { transform: translateY(-10px); }
-          50%       { transform: translateY(-58px); }
-          72%       { transform: translateY(-12px); }
-          82%       { transform: translateY(0px); }
-          100%      { transform: translateY(0px); }
+          0%, 100% { transform: translateY(0px); }
+          45%      { transform: translateY(-56px); }
         }
         /* Arm waves */
         @keyframes larryWaveLeft {
@@ -40,7 +36,8 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           animation: larryJump 1.6s ease infinite;
         }
         .larry-hat {
-          animation: larryHatFloat 1.6s ease infinite;
+          animation: larryHatFloat 1.6s ease-in-out infinite;
+          animation-delay: 0.13s;
         }
         .larry-arm-left {
           transform-box: fill-box;
