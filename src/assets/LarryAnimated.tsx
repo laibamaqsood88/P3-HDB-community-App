@@ -2,8 +2,8 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
   return (
     <svg
       width={size}
-      height={size * (566 / 483)}
-      viewBox="0 0 483 566"
+      height={size * (566 / 492)}
+      viewBox="0 0 492 566"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ overflow: 'visible' }}
@@ -52,7 +52,8 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
       `}</style>
 
       <defs>
-        <filter id="la_f0" x="0" y="340" width="78" height="87.3397" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        {/* Left leg */}
+        <filter id="la_f0" x="143.994" y="507" width="68.9624" height="62.0129" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
@@ -61,7 +62,8 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/>
           <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
         </filter>
-        <filter id="la_f1" x="409" y="340" width="78" height="87.3397" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        {/* Right leg */}
+        <filter id="la_f1" x="286.994" y="507" width="68.9624" height="62.0129" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
@@ -70,7 +72,8 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/>
           <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
         </filter>
-        <filter id="la_f2" x="136" y="507" width="68.9624" height="62.0128" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        {/* Right arm */}
+        <filter id="la_f_rarm" x="389.999" y="350.82" width="105.338" height="91.6802" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
@@ -79,7 +82,8 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/>
           <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
         </filter>
-        <filter id="la_f3" x="279" y="507" width="68.9624" height="62.0128" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        {/* Left arm */}
+        <filter id="la_f_larm" x="0" y="350.82" width="102.5" height="88.1802" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
@@ -88,7 +92,72 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/>
           <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
         </filter>
-        <filter id="la_eye1" x="149.269" y="396.543" width="38.0752" height="38.0752" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        {/* Windows */}
+        <filter id="la_win1" x="107.786" y="84.2053" width="75.9792" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+        </filter>
+        <filter id="la_win2" x="213.355" y="84.2053" width="75.9792" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+        </filter>
+        <filter id="la_win3" x="318.925" y="84.2053" width="75.9792" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+        </filter>
+        <filter id="la_win4" x="318.925" y="184.977" width="75.9792" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+        </filter>
+        <filter id="la_win5" x="107.786" y="184.977" width="180.349" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+        </filter>
+        <filter id="la_win6" x="213.355" y="285.748" width="180.349" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+        </filter>
+        <filter id="la_win7" x="107.786" y="285.748" width="75.9792" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+        </filter>
+        {/* Eyes & mouth */}
+        <filter id="la_eye1" x="157.262" y="396.543" width="38.0752" height="38.0752" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
           <feOffset dx="1" dy="1"/><feGaussianBlur stdDeviation="1"/>
@@ -97,7 +166,7 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
           <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
         </filter>
-        <filter id="la_eye1hl" x="156.084" y="404.494" width="15.3584" height="15.3584" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <filter id="la_eye1hl" x="164.077" y="404.494" width="15.3584" height="15.3584" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
           <feOffset dx="1" dy="1"/><feGaussianBlur stdDeviation="1"/>
@@ -106,7 +175,7 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
           <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
         </filter>
-        <filter id="la_mouth" x="205.359" y="430.903" width="71.5847" height="31.9956" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <filter id="la_mouth" x="213.353" y="430.904" width="71.585" height="31.9956" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
           <feOffset dx="1" dy="1"/><feGaussianBlur stdDeviation="1"/>
@@ -115,7 +184,7 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
           <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
         </filter>
-        <filter id="la_eye2" x="300.335" y="396.543" width="38.0752" height="38.0752" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <filter id="la_eye2" x="308.329" y="396.543" width="38.0752" height="38.0752" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
           <feOffset dx="1" dy="1"/><feGaussianBlur stdDeviation="1"/>
@@ -124,7 +193,7 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
           <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
         </filter>
-        <filter id="la_eye2hl" x="307.15" y="404.494" width="15.3584" height="15.3584" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <filter id="la_eye2hl" x="315.144" y="404.494" width="15.3584" height="15.3584" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix"/>
           <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
           <feOffset dx="1" dy="1"/><feGaussianBlur stdDeviation="1"/>
@@ -132,146 +201,83 @@ export function LarryAnimated({ size = 160 }: { size?: number }) {
           <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
           <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
           <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
-        </filter>
-        <filter id="la_win1" x="99.792" y="84.2053" width="75.9795" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
-          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
-        </filter>
-        <filter id="la_win2" x="205.361" y="84.2053" width="75.9795" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
-          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
-        </filter>
-        <filter id="la_win3" x="310.932" y="84.2053" width="75.9792" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
-          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
-        </filter>
-        <filter id="la_win4" x="310.932" y="184.977" width="75.9792" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
-          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
-        </filter>
-        <filter id="la_win5" x="99.792" y="184.977" width="180.349" height="75.9792" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
-          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
-        </filter>
-        <filter id="la_win6" x="205.361" y="285.747" width="180.349" height="75.9794" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
-          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
-        </filter>
-        <filter id="la_win7" x="99.792" y="285.747" width="75.9795" height="75.9794" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dx="8" dy="8"/><feGaussianBlur stdDeviation="2"/>
-          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
-          <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
         </filter>
       </defs>
 
       {/* Body + arms — all jump together */}
       <g className="larry-jump">
 
-        {/* Left arm */}
-        <g filter="url(#la_f0)" className="larry-arm-left">
-          <path d="M43.5 365.34L74 389.84V423.34C48.9685 418.253 36.6882 409.912 18.5 383.34C10.1115 385.947 6.85724 385.644 2.5 383.34C0 379.34 3.69 374.62 11 373.34C3.16953 371.355 0.221207 369.777 0 365.34C0.217583 359.935 5.00533 359.76 15 360.34C9.72053 353.208 8.45152 350.057 11 346.84C16 342.84 22.7942 347.863 31.5 354.34C30.2151 350.923 29.5 345.124 31.5 342.84C35.7158 338.024 39 340.242 41.5 342.84C45.0555 346.534 45.009 352.349 43.5 365.34Z" fill="#FEB6A5"/>
+        {/* Left arm — new hand design */}
+        <g filter="url(#la_f_larm)" className="larry-arm-left">
+          <path d="M47.8418 353.84C51.3973 357.534 51.3508 363.349 49.8418 376.34L69.8418 392.406L98.5 406L96.5 435C85.0725 433.073 72.5 432.5 57.3418 424C43.8178 416.417 41.8411 411 30.8411 396C27.1311 395.245 17.3411 393.5 9.84106 389C2.34106 384.5 -1.15894 375.5 0.341064 367.5C1.84106 359.5 10.3411 355 16.8411 355C23.3411 355 28.8418 357.5 35.3418 362.5C34.0569 359.084 34.3418 355.285 36.3418 353C39.8416 349.002 45.3418 351.243 47.8418 353.84Z" fill="#FEB6A5"/>
         </g>
 
-        {/* Right arm */}
-        <g filter="url(#la_f1)" className="larry-arm-right">
-          <path d="M441.5 342.84C437.944 346.534 437.991 352.349 439.5 365.34L419.5 381.405L409 389.84V423.34C420.427 421.413 428.259 418.922 433.603 415C444.524 408.959 453.415 399.535 464.5 383.34C472.888 385.947 476.143 385.644 480.5 383.34C483 379.34 479.31 374.62 472 373.34C479.83 371.355 482.779 369.777 483 365.34C482.782 359.935 477.995 359.76 468 360.34C473.279 353.208 474.548 350.057 472 346.84C467 342.84 460.206 347.863 451.5 354.34C452.785 350.923 453.5 345.124 451.5 342.84C447.284 338.024 444 340.242 441.5 342.84Z" fill="#FEB6A5"/>
+        {/* Right arm — new hand design */}
+        <g filter="url(#la_f_rarm)" className="larry-arm-right">
+          <path d="M443.496 353.84C439.94 357.534 439.987 363.349 441.496 376.34L421.496 392.406L389.999 407.5V438.5C401.427 436.573 414.499 436.411 433.996 424C447.076 415.674 449.497 411 460.497 396C464.207 395.245 473.997 393.5 481.497 389C488.997 384.5 492.497 375.5 490.997 367.5C489.497 359.5 480.997 355 474.497 355C467.997 355 462.496 357.5 455.996 362.5C457.281 359.084 456.996 355.285 454.996 353C451.496 349.002 445.996 351.243 443.496 353.84Z" fill="#FEB6A5"/>
         </g>
 
         {/* Body */}
-        <rect x="62" y="37.4189" width="360.637" height="469.433" rx="16" fill="#FEB6A5"/>
-        <path d="M62.3704 48.8514C62.3704 44.8497 62.3704 42.8488 63.1492 41.3203C63.8342 39.9759 64.9273 38.8828 66.2718 38.1977C67.8002 37.4189 69.8011 37.4189 73.8028 37.4189H410.834C414.836 37.4189 416.837 37.4189 418.365 38.1977C419.71 38.8828 420.803 39.9759 421.488 41.3203C422.267 42.8488 422.267 44.8497 422.267 48.8514V66.2107H62.3704V48.8514Z" fill="black" fillOpacity="0.2"/>
+        <rect x="64.9968" y="37.4189" width="360.637" height="469.433" rx="16" fill="#FEB6A5"/>
+        <path d="M65.3672 48.8514C65.3672 44.8497 65.3672 42.8488 66.146 41.3203C66.831 39.9759 67.9241 38.8828 69.2686 38.1977C70.7971 37.4189 72.7979 37.4189 76.7997 37.4189H413.831C417.833 37.4189 419.834 37.4189 421.362 38.1977C422.707 38.8828 423.8 39.9759 424.485 41.3203C425.264 42.8488 425.264 44.8497 425.264 48.8514V66.2107H65.3672V48.8514Z" fill="black" fillOpacity="0.2"/>
 
         {/* Legs */}
-        <g filter="url(#la_f2)">
-          <path d="M156.817 533.5V507H195.817V533.5C203.028 542.171 202.317 557 195.817 560C182.743 566.034 140.817 568 136.817 558C133.317 544 141.259 537.78 156.817 533.5Z" fill="#623327"/>
+        <g filter="url(#la_f0)">
+          <path d="M164.811 533.5V507H203.811V533.5C211.022 542.171 210.311 557 203.811 560C190.737 566.034 148.811 568 144.811 558C141.311 544 149.253 537.78 164.811 533.5Z" fill="#623327"/>
         </g>
-        <g filter="url(#la_f3)">
-          <path d="M323.145 533.5V507H284.145V533.5C276.934 542.171 277.645 557 284.145 560C297.219 566.034 339.145 568 343.145 558C346.645 544 338.703 537.78 323.145 533.5Z" fill="#623327"/>
+        <g filter="url(#la_f1)">
+          <path d="M331.139 533.5V507H292.139V533.5C284.928 542.171 285.639 557 292.139 560C305.213 566.034 347.139 568 351.139 558C354.639 544 346.697 537.78 331.139 533.5Z" fill="#623327"/>
         </g>
 
         {/* Windows */}
         <g filter="url(#la_win1)">
-          <rect x="99.792" y="84.2053" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
+          <rect x="107.786" y="84.2053" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
         </g>
         <g filter="url(#la_win2)">
-          <rect x="205.361" y="84.2053" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
+          <rect x="213.355" y="84.2053" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
         </g>
         <g filter="url(#la_win3)">
-          <rect x="310.932" y="84.2053" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
+          <rect x="318.925" y="84.2053" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
         </g>
         <g filter="url(#la_win4)">
-          <rect x="310.932" y="184.977" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
+          <rect x="318.925" y="184.977" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
         </g>
         <g filter="url(#la_win5)">
-          <rect x="99.792" y="184.977" width="176.349" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
+          <rect x="107.786" y="184.977" width="176.349" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
         </g>
         <g filter="url(#la_win6)">
-          <rect x="205.361" y="285.747" width="176.349" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
+          <rect x="213.355" y="285.748" width="176.349" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
         </g>
         <g filter="url(#la_win7)">
-          <rect x="99.792" y="285.747" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
+          <rect x="107.786" y="285.748" width="71.9793" height="71.9793" rx="7.1453" fill="black" fillOpacity="0.3"/>
         </g>
 
         {/* Face */}
         <g filter="url(#la_eye1)">
-          <circle cx="167.306" cy="414.581" r="17.0376" fill="#3B2626"/>
-          <circle cx="167.306" cy="414.581" r="16.1444" stroke="#3B2626" strokeWidth="1.78632"/>
+          <circle cx="175.3" cy="414.581" r="17.0376" fill="#3B2626"/>
+          <circle cx="175.3" cy="414.581" r="16.1444" stroke="#3B2626" strokeWidth="1.78632"/>
         </g>
         <g filter="url(#la_eye1hl)">
-          <circle cx="162.763" cy="411.173" r="5.67919" fill="white"/>
-          <circle cx="162.763" cy="411.173" r="4.78603" stroke="white" strokeWidth="1.78632"/>
+          <circle cx="170.757" cy="411.174" r="5.67919" fill="white"/>
+          <circle cx="170.757" cy="411.174" r="4.78603" stroke="white" strokeWidth="1.78632"/>
         </g>
         <g filter="url(#la_mouth)">
-          <path d="M211.36 436.904C215.035 460.897 265.268 460.897 268.943 436.904" stroke="#3B2626" strokeWidth="10" strokeLinecap="round"/>
+          <path d="M219.354 436.904C223.029 460.897 273.261 460.897 276.937 436.904" stroke="#3B2626" strokeWidth="10" strokeLinecap="round"/>
         </g>
         <g filter="url(#la_eye2)">
-          <circle cx="318.373" cy="414.581" r="17.0376" fill="#3B2626"/>
-          <circle cx="318.373" cy="414.581" r="16.1444" stroke="#3B2626" strokeWidth="1.78632"/>
+          <circle cx="326.366" cy="414.581" r="17.0376" fill="#3B2626"/>
+          <circle cx="326.366" cy="414.581" r="16.1444" stroke="#3B2626" strokeWidth="1.78632"/>
         </g>
         <g filter="url(#la_eye2hl)">
-          <circle cx="313.83" cy="411.173" r="5.67919" fill="white"/>
-          <circle cx="313.83" cy="411.173" r="4.78603" stroke="white" strokeWidth="1.78632"/>
+          <circle cx="321.823" cy="411.174" r="5.67919" fill="white"/>
+          <circle cx="321.823" cy="411.174" r="4.78603" stroke="white" strokeWidth="1.78632"/>
         </g>
       </g>
 
       {/* Hat — rendered last so it always appears above the body */}
       <g className="larry-hat">
-        <rect x="43.5" width="392.873" height="50.3683" rx="8" fill="#FF6B47"/>
-        <path d="M43.5 37.4827H436.5V41.9769C436.5 46.3952 432.918 49.9769 428.5 49.9769H51.5C47.0817 49.9769 43.5 46.3952 43.5 41.9769V37.4827Z" fill="#82483A" fillOpacity="0.3"/>
+        <rect x="48.9968" width="392.873" height="50.3683" rx="8" fill="#FF6B47"/>
+        <path d="M48.9968 37.4827H441.997V41.9769C441.997 46.3952 438.415 49.9769 433.997 49.9769H56.9968C52.5785 49.9769 48.9968 46.3952 48.9968 41.9769V37.4827Z" fill="#82483A" fillOpacity="0.3"/>
       </g>
     </svg>
   );

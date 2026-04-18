@@ -619,7 +619,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
             </button>
           </div>
 
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '4px' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingTop: '4px', paddingBottom: '4px' }}>
             {signedUpEvents.map(ev => (
               <motion.div
                 key={ev.id}
@@ -739,7 +739,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>›</span>
             </button>
           </div>
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingTop: '6px', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
             {joinedGroups.map(group => {
               const gradient = COLOR_GRADIENT[group.categoryColor] || `linear-gradient(135deg, ${group.categoryColor} 0%, ${group.categoryColor}AA 100%)`;
               const IconComp = EMOJI_ICON_MAP[group.emoji] || Users;
@@ -854,7 +854,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingBottom: '6px' }}>
+          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px', paddingTop: '6px', paddingBottom: '6px' }}>
             {REQUESTS_DATA.slice(0, 5).map(r => {
               const typeColors: Record<string, { bg: string; text: string }> = {
                 'Borrow': { bg: '#EDE9FE', text: '#7C3AED' },

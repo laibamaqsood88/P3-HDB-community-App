@@ -977,13 +977,6 @@ function ChatScreen({
             </div>
           ))}
 
-          {/* Discoverability notice */}
-          <div style={{ background: '#FFF0EC', borderRadius: '16px', padding: '14px 16px', display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '8px', border: `1px solid #FFD8CC` }}>
-            <Users size={16} color={PRIMARY} style={{ flexShrink: 0, marginTop: '1px' }} />
-            <div style={{ fontSize: '12px', color: PRIMARY, fontWeight: 600, lineHeight: '1.5' }}>
-              This group is discoverable by verified estate residents with the "{conv.tag}" interest tag
-            </div>
-          </div>
         </div>
       )}
 
