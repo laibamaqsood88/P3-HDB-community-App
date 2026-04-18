@@ -115,6 +115,7 @@ const BADGES = [
 // ---- Main Component ----
 export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest, onClose, myPosts = [], userInterests = MY_INTERESTS, onUpdateInterests, userLanguages = [], onUpdateLanguages, savedMarketplaceItems = [] }: ProfilePageProps) {
   const [activeSection, setActiveSection] = useState<'main' | 'settings' | 'saved-items' | 'my-posts'>('main');
+  const [scrolled, setScrolled] = useState(false);
   const [showPhotoEdit, setShowPhotoEdit] = useState(false);
   const [showInterestEdit, setShowInterestEdit] = useState(false);
   const [draftInterests, setDraftInterests] = useState<string[]>(userInterests);
@@ -193,11 +194,16 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
   }
 
   return (
-    <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }}>
-      {/* ---- Header ---- */}
-      <div style={{ background: BG, paddingTop: '52px', paddingBottom: '20px' }}>
-        {/* Back button + Title + Edit & Settings buttons */}
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 20px', marginBottom: '20px' }}>
+    <div style={{ height: '100%', overflowY: 'auto', background: BG, fontFamily: "'Nunito', sans-serif" }} onScroll={e => setScrolled((e.target as HTMLElement).scrollTop > 4)}>
+      {/* ---- Sticky nav bar ---- */}
+      <div style={{
+        position: 'sticky', top: 0, zIndex: 10,
+        paddingTop: '52px', paddingBottom: '12.8px',
+        background: scrolled ? BG : 'transparent',
+        boxShadow: scrolled ? '0 1px 0 rgba(60,60,67,0.1)' : 'none',
+        transition: 'background 0.2s, box-shadow 0.2s',
+      }}>
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 20px' }}>
           {onClose && (
             <button
               onClick={onClose}
@@ -211,11 +217,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
               <ChevronLeft size={22} color={TEXT} />
             </button>
           )}
-
-          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>
-            Profile
-          </div>
-
+          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>Profile</div>
           <div style={{ position: 'absolute', right: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
               onClick={() => setShowPhotoEdit(true)}
@@ -239,7 +241,10 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
             </button>
           </div>
         </div>
+      </div>
 
+      {/* ---- Content below sticky nav ---- */}
+      <div style={{ paddingTop: '16px', paddingBottom: '20px' }}>
         {/* Avatar — centred */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <img
@@ -791,7 +796,7 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '44px 20px 20px', flexShrink: 0, borderBottom: `0.5px solid ${BORDER}` }}>
+      <div style={{ background: CARD, padding: '44px 20px 12.8px', flexShrink: 0, borderBottom: `0.5px solid ${BORDER}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronRight size={18} color={TEXT} style={{ transform: 'rotate(180deg)' }} />
@@ -1148,9 +1153,9 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
       {/* Header */}
-      <div style={{ background: CARD, padding: '44px 20px 20px', borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
+      <div style={{ background: CARD, padding: '52px 20px 12.8px', borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <button onClick={onBack} style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(0,0,0,0.07)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <ChevronLeft size={22} color={TEXT} />
           </button>
           <div style={{ flex: 1, fontSize: '18px', fontWeight: 800, color: TEXT, textAlign: 'center' }}>Settings</div>

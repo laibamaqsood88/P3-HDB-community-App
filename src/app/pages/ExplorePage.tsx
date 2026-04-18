@@ -581,7 +581,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  position: 'absolute', top: '128px', left: '12px', right: '12px',
+                  position: 'absolute', top: '144px', left: '12px', right: '12px',
                   background: 'white',
                   borderRadius: '16px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
