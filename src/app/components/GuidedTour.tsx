@@ -180,62 +180,29 @@ export function GuidedTour({ onNavigate, onNavigateSubTab }: GuidedTourProps) {
 
   // ---- Tooltip vertical position ----
   const getTooltipStyle = (): React.CSSProperties => {
+    const base = {
+      background: 'white',
+      boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+      zIndex: 10001,
+      position: 'fixed' as const,
+      left: '50%',
+      width: 'calc(100% - 48px)',
+      maxWidth: '400px',
+    };
+
     if (step.type === 'modal') {
-      return {
-        position: 'fixed',
-        left: '24px',
-        right: '24px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'white',
-        borderRadius: '24px',
-        padding: '28px 24px 24px',
-        boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-        zIndex: 10001,
-      };
+      return { ...base, top: '50%', borderRadius: '24px', padding: '28px 24px 24px' };
     }
 
     if (spotlightRect) {
       if (step.tooltipSide === 'above') {
-        return {
-          position: 'fixed',
-          left: '20px',
-          right: '20px',
-          bottom: `calc(100vh - ${spotlightRect.top}px + 12px)`,
-          background: 'white',
-          borderRadius: '20px',
-          padding: '20px',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-          zIndex: 10001,
-        };
+        return { ...base, bottom: `calc(100vh - ${spotlightRect.top}px + 12px)`, borderRadius: '20px', padding: '20px' };
       } else {
-        return {
-          position: 'fixed',
-          left: '20px',
-          right: '20px',
-          top: `${spotlightRect.top + spotlightRect.height + 12}px`,
-          background: 'white',
-          borderRadius: '20px',
-          padding: '20px',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-          zIndex: 10001,
-        };
+        return { ...base, top: `${spotlightRect.top + spotlightRect.height + 12}px`, borderRadius: '20px', padding: '20px' };
       }
     }
 
-    // Fallback — center vertically if spotlight not measured yet
-    return {
-      position: 'fixed',
-      left: '20px',
-      right: '20px',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      background: 'white',
-      borderRadius: '20px',
-      padding: '20px',
-      boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-      zIndex: 10001,
-    };
+    return { ...base, top: '50%', borderRadius: '20px', padding: '20px' };
   };
 
   return (
@@ -286,9 +253,9 @@ export function GuidedTour({ onNavigate, onNavigateSubTab }: GuidedTourProps) {
       <AnimatePresence mode="wait">
         <motion.div
           key={step.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: 10, x: '-50%' }}
+          animate={{ opacity: 1, y: step.type === 'modal' ? '-50%' : 0, x: '-50%' }}
+          exit={{ opacity: 0, y: -10, x: '-50%' }}
           transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
           style={getTooltipStyle()}
         >
