@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Shield, MapPin, CheckCircle } from 'lucide-react';
+import { Shield, CheckCircle } from 'lucide-react';
 import mccyLogo from '../../imports/mccy-logo-v2.webp';
+import loginImage from '../../assets/loginimage.png';
 
 // ---- Design tokens (Apple HIG) ----
 const BG = '#F7F7F7';
@@ -74,34 +75,31 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         }}
       />
 
-      {/* Hero area — app icon centred in the upper space */}
+      {/* Hero area — community illustration */}
       <div
         style={{
           flex: 1,
+          minHeight: 0,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
           position: 'relative',
           zIndex: 1,
+          paddingBottom: '8px',
         }}
       >
         <motion.div
-          initial={{ scale: 0.72, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.08 }}
-          style={{
-            width: '96px',
-            height: '96px',
-            borderRadius: '26px',
-            background: 'linear-gradient(145deg, #FF6B47 0%, #FF8C6B 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 8px 28px rgba(255,107,71,0.32), 0 2px 8px rgba(0,0,0,0.08)',
-          }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.08 }}
+          style={{ width: '92%', maxWidth: '460px', marginBottom: '12px' }}
         >
-          <MapPin size={44} color="white" strokeWidth={1.8} />
+          <img
+            src={loginImage}
+            alt="Community illustration"
+            style={{ width: '100%', display: 'block' }}
+          />
         </motion.div>
       </div>
 
