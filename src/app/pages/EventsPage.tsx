@@ -237,7 +237,7 @@ const LANGUAGE_BREAKDOWN = [
   { label: 'Mandarin',   count: 8,  color: '#D97706' },
   { label: 'Malay',      count: 4,  color: '#059669' },
   { label: 'Tamil',      count: 2,  color: '#DB2777' },
-  { label: 'Multilingual', count: 3, color: '#7C3AED' },
+  { label: 'Others', count: 3, color: '#7C3AED' },
 ];
 
 const NEIGHBOURS_GOING = [

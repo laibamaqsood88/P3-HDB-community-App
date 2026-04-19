@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  ChevronLeft, Bookmark, Share2, X, Shield, Bell,
+  ChevronLeft, ChevronRight, Bookmark, Share2, X, Shield, Bell,
   Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, ChevronDown, SquareArrowOutUpRight
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -127,7 +127,13 @@ const LANGUAGE_BREAKDOWN = [
   { label: 'Mandarin',   count: 8,  color: '#D97706' },
   { label: 'Malay',      count: 4,  color: '#059669' },
   { label: 'Tamil',      count: 2,  color: '#DB2777' },
-  { label: 'Multilingual', count: 3, color: '#7C3AED' },
+  { label: 'Others', count: 3, color: '#7C3AED' },
+];
+
+const OTHERS_BREAKDOWN = [
+  { label: 'Japanese',  count: 1, color: '#0891B2' },
+  { label: 'Hindi',     count: 1, color: '#EA580C' },
+  { label: 'Tagalog',   count: 1, color: '#7C3AED' },
 ];
 
 const NEIGHBOURS_GOING = [
@@ -239,6 +245,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const [scrollProgress, setScrollProgress] = useState(0);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [detailScrollY, setDetailScrollY] = useState(0);
+  const [showOthersSheet, setShowOthersSheet] = useState(false);
 
   const handleSubTabChange = (tab: 'events' | 'groups' | 'neighbours') => {
     setActiveSubTab(tab);
@@ -987,10 +994,18 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {LANGUAGE_BREAKDOWN.map((item, i) => {
                 const langTotal = LANGUAGE_BREAKDOWN.reduce((s, x) => s + x.count, 0);
+                const isOthers = item.label === 'Others';
                 return (
-                  <div key={item.label}>
+                  <div
+                    key={item.label}
+                    onClick={isOthers ? () => setShowOthersSheet(true) : undefined}
+                    style={{ cursor: isOthers ? 'pointer' : 'default' }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                        {isOthers && <ChevronRight size={13} color={TEXT2} strokeWidth={2.5} />}
+                      </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
                         <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / langTotal) * 100)}%)</span>
@@ -1009,6 +1024,48 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               })}
             </div>
           </div>
+
+          {/* Others language bottom sheet */}
+          <AnimatePresence>
+            {showOthersSheet && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  onClick={() => setShowOthersSheet(false)}
+                  style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 300 }}
+                />
+                <motion.div
+                  initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+                  style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: CARD, borderRadius: '24px 24px 0 0', padding: '20px 20px 40px', zIndex: 301 }}
+                >
+                  <div style={{ width: '36px', height: '4px', borderRadius: '2px', background: BORDER, margin: '0 auto 20px' }} />
+                  <div style={{ fontSize: '16px', fontWeight: 800, color: TEXT, marginBottom: '4px' }}>Other Languages</div>
+                  <div style={{ fontSize: '13px', color: TEXT2, marginBottom: '20px' }}>3 neighbours speak other languages in your estate</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {OTHERS_BREAKDOWN.map((item, i) => (
+                      <div key={item.label}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 500, color: TEXT2 }}>{item.label}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{item.count}</span>
+                            <span style={{ fontSize: '11px', color: MUTED }}>({Math.round((item.count / 3) * 100)}%)</span>
+                          </div>
+                        </div>
+                        <div style={{ height: '10px', borderRadius: '6px', background: BG, overflow: 'hidden' }}>
+                          <motion.div
+                            initial={{ width: 0 }} animate={{ width: `${(item.count / 3) * 100}%` }}
+                            transition={{ duration: 0.5, ease: 'easeOut', delay: i * 0.08 }}
+                            style={{ height: '100%', borderRadius: '6px', background: item.color }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
 
           {/* Neighbours attending */}
           <div>
