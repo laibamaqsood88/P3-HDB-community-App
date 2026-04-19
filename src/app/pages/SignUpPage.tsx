@@ -245,7 +245,7 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
         background: CARD,
       }}
     >
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
         {/* Decorative gradient circle */}
         <div style={{ marginBottom: '28px' }}>
           <LarryAnimated size={140} />
@@ -270,13 +270,12 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
             lineHeight: '1.6',
             fontWeight: 400,
             textAlign: 'center',
+            marginBottom: '28px',
           }}
         >
           Let's personalise your experience with a few quick questions
         </div>
-      </div>
 
-      <div style={{ alignSelf: 'stretch' }}>
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onContinue}
@@ -299,7 +298,6 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
           }}
         >
           Continue
-          <ChevronRight size={18} />
         </motion.button>
       </div>
     </div>
