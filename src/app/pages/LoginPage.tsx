@@ -74,7 +74,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         }}
       />
 
-      {/* Hero area */}
+      {/* Hero area — app icon centred in the upper space */}
       <div
         style={{
           flex: 1,
@@ -82,12 +82,10 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '44px 32px 28px',
           position: 'relative',
           zIndex: 1,
         }}
       >
-        {/* App icon */}
         <motion.div
           initial={{ scale: 0.72, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -101,136 +99,64 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0 8px 28px rgba(255,107,71,0.32), 0 2px 8px rgba(0,0,0,0.08)',
-            marginBottom: '28px',
           }}
         >
           <MapPin size={44} color="white" strokeWidth={1.8} />
         </motion.div>
-
-        {/* Text content */}
-        <motion.div
-          initial={{ y: 18, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          style={{ textAlign: 'center', width: '100%' }}
-        >
-          <div
-            style={{
-              fontSize: '34px',
-              fontWeight: 800,
-              color: TEXT,
-              letterSpacing: '-0.6px',
-              lineHeight: 1.1,
-              marginBottom: '10px',
-            }}
-          >
-            NeighbourHood
-          </div>
-          <div
-            style={{
-              fontSize: '16px',
-              color: TEXT2,
-              fontWeight: 500,
-              lineHeight: 1.5,
-              marginBottom: '6px',
-            }}
-          >
-            Connect with your neighbours
-          </div>
-          <div
-            style={{
-              fontSize: '13px',
-              color: MUTED,
-              fontWeight: 500,
-              marginBottom: '40px',
-            }}
-          >
-            Estate-verified · Singpass secured
-          </div>
-
-          {/* Singpass login button */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={onLogin}
-            style={{
-              width: '100%',
-              padding: '17px 24px',
-              borderRadius: '14px',
-              background: '#FFFFFF',
-              border: `1px solid ${BORDER}`,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0px',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)',
-              fontFamily: "'Nunito', sans-serif",
-            }}
-          >
-            <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111' }}>
-              Log in with&nbsp;
-            </span>
-            <span style={{ fontSize: '16px', fontWeight: 700, color: '#E30613' }}>
-              singpass
-            </span>
-          </motion.button>
-
-          {/* Supported by MCCY */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            marginTop: '14px',
-          }}>
-            <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>supported by</span>
-            <img src={mccyLogo} alt="MCCY" style={{ height: '22px', objectFit: 'contain' }} />
-          </div>
-        </motion.div>
       </div>
 
-      {/* Bottom trust strip */}
+      {/* White bottom panel */}
       <motion.div
-        initial={{ y: 32, opacity: 0 }}
+        initial={{ y: 60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.55, duration: 0.45 }}
+        transition={{ delay: 0.2, duration: 0.45 }}
         style={{
-          padding: '0 24px 44px',
+          background: '#FFFFFF',
+          borderRadius: '28px 28px 0 0',
+          padding: '36px 28px 56px',
           position: 'relative',
           zIndex: 1,
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.06)',
         }}
       >
-        <div
-          style={{
-            fontSize: '12px',
-            color: MUTED,
-            fontWeight: 500,
-            textAlign: 'center',
-            marginBottom: '14px',
-            lineHeight: 1.6,
-          }}
-        >
-          Your identity is verified and no personal data is stored.
+        <div style={{ fontSize: '28px', fontWeight: 800, color: TEXT, letterSpacing: '-0.4px', lineHeight: 1.2, marginBottom: '10px' }}>
+          NeighbourLah
+        </div>
+        <div style={{ fontSize: '15px', color: TEXT2, fontWeight: 500, lineHeight: 1.6, marginBottom: '44px' }}>
+          Connect, exchange, lend a hand and join events in your estate. Brought to you by the Ministry of Culture, Community & Youth.
         </div>
 
-        {/* Trust row */}
-        <div
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={onLogin}
           style={{
+            width: '100%',
+            padding: '17px 24px',
+            borderRadius: '14px',
+            background: '#FFFFFF',
+            border: `1px solid ${BORDER}`,
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '10px',
-            padding: '12px 20px',
-            background: '#FFFFFF',
-            borderRadius: '14px',
-            border: `1px solid ${BORDER}`,
+            gap: '0px',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)',
+            fontFamily: "'Nunito', sans-serif",
           }}
         >
-          <CheckCircle size={15} color="#34C759" strokeWidth={2} />
-          <span style={{ fontSize: '13px', color: TEXT2, fontWeight: 600 }}>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: '#111111' }}>
+            Log in with&nbsp;
+          </span>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: '#E30613' }}>
+            singpass
+          </span>
+        </motion.button>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: '12px' }}>
+          <CheckCircle size={13} color={MUTED} strokeWidth={2} />
+          <span style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>
             MyInfo data is not accessed
           </span>
-          <Shield size={14} color={MUTED} strokeWidth={1.8} />
         </div>
       </motion.div>
     </div>
