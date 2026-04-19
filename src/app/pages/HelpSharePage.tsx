@@ -702,7 +702,7 @@ function ItemCard({ item, savedItems, onSaveToggle, onClick }: { item: any; save
       </div>
       <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '3px', flex: 1 }}>
         <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.name}</div>
-        <div style={{ fontSize: '15px', fontWeight: 700, color: item.price === 'Free' ? '#34C759' : TEXT }}>{item.price}</div>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: item.price === 'Free' ? TEXT : TEXT }}>{item.price}</div>
         <div style={{ fontSize: '12px', color: MUTED }}>{item.distance}</div>
         <div style={{ fontSize: '11px', color: MUTED }}>{item.postedTime}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
@@ -739,7 +739,7 @@ function ServiceCard({ s, savedItems, onSaveToggle, onClick }: { s: any; savedIt
       </div>
       <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '3px', flex: 1 }}>
         <div style={{ fontSize: '13px', fontWeight: 600, color: TEXT, lineHeight: '1.3', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{s.name}</div>
-        <div style={{ fontSize: '15px', fontWeight: 700, color: (s.rate === 'Free' || !s.rate) ? '#34C759' : TEXT }}>{s.rate || 'Free'}</div>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: (s.rate === 'Free' || !s.rate) ? TEXT : TEXT }}>{s.rate || 'Free'}</div>
         <div style={{ fontSize: '12px', color: MUTED }}>{s.distance}</div>
         <div style={{ fontSize: '11px', color: MUTED }}>{s.postedTime}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px' }}>
@@ -838,7 +838,7 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
           </div>
           <div style={{ padding: '20px 20px 0' }}>
             <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
-            <div style={{ fontSize: '26px', fontWeight: 700, color: (item.rate === 'Free' || !item.rate) ? '#34C759' : TEXT, marginBottom: '20px' }}>{item.rate || 'Free'}</div>
+            <div style={{ fontSize: '26px', fontWeight: 700, color: (item.rate === 'Free' || !item.rate) ? TEXT : TEXT, marginBottom: '20px' }}>{item.rate || 'Free'}</div>
 
             <div style={{ marginBottom: '20px' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>
@@ -956,7 +956,7 @@ function ItemDetail({ item, type, onBack, onExpressInterest, onViewProfile, save
         </div>
         <div style={{ padding: '20px 20px 0' }}>
           <div style={{ fontSize: '22px', fontWeight: 700, color: TEXT, lineHeight: '1.3', marginBottom: '6px', letterSpacing: '-0.2px' }}>{name}</div>
-          <div style={{ fontSize: '26px', fontWeight: 700, color: item.price === 'Free' ? '#34C759' : TEXT, marginBottom: '20px' }}>{item.price}</div>
+          <div style={{ fontSize: '26px', fontWeight: 700, color: item.price === 'Free' ? TEXT : TEXT, marginBottom: '20px' }}>{item.price}</div>
 
           <div style={{ marginBottom: '20px' }}>
             <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT, marginBottom: '10px' }}>Details</div>

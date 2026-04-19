@@ -1188,24 +1188,19 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         {/* ---- Notifications section ---- */}
         <div style={{ padding: '0 16px 8px', fontSize: '12px', fontWeight: 600, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '24px' }}>Notifications</div>
         <div style={{ background: CARD, borderRadius: '14px', margin: '0 16px 8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          {/* Notifications row (nav) */}
-          <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Bell size={16} color={MUTED} />
-            </div>
-            <span style={{ flex: 1, fontSize: '16px', fontWeight: 500, color: TEXT, textAlign: 'left' }}>Notifications</span>
-            <ChevronRight size={16} color={MUTED} />
-          </button>
           {/* Toggles */}
           {[
-            { label: 'Event reminders', sub: 'Alerts for saved events', val: notifEvents, set: setNotifEvents },
-            { label: 'Neighbour invites', sub: "When a neighbour Jio's you", val: notifNeighbours, set: setNotifNeighbours },
-            { label: 'Help & Share', sub: 'Matches for your requests', val: notifHelp, set: setNotifHelp },
-          ].map(({ label, sub, val, set }, i) => (
+            { label: 'Event reminders', sub: 'Alerts for saved events', val: notifEvents, set: setNotifEvents, icon: <CalendarDays size={16} color={MUTED} /> },
+            { label: 'Neighbour invites', sub: "When a neighbour Jio's you", val: notifNeighbours, set: setNotifNeighbours, icon: <Users size={16} color={MUTED} /> },
+            { label: 'Help & Share', sub: 'Matches for your requests', val: notifHelp, set: setNotifHelp, icon: <ShoppingBag size={16} color={MUTED} /> },
+          ].map(({ label, sub, val, set, icon }, i) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: i < 2 ? `0.5px solid ${BORDER}` : 'none' }}>
-              <div>
-                <div style={{ fontSize: '15px', fontWeight: 500, color: TEXT }}>{label}</div>
-                <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#F2F2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{icon}</div>
+                <div>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: TEXT }}>{label}</div>
+                  <div style={{ fontSize: '12px', color: MUTED, fontWeight: 500 }}>{sub}</div>
+                </div>
               </div>
               <div
                 onClick={() => set(!val)}
