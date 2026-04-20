@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Shield, CheckCircle } from 'lucide-react';
 import mccyLogo from '../../imports/mccy-logo-v2.webp';
-import loginImage from '../../assets/loginimage.png';
+import loginImage from '../../assets/login2.png';
 
 // ---- Design tokens (Apple HIG) ----
 const BG = '#F7F7F7';
@@ -87,18 +87,19 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           position: 'relative',
           zIndex: 1,
           paddingBottom: '8px',
+          overflow: 'visible',
         }}
       >
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.08 }}
-          style={{ width: '92%', maxWidth: '460px', marginBottom: '12px' }}
+          style={{ width: '92%', maxWidth: '460px', marginBottom: '-108px', position: 'relative', zIndex: 2 }}
         >
           <img
             src={loginImage}
             alt="Community illustration"
-            style={{ width: '100%', display: 'block' }}
+            style={{ width: '100%', display: 'block', mixBlendMode: 'multiply' }}
           />
         </motion.div>
       </div>
