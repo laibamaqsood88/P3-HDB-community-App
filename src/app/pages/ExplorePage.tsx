@@ -1196,22 +1196,31 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
         {/* Bottom CTA */}
         <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}`, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {!reminderOption && (
+            <div style={{ fontSize: '12px', color: PRIMARY, fontWeight: 600, textAlign: 'center' }}>
+              Please select a reminder option above to continue
+            </div>
+          )}
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={reminderOption ? { scale: 0.97 } : {}}
             onClick={() => {
-              const reminderMsg = reminderOption && reminderOption !== 'No reminder' ? ` Reminder set for ${reminderOption.toLowerCase()}.` : '';
+              if (!reminderOption) return;
+              const reminderMsg = reminderOption !== 'No reminder' ? ` Reminder set for ${reminderOption.toLowerCase()}.` : '';
               toast.success(`Opening sign-up page…${reminderMsg}`);
               toggleRegister(ev.id);
               goBack();
             }}
             style={{
-              width: '100%', padding: '16px', borderRadius: '18px', background: PRIMARY,
-              border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 800,
-              color: 'white', fontFamily: 'inherit',
+              width: '100%', padding: '16px', borderRadius: '18px',
+              background: reminderOption ? PRIMARY : '#E5E5EA',
+              border: 'none', cursor: reminderOption ? 'pointer' : 'not-allowed',
+              fontSize: '15px', fontWeight: 800,
+              color: reminderOption ? 'white' : '#AEAEB2', fontFamily: 'inherit',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              transition: 'background 0.2s, color 0.2s',
             }}
           >
-            <ExternalLink size={16} color="white" />
+            <ExternalLink size={16} color={reminderOption ? 'white' : '#AEAEB2'} />
             Sign up on organiser's website
           </motion.button>
         </div>
