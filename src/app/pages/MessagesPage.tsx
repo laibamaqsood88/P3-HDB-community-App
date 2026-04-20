@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Send, Shield, Users, UserPlus, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight, ArrowRight, History, Camera, Filter, Check } from 'lucide-react';
+import { ChevronLeft, ChevronDown, Send, Shield, Users, UserPlus, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight, ArrowRight, History, Camera, Filter, Check } from 'lucide-react';
 import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
@@ -45,6 +45,14 @@ const GROUP_INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 const ALL_GROUP_INTERESTS = Object.keys(GROUP_INTEREST_COLORS);
+
+const GROUP_INTEREST_CATEGORIES = [
+  { label: 'Social & Community',  items: ['Community Volunteering', 'Cultural Heritage & Festivals'] },
+  { label: 'Fitness & Wellness',  items: ['Fitness & Sports', 'Yoga & Mindfulness', 'Outdoor Activities'] },
+  { label: 'Arts & Creativity',   items: ['Arts & Crafts', 'Music & Performing Arts', 'Dance'] },
+  { label: 'Learning & Skills',   items: ['Cooking & Baking', 'Technology & Digital Skills', 'DIY & Home Improvement', 'Language Learning'] },
+  { label: 'Lifestyle & Hobbies', items: ['Pets & Animals', 'Gardening & Plants', 'Gaming', 'Fashion & Beauty', 'Photography'] },
+];
 
 // ---- Mock conversation list ----
 type ConvType = 'group' | 'marketplace' | 'request' | 'direct';
@@ -298,6 +306,7 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
   const [neighbourSearch, setNeighbourSearch] = useState('');
   const [interestFilter, setInterestFilter] = useState('');
   const [showInterestFilter, setShowInterestFilter] = useState(false);
+  const [expandedInterestCats, setExpandedInterestCats] = useState<Set<string>>(new Set());
   const [groupName, setGroupName] = useState('');
   const [selectedGroupInterests, setSelectedGroupInterests] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -844,17 +853,6 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                     <Filter size={16} color={interestFilter ? 'white' : MUTED} />
                   </button>
                 </div>
-                {/* Interest filter chips */}
-                {showInterestFilter && (
-                  <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '0 16px 14px' }}>
-                    <button onClick={() => setInterestFilter('')} style={{ flexShrink: 0, padding: '6px 12px', borderRadius: '20px', border: `1.5px solid ${interestFilter === '' ? PRIMARY : BORDER}`, background: interestFilter === '' ? '#FFF0EC' : 'transparent', color: interestFilter === '' ? PRIMARY : MUTED, fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>All</button>
-                    {ALL_GROUP_INTERESTS.map(int => {
-                      const tc = GROUP_INTEREST_COLORS[int];
-                      const active = interestFilter === int;
-                      return <button key={int} onClick={() => setInterestFilter(active ? '' : int)} style={{ flexShrink: 0, padding: '6px 12px', borderRadius: '20px', border: `1.5px solid ${active ? tc.text : BORDER}`, background: active ? tc.bg : 'transparent', color: active ? tc.text : MUTED, fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>{int}</button>;
-                    })}
-                  </div>
-                )}
               </div>
               {/* Neighbour list */}
               <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
@@ -898,6 +896,78 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                   <span style={{ fontSize: '13px', fontWeight: 700, color: PRIMARY, flexShrink: 0 }}>{selectedNeighbours.length} added</span>
                 </div>
               )}
+
+              {/* Interest filter bottom sheet */}
+              <AnimatePresence>
+                {showInterestFilter && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+                    onClick={() => setShowInterestFilter(false)}
+                  >
+                    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+                      onClick={e => e.stopPropagation()}
+                      style={{ background: CARD, borderRadius: '20px 20px 0 0', padding: '16px 16px 40px', maxHeight: '70vh', overflowY: 'auto' }}
+                    >
+                      <div style={{ width: '36px', height: '4px', background: 'rgba(60,60,67,0.15)', borderRadius: '2px', margin: '0 auto 20px' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Filter by Interest</span>
+                        <button onClick={() => setShowInterestFilter(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <X size={16} color={TEXT} />
+                        </button>
+                      </div>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Interests</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '24px' }}>
+                        {GROUP_INTEREST_CATEGORIES.map(cat => {
+                          const isOpen = expandedInterestCats.has(cat.label);
+                          const selectedInCat = cat.items.filter(t => interestFilter === t).length;
+                          return (
+                            <div key={cat.label} style={{ background: BG, borderRadius: '14px', overflow: 'hidden' }}>
+                              <motion.button whileTap={{ scale: 0.98 }}
+                                onClick={() => setExpandedInterestCats(prev => { const next = new Set(prev); isOpen ? next.delete(cat.label) : next.add(cat.label); return next; })}
+                                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Nunito', sans-serif" }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <span style={{ fontSize: '13px', fontWeight: 700, color: TEXT }}>{cat.label}</span>
+                                  {selectedInCat > 0 && (
+                                    <div style={{ minWidth: '18px', height: '18px', borderRadius: '9px', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                                      <span style={{ fontSize: '10px', fontWeight: 800, color: 'white' }}>{selectedInCat}</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                                  <ChevronDown size={15} color={MUTED} />
+                                </motion.div>
+                              </motion.button>
+                              <AnimatePresence>
+                                {isOpen && (
+                                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} style={{ overflow: 'hidden' }}>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0 14px 14px' }}>
+                                      {cat.items.map(t => {
+                                        const sel = interestFilter === t;
+                                        return (
+                                          <button key={t} onClick={() => setInterestFilter(sel ? '' : t)}
+                                            style={{ padding: '7px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: sel ? '#FFF0EC' : CARD, color: sel ? PRIMARY : TEXT2, border: sel ? `1.5px solid ${PRIMARY}` : `1.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}
+                                          >{t}</button>
+                                        );
+                                      })}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button onClick={() => { setInterestFilter(''); setExpandedInterestCats(new Set()); }}
+                          style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>Clear</button>
+                        <button onClick={() => setShowInterestFilter(false)}
+                          style={{ flex: 2, padding: '14px', borderRadius: '14px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}>Apply</button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           );
         })()}
