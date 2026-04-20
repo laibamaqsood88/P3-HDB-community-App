@@ -29,6 +29,7 @@
       "Bash(npx tsc:*)",
       "Bash(./node_modules/.bin/tsc --noEmit)",
       "Bash(node_modules/.bin/tsc --noEmit)",
+<<<<<<< HEAD
       "Bash(node -e \"const fs=require\\('fs'\\); const c=fs.readFileSync\\('C:/Users/User/Desktop/p3 v2/src/app/pages/ExplorePage.tsx','utf8'\\); console.log\\('two rows comment:', c.includes\\('Row 1: action buttons right-aligned'\\)\\); console.log\\('Row 2 comment:', c.includes\\('Row 2: title left'\\)\\); console.log\\('padding 0 end:', c.includes\\('16px 0\\\\`, transition'\\)\\);\")",
       "Bash(node -e ' *)",
       "Bash(cat)",
@@ -60,6 +61,9 @@
       "Bash(node \"C:/Users/User/Desktop/fix_market_avatars.js\")",
       "Bash(git commit -m ' *)",
       "Bash(node -e \"const j = require\\('jimp'\\); console.log\\(Object.keys\\(j\\)\\);\")"
+=======
+      "Bash(npx --no-install tsc --noEmit)"
+>>>>>>> 5fe61cd38384604ec039ca3b28c03639a59f8806
     ]
   }
 }
