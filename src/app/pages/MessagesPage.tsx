@@ -244,6 +244,7 @@ const FILTER_TABS: FilterTab[] = ['All', 'Groups', 'Market', 'Requests', 'Neighb
 
 interface MessagesPageProps {
   initialConvId?: number;
+  initialFilter?: FilterTab;
   extraConversations?: any[];
   onNavVisibilityChange?: (visible: boolean) => void;
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
@@ -253,8 +254,8 @@ interface MessagesPageProps {
   onOpenRequestListing?: (id: number) => void;
 }
 
-export function MessagesPage({ initialConvId, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile, onNewGroup, onNewNeighbour, onOpenMarketplaceListing, onOpenRequestListing }: MessagesPageProps = {}) {
-  const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
+export function MessagesPage({ initialConvId, initialFilter, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile, onNewGroup, onNewNeighbour, onOpenMarketplaceListing, onOpenRequestListing }: MessagesPageProps = {}) {
+  const [activeFilter, setActiveFilter] = useState<FilterTab>(initialFilter || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);

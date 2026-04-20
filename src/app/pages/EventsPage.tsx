@@ -44,6 +44,7 @@ interface EventsPageProps {
   onOpenProfile: () => void;
   onOpenEvent: (eventId: number) => void;
   onOpenGroups: () => void;
+  onOpenMessagesGroups?: () => void;
   onOpenGroupChat: (groupId: number) => void;
   onOpenMarketplace: () => void;
   savedEvents: number[];
@@ -280,7 +281,7 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 };
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents, registeredEventIds = [], onToggleRegister }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMessagesGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents, registeredEventIds = [], onToggleRegister }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const registeredEvents = registeredEventIds;
   const [showNotifications, setShowNotifications] = useState(false);
@@ -730,12 +731,15 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
         {/* My Groups */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Groups</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Groups</span>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: PRIMARY, background: '#FFF0EC', borderRadius: '8px', padding: '1px 7px' }}>{joinedGroups.length}</span>
+            </div>
             <button
-              onClick={onOpenGroups}
+              onClick={onOpenMessagesGroups}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>Find more groups</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>View all</span>
               <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>›</span>
             </button>
           </div>

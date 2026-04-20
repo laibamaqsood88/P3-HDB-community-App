@@ -24,6 +24,7 @@ export default function App() {
   const [savedEvents, setSavedEvents] = useState<number[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [initialGroupChatId, setInitialGroupChatId] = useState<number | undefined>(undefined);
+  const [messagesInitialFilter, setMessagesInitialFilter] = useState<'All' | 'Groups' | 'Market' | 'Requests' | 'Neighbour'>('All');
   const [userInterests, setUserInterests] = useState<string[]>([]);
   const [userLanguages, setUserLanguages] = useState<string[]>([]);
   const [myPosts, setMyPosts] = useState<any[]>([]);
@@ -72,7 +73,14 @@ export default function App() {
   };
 
   const openGroupChat = (groupId: number) => {
+    setMessagesInitialFilter('All');
     setInitialGroupChatId(groupId);
+    setActiveTab('messages');
+  };
+
+  const openMessagesGroups = () => {
+    setMessagesInitialFilter('Groups');
+    setInitialGroupChatId(undefined);
     setActiveTab('messages');
   };
 
@@ -142,6 +150,7 @@ export default function App() {
             onOpenEvent={(id) => { setActiveTab('explore'); }}
             onOpenExploreEvents={openExploreEvents}
             onOpenGroups={openExploreGroups}
+            onOpenMessagesGroups={openMessagesGroups}
             onOpenGroupChat={openGroupChat}
             joinedGroups={joinedGroups}
             registeredEventIds={registeredEventIds}
@@ -262,7 +271,8 @@ export default function App() {
         {activeTab === 'messages' && (
           <MessagesPage
             initialConvId={initialGroupChatId}
-            key={initialGroupChatId}
+            initialFilter={messagesInitialFilter}
+            key={`${initialGroupChatId}-${messagesInitialFilter}`}
             extraConversations={conversations}
             onNavVisibilityChange={setShowBottomNav}
             onOpenNeighbourProfile={openNeighbourProfile}
