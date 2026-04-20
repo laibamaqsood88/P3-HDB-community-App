@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList, Plus, Utensils, Camera, BookOpen, Heart, MessageCircle } from 'lucide-react';
+import { Bell, ChevronRight, Bookmark, Check, ChevronLeft, MapPin, Calendar, Clock, Star, Users, Share2, X, Activity, Leaf, Dice5, Sun, MapPin as MapPinIcon, ClipboardList, Plus, Utensils, Camera, BookOpen, Heart, MessageCircle, CalendarMinus } from 'lucide-react';
 import { toast } from 'sonner';
 import { REQUESTS_DATA, REQUESTS_CAT_EMOJIS } from './RequestsPage';
 import { NeighbourProfile } from './NeighbourProfilePage';
@@ -419,32 +419,51 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
             </div>
 
             {/* Description */}
-            <div style={{ background: CARD, borderRadius: '14px', padding: '16px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
+            <div style={{ background: CARD, borderRadius: '14px', padding: '16px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '8px' }}>About this event</div>
               <div style={{ fontSize: '13px', color: TEXT2, lineHeight: '1.65' }}>{ev.description}</div>
             </div>
+
+            {/* Remove from my events — inline, only when registered */}
+            {isRegistered && (
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => toggleRegister(ev.id)}
+                style={{
+                  width: '100%', padding: '15px', borderRadius: '14px',
+                  background: 'transparent', border: 'none', cursor: 'pointer',
+                  fontSize: '15px', fontWeight: 500,
+                  color: '#DC2626', fontFamily: "'Nunito', sans-serif",
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  marginBottom: '20px',
+                }}
+              >
+                <CalendarMinus size={16} color="#DC2626" />
+                Remove from my events
+              </motion.button>
+            )}
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>{ev.price}</div>
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => toggleRegister(ev.id)}
-            style={{
-              flex: 1, padding: '15px', borderRadius: '14px',
-              background: isRegistered ? '#D1FAE5' : PRIMARY,
-              border: 'none', cursor: 'pointer',
-              fontSize: '15px', fontWeight: 800,
-              color: isRegistered ? '#059669' : 'white',
-              fontFamily: "'Nunito', sans-serif",
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-            }}
-          >
-            {isRegistered ? <><Check size={16} strokeWidth={2.5} /> Attending</> : 'Attend'}
-          </motion.button>
-        </div>
+        {/* Bottom bar — only when not registered */}
+        {!isRegistered && (
+          <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ fontSize: '18px', fontWeight: 800, color: TEXT }}>{ev.price}</div>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => toggleRegister(ev.id)}
+              style={{
+                flex: 1, padding: '15px', borderRadius: '14px',
+                background: PRIMARY, border: 'none', cursor: 'pointer',
+                fontSize: '15px', fontWeight: 800,
+                color: 'white', fontFamily: "'Nunito', sans-serif",
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              }}
+            >
+              Attend
+            </motion.button>
+          </div>
+        )}
       </div>
     );
   }

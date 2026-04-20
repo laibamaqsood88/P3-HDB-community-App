@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ChevronLeft, ChevronRight, Bookmark, Share2, X, Shield, Bell,
-  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, ChevronDown, SquareArrowOutUpRight
+  Calendar, MapPin, Users, Search, Check, Clock, Star, ExternalLink, MessageCircle, SlidersHorizontal, Link2, Copy, RefreshCw, ChevronDown, SquareArrowOutUpRight, AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConnectPage } from './ConnectPage';
@@ -226,6 +226,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
   const registeredEvents = registeredEventIds;
   const [showFilter, setShowFilter] = useState(false);
   const [reminderOption, setReminderOption] = useState('');
+  const [showReminderError, setShowReminderError] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSubTab, setActiveSubTab] = useState<'events' | 'groups' | 'neighbours'>(initialSubTab);
@@ -1149,7 +1150,8 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
           {/* Reminder section */}
           <div style={{ background: CARD, borderRadius: '22px', padding: '20px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+            {showReminderError && <div style={{ fontSize: '12px', color: PRIMARY, fontWeight: 600, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}><AlertCircle size={13} color={PRIMARY} strokeWidth={2.5} />Please select an option to continue</div>}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '16px' }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Bell size={16} color={PRIMARY} />
               </div>
@@ -1162,7 +1164,7 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
               {['1 day before', '3 hours before', '30 minutes before', 'No reminder'].map(opt => (
                 <button
                   key={opt}
-                  onClick={() => setReminderOption(opt)}
+                  onClick={() => { setReminderOption(opt); setShowReminderError(false); }}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '13px 16px', borderRadius: '14px',
@@ -1196,15 +1198,10 @@ export function ExplorePage({ initialEventId, initialSubTab = 'events', onSubTab
 
         {/* Bottom CTA */}
         <div style={{ padding: '12px 20px 28px', background: CARD, borderTop: `1px solid ${BORDER}`, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {!reminderOption && (
-            <div style={{ fontSize: '12px', color: PRIMARY, fontWeight: 600, textAlign: 'center' }}>
-              Please select a reminder option above to continue
-            </div>
-          )}
           <motion.button
-            whileTap={reminderOption ? { scale: 0.97 } : {}}
+            whileTap={{ scale: 0.97 }}
             onClick={() => {
-              if (!reminderOption) return;
+              if (!reminderOption) { setShowReminderError(true); return; }
               const reminderMsg = reminderOption !== 'No reminder' ? ` Reminder set for ${reminderOption.toLowerCase()}.` : '';
               toast.success(`Opening sign-up page…${reminderMsg}`);
               toggleRegister(ev.id);
