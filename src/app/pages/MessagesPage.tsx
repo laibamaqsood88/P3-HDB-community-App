@@ -306,7 +306,9 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
   const [neighbourSearch, setNeighbourSearch] = useState('');
   const [interestFilter, setInterestFilter] = useState('');
   const [showInterestFilter, setShowInterestFilter] = useState(false);
+  const [showGroupInterestFilter, setShowGroupInterestFilter] = useState(false);
   const [expandedInterestCats, setExpandedInterestCats] = useState<Set<string>>(new Set());
+  const [expandedGroupInterestCats, setExpandedGroupInterestCats] = useState<Set<string>>(new Set());
   const [groupName, setGroupName] = useState('');
   const [selectedGroupInterests, setSelectedGroupInterests] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -1020,15 +1022,20 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                 {/* Interest tags */}
                 <div style={{ marginBottom: '24px' }}>
                   <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Group Interest</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {ALL_GROUP_INTERESTS.map(int => {
-                      const tc = GROUP_INTEREST_COLORS[int];
-                      const active = selectedGroupInterests.includes(int);
-                      return (
-                        <button key={int} onClick={() => toggleInterest(int)} style={{ padding: '7px 14px', borderRadius: '20px', border: `1.5px solid ${active ? tc.text : BORDER}`, background: active ? tc.bg : 'transparent', color: active ? tc.text : MUTED, fontSize: '13px', fontWeight: active ? 700 : 500, cursor: 'pointer', fontFamily: 'inherit' }}>{int}</button>
-                      );
-                    })}
-                  </div>
+                  <button onClick={() => setShowGroupInterestFilter(true)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '12px', background: selectedGroupInterests.length > 0 ? 'rgba(255,107,71,0.08)' : 'rgba(120,120,128,0.08)', border: `1.5px solid ${selectedGroupInterests.length > 0 ? PRIMARY : BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 600, color: selectedGroupInterests.length > 0 ? PRIMARY : MUTED }}>
+                      {selectedGroupInterests.length > 0 ? `${selectedGroupInterests.length} interest${selectedGroupInterests.length > 1 ? 's' : ''} selected` : 'Select interests...'}
+                    </span>
+                    <ChevronDown size={16} color={selectedGroupInterests.length > 0 ? PRIMARY : MUTED} />
+                  </button>
+                  {selectedGroupInterests.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
+                      {selectedGroupInterests.map(int => {
+                        const tc = GROUP_INTEREST_COLORS[int];
+                        return <span key={int} style={{ padding: '4px 10px', borderRadius: '20px', background: tc.bg, color: tc.text, fontSize: '12px', fontWeight: 600 }}>{int}</span>;
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 {/* Selected neighbours */}
@@ -1048,6 +1055,68 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                   </div>
                 </div>
               </div>
+
+              {/* Group Interest bottom sheet */}
+              <AnimatePresence>
+                {showGroupInterestFilter && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 60, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+                    onClick={() => setShowGroupInterestFilter(false)}
+                  >
+                    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+                      onClick={e => e.stopPropagation()}
+                      style={{ background: CARD, borderRadius: '20px 20px 0 0', padding: '16px 16px 40px', maxHeight: '70vh', overflowY: 'auto' }}
+                    >
+                      <div style={{ width: '36px', height: '4px', background: 'rgba(60,60,67,0.15)', borderRadius: '2px', margin: '0 auto 20px' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                        <span style={{ fontSize: '17px', fontWeight: 700, color: TEXT }}>Group Interest</span>
+                        <button onClick={() => setShowGroupInterestFilter(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <X size={16} color={TEXT} />
+                        </button>
+                      </div>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Interests</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
+                        {GROUP_INTEREST_CATEGORIES.map(cat => {
+                          const expanded = expandedGroupInterestCats.has(cat.label);
+                          const selectedCount = cat.items.filter(i => selectedGroupInterests.includes(i)).length;
+                          return (
+                            <div key={cat.label} style={{ borderRadius: '14px', border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+                              <button onClick={() => setExpandedGroupInterestCats(prev => { const s = new Set(prev); s.has(cat.label) ? s.delete(cat.label) : s.add(cat.label); return s; })}
+                                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: CARD, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>{cat.label}</span>
+                                  {selectedCount > 0 && <span style={{ fontSize: '11px', fontWeight: 700, color: PRIMARY, background: 'rgba(255,107,71,0.12)', padding: '2px 7px', borderRadius: '10px' }}>{selectedCount}</span>}
+                                </div>
+                                <ChevronDown size={16} color={MUTED} style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                              </button>
+                              {expanded && (
+                                <div style={{ padding: '0 16px 14px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                  {cat.items.map(item => {
+                                    const active = selectedGroupInterests.includes(item);
+                                    const tc = GROUP_INTEREST_COLORS[item] || { bg: '#F1F5F9', text: '#475569' };
+                                    return (
+                                      <button key={item} onClick={() => toggleInterest(item)}
+                                        style={{ padding: '7px 14px', borderRadius: '20px', border: `1.5px solid ${active ? tc.text : BORDER}`, background: active ? tc.bg : 'transparent', color: active ? tc.text : MUTED, fontSize: '13px', fontWeight: active ? 700 : 500, cursor: 'pointer', fontFamily: 'inherit' }}>
+                                        {item}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button onClick={() => { setSelectedGroupInterests([]); setExpandedGroupInterestCats(new Set()); }}
+                          style={{ flex: 1, padding: '14px', borderRadius: '14px', background: BG, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: TEXT2, fontFamily: 'inherit' }}>Clear</button>
+                        <button onClick={() => setShowGroupInterestFilter(false)}
+                          style={{ flex: 2, padding: '14px', borderRadius: '14px', background: PRIMARY, border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'inherit' }}>Apply</button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           );
         })()}
