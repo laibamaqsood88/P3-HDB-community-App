@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-20 (session 12 - Home: My Groups card redesigned to horizontal 200px wide white cards with rounded-square photo + category tag; 2-row CSS grid layout; max 7 groups; count badge; "View all" → Messages Groups tab; Find a group CTA redesigned to 200×72px horizontal with 3D orb + ChevronRight; Explore Groups: 2-column gradient grid cards; Event sign-up: reminder selection required before button active; MessagesPage: initialFilter prop added; openMessagesGroups cross-tab callback added)
+2026-04-20 (session 13 - Messages: Send Invite creates group chat + navigates immediately; invite sent banner (light green, auto-dismiss 4s); interest tag above group name in chat header; GROUP_INTEREST_COLORS fallback in conversation list; Exit Group button + confirmation popup in members sheet)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -521,6 +521,15 @@ interface Conversation {
 ### Dynamic groups (from Explore → join)
 When a user joins a group from ExplorePage, `onJoinGroup` in App.tsx creates a conv with `imageUrl: group.image`, so the Messages avatar uses the same photo shown in the Explore groups page. `extraMapped` in MessagesPage passes through `imageUrl: c.imageUrl`.
 
+### Create Group flow (+ button → Create New Group)
+- **Step 1**: Select neighbours from `GROUP_NEIGHBOURS` list (search + interest filter). "Next" enabled when ≥1 selected.
+- **Step 2**: Group name input + GROUP_INTEREST category dropdowns (collapsible). "Send Invite to N Member(s)" button enabled when group name is non-empty.
+- **On Send Invite**:
+  - New `Conversation` object created (`type: 'group'`, initials avatar, `memberCount: selectedNeighbours.length + 1`, first selected interest as `tag`)
+  - Added to local `createdGroups` state (prepended to conversation list)
+  - User immediately navigated into the new group chat (`openConv` set to new conv)
+  - **Invite sent banner** appears at top of chat: light green background (`#F0FDF4`), green checkmark icon + green text (`#16A34A`), regular weight, no X button. Auto-dismisses after 4 seconds via `newGroupConvId` state.
+
 ### GroupMember interface
 ```ts
 interface GroupMember {
@@ -533,7 +542,21 @@ All 31 members across 3 group chats have `interests` and `languages` populated (
 ### Group chat screen
 Two tabs: **Chat** | **Activity Board**
 - Activity Board: 📍 Next Meetup, 📋 Upcoming Plan, 🎯 Group Goal
-- ~~Discoverability notice~~ removed (the orange banner "This group is discoverable by verified estate residents with the X interest tag" has been deleted)
+- ~~Discoverability notice~~ removed
+
+### Group chat header — interest tag
+- Interest tag rendered **above the group name** (inside the text column, not to the right)
+- Uses `INTEREST_COLORS[tag] || GROUP_INTEREST_COLORS[tag]` for correct colours on both static tags (e.g. "Running") and full interest names (e.g. "Fitness & Sports")
+- Same fallback applied in the conversation list row tag
+
+### Members bottom sheet
+- Handle bar + group name + member count + X close button
+- Scrollable members list; tapping any member (except "You") opens NeighbourProfilePage
+- **Exit Group button** (red text `#DC2626`) pinned at the bottom of the list
+- Tapping Exit Group shows a **confirmation popup**:
+  - Centred modal (flex container wrapper to avoid Framer Motion transform conflict)
+  - Title "Exit group?", body names the group in bold, Cancel (grey) + Exit Group (light red bg `#FEE2E2`, red text) buttons
+  - X icon top-right dismisses; confirming calls `onBack()` to return to conversation list
 
 ### GROUP_ACTIVITY mock data
 ```ts
