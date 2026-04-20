@@ -994,10 +994,7 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                     <ChevronLeft size={20} color={PRIMARY} />
                   </button>
                   <span style={{ fontSize: '17px', fontWeight: 800, color: TEXT }}>Create New Group</span>
-                  <button
-                    onClick={() => { if (groupName.trim()) { setCreateGroupStep(0); } }}
-                    style={{ background: 'none', border: 'none', cursor: groupName.trim() ? 'pointer' : 'default', fontFamily: 'inherit', fontSize: '15px', fontWeight: 700, color: groupName.trim() ? PRIMARY : MUTED, padding: 0 }}
-                  >Send Invite</button>
+                  <div style={{ width: '77px' }} />
                 </div>
               </div>
               <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px' }}>
@@ -1071,6 +1068,17 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                     ))}
                   </div>
                 </div>
+              </div>
+
+              {/* Send Invite CTA */}
+              <div style={{ background: CARD, borderTop: `0.5px solid ${BORDER}`, padding: '16px 16px 36px', flexShrink: 0 }}>
+                <button
+                  onClick={() => { if (groupName.trim()) setCreateGroupStep(0); }}
+                  disabled={!groupName.trim()}
+                  style={{ width: '100%', padding: '16px', borderRadius: '16px', background: groupName.trim() ? PRIMARY : 'rgba(120,120,128,0.15)', border: 'none', cursor: groupName.trim() ? 'pointer' : 'default', fontFamily: 'inherit', fontSize: '16px', fontWeight: 700, color: groupName.trim() ? 'white' : MUTED, transition: 'background 0.2s' }}
+                >
+                  Send Invite to {selectedNeighbours.length} Member{selectedNeighbours.length !== 1 ? 's' : ''}
+                </button>
               </div>
 
             </motion.div>
