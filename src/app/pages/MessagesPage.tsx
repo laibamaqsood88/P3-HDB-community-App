@@ -358,6 +358,11 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
   }, [openConv]);
 
   useEffect(() => {
+    if (createGroupStep !== 0) onNavVisibilityChange?.(false);
+    else if (openConv === null) onNavVisibilityChange?.(true);
+  }, [createGroupStep]);
+
+  useEffect(() => {
     if (!showNewChat) return;
     const handler = (e: MouseEvent) => {
       if (newChatRef.current && !newChatRef.current.contains(e.target as Node)) {
