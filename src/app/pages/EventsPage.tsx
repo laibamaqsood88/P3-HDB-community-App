@@ -815,7 +815,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px' }}>My Groups</span>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: PRIMARY, background: '#FFF0EC', borderRadius: '8px', padding: '1px 7px' }}>{joinedGroups.length}</span>
+              {joinedGroups.length > 0 && <span style={{ fontSize: '11px', fontWeight: 700, color: PRIMARY, background: '#FFF0EC', borderRadius: '8px', padding: '1px 7px' }}>{joinedGroups.length}</span>}
             </div>
             <button
               onClick={onOpenMessagesGroups}

@@ -294,9 +294,10 @@ interface MessagesPageProps {
   onNewNeighbour?: () => void;
   onOpenMarketplaceListing?: (id: number) => void;
   onOpenRequestListing?: (id: number) => void;
+  onLeaveGroup?: (convId: number) => void;
 }
 
-export function MessagesPage({ initialConvId, initialFilter, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile, onNewGroup, onNewNeighbour, onOpenMarketplaceListing, onOpenRequestListing }: MessagesPageProps = {}) {
+export function MessagesPage({ initialConvId, initialFilter, extraConversations = [], onNavVisibilityChange, onOpenNeighbourProfile, onNewGroup, onNewNeighbour, onOpenMarketplaceListing, onOpenRequestListing, onLeaveGroup }: MessagesPageProps = {}) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>(initialFilter || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -1148,6 +1149,11 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
               onOpenRequestListing={onOpenRequestListing}
               showInviteBanner={openConv.id === newGroupConvId}
               onDismissInviteBanner={() => setNewGroupConvId(null)}
+              onLeaveGroup={(convId) => {
+                setCreatedGroups(prev => prev.filter(g => g.id !== convId));
+                onLeaveGroup?.(convId);
+                setOpenConv(null);
+              }}
             />
           </motion.div>
         )}
@@ -1169,6 +1175,7 @@ function ChatScreen({
   onOpenRequestListing,
   showInviteBanner,
   onDismissInviteBanner,
+  onLeaveGroup,
 }: {
   conv: Conversation;
   messages: ChatMessage[];
@@ -1181,6 +1188,7 @@ function ChatScreen({
   onOpenRequestListing?: (id: number) => void;
   showInviteBanner?: boolean;
   onDismissInviteBanner?: () => void;
+  onLeaveGroup?: (convId: number) => void;
 }) {
   const isGroup = conv.type === 'group';
   const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
@@ -1668,7 +1676,7 @@ function ChatScreen({
                   Cancel
                 </button>
                 <button
-                  onClick={() => { setShowExitConfirm(false); setShowMembers(false); onBack(); }}
+                  onClick={() => { setShowExitConfirm(false); setShowMembers(false); onLeaveGroup?.(conv.id); }}
                   style={{ flex: 1, padding: '13px', borderRadius: '14px', background: '#FEE2E2', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '15px', fontWeight: 700, color: '#DC2626' }}
                 >
                   Exit Group

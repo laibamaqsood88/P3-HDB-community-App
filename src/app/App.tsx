@@ -47,6 +47,10 @@ export default function App() {
 
   const onAddPost = (post: any) => setMyPosts(prev => [post, ...prev]);
   const onAddConversation = (conv: any) => setConversations(prev => [conv, ...prev]);
+  const onLeaveGroup = (convId: number) => {
+    setConversations(prev => prev.filter(c => c.id !== convId));
+    setJoinedGroups(prev => prev.filter(g => g.convId !== convId));
+  };
 
   const onMarketplaceSaveToggle = (id: number, item: any) => {
     setSavedMarketplaceItems(prev => {
@@ -287,6 +291,7 @@ export default function App() {
               setInitialRequestId(id);
               setActiveTab('requests');
             }}
+            onLeaveGroup={onLeaveGroup}
           />
         )}
 
