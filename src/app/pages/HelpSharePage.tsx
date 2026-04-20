@@ -336,6 +336,8 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
                 price: data.price ? `$${data.price}` : 'Free',
                 status: 'Active',
                 date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
+                description: data.description || '',
+                category: data.category || '',
               });
               setShowConfetti(true);
               setNavStack([{ screen: 'feed' }]);
@@ -351,6 +353,8 @@ export function HelpSharePage({ onAddPost, initialItemId, savedItems = [], onSav
             price: data.rate || 'Free',
             status: 'Active',
             date: new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
+            description: data.description || '',
+            category: data.category || '',
           });
           toast.success('Your service offer is live!');
           setNavStack([{ screen: 'feed' }]);

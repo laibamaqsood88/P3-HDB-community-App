@@ -176,7 +176,7 @@ export function ProfilePage({ onOpenEvent, onOpenMarketplaceItem, onOpenRequest,
       expiresOn: p.date || null,
       isExpired: false,
       category: p.category || '',
-      description: '',
+      description: p.description || '',
     }));
     return <MyPostsScreen onBack={() => setActiveSection('main')} posts={[...newPosts, ...MY_POSTS]} />;
   }
@@ -827,7 +827,7 @@ function PostDetailScreen({ post, onBack, onUpdate }: { post: any; onBack: () =>
               <div style={{ fontSize: '13px', color: TEXT, lineHeight: '1.5' }}>{currentPost.description}</div>
             </div>
           ) : null}
-          {currentPost.expiresOn && (
+          {currentPost.expiresOn && currentPost.type !== 'Listing' && currentPost.type !== 'Service' && (
             <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{ fontSize: '12px', color: isExpired ? '#DC2626' : TEXT2, fontWeight: 600 }}>
                 {isExpired ? `Expired on ${currentPost.expiresOn}` : `Expires: ${currentPost.expiresOn}`}
