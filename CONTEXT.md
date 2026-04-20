@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-19 (session 8 - NeighbourLah rebrand, Larry mascot + animations, card row padding, group chat cleanup)
+2026-04-20 (session 11 - LoginPage: community illustration added; MarketPlace: Free label changed to black; Events/Explore: Multilingual renamed to Others with tappable breakdown sheet; Settings: Notifications nav row removed, icons added to toggle rows; GuidedTour: responsive maxWidth centering)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -25,7 +25,8 @@ src/
 ├── assets/
 │   ├── larrywithlimbs.svg         — static Larry mascot SVG (original)
 │   ├── larry2.svg                 — updated Larry SVG with redesigned hands
-│   └── LarryAnimated.tsx          — animated inline-SVG React component (see Larry Mascot section)
+│   ├── LarryAnimated.tsx          — animated inline-SVG React component (see Larry Mascot section)
+│   └── loginimage.png             — community illustration (4 scenes) used as hero on LoginPage; white background removed
 └── app/
     ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks
     ├── components/
@@ -253,6 +254,9 @@ All four tab headers share the same absolute-positioning scroll animation. The p
 - Events listed in date-grouped horizontal Luma-style cards
 - **Event Detail**: Date row, Location row, Organizer card, About card, Hosting/Going panels, Price + Attend toggle
 - **Going Breakdown screen**: Stacked bar chart by family status + neighbours attending list
+  - `LANGUAGE_BREAKDOWN`: English, Mandarin, Malay, Tamil, **Others** (renamed from Multilingual)
+  - "Others ›" row is tappable → bottom sheet shows `OTHERS_BREAKDOWN`: Japanese 1, Hindi 1, Tagalog 1
+  - Same data + sheet in both `ExplorePage.tsx` and `EventsPage.tsx`
 
 #### Groups Sub-tab (`ConnectPage.tsx`)
 - 8 groups: Morning Runners Club, **Cooking & Sharing Circle** (renamed from Peranakan Cooking Circle), Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
@@ -288,6 +292,9 @@ All four tab headers share the same absolute-positioning scroll animation. The p
   onSaveToggle?: (id: number, item: any) => void; // from App.tsx (onMarketplaceSaveToggle)
 }
 ```
+
+### Price display
+- "Free" label colour changed from green (`#34C759`) to black (`TEXT`) across ItemCard, ServiceCard, ItemDetail, and ServiceDetail.
 
 ### Mock Item Data (IDs 101–110)
 Each item has:
@@ -542,6 +549,10 @@ Two tabs: **Chat** | **Activity Board**
 - My Posts (Requests/Listings with status)
 - Settings screen (Notification Preferences, Privacy, Verification, Help)
 
+### Notifications section (Settings)
+- "Notifications" nav row (bell icon + ChevronRight) removed — section now shows only the 3 toggle rows directly
+- Each toggle row now has a grey rounded-square icon: CalendarDays (Event reminders), Users (Neighbour invites), ShoppingBag (Help & Share)
+
 ### Edit Languages Bottom Sheet Modal
 - Opened via Edit button on Languages Spoken section
 - Three sections:
@@ -592,10 +603,14 @@ German:    { bg: '#E0E7FF', text: '#3730A3' }
 ---
 
 ## Login Page (`LoginPage.tsx`)
-- Animated canvas background (orange blobs)
-- App name: **NeighbourHood**, tagline: "Connect with neighbours"
-- "Log in with singpass" button below tagline
-- Privacy note + Singpass badge at bottom
+- Animated canvas background (orange blobs top area)
+- **Hero area**: community illustration (`loginimage.png` — 4 scenes: neighbours chatting, noticeboard, grocery help, dog walking) fills the upper area; image has transparent background (white removed via jimp flood-fill); sized at `width: 92%, maxWidth: 460px` with `marginBottom: 12px`
+- **White bottom panel** (`borderRadius: 28px 28px 0 0`, slides up on mount):
+  - Title: **"NeighbourLah"** (28px, bold)
+  - Description: "Connect, exchange, lend a hand and join events in your estate. Brought to you by the Ministry of Culture, Community & Youth."
+  - "Log in with **singpass**" button (white card style, red singpass text)
+  - "MyInfo data is not accessed" (grey tick icon + plain text, no box)
+- Removed: location icon (MapPin orange rounded square), "Estate-verified · Singpass secured", "Your identity is verified and no personal data is stored", "supported by MCCY" logo strip
 
 ---
 
@@ -631,10 +646,10 @@ Based on `larry2.svg` (viewBox `0 0 492 566`) — updated hand design with sprea
 6 steps: Welcome → Family Status → Interests → Spoken Language → Loading → Recommendations
 
 ### Welcome Step layout
-- **Title**: "Welcome to NeighbourLah" (rebranded from NeighbourHood)
+- **Title**: "Welcome to NeighbourLah"
 - **Icon**: `<LarryAnimated size={140} />` replaces the old home icon
-- All content (mascot, title, subtitle) is vertically centred between the top of the screen and the Continue button using a `flex: 1, justifyContent: 'center'` wrapper
-- **Continue button**: `alignSelf: 'stretch'` on the button's wrapper div ensures it spans full screen width even when the parent uses `alignItems: 'center'`
+- All content (mascot, title, subtitle, Continue button) is grouped together and vertically centred in a single `flex: 1, justifyContent: 'center'` wrapper — button sits directly below the description
+- **Continue button**: no chevron icon; text only; full-width inside the centred group
 
 ### Family Status Step
 - 6 options: Single, Couple, Living with kids, Living with parents, Multigenerational, Senior (60 and above)
@@ -731,6 +746,15 @@ All page headers follow: `[Title] → [Search] → [Filter] → [+/Post]`
 - **Market**: Search + Filter + Post (+)
 - **Requests**: Search + Filter + Post (+)
 - **Messages**: Search + New Chat (+, orange)
+
+---
+
+## Guided Tour (`src/app/components/GuidedTour.tsx`)
+- 9-step onboarding overlay shown on first app load
+- Step types: `modal` (welcome/completion) and `spotlight` (highlights a `data-tour` element)
+- Modal cards: `maxWidth: 400px`, centered via Framer Motion `x: '-50%'` + `left: '50%'` — responsive across screen sizes
+- Spotlight tooltips position `above` or `below` the highlighted element using `spotlightRect` measurements
+- Props: `onNavigate(tab)`, `onNavigateSubTab(tab)` — called when a step requires switching tabs
 
 ---
 
