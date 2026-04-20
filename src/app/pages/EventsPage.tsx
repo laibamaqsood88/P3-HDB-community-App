@@ -700,7 +700,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
               onClick={() => signedUpEvents.length > 0 ? goTo('my-events') : onOpenExploreEvents?.()}
               style={{ display: 'flex', alignItems: 'center', gap: '2px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>View All</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>View all</span>
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
@@ -914,7 +914,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
               onClick={() => onOpenRequest && onOpenRequest(0)}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>See all</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>View all</span>
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
@@ -978,7 +978,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
               onClick={onOpenNeighbours}
               style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>See all</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>View all</span>
               <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
