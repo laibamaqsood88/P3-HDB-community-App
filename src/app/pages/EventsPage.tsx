@@ -743,8 +743,8 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
               <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>›</span>
             </button>
           </div>
-          <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingTop: '6px', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
-            {joinedGroups.map(group => {
+          <div className="no-scrollbar" style={{ display: 'grid', gridTemplateRows: 'repeat(2, auto)', gridAutoFlow: 'column', gap: '12px', overflowX: 'auto', paddingTop: '6px', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
+            {joinedGroups.slice(0, 7).map(group => {
               return (
                 <motion.div
                   key={group.id}
