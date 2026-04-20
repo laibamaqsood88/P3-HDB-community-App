@@ -874,7 +874,7 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                       </div>
                       <div style={{ flex: 1, textAlign: 'left' }}>
                         <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{n.name}</div>
-                        <div style={{ fontSize: '12px', color: MUTED, marginTop: '2px' }}>{n.unit}</div>
+                        <div style={{ fontSize: '12px', color: MUTED, marginTop: '2px' }}>{n.unit.split(' #')[0]}</div>
                       </div>
                       <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '140px' }}>
                         {n.interests.slice(0, 1).map(int => {
