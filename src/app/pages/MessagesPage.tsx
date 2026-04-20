@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Send, Shield, Users, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight } from 'lucide-react';
+import { ChevronLeft, Send, Shield, Users, UserPlus, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight, ArrowRight } from 'lucide-react';
 import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
@@ -726,7 +726,7 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                 padding: '16px 16px 20px',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(120,120,128,0.10)', borderRadius: '14px', padding: '12px 14px', marginBottom: recentSearches.length > 0 ? '20px' : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(120,120,128,0.10)', borderRadius: '14px', padding: '12px 14px', marginBottom: '16px' }}>
                 <Search size={16} color={MUTED} />
                 <input
                   autoFocus
@@ -741,6 +741,22 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                     <X size={15} color={MUTED} />
                   </button>
                 )}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start', marginBottom: recentSearches.length > 0 ? '16px' : 0 }}>
+                <button
+                  onClick={() => { setSearchOpen(false); setSearchQuery(''); onNewGroup?.(); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '13px', fontWeight: 700, color: TEXT }}
+                >
+                  <span>Explore more groups</span>
+                  <ArrowRight size={14} color={TEXT} />
+                </button>
+                <button
+                  onClick={() => { setSearchOpen(false); setSearchQuery(''); onNewNeighbour?.(); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '13px', fontWeight: 700, color: TEXT }}
+                >
+                  <span>Find neighbours</span>
+                  <ArrowRight size={14} color={TEXT} />
+                </button>
               </div>
               {recentSearches.length > 0 && (
                 <div>
