@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Send, Shield, Users, UserPlus, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight, ArrowRight } from 'lucide-react';
+import { ChevronLeft, Send, Shield, Users, UserPlus, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight, ArrowRight, History } from 'lucide-react';
 import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
@@ -767,10 +767,10 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                     <button
                       key={i}
                       onClick={() => submitSearch(s)}
-                      style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 4px', background: 'none', border: 'none', borderBottom: i < recentSearches.length - 1 ? `0.5px solid rgba(60,60,67,0.12)` : 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                      style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-start', padding: '13px 4px', background: 'none', border: 'none', borderBottom: i < recentSearches.length - 1 ? `0.5px solid rgba(60,60,67,0.12)` : 'none', cursor: 'pointer', fontFamily: 'inherit' }}
                     >
+                      <History size={15} color={MUTED} />
                       <span style={{ fontSize: '15px', color: TEXT, fontWeight: 500 }}>{s}</span>
-                      <SquareArrowOutUpRight size={15} color={MUTED} />
                     </button>
                   ))}
                 </div>
