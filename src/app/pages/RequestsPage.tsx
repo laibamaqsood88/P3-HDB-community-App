@@ -23,7 +23,7 @@ type RequestScreen = 'feed' | 'detail' | 'post' | 'chat' | 'neighbour-profile';
 interface NavFrame { screen: RequestScreen; params?: any; }
 
 const REQUEST_CATEGORIES = ['Home Help', 'Errands', 'Repairs', 'Moving', 'Learning', 'Community', 'Items Needed', 'Lost Items'];
-const REQUEST_TYPES = ['Borrow', 'Free Request', 'Paid Request'];
+const REQUEST_TYPES = ['Borrow', 'Free Request', 'Paid Request', 'Lost', 'Found'];
 
 const CAT_EMOJIS: Record<string, string> = {
   'Home Help': '🏠', 'Errands': '🛒', 'Repairs': '🔧', 'Moving': '📦',
@@ -45,6 +45,8 @@ const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
   'Borrow': { bg: '#EDE9FE', text: '#7C3AED' },
   'Free Request': { bg: '#DCFCE7', text: '#16A34A' },
   'Paid Request': { bg: '#FEF3C7', text: '#D97706' },
+  'Lost': { bg: '#FFE4E6', text: '#BE123C' },
+  'Found': { bg: '#DBEAFE', text: '#1D4ED8' },
 };
 
 const POSTER_AVATARS = [
@@ -68,7 +70,9 @@ const INITIAL_REQUESTS = [
   { id: 4, title: 'Lost: Orange tabby cat near Blk 443', category: 'Lost Items', type: 'Free Request', description: 'Lost my orange tabby cat Milo near Blk 443 last Sunday evening. Very friendly, wearing a blue collar with a bell. Please contact if spotted!', expiresOn: '28 Apr 2026', postedAgo: '3 days ago', distance: '0.5 km away', image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[3], collectionPoint: 'Blk 443 Area' },
   { id: 5, title: 'Need help fixing leaking kitchen tap', category: 'Repairs', type: 'Paid Request', description: 'Kitchen tap has been dripping for a week. Looking for someone handy who can fix it. Will pay for parts and a small appreciation fee.', expiresOn: '22 Apr 2026', postedAgo: '4 hours ago', distance: '0.7 km away', image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[4], collectionPoint: 'Blk 445, Level 8, #08-11' },,
   { id: 6, title: 'Anyone have a foldable ladder to lend?', category: 'Items Needed', type: 'Borrow', description: 'Need to change a light bulb on a high ceiling and don\'t own a ladder. Looking to borrow a foldable ladder for just an hour or two. Will return immediately after, promise!', expiresOn: '24 Apr 2026', postedAgo: '6 hours ago', distance: '0.4 km away', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[1], collectionPoint: 'Blk 448, Level 6, #06-33' },
-  { id: 7, title: 'Help with grocery run for elderly mum', category: 'Errands', type: 'Free Request', description: 'My mum is 78 and has difficulty walking after a knee op. Looking for a kind neighbour who can help pick up a short grocery list from NTUC once this week. Happy to transfer payment for the groceries.', expiresOn: '26 Apr 2026', postedAgo: '1 hour ago', distance: '0.9 km away', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[2], collectionPoint: 'Blk 451, Level 4, #04-18' }
+  { id: 7, title: 'Help with grocery run for elderly mum', category: 'Errands', type: 'Free Request', description: 'My mum is 78 and has difficulty walking after a knee op. Looking for a kind neighbour who can help pick up a short grocery list from NTUC once this week. Happy to transfer payment for the groceries.', expiresOn: '26 Apr 2026', postedAgo: '1 hour ago', distance: '0.9 km away', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[2], collectionPoint: 'Blk 451, Level 4, #04-18' },
+  { id: 8, title: 'Lost: Black wallet near Blk 449 playground', category: 'Lost Items', type: 'Lost', description: 'Lost my black leather wallet near the Blk 449 playground yesterday evening. Contains IC, bank card, and some cash. Please contact me if found — reward offered!', expiresOn: '28 Apr 2026', postedAgo: '3 hours ago', distance: '0.6 km away', image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[3], collectionPoint: 'Blk 449 Playground Area' },
+  { id: 9, title: 'Found: Blue umbrella at Blk 446 void deck', category: 'Lost Items', type: 'Found', description: 'Found a blue foldable umbrella at the Blk 446 void deck this morning. Has a floral print handle. Please describe it to claim. Will keep it for 1 week before donating.', expiresOn: '27 Apr 2026', postedAgo: '5 hours ago', distance: '0.2 km away', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400', verified: true, poster: POSTER_AVATARS[0], collectionPoint: 'Blk 446, Level 1, #01-05' }
 ];
 
 export { INITIAL_REQUESTS as REQUESTS_DATA, CAT_EMOJIS as REQUESTS_CAT_EMOJIS };
