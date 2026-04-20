@@ -750,20 +750,16 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
                   key={group.id}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onOpenGroupChat(group.convId)}
-                  style={{ flexShrink: 0, width: '148px', borderRadius: '16px', background: '#FFFFFF', padding: '16px 14px', cursor: 'pointer', position: 'relative', boxShadow: '0 1px 6px rgba(0,0,0,0.08)' }}
+                  style={{ flexShrink: 0, width: '200px', borderRadius: '16px', background: '#FFFFFF', padding: '10px 12px', cursor: 'pointer', boxShadow: '0 1px 6px rgba(0,0,0,0.08)', display: 'flex', alignItems: 'flex-start', gap: '10px' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <div style={{ width: '44px', height: '44px', borderRadius: '12px', overflow: 'hidden', border: `2px solid ${group.categoryColor}33`, flexShrink: 0 }}>
-                      <img src={group.image} alt={group.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <div style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '6px', background: group.categoryBg, color: group.categoryColor, fontSize: '9px', fontWeight: 800, lineHeight: '1.4' }}>
+                  <div style={{ borderRadius: '10px', overflow: 'hidden', border: `2px solid ${group.categoryColor}33`, flexShrink: 0, width: '52px', height: '52px' }}>
+                    <img src={group.image} alt={group.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                    <div style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '6px', background: group.categoryBg, color: group.categoryColor, fontSize: '9px', fontWeight: 800, lineHeight: '1.4', marginBottom: '4px' }}>
                       {group.category}
                     </div>
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#8E8E93', fontWeight: 500, marginBottom: '4px' }}>{group.members} members</div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#1C1C1E', marginBottom: '8px', lineHeight: '1.2', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{group.name}</div>
-                  <div style={{ fontSize: '10px', color: group.categoryColor, fontWeight: 600, background: group.categoryBg, borderRadius: '10px', padding: '3px 8px', display: 'inline-block' }}>
-                    {group.meetFrequency}
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#1C1C1E', lineHeight: '1.2', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, width: '100%' }}>{group.name}</div>
                   </div>
                 </motion.div>
               );
@@ -791,60 +787,39 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
               whileHover={{ scale: 1.03 }}
               onClick={onOpenGroups}
               style={{
-                flexShrink: 0, width: '148px', minHeight: '167px', alignSelf: 'stretch', borderRadius: '16px',
+                flexShrink: 0, width: '200px', height: '72px', borderRadius: '16px',
                 background: '#F4FFF7',
                 border: '1.5px dashed #4CA154',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: '10px', cursor: 'pointer', position: 'relative', overflow: 'hidden',
+                display: 'flex', flexDirection: 'row', alignItems: 'center',
+                gap: '12px', padding: '10px 12px', cursor: 'pointer', position: 'relative', overflow: 'hidden',
               }}
             >
-              {/* Soft background glow */}
-              <div style={{
-                position: 'absolute', width: '90px', height: '90px', borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(0,0,0,0.06) 0%, transparent 70%)',
-                animation: 'pulseRing 2.4s ease-in-out infinite',
-                pointerEvents: 'none',
-              }} />
-
-              {/* 3D floating icon group */}
-              <div style={{
-                perspective: '300px',
-                animation: 'floatGroups 3s ease-in-out infinite',
-              }}>
-                {/* Orb container */}
+              {/* Bouncing icon */}
+              <div style={{ animation: 'floatGroups 3s ease-in-out infinite', flexShrink: 0, perspective: '300px' }}>
                 <div style={{
-                  width: '56px', height: '56px', borderRadius: '50%',
+                  width: '44px', height: '44px', borderRadius: '50%',
                   background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 40%, #e0e0e0 100%)',
                   boxShadow: '0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(0,0,0,0.06)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  position: 'relative',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
                 }}>
-                  {/* Highlight shine */}
+                  <div style={{ position: 'absolute', top: '6px', left: '8px', width: '14px', height: '8px', borderRadius: '50%', background: 'rgba(255,255,255,0.85)', transform: 'rotate(-30deg)', filter: 'blur(2px)', pointerEvents: 'none' }} />
+                  <Users size={18} color="#4CA154" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(76,161,84,0.35))' }} />
                   <div style={{
-                    position: 'absolute', top: '8px', left: '10px',
-                    width: '18px', height: '10px', borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.85)',
-                    transform: 'rotate(-30deg)',
-                    filter: 'blur(3px)',
-                    pointerEvents: 'none',
-                  }} />
-                  <Users size={22} color="#4CA154" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(76,161,84,0.35))' }} />
-                  {/* Plus badge */}
-                  <div style={{
-                    position: 'absolute', bottom: '-4px', right: '-4px',
-                    width: '20px', height: '20px', borderRadius: '50%',
+                    position: 'absolute', bottom: '-3px', right: '-3px',
+                    width: '16px', height: '16px', borderRadius: '50%',
                     background: 'linear-gradient(135deg, #6FCF78 0%, #4CA154 100%)',
                     boxShadow: '0 2px 6px rgba(76,161,84,0.5), 0 0 0 2px #F4FFF7',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <Plus size={11} color="white" strokeWidth={3} />
+                    <Plus size={9} color="white" strokeWidth={3} />
                   </div>
                 </div>
               </div>
 
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#4CA154', textAlign: 'center', lineHeight: '1.3', letterSpacing: '0.1px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#4CA154', lineHeight: '1.3', flex: 1 }}>
                 Find a group
               </span>
+              <ChevronRight size={16} color="#4CA154" strokeWidth={2.5} />
             </motion.div></>
           </div>
         </div>
