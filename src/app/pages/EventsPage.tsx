@@ -288,6 +288,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNeighbour, setSelectedNeighbour] = useState<typeof MOCK_NEIGHBOURS[0] | null>(null);
   const [readNotifs, setReadNotifs] = useState<number[]>(NOTIFICATIONS.filter(n => n.read).map(n => n.id));
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
   const unreadCount = NOTIFICATIONS.filter(n => !readNotifs.includes(n.id)).length;
   const markAllRead = () => setReadNotifs(NOTIFICATIONS.map(n => n.id));
@@ -428,7 +429,7 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
             {isRegistered && (
               <motion.button
                 whileTap={{ scale: 0.97 }}
-                onClick={() => toggleRegister(ev.id)}
+                onClick={() => setShowRemoveConfirm(true)}
                 style={{
                   width: '100%', padding: '15px', borderRadius: '14px',
                   background: 'transparent', border: 'none', cursor: 'pointer',
@@ -464,6 +465,57 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
             </motion.button>
           </div>
         )}
+
+        {/* Remove confirmation popup */}
+        <AnimatePresence>
+          {showRemoveConfirm && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowRemoveConfirm(false)}
+                style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 30 }}
+              />
+              <div style={{ position: 'absolute', inset: 0, zIndex: 31, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  style={{ background: CARD, borderRadius: '20px', width: '100%', maxWidth: '320px', padding: '24px 24px 20px', position: 'relative' }}
+                >
+                  <button
+                    onClick={() => setShowRemoveConfirm(false)}
+                    style={{ position: 'absolute', top: '16px', right: '16px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(120,120,128,0.12)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <X size={15} color={MUTED} />
+                  </button>
+                  <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT, marginBottom: '8px', paddingRight: '32px' }}>
+                    Remove event?
+                  </div>
+                  <div style={{ fontSize: '14px', color: TEXT2, fontWeight: 400, marginBottom: '24px', lineHeight: '1.5' }}>
+                    Are you sure you want to remove <span style={{ fontWeight: 700, color: TEXT }}>"{ev.title}"</span> from your events?
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      onClick={() => setShowRemoveConfirm(false)}
+                      style={{ flex: 1, padding: '13px', borderRadius: '14px', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, color: TEXT }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => { setShowRemoveConfirm(false); toggleRegister(ev.id); goBack(); }}
+                      style={{ flex: 1, padding: '13px', borderRadius: '14px', background: '#FEE2E2', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '15px', fontWeight: 700, color: '#DC2626' }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
