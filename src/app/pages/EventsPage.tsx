@@ -37,7 +37,7 @@ const COLOR_GRADIENT: Record<string, string> = {
 };
 
 // ---- Types ----
-type EventsScreen = 'feed' | 'detail' | 'going' | 'group-detail';
+type EventsScreen = 'feed' | 'detail' | 'going' | 'group-detail' | 'my-events';
 interface NavFrame { screen: EventsScreen; params?: any; }
 
 interface EventsPageProps {
@@ -56,6 +56,7 @@ interface EventsPageProps {
   onOpenExploreEvents?: () => void;
   registeredEventIds?: number[];
   onToggleRegister?: (id: number) => void;
+  onNavVisibilityChange?: (visible: boolean) => void;
 }
 
 // ---- Mock Neighbours Data (shared with ExplorePage) ----
@@ -281,7 +282,7 @@ const NOTIF_ICON_MAP: Record<string, React.FC<any>> = {
 };
 
 // ---- Main Component ----
-export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMessagesGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents, registeredEventIds = [], onToggleRegister }: EventsPageProps) {
+export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMessagesGroups, onOpenGroupChat, onOpenMarketplace, savedEvents, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello, joinedGroups = [], onOpenExploreEvents, registeredEventIds = [], onToggleRegister, onNavVisibilityChange }: EventsPageProps) {
   const [navStack, setNavStack] = useState<NavFrame[]>([{ screen: 'feed' }]);
   const registeredEvents = registeredEventIds;
   const [showNotifications, setShowNotifications] = useState(false);
@@ -292,8 +293,15 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
   const markAllRead = () => setReadNotifs(NOTIFICATIONS.map(n => n.id));
 
   const current = navStack[navStack.length - 1];
-  const goTo = (screen: EventsScreen, params?: any) => setNavStack(p => [...p, { screen, params }]);
-  const goBack = () => setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
+  const goTo = (screen: EventsScreen, params?: any) => {
+    if (screen === 'my-events' || screen === 'detail') onNavVisibilityChange?.(false);
+    setNavStack(p => [...p, { screen, params }]);
+  };
+  const goBack = () => {
+    const prev = navStack[navStack.length - 2];
+    if (prev?.screen === 'feed') onNavVisibilityChange?.(true);
+    setNavStack(p => p.length > 1 ? p.slice(0, -1) : p);
+  };
 
   const toggleRegister = (id: number) => {
     const isRegistered = registeredEvents.includes(id);
@@ -557,6 +565,83 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
     );
   }
 
+  // ---- My Events list screen ----
+  if (current.screen === 'my-events') {
+    const myEvents = EVENTS.filter(e => registeredEvents.includes(e.id));
+    // Group by date label
+    const grouped: Record<string, typeof myEvents> = {};
+    myEvents.forEach(ev => {
+      const label = ev.date;
+      if (!grouped[label]) grouped[label] = [];
+      grouped[label].push(ev);
+    });
+    const dateKeys = Object.keys(grouped);
+
+    return (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, fontFamily: "'Nunito', sans-serif" }}>
+        {/* Header */}
+        <div style={{ background: CARD, padding: '52px 20px 16px', borderBottom: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <button onClick={goBack} style={{ width: '36px', height: '36px', borderRadius: '12px', background: BG, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ChevronLeft size={20} color={TEXT} />
+          </button>
+          <div style={{ fontSize: '17px', fontWeight: 800, color: TEXT }}>My Events</div>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px' }}>
+          {myEvents.length === 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: '80px', gap: '12px' }}>
+              <Calendar size={40} color={MUTED} />
+              <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT2 }}>No registered events yet</div>
+            </div>
+          ) : (
+            dateKeys.map(label => (
+              <div key={label} style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '15px', fontWeight: 800, color: TEXT, padding: '4px 0 10px', letterSpacing: '-0.2px' }}>{label}</div>
+                <div style={{ background: CARD, borderRadius: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+                  {grouped[label].map((ev, idx) => (
+                    <div key={ev.id}>
+                      {idx > 0 && <div style={{ height: '1px', background: '#EBEBEB', marginLeft: '96px' }} />}
+                      <motion.div
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => goTo('detail', { event: ev })}
+                        style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', cursor: 'pointer' }}
+                      >
+                        {/* Thumbnail */}
+                        <div style={{ position: 'relative', flexShrink: 0, width: '72px', height: '72px', borderRadius: '10px', overflow: 'hidden' }}>
+                          <img src={ev.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <div style={{ position: 'absolute', bottom: '6px', left: '50%', transform: 'translateX(-50%)', display: 'inline-flex', alignItems: 'center', gap: '3px', background: '#16A34A', borderRadius: '20px', padding: '2px 7px', whiteSpace: 'nowrap' }}>
+                            <Check size={8} color="white" strokeWidth={3} />
+                            <span style={{ fontSize: '9px', fontWeight: 700, color: 'white' }}>Going</span>
+                          </div>
+                        </div>
+                        {/* Content */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                            <img src={ev.organizerImage} alt={ev.organizer} style={{ width: '14px', height: '14px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500 }}>{ev.organizer}</span>
+                          </div>
+                          <div style={{ fontSize: '14px', fontWeight: 800, color: TEXT, lineHeight: '1.3', marginBottom: '6px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{ev.title}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'nowrap', overflow: 'hidden' }}>
+                            <Clock size={11} color={MUTED} style={{ flexShrink: 0 }} />
+                            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500, whiteSpace: 'nowrap' }}>
+                              {ev.date.replace(/^[A-Za-z]+,\s*/, '').replace(/\s+\d{4}$/, '')}, {ev.time.split('–')[0].trim()}
+                            </span>
+                            <MapPin size={11} color={MUTED} style={{ flexShrink: 0, marginLeft: '4px' }} />
+                            <span style={{ fontSize: '11px', color: MUTED, fontWeight: 500, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{ev.location.split(',')[0]}</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
   // ---- Group Detail screen ----
   if (current.screen === 'group-detail') {
     return <GroupDetailScreen group={current.params?.group} onBack={goBack} />;
@@ -612,11 +697,11 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
               )}
             </div>
             <button
-              onClick={() => onOpenExploreEvents?.()}
-              style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
+              onClick={() => signedUpEvents.length > 0 ? goTo('my-events') : onOpenExploreEvents?.()}
+              style={{ display: 'flex', alignItems: 'center', gap: '2px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontFamily: 'inherit' }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>Find more events</span>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>›</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: PRIMARY }}>View All</span>
+              <ChevronRight size={14} color={PRIMARY} />
             </button>
           </div>
 

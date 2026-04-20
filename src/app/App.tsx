@@ -155,6 +155,7 @@ export default function App() {
             joinedGroups={joinedGroups}
             registeredEventIds={registeredEventIds}
             onToggleRegister={toggleRegisteredEvent}
+            onNavVisibilityChange={setShowBottomNav}
             onOpenMarketplace={() => setActiveTab('marketplace')}
             savedEvents={savedEvents}
             onOpenNeighbours={openExploreNeighbours}
