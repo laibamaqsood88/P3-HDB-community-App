@@ -1185,6 +1185,7 @@ function ChatScreen({
   const isGroup = conv.type === 'group';
   const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
   const [showMembers, setShowMembers] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   useEffect(() => {
     if (!showInviteBanner) return;
@@ -1568,7 +1569,7 @@ function ChatScreen({
               </div>
 
               {/* Members list */}
-              <div className="no-scrollbar" style={{ overflowY: 'auto', padding: '0 20px 32px', flex: 1 }}>
+              <div className="no-scrollbar" style={{ overflowY: 'auto', padding: '0 20px 0', flex: 1 }}>
                 {members.map((m, i) => (
                   <div
                     key={i}
@@ -1580,7 +1581,7 @@ function ChatScreen({
                     style={{
                       display: 'flex', alignItems: 'center', gap: '12px',
                       padding: '10px 0',
-                      borderBottom: i < members.length - 1 ? `0.5px solid rgba(60,60,67,0.10)` : 'none',
+                      borderBottom: `0.5px solid rgba(60,60,67,0.10)`,
                       cursor: m.name === 'You' ? 'default' : 'pointer',
                     }}
                   >
@@ -1606,8 +1607,75 @@ function ChatScreen({
                     )}
                   </div>
                 ))}
+
+                {/* Exit Group button */}
+                <button
+                  onClick={() => setShowExitConfirm(true)}
+                  style={{ width: '100%', padding: '16px 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, color: '#DC2626', textAlign: 'center' }}
+                >
+                  Exit Group
+                </button>
               </div>
             </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Exit Group confirmation popup */}
+      <AnimatePresence>
+        {showExitConfirm && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowExitConfirm(false)}
+              style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 30 }}
+            />
+            <div style={{ position: 'absolute', inset: 0, zIndex: 31, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              style={{
+                background: CARD, borderRadius: '20px',
+                width: '100%', maxWidth: '320px',
+                padding: '24px 24px 20px',
+                position: 'relative',
+              }}
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setShowExitConfirm(false)}
+                style={{ position: 'absolute', top: '16px', right: '16px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(120,120,128,0.12)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <X size={15} color={MUTED} />
+              </button>
+
+              <div style={{ fontSize: '17px', fontWeight: 700, color: TEXT, marginBottom: '8px', paddingRight: '32px' }}>
+                Exit group?
+              </div>
+              <div style={{ fontSize: '14px', color: TEXT2, fontWeight: 400, marginBottom: '24px', lineHeight: '1.5' }}>
+                Are you sure you want to exit <span style={{ fontWeight: 700, color: TEXT }}>"{conv.name}"</span>? You won't be able to receive messages from this group.
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  onClick={() => setShowExitConfirm(false)}
+                  style={{ flex: 1, padding: '13px', borderRadius: '14px', background: 'rgba(120,120,128,0.10)', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, color: TEXT }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => { setShowExitConfirm(false); setShowMembers(false); onBack(); }}
+                  style={{ flex: 1, padding: '13px', borderRadius: '14px', background: '#FEE2E2', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '15px', fontWeight: 700, color: '#DC2626' }}
+                >
+                  Exit Group
+                </button>
+              </div>
+            </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>
