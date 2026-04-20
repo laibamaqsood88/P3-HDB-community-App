@@ -721,7 +721,7 @@ function MyPostsScreen({ onBack, posts }: { onBack: () => void; posts: any[] }) 
                 marginBottom: '-1px',
               }}
             >
-              {tab}
+              {tab === 'Marketplace' ? 'Market' : tab}
             </button>
           ))}
         </div>
@@ -754,7 +754,7 @@ function MyPostsScreen({ onBack, posts }: { onBack: () => void; posts: any[] }) 
                       <span style={{ fontSize: '10px', fontWeight: 700, background: p.statusBg || '#DCFCE7', color: p.statusColor || '#16A34A', padding: '2px 8px', borderRadius: '8px' }}>{p.status}</span>
                     </div>
                     <div style={{ fontSize: '13px', fontWeight: 700, color: TEXT, marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.title}</div>
-                    {p.expiresOn && <div style={{ fontSize: '11px', color: p.isExpired ? '#DC2626' : MUTED, fontWeight: 500 }}>{p.isExpired ? 'Expired' : 'Expires'} {p.expiresOn}</div>}
+                    {p.expiresOn && p.type !== 'Listing' && p.type !== 'Service' && <div style={{ fontSize: '11px', color: p.isExpired ? '#DC2626' : MUTED, fontWeight: 500 }}>{p.isExpired ? 'Expired' : 'Expires'} {p.expiresOn}</div>}
                   </div>
                   <ChevronRight size={16} color={MUTED} style={{ flexShrink: 0 }} />
                 </div>
