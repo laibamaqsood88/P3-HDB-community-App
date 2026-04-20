@@ -741,21 +741,24 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGro
           </div>
           <div className="no-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingTop: '6px', paddingBottom: '6px', marginLeft: '-20px', paddingLeft: '20px', marginRight: '-20px', paddingRight: '20px' }}>
             {joinedGroups.map(group => {
-              const gradient = COLOR_GRADIENT[group.categoryColor] || `linear-gradient(135deg, ${group.categoryColor} 0%, ${group.categoryColor}AA 100%)`;
-              const IconComp = EMOJI_ICON_MAP[group.emoji] || Users;
               return (
                 <motion.div
                   key={group.id}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onOpenGroupChat(group.convId)}
-                  style={{ flexShrink: 0, width: '148px', borderRadius: '16px', background: gradient, padding: '16px 14px', cursor: 'pointer' }}
+                  style={{ flexShrink: 0, width: '148px', borderRadius: '16px', background: '#FFFFFF', padding: '16px 14px', cursor: 'pointer', position: 'relative', boxShadow: '0 1px 6px rgba(0,0,0,0.08)' }}
                 >
-                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                    <IconComp size={20} color="white" strokeWidth={1.8} />
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <div style={{ width: '44px', height: '44px', borderRadius: '12px', overflow: 'hidden', border: `2px solid ${group.categoryColor}33`, flexShrink: 0 }}>
+                      <img src={group.image} alt={group.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ display: 'inline-block', padding: '2px 7px', borderRadius: '6px', background: group.categoryBg, color: group.categoryColor, fontSize: '9px', fontWeight: 800, lineHeight: '1.4' }}>
+                      {group.category}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'white', marginBottom: '4px', lineHeight: '1.2' }}>{group.name}</div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', fontWeight: 500, marginBottom: '6px' }}>{group.members} members</div>
-                  <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)', fontWeight: 600, background: 'rgba(255,255,255,0.15)', borderRadius: '10px', padding: '3px 8px' }}>
+                  <div style={{ fontSize: '11px', color: '#8E8E93', fontWeight: 500, marginBottom: '4px' }}>{group.members} members</div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#1C1C1E', marginBottom: '8px', lineHeight: '1.2', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{group.name}</div>
+                  <div style={{ fontSize: '10px', color: group.categoryColor, fontWeight: 600, background: group.categoryBg, borderRadius: '10px', padding: '3px 8px', display: 'inline-block' }}>
                     {group.meetFrequency}
                   </div>
                 </motion.div>
