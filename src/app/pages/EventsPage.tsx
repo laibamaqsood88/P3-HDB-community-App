@@ -961,29 +961,28 @@ export function EventsPage({ onOpenProfile, onOpenEvent, onOpenGroups, onOpenMes
               {/* Bouncing icon */}
               <div style={{ animation: 'floatGroups 3s ease-in-out infinite', flexShrink: 0, perspective: '300px' }}>
                 <div style={{
-                  width: '44px', height: '44px', borderRadius: '50%',
+                  width: '38px', height: '38px', borderRadius: '50%',
                   background: 'linear-gradient(145deg, #ffffff 0%, #f5f5f5 40%, #e0e0e0 100%)',
-                  boxShadow: '0 10px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06), 0 -2px 6px rgba(255,255,255,0.9), inset 3px 3px 8px rgba(255,255,255,1), inset -2px -3px 6px rgba(0,0,0,0.06)',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.06), 0 -2px 4px rgba(255,255,255,0.9), inset 2px 2px 6px rgba(255,255,255,1), inset -1px -2px 4px rgba(0,0,0,0.06)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
                 }}>
-                  <div style={{ position: 'absolute', top: '6px', left: '8px', width: '14px', height: '8px', borderRadius: '50%', background: 'rgba(255,255,255,0.85)', transform: 'rotate(-30deg)', filter: 'blur(2px)', pointerEvents: 'none' }} />
-                  <Users size={18} color="#4CA154" strokeWidth={2} style={{ filter: 'drop-shadow(0px 2px 4px rgba(76,161,84,0.35))' }} />
+                  <div style={{ position: 'absolute', top: '5px', left: '7px', width: '12px', height: '7px', borderRadius: '50%', background: 'rgba(255,255,255,0.85)', transform: 'rotate(-30deg)', filter: 'blur(2px)', pointerEvents: 'none' }} />
+                  <Users size={15} color="#4CA154" strokeWidth={2} style={{ filter: 'drop-shadow(0px 1px 3px rgba(76,161,84,0.35))' }} />
                   <div style={{
                     position: 'absolute', bottom: '-3px', right: '-3px',
-                    width: '16px', height: '16px', borderRadius: '50%',
+                    width: '14px', height: '14px', borderRadius: '50%',
                     background: 'linear-gradient(135deg, #6FCF78 0%, #4CA154 100%)',
-                    boxShadow: '0 2px 6px rgba(76,161,84,0.5), 0 0 0 2px #F4FFF7',
+                    boxShadow: '0 2px 4px rgba(76,161,84,0.5), 0 0 0 2px #F4FFF7',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <Plus size={9} color="white" strokeWidth={3} />
+                    <Plus size={8} color="white" strokeWidth={3} />
                   </div>
                 </div>
               </div>
 
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#4CA154', lineHeight: '1.3', flex: 1 }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#4CA154', lineHeight: '1.3', flex: 1 }}>
                 Find a group
               </span>
-              <ChevronRight size={16} color="#4CA154" strokeWidth={2.5} />
             </motion.div></>
           </div>
         </div>
