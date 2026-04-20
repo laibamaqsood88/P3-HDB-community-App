@@ -85,7 +85,7 @@ export default function App() {
   // ---- Auth flow ----
   if (authScreen === 'login') {
     return (
-      <div style={{ width: '100vw', height: '100svh', fontFamily: "'Nunito', sans-serif" }}>
+      <div style={{ width: '100vw', height: '100svh', minHeight: '100vh', fontFamily: "'Nunito', sans-serif" }}>
         <Toaster
           position="top-center"
           richColors
@@ -98,7 +98,7 @@ export default function App() {
 
   if (authScreen === 'signup') {
     return (
-      <div style={{ width: '100vw', height: '100svh', fontFamily: "'Nunito', sans-serif" }}>
+      <div style={{ width: '100vw', height: '100svh', minHeight: '100vh', fontFamily: "'Nunito', sans-serif" }}>
         <Toaster
           position="top-center"
           richColors
@@ -119,6 +119,7 @@ export default function App() {
       style={{
         width: '100vw',
         height: '100svh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
