@@ -19,7 +19,7 @@ const NAV_TABS: { id: ActiveTab; label: string; Icon: React.FC<any>; tourId?: st
 export function BottomNav({ activeTab, onTabChange }: Props) {
   return (
     /* Safe-area wrapper */
-    <div style={{ padding: '0 14px 24px', background: 'transparent' }}>
+    <div style={{ padding: '0 14px max(env(safe-area-inset-bottom, 0px), 16px)', background: 'transparent' }}>
 
       {/* iOS system-material pill */}
       <div
