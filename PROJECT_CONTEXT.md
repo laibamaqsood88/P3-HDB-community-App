@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-18 (Session 10)
+2026-04-20 (Session 11)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -30,11 +30,16 @@ src/
 │   ├── primary-math-tutoring.avif — Marketplace id:203 Primary Math Tutoring
 │   ├── event1.png                 — Welcome banner image (ExplorePage Events sub-tab)
 │   ├── events.png                 — (alias / duplicate of event1.png)
-│   └── group-smile.png            — Welcome banner image (ConnectPage Groups)
+│   ├── group-smile.png            — Welcome banner image (ConnectPage Groups)
+│   └── loginimage.png             — Login page hero/background image
+├── assets/                        — Component & SVG assets
+│   ├── LarryAnimated.tsx          — Animated Larry mascot React component
+│   ├── larry2.svg                 — Larry mascot SVG variant
+│   └── larrywithlimbs.svg         — Larry mascot SVG with limbs
 └── app/
-    ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks
+    ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks; all 3 top-level containers have minHeight: '100vh'
     ├── components/
-    │   ├── BottomNav.tsx          — 5-tab floating pill nav (has data-tour="explore-tab" etc.)
+    │   ├── BottomNav.tsx          — 5-tab floating pill nav; bottom padding uses env(safe-area-inset-bottom) for iPhone home indicator
     │   └── GuidedTour.tsx         — 9-step onboarding guided tour overlay (shown on every app load)
     └── pages/
         ├── LoginPage.tsx          — Singpass login screen
@@ -47,7 +52,7 @@ src/
         ├── MessagesPage.tsx       — Group + direct chats (Tab 5)
         ├── NeighboursPage.tsx     — Neighbours feed (used inside ExplorePage)
         └── ProfilePage.tsx        — Profile overlay (opened from Home)
-index.html                         — Google Fonts Nunito import
+index.html                         — Google Fonts Nunito import; viewport-fit=cover for iPhone notch/home indicator
 ```
 
 ---
@@ -90,7 +95,7 @@ Apply `className="no-scrollbar"` to scrollable elements. Defined in `src/styles/
 - **Active tab**: frosted glass pill highlight (`rgba(255,255,255,0.62)` + blur) with **orange** `#FF6B47` icon + label
 - **Inactive tabs**: muted `#8E8E93` icons + labels
 - Framer Motion `layoutId="activeNavPill"` spring animation between tabs
-- Safe-area wrapper: `padding: '0 14px 24px'`
+- Safe-area wrapper: `padding: '0 14px max(env(safe-area-inset-bottom, 0px), 16px)'` — adapts to iPhone home indicator height
 
 ### Gradient Fade Layer
 - `position: absolute, bottom: 0, height: 140px, zIndex: 40` — fades page content into nav
@@ -580,11 +585,16 @@ Note: FAB buttons removed from Marketplace and Requests — replaced by header `
 
 ## Responsive Layout
 - All page wrappers: `width: '100%'`, `height: '100%'`
-- Root: `width: '100vw'`, `height: '100svh'`, `overflow: 'hidden'`
+- Root: `width: '100vw'`, `height: '100svh'`, `minHeight: '100vh'`, `overflow: 'hidden'` — applied to all 3 top-level containers (login, signup, main)
 - Horizontal scroll rows: `display: 'flex'`, `overflowX: 'auto'`, cards use `flexShrink: 0` with fixed widths (fine for scroll)
 - Two-column grids: `width: 'calc(50% - 6px)'`
 - No hardcoded `width: '390px'` or similar viewport-specific values
 - Buttons/inputs: `width: '100%'`
+
+### iPhone / Mobile Safari Fixes (Session 11)
+- `index.html`: `viewport-fit=cover` added so the app extends to fill the full screen including behind the Dynamic Island (top) and home indicator (bottom)
+- `BottomNav.tsx`: bottom padding uses `max(env(safe-area-inset-bottom, 0px), 16px)` instead of hardcoded 24px — on iPhone 14 Pro this evaluates to ~34px
+- `App.tsx`: `minHeight: '100vh'` on all three top-level wrappers ensures screens fill the viewport even with sparse content
 
 ---
 
