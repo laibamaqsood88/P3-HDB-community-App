@@ -1,7 +1,7 @@
 # NeighbourHood App — Context
 
 ## Last Updated
-2026-04-20 (session 11 - LoginPage: community illustration added; MarketPlace: Free label changed to black; Events/Explore: Multilingual renamed to Others with tappable breakdown sheet; Settings: Notifications nav row removed, icons added to toggle rows; GuidedTour: responsive maxWidth centering)
+2026-04-20 (session 12 - Home: My Groups card redesigned to horizontal 200px wide white cards with rounded-square photo + category tag; 2-row CSS grid layout; max 7 groups; count badge; "View all" → Messages Groups tab; Find a group CTA redesigned to 200×72px horizontal with 3D orb + ChevronRight; Explore Groups: 2-column gradient grid cards; Event sign-up: reminder selection required before button active; MessagesPage: initialFilter prop added; openMessagesGroups cross-tab callback added)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -92,7 +92,8 @@ onUpdateLanguages(languages)          // callback from ProfilePage to update lan
 - `openExploreEvents()` — switches to Explore tab, opens Events sub-tab
 - `openExploreGroups()` — switches to Explore tab, opens Groups sub-tab
 - `openExploreNeighbours()` — switches to Explore tab, opens Neighbours sub-tab
-- `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat
+- `openGroupChat(groupId)` — switches to Messages tab, opens specific group chat (resets `messagesInitialFilter` to `'All'`)
+- `openMessagesGroups()` — sets `messagesInitialFilter` to `'Groups'`, clears `initialGroupChatId`, switches to Messages tab; used by EventsPage "View all" button in My Groups section
 - `onOpenMarketplace()` — switches to Marketplace tab
 - `onOpenDirectChat(conv)` — adds `conv` to `conversations` state, sets `initialGroupChatId` to `conv.id`, switches to Messages tab (passed to `ExplorePage` → `NeighboursTab`)
 - `openNeighbourProfile(profile)` / `onOpenNeighbourProfile` — opens `NeighbourProfilePage` as an app-level slide-in overlay (zIndex 110, above Profile at zIndex 100). Passed down to EventsPage, ExplorePage (→ ConnectPage, NeighboursTab), MessagesPage.
@@ -206,7 +207,7 @@ All four tab headers share the same absolute-positioning scroll animation. The p
 3. **Community Latest Requests** — single card showing newest marketplace request
 4. **Marketplace Picks** — horizontal scroll of 4 recommended items/services
 5. **My Events** — heading row with **"Find more events ›"** button + horizontal scroll row that **always** contains registered event cards followed by the **"Find an event" CTA card** (purple dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many events are registered. Row has equal `paddingTop` and `paddingBottom` (4px each).
-6. **My Groups** — heading row with **"Find more groups ›"** button + horizontal scroll row that **always** contains joined group cards followed by the **"Find a group" CTA card** (green dashed, 148px wide, animated orb icon). CTA card always visible regardless of how many groups are joined. Row has equal `paddingTop` and `paddingBottom` (6px each).
+6. **My Groups** — heading row with **"View all"** button (tapping navigates to Messages tab with Groups filter pre-selected) + group count badge (orange pill) beside "My Groups" label + **2-row CSS grid** (`gridTemplateRows: 'repeat(2, auto)', gridAutoFlow: 'column'`) with horizontal scroll. Shows up to **7 groups max**. Each group card is **200px wide**, white background, horizontal layout: 52px rounded-square group photo on left, category tag + group name on right. The **"Find a group" CTA card** (200×72px, green `#F4FFF7` dashed border, horizontal layout: 3D orb icon with `Users` icon + green `+` badge on left, "Find a group" text in center, `ChevronRight` on right; floating animation `floatGroups`). CTA card always visible.
 7. **Community Latest Requests** horizontal scroll — up to 5 request cards
 8. **Recommended Events** — vertical list of event cards
 
@@ -214,11 +215,19 @@ All four tab headers share the same absolute-positioning scroll animation. The p
 - **Upcoming** — shows all above sections
 - **Signed Up** — list of events user registered for
 
+### My Groups card design
+- **Width**: 200px fixed, `flexShrink: 0`
+- **Background**: white (`#FFFFFF`), `borderRadius: 16px`, subtle box shadow
+- **Layout**: horizontal flex, `alignItems: 'flex-start'`, `gap: 10px`, `padding: '10px 12px'`
+- **Photo**: 52×52px rounded square (`borderRadius: 10px`), colored border `2px solid ${categoryColor}33`, `object-fit: cover`
+- **Text column**: category tag pill (9px, 800 weight, category bg/color) above group name (13px, 700 weight, 2-line clamp)
+- **Grid**: `display: 'grid', gridTemplateRows: 'repeat(2, auto)', gridAutoFlow: 'column', gap: 12px`; max 7 items rendered (`joinedGroups.slice(0, 7)`)
+
 ### Props
 ```ts
-{ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMarketplace,
-  onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello,
-  joinedGroups, savedEvents, onOpenExploreEvents }
+{ onOpenProfile, onOpenEvent, onOpenGroups, onOpenGroupChat, onOpenMessagesGroups,
+  onOpenMarketplace, onOpenNeighbours, onOpenRequest, onOpenNeighbourProfile, onSayHello,
+  joinedGroups, savedEvents, onOpenExploreEvents, registeredEventIds, onToggleRegister }
 ```
 
 ---
@@ -253,6 +262,7 @@ All four tab headers share the same absolute-positioning scroll animation. The p
   - Language and Family Status sections **removed**
 - Events listed in date-grouped horizontal Luma-style cards
 - **Event Detail**: Date row, Location row, Organizer card, About card, Hosting/Going panels, Price + Attend toggle
+- **Reminder gate on sign-up**: "Sign up on organiser's website" button is **disabled** (grey background, `cursor: not-allowed`) until user selects a reminder option. A helper message "Please select a reminder option above to continue" appears above the button when no reminder is selected. Button becomes active (orange) once a reminder option is chosen.
 - **Going Breakdown screen**: Stacked bar chart by family status + neighbours attending list
   - `LANGUAGE_BREAKDOWN`: English, Mandarin, Malay, Tamil, **Others** (renamed from Multilingual)
   - "Others ›" row is tappable → bottom sheet shows `OTHERS_BREAKDOWN`: Japanese 1, Hindi 1, Tagalog 1
@@ -261,7 +271,7 @@ All four tab headers share the same absolute-positioning scroll animation. The p
 #### Groups Sub-tab (`ConnectPage.tsx`)
 - 8 groups: Morning Runners Club, **Cooking & Sharing Circle** (renamed from Peranakan Cooking Circle), Community Garden Guild, Board Game Crew, Seniors Wellness Circle, Parents & Kids Playgroup, Photography Walkers, Neighbourhood Book Club
 - Filter panel: **Category section removed**; only Interest accordion (collapsible INTEREST_CATEGORIES) remains
-- "My Groups" horizontal scroll
+- Groups list displayed as **2-column gradient grid**: each card has a colored gradient background (mapped per `categoryColor`), circular group photo (44px, object-fit cover, white border), group name, member count, meet frequency; "Joined" badge (absolute top-right) when already a member
 - Group detail: hero image, name, members, MEETS + LOCATION info, About, hashtags, Join/Leave button
 - **Header + bottom nav hidden on group detail**
 - **Member rows** tappable → opens NeighbourProfilePage overlay with full `interests` and `languages` data
@@ -473,6 +483,7 @@ SERVICE_CATEGORIES = [
 ## Tab 4 — Messages (`MessagesPage.tsx`)
 - **Header**: title "Messages", Search icon + **+ button (rightmost, orange/PRIMARY background)**; uses absolute-position scroll pattern (132→92px); `newChatRef` wraps full container for click-outside detection
 - **Search mode**: liquid glass overlay, header transparent on glass, back button (white ChevronLeft) replaces title. Filter tabs (All/Groups/Market/Requests/Neighbour) remain visible above popup in white/faded-white. White popup at `top: 144px`.
+- **`initialFilter` prop**: `initialFilter?: FilterTab` — initializes `activeFilter` state on mount. Used by `openMessagesGroups()` in App.tsx to pre-select the "Groups" tab. MessagesPage `key` in App.tsx is `${initialGroupChatId}-${messagesInitialFilter}` to force re-mount when filter changes.
 - **Filter tabs**: `All | Groups | Market | Requests | Neighbour` — underline style
   - `'Market'` maps to `type === 'marketplace'`
   - `'Neighbour'` maps to `type === 'direct'`

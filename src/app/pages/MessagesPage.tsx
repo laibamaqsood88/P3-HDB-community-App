@@ -311,6 +311,8 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
   const [groupName, setGroupName] = useState('');
   const [selectedGroupInterests, setSelectedGroupInterests] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [createdGroups, setCreatedGroups] = useState<Conversation[]>([]);
+  const [newGroupConvId, setNewGroupConvId] = useState<number | null>(null);
   const submitSearch = (q: string) => {
     const trimmed = q.trim();
     if (!trimmed) return;
@@ -375,7 +377,7 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
   }, [showNewChat]);
 
   // Merge extra conversations (from neighbours message etc.) with existing mock data
-  const allConversations: Conversation[] = [...extraMapped, ...CONVERSATIONS].map(c => ({
+  const allConversations: Conversation[] = [...createdGroups, ...extraMapped, ...CONVERSATIONS].map(c => ({
     ...c,
     unread: localUnread[c.id] ?? c.unread,
   }));
@@ -660,7 +662,7 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                       {conv.name}
                     </span>
                     {conv.tag && (() => {
-                      const colors = INTEREST_COLORS[conv.tag] || { bg: BG, text: TEXT2 };
+                      const colors = INTEREST_COLORS[conv.tag] || GROUP_INTEREST_COLORS[conv.tag] || { bg: BG, text: TEXT2 };
                       return (
                         <span
                           style={{
@@ -1073,7 +1075,35 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
               {/* Send Invite CTA */}
               <div style={{ background: CARD, borderTop: `0.5px solid ${BORDER}`, padding: '16px 16px 36px', flexShrink: 0 }}>
                 <button
-                  onClick={() => { if (groupName.trim()) setCreateGroupStep(0); }}
+                  onClick={() => {
+                    if (!groupName.trim()) return;
+                    const newId = Date.now();
+                    const tag = selectedGroupInterests[0] || null;
+                    const words = groupName.trim().split(' ');
+                    const initials = words.length >= 2 ? words[0][0] + words[1][0] : words[0].slice(0, 2);
+                    const avatarColors = ['#FF6B47', '#7C3AED', '#059669', '#0891B2', '#D97706', '#DB2777'];
+                    const avatarBg = avatarColors[newId % avatarColors.length];
+                    const newConv: Conversation = {
+                      id: newId,
+                      type: 'group',
+                      name: groupName.trim(),
+                      avatar: initials.toUpperCase(),
+                      avatarBg,
+                      lastMessage: 'Group created — say hello! 👋',
+                      time: 'Just now',
+                      unread: 0,
+                      tag,
+                      memberCount: selectedNeighbours.length + 1,
+                    };
+                    setCreatedGroups(prev => [newConv, ...prev]);
+                    setLocalMessages(p => ({ ...p, [newId]: [] }));
+                    setNewGroupConvId(newId);
+                    setCreateGroupStep(0);
+                    setGroupName('');
+                    setSelectedNeighbours([]);
+                    setSelectedGroupInterests([]);
+                    setOpenConv(newConv);
+                  }}
                   disabled={!groupName.trim()}
                   style={{ width: '100%', padding: '16px', borderRadius: '16px', background: groupName.trim() ? PRIMARY : 'rgba(120,120,128,0.15)', border: 'none', cursor: groupName.trim() ? 'pointer' : 'default', fontFamily: 'inherit', fontSize: '16px', fontWeight: 700, color: groupName.trim() ? 'white' : MUTED, transition: 'background 0.2s' }}
                 >
@@ -1116,6 +1146,8 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
               onOpenNeighbourProfile={onOpenNeighbourProfile}
               onOpenMarketplaceListing={onOpenMarketplaceListing}
               onOpenRequestListing={onOpenRequestListing}
+              showInviteBanner={openConv.id === newGroupConvId}
+              onDismissInviteBanner={() => setNewGroupConvId(null)}
             />
           </motion.div>
         )}
@@ -1135,6 +1167,8 @@ function ChatScreen({
   onOpenNeighbourProfile,
   onOpenMarketplaceListing,
   onOpenRequestListing,
+  showInviteBanner,
+  onDismissInviteBanner,
 }: {
   conv: Conversation;
   messages: ChatMessage[];
@@ -1145,10 +1179,18 @@ function ChatScreen({
   onOpenNeighbourProfile?: (profile: NeighbourProfile) => void;
   onOpenMarketplaceListing?: (id: number) => void;
   onOpenRequestListing?: (id: number) => void;
+  showInviteBanner?: boolean;
+  onDismissInviteBanner?: () => void;
 }) {
   const isGroup = conv.type === 'group';
   const [groupTab, setGroupTab] = useState<'chat' | 'activity'>('chat');
   const [showMembers, setShowMembers] = useState(false);
+
+  useEffect(() => {
+    if (!showInviteBanner) return;
+    const t = setTimeout(() => onDismissInviteBanner?.(), 4000);
+    return () => clearTimeout(t);
+  }, [showInviteBanner]);
   const activity = GROUP_ACTIVITY[conv.id] ?? (
     conv.meetFrequency ? {
       meetup: `${conv.meetFrequency}${conv.location ? ` · ${conv.location}` : ''}`,
@@ -1161,6 +1203,29 @@ function ChatScreen({
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: BG, position: 'relative' }}>
+      {/* Invite sent confirmation banner */}
+      <AnimatePresence>
+        {showInviteBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -40 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            style={{
+              position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50,
+              background: '#F0FDF4', padding: '52px 16px 14px',
+              display: 'flex', alignItems: 'center', gap: '10px',
+              borderBottom: '0.5px solid #BBF7D0',
+            }}
+          >
+            <Check size={18} color="#16A34A" strokeWidth={2.5} />
+            <span style={{ fontSize: '14px', fontWeight: 400, color: '#16A34A', flex: 1 }}>
+              Invite sent! Your group has been created.
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div style={{ background: CARD, borderBottom: `0.5px solid rgba(60,60,67,0.12)` }}>
         <div style={{ padding: '44px 16px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1199,6 +1264,15 @@ function ChatScreen({
                   {conv.subtitle}
                 </div>
               )}
+              {/* Interest tag above name — groups only */}
+              {isGroup && conv.tag && (() => {
+                const colors = INTEREST_COLORS[conv.tag] || GROUP_INTEREST_COLORS[conv.tag] || { bg: BG, text: TEXT2 };
+                return (
+                  <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '8px', background: colors.bg, color: colors.text, fontSize: '10px', fontWeight: 700, marginBottom: '2px' }}>
+                    {conv.tag}
+                  </span>
+                );
+              })()}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{conv.name}</span>
                 {!isGroup && <Shield size={12} color="#22C55E" />}
@@ -1211,9 +1285,9 @@ function ChatScreen({
             </div>
           </div>
 
-          {/* Tag badge */}
-          {conv.tag && (() => {
-            const colors = INTEREST_COLORS[conv.tag] || { bg: BG, text: TEXT2 };
+          {/* Tag badge — non-group chats only */}
+          {!isGroup && conv.tag && (() => {
+            const colors = INTEREST_COLORS[conv.tag] || GROUP_INTEREST_COLORS[conv.tag] || { bg: BG, text: TEXT2 };
             return (
               <span style={{ padding: '4px 10px', borderRadius: '10px', background: colors.bg, color: colors.text, fontSize: '11px', fontWeight: 700, flexShrink: 0 }}>
                 {conv.tag}
