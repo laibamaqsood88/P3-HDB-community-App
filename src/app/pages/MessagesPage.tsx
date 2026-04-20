@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, Send, Shield, Users, UserPlus, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight, ArrowRight, History } from 'lucide-react';
+import { ChevronLeft, Send, Shield, Users, UserPlus, Search, X, MessageCircle, MapPin, ClipboardList, Target, Plus, SquareArrowOutUpRight, ArrowRight, History, Camera, Filter, Check } from 'lucide-react';
 import { NeighbourProfile } from './NeighbourProfilePage';
 
 // ---- Design tokens ----
@@ -11,6 +11,40 @@ const TEXT = '#1C1C1E';
 const TEXT2 = '#636366';
 const MUTED = '#8E8E93';
 const BORDER = 'rgba(60,60,67,0.12)';
+
+// ---- Create Group data ----
+const GROUP_NEIGHBOURS = [
+  { id: 1, name: 'Alex Lim',   interests: ['Fitness & Sports', 'Cooking & Baking'],              avatar: 'AL', color: '#FF6B47', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 445 #12-34' },
+  { id: 2, name: 'Ben Tan',    interests: ['Gaming', 'Technology & Digital Skills'],              avatar: 'BT', color: '#7C3AED', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 447 #08-12' },
+  { id: 3, name: 'Clara Soh',  interests: ['Cooking & Baking', 'Gardening & Plants'],             avatar: 'CS', color: '#D97706', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 448 #03-22' },
+  { id: 4, name: 'Diana Mak',  interests: ['Gardening & Plants', 'Yoga & Mindfulness'],           avatar: 'DM', color: '#059669', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 445 #15-01' },
+  { id: 5, name: 'Eli Ng',     interests: ['Community Volunteering', 'Arts & Crafts'],            avatar: 'EN', color: '#0891B2', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 449 #07-05' },
+  { id: 6, name: 'Fiona Raj',  interests: ['Music & Performing Arts', 'Dance'],                   avatar: 'FR', color: '#DB2777', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 446 #11-18' },
+  { id: 7, name: 'Gary Koh',   interests: ['DIY & Home Improvement', 'Technology & Digital Skills'], avatar: 'GK', color: '#EA580C', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 450 #04-09' },
+  { id: 8, name: 'Hannah Lee', interests: ['Photography', 'Outdoor Activities'],                  avatar: 'HL', color: '#475569', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=100&w=100', unit: 'Blk 445 #09-33' },
+];
+
+const GROUP_INTEREST_COLORS: Record<string, { bg: string; text: string }> = {
+  'Community Volunteering': { bg: '#FEE2E2', text: '#DC2626' },
+  'Cultural Heritage & Festivals': { bg: '#FEF3C7', text: '#B45309' },
+  'Fitness & Sports': { bg: '#DCFCE7', text: '#16A34A' },
+  'Yoga & Mindfulness': { bg: '#F3E8FF', text: '#9333EA' },
+  'Outdoor Activities': { bg: '#CCFBF1', text: '#0D9488' },
+  'Arts & Crafts': { bg: '#FCE7F3', text: '#DB2777' },
+  'Music & Performing Arts': { bg: '#FFE4E6', text: '#E11D48' },
+  'Dance': { bg: '#EDE9FE', text: '#7C3AED' },
+  'Cooking & Baking': { bg: '#FEF3C7', text: '#D97706' },
+  'Technology & Digital Skills': { bg: '#DBEAFE', text: '#2563EB' },
+  'DIY & Home Improvement': { bg: '#F1F5F9', text: '#475569' },
+  'Language Learning': { bg: '#CFFAFE', text: '#0891B2' },
+  'Pets & Animals': { bg: '#FEF9C3', text: '#CA8A04' },
+  'Gardening & Plants': { bg: '#D1FAE5', text: '#059669' },
+  'Gaming': { bg: '#E0E7FF', text: '#4F46E5' },
+  'Fashion & Beauty': { bg: '#FCE7F3', text: '#BE185D' },
+  'Photography': { bg: '#FAE8FF', text: '#A21CAF' },
+};
+
+const ALL_GROUP_INTERESTS = Object.keys(GROUP_INTEREST_COLORS);
 
 // ---- Mock conversation list ----
 type ConvType = 'group' | 'marketplace' | 'request' | 'direct';
@@ -259,6 +293,13 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
+  const [createGroupStep, setCreateGroupStep] = useState<0 | 1 | 2>(0);
+  const [selectedNeighbours, setSelectedNeighbours] = useState<typeof GROUP_NEIGHBOURS>([]);
+  const [neighbourSearch, setNeighbourSearch] = useState('');
+  const [interestFilter, setInterestFilter] = useState('');
+  const [showInterestFilter, setShowInterestFilter] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [selectedGroupInterests, setSelectedGroupInterests] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const submitSearch = (q: string) => {
     const trimmed = q.trim();
@@ -450,26 +491,14 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
                             overflow: 'hidden',
                           }}
                         >
-                          <div style={{ padding: '12px 16px 6px', fontSize: '12px', fontWeight: 700, color: MUTED, letterSpacing: '0.4px', textTransform: 'uppercase' }}>
-                            New chat
-                          </div>
                           <button
-                            onClick={() => { setShowNewChat(false); onNewGroup?.(); }}
-                            style={{ width: '100%', padding: '12px 16px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
+                            onClick={() => { setShowNewChat(false); setSelectedNeighbours([]); setNeighbourSearch(''); setInterestFilter(''); setGroupName(''); setSelectedGroupInterests([]); setCreateGroupStep(1); }}
+                            style={{ width: '100%', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
                           >
                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#FFF0EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                               <Users size={16} color={PRIMARY} />
                             </div>
-                            <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>New group</span>
-                          </button>
-                          <button
-                            onClick={() => { setShowNewChat(false); onNewNeighbour?.(); }}
-                            style={{ width: '100%', padding: '12px 16px 14px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Nunito', sans-serif" }}
-                          >
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#EDE9FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                              <MapPin size={16} color="#7C3AED" />
-                            </div>
-                            <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT, whiteSpace: 'nowrap' }}>New neighbour</span>
+                            <span style={{ fontSize: '15px', fontWeight: 600, color: TEXT }}>Create New Group</span>
                           </button>
                         </motion.div>
                       )}
@@ -778,6 +807,175 @@ export function MessagesPage({ initialConvId, initialFilter, extraConversations 
             </motion.div>
           </>
         )}
+      </AnimatePresence>
+
+      {/* Create Group — Step 1: Add Neighbours */}
+      <AnimatePresence>
+        {createGroupStep === 1 && (() => {
+          const filtered = GROUP_NEIGHBOURS.filter(n =>
+            n.name.toLowerCase().includes(neighbourSearch.toLowerCase()) &&
+            (interestFilter === '' || n.interests.includes(interestFilter))
+          );
+          const toggle = (n: typeof GROUP_NEIGHBOURS[0]) =>
+            setSelectedNeighbours(prev => prev.find(x => x.id === n.id) ? prev.filter(x => x.id !== n.id) : [...prev, n]);
+          return (
+            <motion.div key="create-group-step1" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: BG, zIndex: 10 }}>
+              {/* Header */}
+              <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '52px 16px 14px' }}>
+                  <button onClick={() => setCreateGroupStep(0)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', color: PRIMARY, fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, padding: 0 }}>
+                    <ChevronLeft size={20} color={PRIMARY} />
+                  </button>
+                  <span style={{ fontSize: '17px', fontWeight: 800, color: TEXT }}>Create New Group</span>
+                  <button
+                    onClick={() => selectedNeighbours.length > 0 && setCreateGroupStep(2)}
+                    style={{ background: 'none', border: 'none', cursor: selectedNeighbours.length > 0 ? 'pointer' : 'default', fontFamily: 'inherit', fontSize: '15px', fontWeight: 700, color: selectedNeighbours.length > 0 ? PRIMARY : MUTED, padding: 0 }}
+                  >Next</button>
+                </div>
+                {/* Search + Filter */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 16px 14px' }}>
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(120,120,128,0.1)', borderRadius: '12px', padding: '10px 14px' }}>
+                    <Search size={15} color={MUTED} />
+                    <input value={neighbourSearch} onChange={e => setNeighbourSearch(e.target.value)} placeholder="Search neighbours..." style={{ flex: 1, border: 'none', background: 'transparent', fontSize: '15px', color: TEXT, outline: 'none', fontFamily: 'inherit' }} />
+                    {neighbourSearch && <button onClick={() => setNeighbourSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}><X size={14} color={MUTED} /></button>}
+                  </div>
+                  <button onClick={() => setShowInterestFilter(v => !v)} style={{ width: '40px', height: '40px', borderRadius: '12px', background: interestFilter ? PRIMARY : 'rgba(120,120,128,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Filter size={16} color={interestFilter ? 'white' : MUTED} />
+                  </button>
+                </div>
+                {/* Interest filter chips */}
+                {showInterestFilter && (
+                  <div className="no-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '0 16px 14px' }}>
+                    <button onClick={() => setInterestFilter('')} style={{ flexShrink: 0, padding: '6px 12px', borderRadius: '20px', border: `1.5px solid ${interestFilter === '' ? PRIMARY : BORDER}`, background: interestFilter === '' ? '#FFF0EC' : 'transparent', color: interestFilter === '' ? PRIMARY : MUTED, fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>All</button>
+                    {ALL_GROUP_INTERESTS.map(int => {
+                      const tc = GROUP_INTEREST_COLORS[int];
+                      const active = interestFilter === int;
+                      return <button key={int} onClick={() => setInterestFilter(active ? '' : int)} style={{ flexShrink: 0, padding: '6px 12px', borderRadius: '20px', border: `1.5px solid ${active ? tc.text : BORDER}`, background: active ? tc.bg : 'transparent', color: active ? tc.text : MUTED, fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>{int}</button>;
+                    })}
+                  </div>
+                )}
+              </div>
+              {/* Neighbour list */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
+                {filtered.map(n => {
+                  const selected = !!selectedNeighbours.find(x => x.id === n.id);
+                  return (
+                    <button key={n.id} onClick={() => toggle(n)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '12px 0', background: 'none', border: 'none', borderBottom: `0.5px solid ${BORDER}`, cursor: 'pointer', fontFamily: 'inherit' }}>
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', overflow: 'hidden', border: selected ? `2.5px solid ${PRIMARY}` : '2px solid transparent' }}>
+                          <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        {selected && <div style={{ position: 'absolute', bottom: 0, right: 0, width: '16px', height: '16px', borderRadius: '50%', background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid white' }}><Check size={10} color="white" /></div>}
+                      </div>
+                      <div style={{ flex: 1, textAlign: 'left' }}>
+                        <div style={{ fontSize: '15px', fontWeight: 700, color: TEXT }}>{n.name}</div>
+                        <div style={{ fontSize: '12px', color: MUTED, marginTop: '2px' }}>{n.unit}</div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '140px' }}>
+                        {n.interests.slice(0, 1).map(int => {
+                          const tc = GROUP_INTEREST_COLORS[int] || { bg: '#F1F5F9', text: '#475569' };
+                          return <span key={int} style={{ fontSize: '10px', fontWeight: 600, padding: '3px 7px', borderRadius: '8px', background: tc.bg, color: tc.text }}>{int}</span>;
+                        })}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              {/* Selected count bar */}
+              {selectedNeighbours.length > 0 && (
+                <div style={{ background: CARD, borderTop: `0.5px solid ${BORDER}`, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div className="no-scrollbar" style={{ flex: 1, display: 'flex', gap: '8px', overflowX: 'auto' }}>
+                    {selectedNeighbours.map(n => (
+                      <div key={n.id} style={{ position: 'relative', flexShrink: 0 }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden' }}>
+                          <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <button onClick={() => toggle(n)} style={{ position: 'absolute', top: '-4px', right: '-4px', width: '16px', height: '16px', borderRadius: '50%', background: MUTED, border: '1.5px solid white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}><X size={8} color="white" /></button>
+                      </div>
+                    ))}
+                  </div>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: PRIMARY, flexShrink: 0 }}>{selectedNeighbours.length} added</span>
+                </div>
+              )}
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
+
+      {/* Create Group — Step 2: Group Details */}
+      <AnimatePresence>
+        {createGroupStep === 2 && (() => {
+          const toggleInterest = (int: string) =>
+            setSelectedGroupInterests(prev => prev.includes(int) ? prev.filter(x => x !== int) : [...prev, int]);
+          return (
+            <motion.div key="create-group-step2" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: BG, zIndex: 11 }}>
+              {/* Header */}
+              <div style={{ background: CARD, borderBottom: `0.5px solid ${BORDER}`, flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '52px 16px 14px' }}>
+                  <button onClick={() => setCreateGroupStep(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: PRIMARY, fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, padding: 0 }}>
+                    <ChevronLeft size={20} color={PRIMARY} />
+                  </button>
+                  <span style={{ fontSize: '17px', fontWeight: 800, color: TEXT }}>Create New Group</span>
+                  <button
+                    onClick={() => { if (groupName.trim()) { setCreateGroupStep(0); } }}
+                    style={{ background: 'none', border: 'none', cursor: groupName.trim() ? 'pointer' : 'default', fontFamily: 'inherit', fontSize: '15px', fontWeight: 700, color: groupName.trim() ? PRIMARY : MUTED, padding: 0 }}
+                  >Send Invite</button>
+                </div>
+              </div>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px' }}>
+                {/* Photo + Name row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
+                  <button style={{ width: '72px', height: '72px', borderRadius: '20px', background: 'rgba(120,120,128,0.1)', border: `1.5px dashed ${MUTED}`, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', flexShrink: 0 }}>
+                    <Camera size={22} color={MUTED} />
+                    <span style={{ fontSize: '10px', color: MUTED, fontWeight: 600 }}>Photo</span>
+                  </button>
+                  <div style={{ flex: 1 }}>
+                    <input
+                      value={groupName}
+                      onChange={e => setGroupName(e.target.value)}
+                      placeholder="Group name..."
+                      style={{ width: '100%', fontSize: '16px', fontWeight: 700, color: TEXT, border: 'none', borderBottom: `2px solid ${groupName ? PRIMARY : BORDER}`, background: 'transparent', outline: 'none', fontFamily: 'inherit', padding: '8px 0', boxSizing: 'border-box' }}
+                    />
+                    <div style={{ fontSize: '11px', color: MUTED, marginTop: '4px' }}>Enter a name for your group</div>
+                  </div>
+                </div>
+
+                {/* Interest tags */}
+                <div style={{ marginBottom: '24px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Group Interest</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {ALL_GROUP_INTERESTS.map(int => {
+                      const tc = GROUP_INTEREST_COLORS[int];
+                      const active = selectedGroupInterests.includes(int);
+                      return (
+                        <button key={int} onClick={() => toggleInterest(int)} style={{ padding: '7px 14px', borderRadius: '20px', border: `1.5px solid ${active ? tc.text : BORDER}`, background: active ? tc.bg : 'transparent', color: active ? tc.text : MUTED, fontSize: '13px', fontWeight: active ? 700 : 500, cursor: 'pointer', fontFamily: 'inherit' }}>{int}</button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Selected neighbours */}
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: MUTED, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+                    Members · {selectedNeighbours.length} neighbour{selectedNeighbours.length !== 1 ? 's' : ''}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                    {selectedNeighbours.map(n => (
+                      <div key={n.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', width: '56px' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', border: `2px solid ${BORDER}` }}>
+                          <img src={n.avatarUrl} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <span style={{ fontSize: '11px', fontWeight: 600, color: TEXT, textAlign: 'center', lineHeight: '1.2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '100%' }}>{n.name.split(' ')[0]}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })()}
       </AnimatePresence>
 
       {/* Chat screen overlay */}
