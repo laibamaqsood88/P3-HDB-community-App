@@ -1,7 +1,7 @@
 # NeighbourHood App — Project Context
 
 ## Last Updated
-2026-04-20 (Session 11)
+2026-04-20 (Session 12)
 
 ## GitHub Repository
 https://github.com/laibamaqsood88/P3-HDB-community-App
@@ -31,11 +31,13 @@ src/
 │   ├── event1.png                 — Welcome banner image (ExplorePage Events sub-tab)
 │   ├── events.png                 — (alias / duplicate of event1.png)
 │   ├── group-smile.png            — Welcome banner image (ConnectPage Groups)
-│   └── loginimage.png             — Login page hero/background image
+│   └── loginimage.png             — (unused; login images moved to src/assets/)
 ├── assets/                        — Component & SVG assets
 │   ├── LarryAnimated.tsx          — Animated Larry mascot React component
 │   ├── larry2.svg                 — Larry mascot SVG variant
-│   └── larrywithlimbs.svg         — Larry mascot SVG with limbs
+│   ├── larrywithlimbs.svg         — Larry mascot SVG with limbs
+│   ├── loginimage.png             — Login page hero image (original)
+│   └── login2.png                 — Login page illustration (current)
 └── app/
     ├── App.tsx                    — root: auth state, tab routing, profile overlay, cross-tab callbacks; all 3 top-level containers have minHeight: '100vh'
     ├── components/
@@ -446,6 +448,13 @@ interface Conversation {
 - No Singpass Verified banner anywhere on profile
 - My Interests (live from App.tsx), Rewards/Badges grid, Saved Items row, My Posts row
 - Badges use CalendarDays, Users, ShoppingBag, Lock icons (no emojis)
+
+### My Posts Screen (`MyPostsScreen` inside `ProfilePage.tsx`)
+- **Tabs**: All | **Market** | Requests — "Marketplace" label renamed to "Market" (display only; internal value stays `'Marketplace'`)
+- **Expiry date**: hidden for `Listing` and `Service` type posts — shown only for `Request` type posts (both in list row and post detail)
+- **Post detail description**: renders `currentPost.description` if set — displayed in a grey rounded box below the title card
+- **Description passthrough**: `newPosts` mapping in `ProfilePage.tsx` now forwards `p.description || ''` and `p.category || ''` from App.tsx `myPosts` state
+- **HelpSharePage `onAddPost` calls** now include `description` and `category` fields for both listing (`item-post-form`) and service (`service-post`) creation flows — data comes from `ItemPostScreen`/`ServicePostScreen` `onPost` callback
 
 ### Settings Screen
 - Back button: **ChevronLeft** icon (not X)
